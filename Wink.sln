@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wink", "Wink\Wink.csproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bias", "Bias\Bias.csproj", "{E744C788-E36F-4170-8776-DC7A3D5F5B8F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StandaloneServer", "StandaloneServer\StandaloneServer.csproj", "{A8DA5ABF-3342-4ACD-B1B3-652A7A4F94E7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,6 +31,14 @@ Global
 		{E744C788-E36F-4170-8776-DC7A3D5F5B8F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E744C788-E36F-4170-8776-DC7A3D5F5B8F}.Release|x86.ActiveCfg = Release|Any CPU
 		{E744C788-E36F-4170-8776-DC7A3D5F5B8F}.Release|x86.Build.0 = Release|Any CPU
+		{A8DA5ABF-3342-4ACD-B1B3-652A7A4F94E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A8DA5ABF-3342-4ACD-B1B3-652A7A4F94E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A8DA5ABF-3342-4ACD-B1B3-652A7A4F94E7}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A8DA5ABF-3342-4ACD-B1B3-652A7A4F94E7}.Debug|x86.Build.0 = Debug|Any CPU
+		{A8DA5ABF-3342-4ACD-B1B3-652A7A4F94E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A8DA5ABF-3342-4ACD-B1B3-652A7A4F94E7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A8DA5ABF-3342-4ACD-B1B3-652A7A4F94E7}.Release|x86.ActiveCfg = Release|Any CPU
+		{A8DA5ABF-3342-4ACD-B1B3-652A7A4F94E7}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
