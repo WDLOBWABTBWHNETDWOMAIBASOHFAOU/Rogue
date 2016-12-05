@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 
 public class GameObjectGrid : GameObject
 {
@@ -114,5 +115,17 @@ public class GameObjectGrid : GameObject
         {
             obj.Reset();
         }
+    }
+
+    public GameObject Find(Func<GameObject, bool> del)
+    {
+        foreach (GameObject obj in grid)
+        {
+            if (del.Invoke(obj))
+            {
+                return obj;
+            }
+        }
+        return null;
     }
 }

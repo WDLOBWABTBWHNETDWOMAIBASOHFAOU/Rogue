@@ -10,7 +10,7 @@ namespace Wink
     class LocalServer : Server
     {
         private List<Client> clients;
-        private Level level;
+        public Level level { get; }
         bool levelChanged;
 
         /// <summary>
@@ -39,6 +39,12 @@ namespace Wink
         public override void AddLocalClient(LocalClient localClient)
         {
             clients.Add(localClient);
+            ClientAdded(localClient);
+        }
+
+        private void ClientAdded(Client client)
+        {
+            Player player = new Player(client, level);
             SendOutUpdatedLevel();
         }
 
@@ -64,9 +70,13 @@ namespace Wink
 
             if (levelChanged)
             {
-
+                SendOutUpdatedLevel();
             }
         }
         
+        public void LevelChanged()
+        {
+            levelChanged = true;
+        }
     }
 }

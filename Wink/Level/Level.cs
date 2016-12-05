@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,14 +12,22 @@ namespace Wink
         public Level()
         {
             TileField tf = new TileField(10, 10, 0, "TileField");
-            tf.CellWidth = 65;
-            tf.CellHeight = 65;
+
+            Point startTile = new Point(0, 0);
 
             for (int x = 0; x < tf.Columns; x++)
             {
                 for(int y = 0; y < tf.Rows; y++)
                 {
-                    tf.Add(new Tile("empty65x65", TileType.Normal), x, y);
+                    if(startTile.X == x && startTile.Y == y)
+                    {
+                        tf.Add(new Tile("empty:65:65:10:Red", TileType.Normal, 0, "startTile"), x, y);
+                    }
+                    else
+                    {
+                        tf.Add(new Tile("empty:65:65:10:Magenta", TileType.Normal), x, y);
+                    }
+                    
                 }
             }
             Add(tf);

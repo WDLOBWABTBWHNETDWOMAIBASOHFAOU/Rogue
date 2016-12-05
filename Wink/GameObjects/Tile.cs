@@ -15,9 +15,14 @@ namespace Wink
         Wall
     }
 
-    class Tile : SpriteGameObject
+    class Tile : SpriteGameObject, ClickableGameObject
     {
+        public const int TileWidth = 65;
+        public const int TileHeight = 65;
+
         protected TileType type;
+
+        public Point TilePosition { get { return new Point((int)Position.X / TileWidth, (int)Position.Y / TileHeight); } }
 
         public Tile(string assetname = "", TileType tp = TileType.Background, int layer = 0, string id = "") : base(assetname, layer, id)
         {
@@ -38,9 +43,12 @@ namespace Wink
             get { return type; }
         }
 
-        public virtual void OnClicked()
+        public virtual void OnClick(Server server)
         {
-            
+            PlayerMoveEvent pme = new PlayerMoveEvent();
+            pme.Player = (Root as GameObjectList).Find("player_" + Environment.MachineName) as Player;
+            pme.Tile = this;
+            server.Send(pme);
         }
     }
 }

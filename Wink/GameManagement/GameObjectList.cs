@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 
 public class GameObjectList : GameObject
 {
@@ -38,18 +39,27 @@ public class GameObjectList : GameObject
         obj.Parent = null;
     }
 
-    public GameObject Find(string id)
+    public GameObject Find(Func<GameObject, bool> del)
     {
         foreach (GameObject obj in children)
         {
-            if (obj.Id == id)
+            if (del.Invoke(obj))
             {
                 return obj;
             }
             if (obj is GameObjectList)
             {
                 GameObjectList objList = obj as GameObjectList;
-                GameObject subObj = objList.Find(id);
+                GameObject subObj = objList.Find(del);
+                if (subObj != null)
+                {
+                    return subObj;
+                }
+            }
+            if (obj is GameObjectGrid)
+            {
+                GameObjectGrid objGrid = obj as GameObjectGrid;
+                GameObject subObj = objGrid.Find(del);
                 if (subObj != null)
                 {
                     return subObj;
@@ -57,6 +67,11 @@ public class GameObjectList : GameObject
             }
         }
         return null;
+    }
+
+    public GameObject Find(string id)
+    {
+        return Find((gobj) => gobj.Id == id);
     }
 
     public override void HandleInput(InputHelper inputHelper)

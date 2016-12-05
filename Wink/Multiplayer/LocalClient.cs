@@ -11,7 +11,6 @@ namespace Wink
 {
     class LocalClient : Client
     {
-        public string clientName { get; set; }
         public Level level { get; set; }
 
         private Camera camera;
@@ -21,10 +20,11 @@ namespace Wink
 
         public LocalClient(Server server) : base(server)
         {
+            clientName = System.Environment.MachineName;
             ih = new InputHelper();
             camera = new Camera();
             server.AddLocalClient(this);
-            clientName = System.Environment.MachineName;
+            
         }
 
         public void Update(GameTime gameTime)
@@ -48,7 +48,9 @@ namespace Wink
             {
                 Vector2 mousePos = ih.MousePosition;
                 Vector2 globalPos = mousePos + camera.GlobalPosition;
+                FindClicked(level.Children, globalPos);
 
+                /*
                 TileField tf = (TileField)level.Find("TileField");
                 int width = tf.Columns * tf.CellWidth;
                 int height = tf.Rows * tf.CellHeight;
@@ -61,6 +63,37 @@ namespace Wink
                     Tile clicked = (Tile)tf.Objects[x, y];
                     clicked.OnClicked();
                     //System.Diagnostics.Debug.WriteLine("clicked x="+x+" y="+y);
+                }
+                */
+            }
+        }
+
+        private void FindClicked(List<GameObject> gameObjects, Vector2 mousePos)
+        {
+            gameObjects.Sort((obj1, obj2) => obj1.Layer - obj2.Layer);
+
+            for (int i = 0; i < gameObjects.Count; i++)
+            {
+                bool emptyBB = gameObjects[i].BoundingBox.Width * gameObjects[i].BoundingBox.Height == 0;
+                if (gameObjects[i].BoundingBox.Contains(mousePos) || emptyBB)
+                {
+                    if (gameObjects[i] is ClickableGameObject)
+                    {
+                        (gameObjects[i] as ClickableGameObject).OnClick(server);
+                        return;
+                    }
+                    else if (gameObjects[i] is GameObjectList)
+                    {
+                        FindClicked((gameObjects[i] as GameObjectList).Children, mousePos);
+                    }
+                    else if (gameObjects[i] is GameObjectGrid)
+                    {
+                        GameObject gObj = (gameObjects[i] as GameObjectGrid).Find(obj => obj.BoundingBox.Contains(mousePos));
+                        if(gObj is ClickableGameObject)
+                        {
+                            (gObj as ClickableGameObject).OnClick(server);
+                        }
+                    }
                 }
             }
         }

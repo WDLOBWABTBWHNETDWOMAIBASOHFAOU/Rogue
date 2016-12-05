@@ -41,10 +41,14 @@
     <Compile Include="Events\Event.cs" />
     <Compile Include="Events\JoinServerEvent.cs" />
     <Compile Include="Events\LevelUpdatedEvent.cs" />
+    <Compile Include="Events\PlayerMoveEvent.cs" />
     <Compile Include="GameManagement\AnimatedGameObject.cs" />
     <Compile Include="GameManagement\Animation.cs" />
     <Compile Include="GameManagement\AssetManager.cs" />
     <Compile Include="GameManagement\Camera.cs" />
+    <Compile Include="GameObjects\ClickableGameObject.cs" />
+    <Compile Include="GameObjects\Living.cs" />
+    <Compile Include="GameObjects\Player.cs" />
     <Compile Include="GameObjects\Tile.cs" />
     <Compile Include="GameObjects\TileField.cs" />
     <Compile Include="Level\Level.cs" />
