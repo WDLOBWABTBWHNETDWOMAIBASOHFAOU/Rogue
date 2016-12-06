@@ -20,8 +20,8 @@ namespace Wink
         {
             base.LoadContent();
             screen = new Point(1440, 825);
-            //windowSize = new Point(1024, 586);
-            windowSize = screen;
+            windowSize = new Point(1024, 586);
+            //windowSize = screen;
             FullScreen = false;
 
             //This needs to happen when switched to the playingstate(based on what menu option is chosen)

@@ -64,7 +64,11 @@ namespace Wink
 
         public void HandleInput(InputHelper inputHelper)
         {
-            
+            if (client is LocalClient && client != null)
+            {
+                LocalClient lc = (LocalClient)client;
+                lc.HandleInput(inputHelper);
+            }
         }
 
         public void Reset()

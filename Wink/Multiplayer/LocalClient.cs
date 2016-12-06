@@ -14,14 +14,13 @@ namespace Wink
         public Level level { get; set; }
 
         private Camera camera;
-        private InputHelper ih;
 
         private const int cameraMoveSpeed = 4;
 
         public LocalClient(Server server) : base(server)
         {
             clientName = System.Environment.MachineName;
-            ih = new InputHelper();
+            
             camera = new Camera();
             server.AddLocalClient(this);
             
@@ -29,24 +28,28 @@ namespace Wink
 
         public void Update(GameTime gameTime)
         {
-            ih.Update();
+            //Nodig?
 
-            if (ih.IsKeyDown(Keys.W))
+        }
+
+        public void HandleInput(InputHelper inputHelper)
+        {
+            if (inputHelper.IsKeyDown(Keys.W))
                 camera.Position += new Vector2(0, -cameraMoveSpeed);
 
-            if (ih.IsKeyDown(Keys.A))
+            if (inputHelper.IsKeyDown(Keys.A))
                 camera.Position += new Vector2(-cameraMoveSpeed, 0);
 
-            if (ih.IsKeyDown(Keys.S))
+            if (inputHelper.IsKeyDown(Keys.S))
                 camera.Position += new Vector2(0, cameraMoveSpeed);
 
-            if (ih.IsKeyDown(Keys.D))
+            if (inputHelper.IsKeyDown(Keys.D))
                 camera.Position += new Vector2(cameraMoveSpeed, 0);
 
-            
-            if(ih.MouseLeftButtonPressed() && level != null)
+
+            if (inputHelper.MouseLeftButtonPressed() && level != null)
             {
-                Vector2 mousePos = ih.MousePosition;
+                Vector2 mousePos = inputHelper.MousePosition;
                 Vector2 globalPos = mousePos + camera.GlobalPosition;
                 FindClicked(level.Children, globalPos);
             }
