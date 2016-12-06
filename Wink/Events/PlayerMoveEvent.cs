@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace Wink
 {
-    class PlayerMoveEvent : Event
+    [Serializable()]
+    public class PlayerMoveEvent : Event
     {
         public Player Player { get; set; }
         public Tile Tile { get; set; }

@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace Wink
 {
-    class JoinServerEvent : Event
+    [Serializable()]
+    public class JoinServerEvent : Event
     {
         public string clientName { get; set; }
 

@@ -6,17 +6,28 @@ using System.Threading.Tasks;
 
 namespace Wink
 {
-    class Player : Living
+    public class Player : Living
     {
         private Client client;
+
+        public Player()
+        {
+            InitAnimation();
+        }
 
         public Player(Client client, Level level) : base(0, "player_" + client.clientName)
         {
             this.client = client;
-
-            LoadAnimation("empty:65:65:10:DarkGreen", "default", true);
+            
             level.Add(this);
             MoveTo(level.Find("startTile") as Tile);
+
+            InitAnimation();
+        }
+
+        private void InitAnimation()
+        {
+            LoadAnimation("empty:65:65:10:DarkGreen", "default", true);
             PlayAnimation("default");
         }
 

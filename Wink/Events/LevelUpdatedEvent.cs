@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace Wink
 {
-    class LevelUpdatedEvent : Event
+    [Serializable()]
+    public class LevelUpdatedEvent : Event
     {
         public Level updatedLevel { get; set; }
 

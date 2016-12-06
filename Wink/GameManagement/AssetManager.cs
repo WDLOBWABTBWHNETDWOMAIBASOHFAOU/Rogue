@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
-using System;
 using System.Collections.Generic;
 
 public class AssetManager
@@ -18,11 +17,10 @@ public class AssetManager
     {
         contentManager = content;
         graphicsDevice = graphics;
-        defaultFont = Content.Load<SpriteFont>("default");
         generatedTextures = new Dictionary<string, Texture2D>();
     }
 
-    public Texture2D GetSprite(string assetName)
+    public virtual Texture2D GetSprite(string assetName)
     {
         if (assetName == "")
         { 
@@ -35,7 +33,7 @@ public class AssetManager
         return contentManager.Load<Texture2D>(assetName);
     }
 
-    public Texture2D GetEmptySprite(string emptyString)
+    public virtual Texture2D GetEmptySprite(string emptyString)
     {
         if (generatedTextures.ContainsKey(emptyString))
         {
@@ -68,13 +66,13 @@ public class AssetManager
         }
     }
 
-    public void PlaySound(string assetName)
+    public virtual void PlaySound(string assetName)
     {
         SoundEffect snd = contentManager.Load<SoundEffect>(assetName);
         snd.Play();
     }
 
-    public void PlayMusic(string assetName, bool repeat = true)
+    public virtual void PlayMusic(string assetName, bool repeat = true)
     {
         MediaPlayer.IsRepeating = repeat;
         MediaPlayer.Play(contentManager.Load<Song>(assetName));
@@ -83,5 +81,30 @@ public class AssetManager
     public ContentManager Content
     {
         get { return contentManager; }
+    }
+}
+
+public class EmptyAssetManager : AssetManager
+{
+    public EmptyAssetManager() : base(null, null)
+    {
+    }
+
+    public override Texture2D GetSprite(string assetName)
+    {
+        return null;
+    }
+
+    public override Texture2D GetEmptySprite(string emptyString)
+    {
+        return null;
+    }
+
+    public override void PlaySound(string assetName)
+    {
+    }
+
+    public override void PlayMusic(string assetName, bool repeat = true)
+    {
     }
 }

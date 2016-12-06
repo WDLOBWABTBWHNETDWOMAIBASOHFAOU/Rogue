@@ -9,8 +9,13 @@ namespace Wink
     /*
      * This class came from the TickTick Game.
      */
-    class TileField : GameObjectGrid
+    public class TileField : GameObjectGrid
     {
+        public TileField() : base(0, 0)
+        {
+
+        }
+
         public TileField(int rows, int columns, int layer = 0, string id = "") : base(rows, columns, layer, id)
         {
             CellWidth = Tile.TileWidth;

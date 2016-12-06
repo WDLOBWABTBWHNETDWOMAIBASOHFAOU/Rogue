@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Wink
 {
-    class LocalClient : Client
+    public class LocalClient : Client
     {
         public Level level { get; set; }
 
@@ -49,27 +49,12 @@ namespace Wink
                 Vector2 mousePos = ih.MousePosition;
                 Vector2 globalPos = mousePos + camera.GlobalPosition;
                 FindClicked(level.Children, globalPos);
-
-                /*
-                TileField tf = (TileField)level.Find("TileField");
-                int width = tf.Columns * tf.CellWidth;
-                int height = tf.Rows * tf.CellHeight;
-
-                if(new Rectangle((int)tf.GlobalPosition.X, (int)tf.GlobalPosition.Y, width, height).Contains(globalPos))
-                {
-                    Vector2 tileFielfOffSet = globalPos - tf.GlobalPosition;
-                    int x = (int)(tileFielfOffSet.X / tf.CellWidth);
-                    int y = (int)(tileFielfOffSet.Y / tf.CellHeight);
-                    Tile clicked = (Tile)tf.Objects[x, y];
-                    clicked.OnClicked();
-                    //System.Diagnostics.Debug.WriteLine("clicked x="+x+" y="+y);
-                }
-                */
             }
         }
 
         private void FindClicked(List<GameObject> gameObjects, Vector2 mousePos)
         {
+            //Right way round?
             gameObjects.Sort((obj1, obj2) => obj1.Layer - obj2.Layer);
 
             for (int i = 0; i < gameObjects.Count; i++)

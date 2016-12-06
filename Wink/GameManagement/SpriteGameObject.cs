@@ -7,13 +7,13 @@ public class SpriteGameObject : GameObject
     protected Vector2 origin;
     protected float scale;
 
-    public float CameraSensitivity { get; protected set; }
+    protected float cameraSensitivity;
 
     public bool PerPixelCollisionDetection = true;
 
     public SpriteGameObject(string assetName, int layer = 0, string id = "", int sheetIndex = 0, float cameraSensitivity = 1.0f, float scale = 1.0f) : base(layer, id)
     {
-        CameraSensitivity = cameraSensitivity;
+        this.cameraSensitivity = cameraSensitivity;
         this.scale = scale;
 
         if (assetName != "")
@@ -33,7 +33,7 @@ public class SpriteGameObject : GameObject
             return;
         }
         //Draw every SpriteGameObject in its position relative to the camera but only to the extent specified by the CameraSensitivity property.
-        sprite.Draw(spriteBatch, GlobalPosition - (CameraSensitivity * camera.GlobalPosition), origin, scale);
+        sprite.Draw(spriteBatch, GlobalPosition - (cameraSensitivity * camera.GlobalPosition), origin, scale);
     }
 
     public SpriteSheet Sprite

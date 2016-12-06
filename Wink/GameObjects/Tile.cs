@@ -8,14 +8,14 @@ using System.Threading.Tasks;
 
 namespace Wink
 {
-    enum TileType
+    public enum TileType
     {
         Background,
         Normal,
         Wall
     }
 
-    class Tile : SpriteGameObject, ClickableGameObject
+    public class Tile : SpriteGameObject, ClickableGameObject
     {
         public const int TileWidth = 65;
         public const int TileHeight = 65;
@@ -23,6 +23,11 @@ namespace Wink
         protected TileType type;
 
         public Point TilePosition { get { return new Point((int)Position.X / TileWidth, (int)Position.Y / TileHeight); } }
+
+        public Tile() : base("")
+        {
+
+        }
 
         public Tile(string assetname = "", TileType tp = TileType.Background, int layer = 0, string id = "") : base(assetname, layer, id)
         {

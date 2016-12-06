@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Wink
 {
-    abstract class Living : AnimatedGameObject
+    public abstract class Living : AnimatedGameObject
     {
         public Living(int layer = 0, string id = "", float scale = 1.0f) : base(layer, id, scale)
         {

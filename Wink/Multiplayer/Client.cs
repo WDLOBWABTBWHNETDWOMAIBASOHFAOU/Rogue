@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Wink
 {
-    abstract class Client
+    public abstract class Client
     {
         protected Server server;
         public string clientName { get; set; }

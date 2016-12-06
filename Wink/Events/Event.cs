@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Wink
 {
     [Serializable()]
-    abstract class Event
+    public abstract class Event
     {
         public abstract void OnClientReceive(LocalClient client);
         public abstract void OnServerReceive(LocalServer server);

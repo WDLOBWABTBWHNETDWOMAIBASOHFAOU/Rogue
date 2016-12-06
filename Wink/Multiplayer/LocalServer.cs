@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Wink
 {
-    class LocalServer : Server
+    public class LocalServer : Server
     {
         private List<Client> clients;
         public Level level { get; }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Wink
 {
-    class Level : GameObjectList
+    public class Level : GameObjectList
     {
         public Level()
         {

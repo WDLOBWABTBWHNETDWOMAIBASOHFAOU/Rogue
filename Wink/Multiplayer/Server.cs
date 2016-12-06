@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Wink
 {
-    abstract class Server
+    public abstract class Server
     {
         
         public Server()

@@ -1,10 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Reflection;
 using System.Threading;
-using System.Threading.Tasks;
 using Wink;
 
 class Program
@@ -15,17 +12,31 @@ class Program
 
     static void Main(string[] args)
     {
+        FieldInfo assetManagerField = typeof(GameEnvironment).GetField("assetManager", BindingFlags.Static | BindingFlags.NonPublic);
+        assetManagerField.SetValue(null, new EmptyAssetManager());
+
+        LocalServer server = new LocalServer();
+        RemoteClient rc = new RemoteClient(server);
+
+        //JoinServerEvent jse = new JoinServerEvent();
+        //jse.clientName = "test";
+        LevelUpdatedEvent lue = new LevelUpdatedEvent();
+        lue.updatedLevel = server.level;
+
+        rc.Send(lue);
+        
         startTime = DateTime.UtcNow;
-        //Rebuild system that updates 60 times a second (or less?) and gives a gametime.
+
         playingState = new PlayingState();
 
         Timer timer = new Timer(tick, null, 0, (int)(1000f/60f));
-        GameTime gameTime = new GameTime();
+        Console.Read();
+
     }
 
     static void tick(object state)
     {
-        if (lastTime == null)
+        if (lastTime.Equals(new DateTime()))
             lastTime = DateTime.UtcNow;
 
         TimeSpan total = startTime - DateTime.UtcNow;
