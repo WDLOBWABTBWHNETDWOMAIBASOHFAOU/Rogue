@@ -28,10 +28,12 @@ namespace Wink
             PlayingState ps = new PlayingState();
             ps.InitializeGameMode(PlayingState.GameMode.Singleplayer);
 
+            gameStateManager.AddGameState("mainMenuState", new MainMenuState());
             gameStateManager.AddGameState("playingState", ps);
-            gameStateManager.SwitchTo("playingState");
+            gameStateManager.SwitchTo("mainMenuState");
 
-            /*gameStateManager.AddGameState("titleMenu", new TitleMenuState());
+            /*
+            
             gameStateManager.AddGameState("helpState", new HelpState());
             gameStateManager.AddGameState("levelMenu", new LevelMenuState());
             gameStateManager.AddGameState("gameOverState", new GameOverState());

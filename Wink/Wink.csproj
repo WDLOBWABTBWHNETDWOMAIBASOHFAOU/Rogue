@@ -52,6 +52,7 @@
     <Compile Include="GameObjects\Tile.cs" />
     <Compile Include="GameObjects\TileField.cs" />
     <Compile Include="Level\Level.cs" />
+    <Compile Include="Menu\Button.cs" />
     <Compile Include="Multiplayer\Client.cs" />
     <Compile Include="GameManagement\Collision.cs" />
     <Compile Include="GameManagement\DrawingHelper.cs" />
@@ -76,6 +77,7 @@
     <Compile Include="GameManagement\SpriteSheet.cs" />
     <Compile Include="GameManagement\TextBox.cs" />
     <Compile Include="GameManagement\TextGameObject.cs" />
+    <Compile Include="States\MainMenuState.cs" />
     <Compile Include="States\PlayingState.cs" />
   </ItemGroup>
   <ItemGroup>

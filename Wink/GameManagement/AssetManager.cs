@@ -37,24 +37,31 @@ public class AssetManager
     {
         if (generatedTextures.ContainsKey(emptyString))
         {
+            //Check if this emptyTexture has been generated before, if so return it.
             return generatedTextures[emptyString];
         }
         else
         {
+            //Split up the string and get the parameters
             string[] parts = emptyString.Split(':');
             int width = int.Parse(parts[1]);
             int height = int.Parse(parts[2]);
             int size = int.Parse(parts[3]);
+
+            //Use Reflection to get the specified Color Property.
             Color color = Color.Black;
             color = (Color)color.GetType().GetProperty(parts[4]).GetValue(null);
 
+            //New empty texture
             Texture2D emptyTexture = new Texture2D(graphicsDevice, width, height);
             Color[] pixels = new Color[width * height];
             for (int y1 = 0; y1 < height; y1++)
             {
+                //Whether or not to start with a colored square.
                 bool pinkStart = y1 % (2*size) < size;
                 for (int x1 = 0; x1 < width; x1++)
                 {
+                    //Whether or not this square is colored or black.
                     bool pink = x1 % (2*size) < size ? pinkStart : !pinkStart;
                     pixels[y1 * width + x1] = pink ? color : Color.Black;
                 }
