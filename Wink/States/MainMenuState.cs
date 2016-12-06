@@ -10,13 +10,27 @@ namespace Wink
     class MainMenuState : GameObjectList
     {
         Button singlePlayerButton;
+        Button multiPlayerButton;
+
+        Button helpButton;
+        Button optionsButton;
+        Button highscoreButton;
+        Button quitButton;
 
         public MainMenuState()
         {
-            singlePlayerButton = new Button("empty:300:50:25:Blue");
-            singlePlayerButton.Position = new Vector2((GameEnvironment.Screen.X - singlePlayerButton.Width) / 2, 540);
+            int buffer = 50;
+            int buttonWidth = 300;
+            int leftx = (GameEnvironment.Screen.X - (buttonWidth * 2 + buffer)) / 2;
+            int rightx = leftx + buttonWidth + buffer;
+
+            singlePlayerButton = new Button("empty:"+ buttonWidth + ":50:25:Blue");
+            singlePlayerButton.Position = new Vector2(leftx, 300);
             Add(singlePlayerButton);
 
+            multiPlayerButton = new Button("empty:"+ buttonWidth + ":50:25:Green");
+            multiPlayerButton.Position = new Vector2(rightx, 300);
+            Add(multiPlayerButton);
         }
 
         public override void HandleInput(InputHelper inputHelper)
