@@ -11,7 +11,7 @@ namespace Wink
 {
     public class LocalClient : Client
     {
-        public Level level { get; set; }
+        public Level Level { get; set; }
 
         private Camera camera;
 
@@ -47,11 +47,11 @@ namespace Wink
                 camera.Position += new Vector2(cameraMoveSpeed, 0);
 
 
-            if (inputHelper.MouseLeftButtonPressed() && level != null)
+            if (inputHelper.MouseLeftButtonPressed() && Level != null)
             {
                 Vector2 mousePos = inputHelper.MousePosition;
                 Vector2 globalPos = mousePos + camera.GlobalPosition;
-                FindClicked(level.Children, globalPos);
+                FindClicked(Level.Children, globalPos);
             }
         }
 
@@ -88,8 +88,8 @@ namespace Wink
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera cam)
         {
-            if(level != null)
-                level.Draw(gameTime, spriteBatch, camera);
+            if(Level != null)
+                Level.Draw(gameTime, spriteBatch, camera);
         }
 
         public override void Send(Event e)
