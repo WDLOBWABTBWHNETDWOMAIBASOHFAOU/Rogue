@@ -118,4 +118,17 @@ public class GameObjectList : GameObject
             obj.Reset();
         }
     }
+
+    public override Rectangle BoundingBox
+    {
+        get
+        {
+            Rectangle bb = new Rectangle();
+            foreach(GameObject go in Children)
+            {
+                bb = Rectangle.Union(bb, go.BoundingBox);
+            }
+            return bb;
+        }
+    }
 }

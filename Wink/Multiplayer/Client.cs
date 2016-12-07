@@ -9,7 +9,8 @@ namespace Wink
     public abstract class Client
     {
         protected Server server;
-        public string clientName { get; set; }
+
+        public string ClientName { get; set; }
 
         public Client(Server server)
         {

@@ -9,7 +9,7 @@ namespace Wink
 {
     public class Level : GameObjectList
     {
-        public Level()
+        public Level() : base(0, "Level")
         {
             TileField tf = new TileField(10, 10, 0, "TileField");
 

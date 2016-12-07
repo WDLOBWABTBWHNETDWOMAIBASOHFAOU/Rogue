@@ -51,8 +51,9 @@
     <Compile Include="GameObjects\Player.cs" />
     <Compile Include="GameObjects\Tile.cs" />
     <Compile Include="GameObjects\TileField.cs" />
+    <Compile Include="GUI\PlayingGUI.cs" />
     <Compile Include="Level\Level.cs" />
-    <Compile Include="Menu\Button.cs" />
+    <Compile Include="GUI\Button.cs" />
     <Compile Include="Multiplayer\Client.cs" />
     <Compile Include="GameManagement\Collision.cs" />
     <Compile Include="GameManagement\DrawingHelper.cs" />

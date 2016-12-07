@@ -15,7 +15,7 @@ namespace Wink
             InitAnimation();
         }
 
-        public Player(Client client, Level level) : base(0, "player_" + client.clientName)
+        public Player(Client client, Level level) : base(0, "player_" + client.ClientName)
         {
             this.client = client;
             

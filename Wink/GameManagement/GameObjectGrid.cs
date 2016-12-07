@@ -128,4 +128,12 @@ public class GameObjectGrid : GameObject
         }
         return null;
     }
+
+    public override Rectangle BoundingBox
+    {
+        get
+        {
+            return new Rectangle((int)GlobalPosition.X, (int)GlobalPosition.Y, Columns*CellWidth, Rows*CellHeight);
+        }
+    }
 }
