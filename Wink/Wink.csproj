@@ -38,6 +38,7 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Events\AttackEvent.cs" />
     <Compile Include="Events\Event.cs" />
     <Compile Include="Events\JoinServerEvent.cs" />
     <Compile Include="Events\LevelUpdatedEvent.cs" />
@@ -47,8 +48,10 @@
     <Compile Include="GameManagement\AssetManager.cs" />
     <Compile Include="GameManagement\Camera.cs" />
     <Compile Include="GameObjects\ClickableGameObject.cs" />
-    <Compile Include="GameObjects\Living.cs" />
-    <Compile Include="GameObjects\Player.cs" />
+    <Compile Include="GameObjects\Living\Living.cs" />
+    <Compile Include="GameObjects\Living\LivingCombat.cs" />
+    <Compile Include="GameObjects\Living\LivingStatsSystem.cs" />
+    <Compile Include="GameObjects\Living\Player.cs" />
     <Compile Include="GameObjects\Tile.cs" />
     <Compile Include="GameObjects\TileField.cs" />
     <Compile Include="Level\Level.cs" />

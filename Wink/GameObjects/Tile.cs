@@ -53,7 +53,17 @@ namespace Wink
             PlayerMoveEvent pme = new PlayerMoveEvent();
             pme.Player = (Root as GameObjectList).Find("player_" + Environment.MachineName) as Player;
             pme.Tile = this;
-            server.Send(pme);
+
+            float TileX = (TilePosition.X + 1) * TileWidth;
+            float TileY = (TilePosition.Y + 1) * TileHeight;
+
+            if (pme.Player.Position.X - TileX <= TileWidth && pme.Player.Position.X - TileX >= -TileWidth * 2)
+            {
+                if (pme.Player.Position.Y - TileY <= TileHeight && pme.Player.Position.Y - TileY >= -TileHeight)
+                {
+                    server.Send(pme);                    
+                }
+            }
         }
     }
 }

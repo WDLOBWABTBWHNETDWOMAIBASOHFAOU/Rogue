@@ -11,10 +11,10 @@ namespace Wink
     {
         public Level()
         {
-            TileField tf = new TileField(10, 10, 0, "TileField");
-
-            Point startTile = new Point(0, 0);
-
+            int rows= 10;
+            int columns=10;
+            TileField tf = new TileField(columns, rows, 0, "TileField");
+            Point startTile = new Point(GameEnvironment.Random.Next(0, columns - 1), GameEnvironment.Random.Next(0, rows - 1));
             for (int x = 0; x < tf.Columns; x++)
             {
                 for(int y = 0; y < tf.Rows; y++)
@@ -26,8 +26,7 @@ namespace Wink
                     else
                     {
                         tf.Add(new Tile("empty:65:65:10:Magenta", TileType.Normal), x, y);
-                    }
-                    
+                    }                    
                 }
             }
             Add(tf);

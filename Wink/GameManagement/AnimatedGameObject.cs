@@ -33,6 +33,11 @@ public class AnimatedGameObject : SpriteGameObject
         origin = new Vector2(sprite.Width / 2, sprite.Height);        
     }
 
+    public void PlaySound(string id)
+    {
+        GameEnvironment.AssetManager.PlaySound(id);
+    }
+
     public override void Update(GameTime gameTime)
     {
         if (sprite == null)
