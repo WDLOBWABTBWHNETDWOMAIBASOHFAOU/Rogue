@@ -12,7 +12,6 @@ namespace Wink
     {
         Button singlePlayerButton;
         Button multiPlayerButton;
-
         Button helpButton;
         Button optionsButton;
         Button highscoreButton;
@@ -25,16 +24,19 @@ namespace Wink
             int leftx = (GameEnvironment.Screen.X - (buttonWidth * 2 + buffer)) / 2;
             int rightx = leftx + buttonWidth + buffer;
 
-            singlePlayerButton = new Button("empty:"+ buttonWidth + ":50:25:Blue");
+            SpriteFont defaultFont = GameEnvironment.AssetManager.GetFont("default");
+            SpriteFont textfieldFont = GameEnvironment.AssetManager.GetFont("TextFieldFont");
+
+            singlePlayerButton = new Button("empty:"+ buttonWidth + ":50:25:Blue", "Singleplayer", textfieldFont, Color.Red);
             singlePlayerButton.Position = new Vector2(leftx, 300);
             Add(singlePlayerButton);
 
-            multiPlayerButton = new Button("empty:"+ buttonWidth + ":50:25:Green");
+            multiPlayerButton = new Button("empty:"+ buttonWidth + ":50:25:Green", "Multiplayer", textfieldFont, Color.Red);
             multiPlayerButton.Position = new Vector2(rightx, 300);
             Add(multiPlayerButton);
 
-            SpriteFont defaultFont = GameEnvironment.AssetManager.GetFont("TextFieldFont");
-            TextField tf = new TextField(defaultFont, Color.Red);
+            
+            TextField tf = new TextField(textfieldFont, Color.Red);
             tf.Position = new Vector2(50, 50);
             Add(tf);
             

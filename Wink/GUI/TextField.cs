@@ -17,7 +17,7 @@ namespace Wink
         private SpriteFont spriteFont;
         private Color color;
 
-        private const string assetName = "empty:300:50:25:White";
+        private const string assetName = "empty:300:50:25:Aquamarine";
         private static readonly Point offset = new Point(3, 3);
 
         public TextField(SpriteFont spriteFont, Color color, int layer = 0, string id = "", float scale = 1) : base(assetName, layer, id, 0, 0, scale)
