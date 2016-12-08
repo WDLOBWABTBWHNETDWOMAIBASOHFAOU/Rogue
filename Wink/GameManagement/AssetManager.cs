@@ -20,6 +20,9 @@ public class AssetManager
         textures = new Dictionary<string, Texture2D>();
     }
 
+    /// <summary>
+    /// Get a 1x1 Texture2D that has the specified color.
+    /// </summary>
     public Texture2D GetSingleColorPixel(Color color)
     {
         Texture2D texture = new Texture2D(graphicsDevice, 1, 1);
