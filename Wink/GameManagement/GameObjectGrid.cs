@@ -1,14 +1,15 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Runtime.Serialization;
 
+[Serializable]
 public class GameObjectGrid : GameObject
 {
     protected GameObject[,] grid;
     protected int cellWidth, cellHeight;
 
-    public GameObjectGrid(int rows, int columns, int layer = 0, string id = "")
-        : base(layer, id)
+    public GameObjectGrid(int rows, int columns, int layer = 0, string id = "") : base(layer, id)
     {
         grid = new GameObject[columns, rows];
         for (int x = 0; x < columns; x++)
@@ -18,6 +19,21 @@ public class GameObjectGrid : GameObject
                 grid[x, y] = null;
             }
         }
+    }
+
+    public GameObjectGrid(SerializationInfo info, StreamingContext context) : base(info, context)
+    {
+        grid = (GameObject[,])info.GetValue("grid", typeof(GameObject[,]));
+        cellWidth = info.GetInt32("cellWidth");
+        cellHeight = info.GetInt32("cellHeight");
+    }
+
+    public override void GetObjectData(SerializationInfo info, StreamingContext context)
+    {
+        info.AddValue("grid", grid);
+        info.AddValue("cellWidth", cellWidth);
+        info.AddValue("cellHeight", cellHeight);
+        base.GetObjectData(info, context);
     }
 
     public void Add(GameObject obj, int x, int y)
@@ -38,7 +54,7 @@ public class GameObjectGrid : GameObject
             return null;
         }
     }
-
+    
     public GameObject[,] Objects
     {
         get
@@ -61,23 +77,23 @@ public class GameObjectGrid : GameObject
         }
         return Vector2.Zero;
     }
-
+    
     public int Rows
     {
         get { return grid.GetLength(1); }
     }
-
+    
     public int Columns
     {
         get { return grid.GetLength(0); }
     }
-
+    
     public int CellWidth
     {
         get { return cellWidth; }
         set { cellWidth = value; }
     }
-
+    
     public int CellHeight
     {
         get { return cellHeight; }
@@ -128,7 +144,7 @@ public class GameObjectGrid : GameObject
         }
         return null;
     }
-
+    
     public override Rectangle BoundingBox
     {
         get

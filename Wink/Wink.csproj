@@ -52,6 +52,7 @@
     <Compile Include="GameObjects\Tile.cs" />
     <Compile Include="GameObjects\TileField.cs" />
     <Compile Include="GUI\PlayingGUI.cs" />
+    <Compile Include="GUI\TextField.cs" />
     <Compile Include="Level\Level.cs" />
     <Compile Include="GUI\Button.cs" />
     <Compile Include="Multiplayer\Client.cs" />

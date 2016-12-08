@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,6 +32,12 @@ namespace Wink
             multiPlayerButton = new Button("empty:"+ buttonWidth + ":50:25:Green");
             multiPlayerButton.Position = new Vector2(rightx, 300);
             Add(multiPlayerButton);
+
+            SpriteFont defaultFont = GameEnvironment.AssetManager.GetFont("TextFieldFont");
+            TextField tf = new TextField(defaultFont, Color.Red);
+            tf.Position = new Vector2(50, 50);
+            Add(tf);
+            
         }
 
         public override void HandleInput(InputHelper inputHelper)

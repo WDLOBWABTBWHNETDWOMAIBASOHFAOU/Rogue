@@ -2,13 +2,19 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Wink
 {
+    [Serializable]
     public class Level : GameObjectList
     {
+        public Level(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+        }
+
         public Level() : base(0, "Level")
         {
             TileField tf = new TileField(10, 10, 0, "TileField");

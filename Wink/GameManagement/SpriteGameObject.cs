@@ -1,12 +1,15 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Runtime.Serialization;
 
 public class SpriteGameObject : GameObject
 {
     protected SpriteSheet sprite;
+    protected string spriteAssetName;
+    protected int spriteSheetIndex;
+
     protected Vector2 origin;
     protected float scale;
-
     protected float cameraSensitivity;
 
     public bool PerPixelCollisionDetection = true;
@@ -15,16 +18,31 @@ public class SpriteGameObject : GameObject
     {
         this.cameraSensitivity = cameraSensitivity;
         this.scale = scale;
+        this.spriteAssetName = assetName;
+        this.spriteSheetIndex = sheetIndex;
+        LoadSprite();
+    }
 
-        if (assetName != "")
-        {
-            sprite = new SpriteSheet(assetName, sheetIndex);
-        }
-        else
-        {
-            sprite = null;
-        }
-    }    
+    public SpriteGameObject(SerializationInfo info, StreamingContext context) : base(info, context)
+    {
+        spriteAssetName = info.GetString("spriteAssetName");
+        spriteSheetIndex = info.GetInt32("spriteSheetIndex");
+        origin = new Vector2((float)info.GetDouble("originX"), (float)info.GetDouble("originY"));
+        scale = (float)info.GetDouble("scale");
+        cameraSensitivity = (float)info.GetDouble("cameraSensitivity");
+        LoadSprite();
+    }
+
+    public override void GetObjectData(SerializationInfo info, StreamingContext context)
+    {
+        info.AddValue("spriteAssetName", spriteAssetName);
+        info.AddValue("spriteSheetIndex", spriteSheetIndex);
+        info.AddValue("originX", origin.X);
+        info.AddValue("originY", origin.Y);
+        info.AddValue("scale", scale);
+        info.AddValue("cameraSensitivity", cameraSensitivity);
+        base.GetObjectData(info, context);
+    }
 
     public override void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
     {
@@ -34,6 +52,18 @@ public class SpriteGameObject : GameObject
         }
         //Draw every SpriteGameObject in its position relative to the camera but only to the extent specified by the CameraSensitivity property.
         sprite.Draw(spriteBatch, GlobalPosition - (cameraSensitivity * camera.GlobalPosition), origin, scale);
+    }
+
+    public void LoadSprite()
+    {
+        if (spriteAssetName != "")
+        {
+            sprite = new SpriteSheet(spriteAssetName, spriteSheetIndex);
+        }
+        else
+        {
+            sprite = null;
+        }
     }
 
     public SpriteSheet Sprite
@@ -50,7 +80,7 @@ public class SpriteGameObject : GameObject
     {
         get
         {
-            return (int)(sprite.Width*scale);
+            return (int)(sprite.Width * scale);
         }
     }
 

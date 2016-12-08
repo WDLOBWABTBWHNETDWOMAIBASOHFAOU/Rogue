@@ -1,7 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
+using System.Runtime.Serialization;
 
-public abstract class GameObject : IGameLoopObject
+[Serializable]
+public abstract class GameObject : IGameLoopObject, ISerializable
 {
     protected GameObject parent;
     protected Vector2 position, velocity;
@@ -16,6 +19,31 @@ public abstract class GameObject : IGameLoopObject
         position = Vector2.Zero;
         velocity = Vector2.Zero; 
         visible = true;
+    }
+
+    /// <summary>
+    /// Used for deserialization only.
+    /// </summary>
+    protected GameObject(SerializationInfo info, StreamingContext context)
+    {
+        parent = (GameObject)info.GetValue("parent", typeof(GameObject));
+        position = new Vector2((float)info.GetDouble("posX"), (float)info.GetDouble("posY"));
+        velocity = new Vector2((float)info.GetDouble("velX"), (float)info.GetDouble("velY"));
+        layer = info.GetInt32("layer");
+        id = info.GetString("id");
+        visible = info.GetBoolean("vis");
+    }
+
+    public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
+    {
+        info.AddValue("parent", parent);
+        info.AddValue("posX", position.X);
+        info.AddValue("posY", position.Y);
+        info.AddValue("velX", velocity.X);
+        info.AddValue("velY", velocity.Y);
+        info.AddValue("layer", layer);
+        info.AddValue("id", id);
+        info.AddValue("vis", visible);
     }
 
     public virtual void HandleInput(InputHelper inputHelper)
@@ -41,13 +69,13 @@ public abstract class GameObject : IGameLoopObject
         get { return position; }
         set { position = value; }
     }
-
+    
     public virtual Vector2 Velocity
     {
         get { return velocity; }
         set { velocity = value; }
     }
-
+    
     public virtual Vector2 GlobalPosition
     {
         get
@@ -62,7 +90,7 @@ public abstract class GameObject : IGameLoopObject
             }
         }
     }
-
+    
     public GameObject Root
     {
         get
@@ -77,7 +105,7 @@ public abstract class GameObject : IGameLoopObject
             }
         }
     }
-
+    
     public GameObjectList GameWorld
     {
         get
@@ -85,30 +113,30 @@ public abstract class GameObject : IGameLoopObject
             return Root as GameObjectList;
         }
     }
-
+    
     public virtual int Layer
     {
         get { return layer; }
         set { layer = value; }
     }
-
+    
     public virtual GameObject Parent
     {
         get { return parent; }
         set { parent = value; }
     }
-
+    
     public string Id
     {
         get { return id; }
     }
-
+    
     public bool Visible
     {
         get { return visible; }
         set { visible = value; }
     }
-
+    
     public virtual Rectangle BoundingBox
     {
         get
