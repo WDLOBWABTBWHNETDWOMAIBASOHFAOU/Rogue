@@ -18,11 +18,11 @@ namespace Wink
         private Color color;
 
         private const string assetName = "empty:300:50:25:White";
-        private static readonly Vector2 offset = new Vector2(3, 3);
+        private static readonly Point offset = new Point(3, 3);
 
         public TextField(SpriteFont spriteFont, Color color, int layer = 0, string id = "", float scale = 1) : base(assetName, layer, id, 0, 0, scale)
         {
-            content = "";
+            this.content = "";
             this.spriteFont = spriteFont;
             this.color = color;
         }
@@ -30,15 +30,17 @@ namespace Wink
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
         {
             base.Draw(gameTime, spriteBatch, camera);
-            spriteBatch.DrawString(spriteFont, content, position + offset, color);
+            //Draw the contents of this textfield.
+            spriteBatch.DrawString(spriteFont, content, position + offset.ToVector2(), color);
+
+            //Draw cursor but only ever other hald second.
             if (gameTime.TotalGameTime.Milliseconds % 1000 < 500 && hasFocus)
             {
                 Texture2D tex = GameEnvironment.AssetManager.GetSingleColorPixel(color);
                 float cursorX = spriteFont.MeasureString(content.Substring(0, cursorPosition)).X;
                 Vector2 cursorPos = position + new Vector2(offset.X + cursorX, offset.Y);
-                spriteBatch.Draw(tex, null, new Rectangle(cursorPos.ToPoint(), new Point(2, Height - 4)));
+                spriteBatch.Draw(tex, null, new Rectangle(cursorPos.ToPoint(), new Point(2, Height - offset.Y * 2)));
             }
-            
         }
 
         public override void HandleInput(InputHelper inputHelper)
@@ -46,6 +48,7 @@ namespace Wink
             if (inputHelper.MouseLeftButtonPressed())
             {
                 Vector2 mouse = inputHelper.MousePosition;
+                //If the mouseclick was inside the textfield, we need to move the cursor.
                 if (BoundingBox.Contains(mouse))
                 {
                     hasFocus = true;
@@ -53,18 +56,25 @@ namespace Wink
                     int pos = 0;
                     float relMouseX = mouse.X - position.X;
                     float distance = relMouseX;
+
+                    //Iterate over possible cursorPositions
                     for (int i = 1; i <= content.Length; i++)
                     {
+                        //Calculate the distance from the current cursorposition to the mouseclick
                         string sub = content.Substring(0, i);
                         Vector2 subSize = spriteFont.MeasureString(sub);
                         float newDistance = Math.Abs(relMouseX - subSize.X);
+
+                        //See if the distance is smaller than it was
                         if(newDistance < distance)
                         {
+                            //If it was move on to the next one.
                             distance = newDistance;
                             pos = i;
                         }
                         else
                         {
+                            //If it wasn't the previous position is where the cursor should be.
                             pos = i-1;
                             break;
                         }
@@ -91,16 +101,16 @@ namespace Wink
                 foreach (Keys key in pressed)
                 {
                     int keyValue = (int)key;
-                    if (keyValue >= 65 && keyValue <= 90)
+                    if (keyValue >= 65 && keyValue <= 90) //a-z keys
                     {
                         int shiftValue = shift ? 0 : 32;
                         InsertCharachter((char)(keyValue + shiftValue));
                     }
-                    else if (shift && shiftTable.ContainsKey(key))
+                    else if (shift && shiftTable.ContainsKey(key))//SHIFT + other key
                     {
                         InsertCharachter(shiftTable[key]);
                     }
-                    else if (keyTable.ContainsKey(key))
+                    else if (keyTable.ContainsKey(key))//other key
                     {
                         InsertCharachter(keyTable[key]);
                     }
@@ -108,7 +118,7 @@ namespace Wink
                         cursorPosition--;
                     else if (key == Keys.Right && cursorPosition < content.Length)
                         cursorPosition++;
-                    else if (key == Keys.Back && cursorPosition > 0)
+                    else if (key == Keys.Back && cursorPosition > 0) //BACKSPACE
                     {
                         content = content.Remove(cursorPosition - 1, 1);
                         cursorPosition--;
@@ -165,6 +175,7 @@ namespace Wink
             { Keys.OemQuestion, '/'},
             { Keys.Space, ' '},
         };
+
         private static readonly Dictionary<Keys, char> shiftTable = new Dictionary<Keys, char>()
         {
             { Keys.OemTilde, '~'},
