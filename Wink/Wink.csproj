@@ -53,6 +53,7 @@
     <Compile Include="GameObjects\TileField.cs" />
     <Compile Include="GUI\Bar.cs" />
     <Compile Include="GUI\PlayingGUI.cs" />
+    <Compile Include="GUI\PlayingMenu.cs" />
     <Compile Include="GUI\SelectField.cs" />
     <Compile Include="GUI\TabField.cs" />
     <Compile Include="GUI\Table.cs" />

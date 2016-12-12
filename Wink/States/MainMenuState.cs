@@ -79,7 +79,7 @@ namespace Wink
             }
             else if (quitButton.Pressed)
             {
-                
+                Game1.QuitGame();
             }
         }
     }

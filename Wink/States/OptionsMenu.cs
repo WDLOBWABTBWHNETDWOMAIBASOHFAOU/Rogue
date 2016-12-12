@@ -10,6 +10,8 @@ namespace Wink
 {
     class OptionsMenu : GameObjectList
     {
+        Button back;
+
         private class Resolution : SelectField<Resolution>.OptionAction
         {
             public int width;
@@ -35,11 +37,27 @@ namespace Wink
 
         public OptionsMenu()
         {
+            Point screen = GameEnvironment.Screen;
+
             SpriteFont textFieldFont = GameEnvironment.AssetManager.GetFont("TextFieldFont");
             SelectField<Resolution> resolutionSelect = new SelectField<Resolution>(true, textFieldFont, Color.Red);
             resolutionSelect.Options = new List<Resolution>() { new Resolution(1024, 586), new Resolution(1440, 825) };
+            resolutionSelect.Position = new Vector2((screen.X - resolutionSelect.Width) / 2, 100);
             Add(resolutionSelect);
+            
+            //Create a button to go back to the main menu.
+            back = new Button("button", "Back", textFieldFont, Color.Black);
+            back.Position = new Vector2(100, screen.Y - 100);
+            Add(back);
+        }
 
+        public override void HandleInput(InputHelper inputHelper)
+        {
+            base.HandleInput(inputHelper);
+            if (back.Pressed)
+            {
+                GameEnvironment.GameStateManager.SwitchTo("mainMenuState");
+            }
         }
     }
 }

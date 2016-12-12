@@ -31,6 +31,11 @@ namespace Wink
             (Instance as GameEnvironment).ApplyResolutionSettings(fullscreen);
         }
 
+        public static void QuitGame()
+        {
+            Instance.Exit();
+        }
+
         protected override void LoadContent()
         {
             base.LoadContent();
