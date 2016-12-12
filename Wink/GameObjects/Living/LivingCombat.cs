@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Wink
+﻿namespace Wink
 {
     public abstract partial class Living : AnimatedGameObject
     {
@@ -27,7 +21,7 @@ namespace Wink
         /// Checks if the defending side dodges the attack, if dodge is unsuccesfull HP decreases. Also displays proper feedback on screen
         /// </summary>
         /// <param name="">Attackvalue of the attacking side</param>
-        protected void TakeDamage(double attackValue)
+        public void TakeDamage(double attackValue)
         {
             double dodgeNumber = GameEnvironment.Random.NextDouble();
             if (dodgeNumber > DodgeChance())
@@ -39,7 +33,7 @@ namespace Wink
             // Display attack dodged (feedback on succes)
         }
 
-        public void Death()
+        protected void Death()
         {
             //What happens on death. Drop equipment/loot, remove itself from world, etc
             level.Remove(this);

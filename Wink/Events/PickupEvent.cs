@@ -2,11 +2,11 @@
 
 namespace Wink
 {
-    [Serializable()]
-    public class AttackEvent : Event
+    class PickupEvent : Event
     {
-        public Living Attacker { get; set; }
-        public Living Defender { get; set; }
+        public Item item { get; set; }
+        public Player player { get; set; }
+        public GameObjectGrid target { get; set; }
 
         public override void OnClientReceive(LocalClient client)
         {
@@ -15,7 +15,7 @@ namespace Wink
 
         public override void OnServerReceive(LocalServer server)
         {
-            Attacker.Attack(Defender);
+            player.mouseSlot.AddTo(item,target);
             server.LevelChanged();
         }
     }

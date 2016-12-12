@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
 using Microsoft.Xna.Framework;
 
 namespace Wink
@@ -23,7 +19,7 @@ namespace Wink
             healthPoints = MaxHP();
             manaPoints = MaxManaPoints();
             InitAnimation();
-
+            timeleft = 1000;
         }
 
         protected virtual void InitAnimation()
@@ -51,7 +47,6 @@ namespace Wink
                         timeleft -= gameTime.TotalGameTime.Seconds;
                 }
             }
-
         }
 
 

@@ -43,6 +43,11 @@ public class InputHelper
         return currentMouseState.LeftButton == ButtonState.Pressed && previousMouseState.LeftButton == ButtonState.Released;
     }
 
+    public bool MouseLeftButtonReleased()
+    {
+        return currentMouseState.LeftButton == ButtonState.Released && previousMouseState.LeftButton == ButtonState.Pressed;
+    }
+
     public bool MouseLeftButtonDown()
     {
         return currentMouseState.LeftButton == ButtonState.Pressed;

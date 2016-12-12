@@ -1,9 +1,5 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -13,9 +9,8 @@ namespace Wink
     {
         public Level level { get; set; }
 
-        private Camera camera;
+        public Camera camera;
         private InputHelper ih;
-
         private const int cameraMoveSpeed = 4;
 
         public LocalClient(Server server) : base(server)
@@ -55,7 +50,7 @@ namespace Wink
         private void FindClicked(List<GameObject> gameObjects, Vector2 mousePos)
         {
             //Right way round?
-            gameObjects.Sort((obj1, obj2) => obj1.Layer - obj2.Layer);
+            gameObjects.Sort((obj1, obj2) => obj1.Layer - obj2.Layer); // is it supposed to actualy change the layer of the objects?
 
             for (int i = 0; i < gameObjects.Count; i++)
             {

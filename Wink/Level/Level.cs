@@ -1,9 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Wink
 {
@@ -21,17 +16,23 @@ namespace Wink
                 {
                     if(startTile.X == x && startTile.Y == y)
                     {
-                        tf.Add(new Tile("empty:65:65:10:Red", TileType.Normal, 0, "startTile"), x, y);
+                        tf.Add(new Tile("empty:65:65:10:Red", TileType.Normal, layer, "startTile"), x, y);
                     }
                     else
                     {
-                        tf.Add(new Tile("empty:65:65:10:Magenta", TileType.Normal), x, y);
+                        tf.Add(new Tile("empty:65:65:10:Magenta", TileType.Normal,layer), x, y);
                     }                    
                 }
             }
             Add(tf);
 
+            Item testItem = new TestItem("empty:65:65:10:Pink",1,layer+1);
+            testItem.Position = new Vector2(GameEnvironment.Random.Next(0, columns - 1) * Tile.TileWidth, GameEnvironment.Random.Next(0, rows - 1) * Tile.TileHeight);
+            Add(testItem);
 
+            InventoryBox inventory = new InventoryBox(3,6,layer+1);
+            inventory.Position = new Vector2((tf.Columns+1)*tf.CellWidth,0);
+            Add(inventory);
         }
     }
 }

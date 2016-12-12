@@ -1,9 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Wink
 {
@@ -44,7 +40,7 @@ namespace Wink
 
         private void ClientAdded(Client client)
         {
-            Player player = new Player(client, level);
+            Player player = new Player(client, level,level.Layer+1);
             SendOutUpdatedLevel();
         }
 

@@ -22,9 +22,12 @@ public class GameObjectGrid : GameObject
 
     public void Add(GameObject obj, int x, int y)
     {
+        if (obj != null)
+        {
         grid[x, y] = obj;
         obj.Parent = this;
         obj.Position = new Vector2(x * cellWidth, y * cellHeight);
+        }
     }
 
     public GameObject Get(int x, int y)
@@ -96,6 +99,7 @@ public class GameObjectGrid : GameObject
     {
         foreach (GameObject obj in grid)
         {
+            if(obj !=null)
             obj.Update(gameTime);
         }
     }
@@ -104,7 +108,10 @@ public class GameObjectGrid : GameObject
     {
         foreach (GameObject obj in grid)
         {
+            if (obj != null)
+            {
             obj.Draw(gameTime, spriteBatch, camera);
+            }
         }
     }
 
@@ -121,9 +128,12 @@ public class GameObjectGrid : GameObject
     {
         foreach (GameObject obj in grid)
         {
-            if (del.Invoke(obj))
+            if(obj != null)
             {
-                return obj;
+                if (del.Invoke(obj))
+                {
+                    return obj;
+                }
             }
         }
         return null;
