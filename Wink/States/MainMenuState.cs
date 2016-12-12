@@ -27,11 +27,11 @@ namespace Wink
             SpriteFont defaultFont = GameEnvironment.AssetManager.GetFont("default");
             SpriteFont textfieldFont = GameEnvironment.AssetManager.GetFont("TextFieldFont");
 
-            singlePlayerButton = new Button("empty:"+ buttonWidth + ":50:25:Green", "Singleplayer", textfieldFont, Color.Red);
+            singlePlayerButton = new Button("button", "Singleplayer", textfieldFont, Color.Red);
             singlePlayerButton.Position = new Vector2(leftx, 300);
             Add(singlePlayerButton);
 
-            multiPlayerButton = new Button("empty:"+ buttonWidth + ":50:25:Green", "Multiplayer", textfieldFont, Color.Red);
+            multiPlayerButton = new Button("button", "Multiplayer", textfieldFont, Color.Red);
             multiPlayerButton.Position = new Vector2(rightx, 300);
             Add(multiPlayerButton);
 

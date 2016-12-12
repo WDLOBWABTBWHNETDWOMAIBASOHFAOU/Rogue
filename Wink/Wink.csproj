@@ -51,6 +51,8 @@
     <Compile Include="GameObjects\Player.cs" />
     <Compile Include="GameObjects\Tile.cs" />
     <Compile Include="GameObjects\TileField.cs" />
+    <Compile Include="GUI\HealthBar.cs" />
+    <Compile Include="GUI\ManaBar.cs" />
     <Compile Include="GUI\PlayingGUI.cs" />
     <Compile Include="GUI\SelectField.cs" />
     <Compile Include="GUI\TabField.cs" />
