@@ -1,9 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -12,6 +9,7 @@ namespace Wink
     class TextField : SpriteGameObject
     {
         private bool hasFocus;
+
         private string content;
         private int cursorPosition;
         private SpriteFont spriteFont;
@@ -19,6 +17,21 @@ namespace Wink
 
         private const string assetName = "empty:300:50:25:Aquamarine";
         private static readonly Point offset = new Point(3, 3);
+
+        public virtual string Text
+        {
+            get { return content; }
+            protected set
+            {
+                Vector2 valueSize = spriteFont.MeasureString(value) + offset.ToVector2() * 2;
+                if (valueSize.X <= BoundingBox.Width && valueSize.Y <= BoundingBox.Height)
+                {
+                    content = value;
+                }
+            }
+        }
+
+        public virtual bool Editable { get; set; }
 
         public TextField(SpriteFont spriteFont, Color color, int layer = 0, string id = "", float scale = 1) : base(assetName, layer, id, 0, 0, scale)
         {
@@ -45,6 +58,10 @@ namespace Wink
 
         public override void HandleInput(InputHelper inputHelper)
         {
+            if (!Editable)
+            {
+                return;
+            }
             if (inputHelper.MouseLeftButtonPressed())
             {
                 Vector2 mouse = inputHelper.MousePosition;
@@ -132,11 +149,8 @@ namespace Wink
         private void InsertCharachter(char c)
         {
             string newContent = content.Insert(cursorPosition, new string(new char[] { c }));
-            if (spriteFont.MeasureString(newContent).X <= Width - offset.X * 2)
-            {
-                content = newContent;
-                cursorPosition++;
-            }
+            Text = newContent;
+            cursorPosition++;
         }
 
         private static readonly Dictionary<Keys, char>keyTable = new Dictionary<Keys, char>()
