@@ -150,7 +150,8 @@ namespace Wink
         {
             string newContent = content.Insert(cursorPosition, new string(new char[] { c }));
             Text = newContent;
-            cursorPosition++;
+            if(Text == newContent)
+                cursorPosition++;
         }
 
         private static readonly Dictionary<Keys, char>keyTable = new Dictionary<Keys, char>()
