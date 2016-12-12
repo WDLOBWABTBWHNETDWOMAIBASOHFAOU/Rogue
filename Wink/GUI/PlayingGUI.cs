@@ -24,11 +24,12 @@ namespace Wink
             Vector2 MPBarPosition = new Vector2(barX, HPBarPosition.Y + 32);
 
             //Healthbar
-            Bar hpBar = new Bar(ref testValue, 100, textfieldFont, Color.Red, 2, "HealthBar", 2.5f);
+            Bar<PlayingGUI> hpBar = new Bar<PlayingGUI>(this, obj => obj.testValue, 100, textfieldFont, Color.Red, 2, "HealthBar", 2.5f);
             hpBar.Position = new Vector2(HPBarPosition.X, HPBarPosition.Y);
             Add(hpBar);
+
             //Manabar
-            Bar mpBar = new Bar(ref testValue, 100, textfieldFont, Color.Blue, 2, "ManaBar", 2.5f);
+            Bar<PlayingGUI> mpBar = new Bar<PlayingGUI>(this, obj => obj.testValue, 100, textfieldFont, Color.Blue, 2, "ManaBar", 2.5f);
             mpBar.Position = new Vector2(MPBarPosition.X, MPBarPosition.Y);
             Add(mpBar);
             //Action Points
@@ -36,6 +37,17 @@ namespace Wink
             SpriteGameObject floor = new SpriteGameObject("empty:85:85:15:Orange", 1, "Floor", 0, 0);
             floor.Position = new Vector2((screenWidth - floor.Width)/2, 7.5f);
             Add(floor);
+        }
+
+        /// <summary>
+        /// TEST CODE
+        /// </summary>
+        /// <param name="inputHelper"></param>
+        public override void HandleInput(InputHelper inputHelper)
+        {
+            base.HandleInput(inputHelper);
+
+            testValue += inputHelper.ScrollWheelDelta / 100;
         }
     }
 }

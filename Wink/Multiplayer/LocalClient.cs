@@ -50,6 +50,7 @@ namespace Wink
             }
 
             camera.HandleInput(inputHelper);
+            gameObjects.HandleInput(inputHelper);
         }
 
         private void FindClicked(List<GameObject> gameObjects, Vector2 mousePos)
