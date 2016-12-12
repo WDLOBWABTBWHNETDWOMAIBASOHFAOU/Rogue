@@ -14,8 +14,11 @@ public class SpriteGameObject : GameObject
 
     public bool PerPixelCollisionDetection = true;
 
+    public Color DrawColor { get; set; }
+
     public SpriteGameObject(string assetName, int layer = 0, string id = "", int sheetIndex = 0, float cameraSensitivity = 1.0f, float scale = 1.0f) : base(layer, id)
     {
+        this.DrawColor = Color.White;
         this.cameraSensitivity = cameraSensitivity;
         this.scale = scale;
         this.spriteAssetName = assetName;
@@ -51,7 +54,7 @@ public class SpriteGameObject : GameObject
             return;
         }
         //Draw every SpriteGameObject in its position relative to the camera but only to the extent specified by the CameraSensitivity property.
-        sprite.Draw(spriteBatch, GlobalPosition - (cameraSensitivity * camera.GlobalPosition), origin, scale);
+        sprite.Draw(spriteBatch, GlobalPosition - (cameraSensitivity * camera.GlobalPosition), origin, scale, DrawColor);
     }
 
     public void LoadSprite()

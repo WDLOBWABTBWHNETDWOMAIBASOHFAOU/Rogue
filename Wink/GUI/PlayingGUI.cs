@@ -1,11 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Wink.GUI;
 
 namespace Wink
 {
     class PlayingGUI : GameObjectList
     {
+        private int testValue = 85;
+
         public PlayingGUI()
         {
             Layer = 1;
@@ -17,20 +18,17 @@ namespace Wink
 
             SpriteGameObject topBar = new SpriteGameObject("HUD/topbar", 0, "TopBar", 0, 0);
             Add(topBar);
-            SpriteGameObject outerHPBar = new SpriteGameObject("HUD/emptyhpbar", 0, "OuterHPBar", 0, 0, 2.5f);
-            outerHPBar.Position = new Vector2(barX, 14);
-            Add(outerHPBar);
-            SpriteGameObject outerMPBar = new SpriteGameObject("HUD/emptympbar", 0, "OuterMPBar", 0, 0, 2.5f);
-            outerMPBar.Position = new Vector2(barX, outerHPBar.Position.Y + 32);
-            Add(outerMPBar);
+            
+            Vector2 outerHPBarPosition = new Vector2(barX, 14);
+            Vector2 outerMPBarPosition = new Vector2(barX, outerHPBarPosition.Y + 32);
 
             //Healthbar
-            SpriteGameObject hpBar = new HealthBar("HUD/innerhpbar", "100/100", textfieldFont, Color.Red, 2, "HealthBar", 0, 2.5f);
-            hpBar.Position = new Vector2(outerHPBar.Position.X + 4.5f, outerHPBar.Position.Y + 6);
+            Bar hpBar = new Bar(ref testValue, 100, textfieldFont, Color.Red, 2, "HealthBar", 2.5f);
+            hpBar.Position = new Vector2(outerHPBarPosition.X, outerHPBarPosition.Y);
             Add(hpBar);
             //Manabar
-            SpriteGameObject mpBar = new ManaBar("HUD/innermpbar", "100/100", textfieldFont, Color.Blue, 2, "ManaBar", 0, 2.5f);
-            mpBar.Position = new Vector2(outerMPBar.Position.X + 4.5f, outerMPBar.Position.Y + 5.5f);
+            Bar mpBar = new Bar(ref testValue, 100, textfieldFont, Color.Blue, 2, "ManaBar", 2.5f);
+            mpBar.Position = new Vector2(outerMPBarPosition.X, outerMPBarPosition.Y);
             Add(mpBar);
             //Action Points
 
