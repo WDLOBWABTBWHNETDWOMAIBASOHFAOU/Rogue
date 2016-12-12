@@ -9,11 +9,26 @@ namespace Wink
     /// </summary>
     public class Game1 : GameEnvironment
     {
+        private static Game1 instance;
 
-        public Game1()
+        private Game1()
         {
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
+        }
+
+        public static Game1 Instance
+        {
+            get {
+                if (instance == null)
+                    instance = new Game1();
+                return instance;
+            }
+        }
+
+        public new static void ApplyResolutionSettings(bool fullscreen = false)
+        {
+            (Instance as GameEnvironment).ApplyResolutionSettings(fullscreen);
         }
 
         protected override void LoadContent()
@@ -27,11 +42,9 @@ namespace Wink
             PlayingState ps = new PlayingState();
             ps.InitializeGameMode(PlayingState.GameMode.Singleplayer);
             gameStateManager.AddGameState("playingState", ps);
-
             gameStateManager.AddGameState("mainMenuState", new MainMenuState());
-            
             gameStateManager.AddGameState("multiplayerMenu", new MultiplayerMenu());
-
+            gameStateManager.AddGameState("optionsMenu", new OptionsMenu());
             gameStateManager.SwitchTo("mainMenuState");
 
             //AssetManager.PlayMusic("Sounds/snd_music");
@@ -39,7 +52,6 @@ namespace Wink
 
         protected override void UnloadContent()
         {
-            // TODO: Unload any non ContentManager content here
         }
     }
 }

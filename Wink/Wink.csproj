@@ -85,6 +85,7 @@
     <Compile Include="GameManagement\TextGameObject.cs" />
     <Compile Include="States\MainMenuState.cs" />
     <Compile Include="States\MultiplayerMenu.cs" />
+    <Compile Include="States\OptionsMenu.cs" />
     <Compile Include="States\PlayingState.cs" />
   </ItemGroup>
   <ItemGroup>

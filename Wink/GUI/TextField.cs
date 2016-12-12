@@ -8,7 +8,7 @@ namespace Wink
 {
     class TextField : SpriteGameObject
     {
-        private bool hasFocus;
+        protected bool hasFocus;
 
         private string content;
         private int cursorPosition;
@@ -47,7 +47,7 @@ namespace Wink
             spriteBatch.DrawString(spriteFont, content, position + offset.ToVector2(), color);
 
             //Draw cursor but only ever other hald second.
-            if (gameTime.TotalGameTime.Milliseconds % 1000 < 500 && hasFocus)
+            if (gameTime.TotalGameTime.Milliseconds % 1000 < 500 && hasFocus && Editable)
             {
                 Texture2D tex = GameEnvironment.AssetManager.GetSingleColorPixel(color);
                 float cursorX = spriteFont.MeasureString(content.Substring(0, cursorPosition)).X;
@@ -58,10 +58,6 @@ namespace Wink
 
         public override void HandleInput(InputHelper inputHelper)
         {
-            if (!Editable)
-            {
-                return;
-            }
             if (inputHelper.MouseLeftButtonPressed())
             {
                 Vector2 mouse = inputHelper.MousePosition;
@@ -69,6 +65,11 @@ namespace Wink
                 if (BoundingBox.Contains(mouse))
                 {
                     hasFocus = true;
+
+                    if (!Editable)
+                    {
+                        return;
+                    }
 
                     int pos = 0;
                     float relMouseX = mouse.X - position.X;

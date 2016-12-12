@@ -71,7 +71,7 @@ namespace Wink
             }
             else if (optionsButton.Pressed)
             {
-
+                GameEnvironment.GameStateManager.SwitchTo("optionsMenu");
             }
             else if (highscoreButton.Pressed)
             {
