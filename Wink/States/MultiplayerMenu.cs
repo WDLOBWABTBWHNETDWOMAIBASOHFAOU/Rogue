@@ -32,7 +32,7 @@ namespace Wink
                 Add(ipAddress);
 
                 //Create a button to start connecting.
-                connectButton = new Button("empty:300:50:25:Green", "Connect", buttonFont, Color.White);
+                connectButton = new Button("button", "Connect", buttonFont, Color.Black);
                 connectButton.Position = new Vector2((screen.X - connectButton.Width) / 2, screen.Y - 300);
                 Add(connectButton);
             }
@@ -62,7 +62,7 @@ namespace Wink
             Add(tabField);
 
             //Create a button to go back to the main menu.
-            back = new Button("empty:150:50:25:Magenta", "Back", tabTitleFont, Color.White);
+            back = new Button("button", "Back", tabTitleFont, Color.Black);
             back.Position = new Vector2(100, screen.Y - 100);
             Add(back);
         }

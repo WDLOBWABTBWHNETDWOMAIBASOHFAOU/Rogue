@@ -19,43 +19,37 @@ namespace Wink
 
         public MainMenuState()
         {
-            int buffer = 50;
-            int buttonWidth = 300;
+            const int buffer = 50;
+            const int buttonWidth = 300;
             int leftx = (GameEnvironment.Screen.X - (buttonWidth * 2 + buffer)) / 2;
             int rightx = leftx + buttonWidth + buffer;
 
             SpriteFont defaultFont = GameEnvironment.AssetManager.GetFont("default");
             SpriteFont textfieldFont = GameEnvironment.AssetManager.GetFont("TextFieldFont");
 
-            singlePlayerButton = new Button("button", "Singleplayer", textfieldFont, Color.Red);
+            singlePlayerButton = new Button("button", "Singleplayer", textfieldFont, Color.Black);
             singlePlayerButton.Position = new Vector2(leftx, 300);
             Add(singlePlayerButton);
 
-            multiPlayerButton = new Button("button", "Multiplayer", textfieldFont, Color.Red);
+            multiPlayerButton = new Button("button", "Multiplayer", textfieldFont, Color.Black);
             multiPlayerButton.Position = new Vector2(rightx, 300);
             Add(multiPlayerButton);
 
-            helpButton = new Button("empty:" + buttonWidth + ":50:25:Green", "Help", textfieldFont, Color.Red);
+            helpButton = new Button("button", "Help", textfieldFont, Color.Black);
             helpButton.Position = new Vector2(leftx, 375);
             Add(helpButton);
 
-            optionsButton = new Button("empty:" + buttonWidth + ":50:25:Green", "Options", textfieldFont, Color.Red);
+            optionsButton = new Button("button", "Options", textfieldFont, Color.Black);
             optionsButton.Position = new Vector2(rightx, 375);
             Add(optionsButton);
 
-            highscoreButton = new Button("empty:" + buttonWidth + ":50:25:Green", "High Scores", textfieldFont, Color.Red);
+            highscoreButton = new Button("button", "High Scores", textfieldFont, Color.Black);
             highscoreButton.Position = new Vector2(leftx, 450);
             Add(highscoreButton);
 
-            quitButton = new Button("empty:" + buttonWidth + ":50:25:Green", "Quit", textfieldFont, Color.Red);
+            quitButton = new Button("button", "Quit", textfieldFont, Color.Black);
             quitButton.Position = new Vector2(rightx, 450);
             Add(quitButton);
-
-            /*
-            TextField tf = new TextField(textfieldFont, Color.Red);
-            tf.Position = new Vector2(50, 50);
-            Add(tf);
-            */
         }
 
         public override void HandleInput(InputHelper inputHelper)
