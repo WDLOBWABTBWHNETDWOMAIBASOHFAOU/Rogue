@@ -10,6 +10,24 @@ namespace Wink
 {
     class Bar : GameObjectList
     {
+        class InnerBar : SpriteGameObject
+        {
+            private int value;
+            private int maxValue;
+
+            public InnerBar(ref int value, int maxValue, Color color, int layer = 0, string id = "", float scale = 1) : base("HUD/innerbar", layer, id, 0, 0, scale)
+            {
+                this.value = value;
+                this.maxValue = maxValue;
+            }
+
+            public override void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
+            {
+                float w = (float)value / (float)maxValue;
+                sprite.Draw(spriteBatch, origin, scale, DrawColor, new Rectangle(GlobalPosition.ToPoint(), new Point((int)(w * Width), (int)(8 * scale))));
+            }
+        }
+
         private SpriteGameObject outer;
         private SpriteGameObject inner;
 
@@ -25,7 +43,7 @@ namespace Wink
             this.value = value;
             this.maxValue = maxValue;
 
-            inner = new SpriteGameObject("HUD/innerbar", layer, id + "_innner", 0, 0, scale);
+            inner = new InnerBar(ref value, maxValue, color, layer, id + "_inner", scale);
             inner.DrawColor = color;
             inner.Position = new Vector2(4.5f, 6f);
             Add(inner);

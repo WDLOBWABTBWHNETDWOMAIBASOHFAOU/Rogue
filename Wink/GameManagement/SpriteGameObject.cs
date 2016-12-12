@@ -111,8 +111,8 @@ public class SpriteGameObject : GameObject
     {
         get
         {
-            int left = (int)(GlobalPosition.X - origin.X*scale);
-            int top = (int)(GlobalPosition.Y - origin.Y*scale);
+            int left = (int)(GlobalPosition.X - origin.X * scale);
+            int top = (int)(GlobalPosition.Y - origin.Y * scale);
             return new Rectangle(left, top, Width, Height);
         }
     }
