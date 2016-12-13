@@ -19,8 +19,8 @@ namespace Wink
             level.Add(this);
 
             Tile ST = level.Find("startTile") as Tile;
-            float tileX = (ST.TilePosition.ToVector2().X+1) * ST.Height- ST.Height/2;
-            float tileY = (ST.TilePosition.ToVector2().Y +1)* ST.Width;
+            float tileX = (ST.TilePosition.ToVector2().X + 1) * ST.Height- ST.Height / 2;
+            float tileY = (ST.TilePosition.ToVector2().Y + 1) * ST.Width;
             Position = new Vector2(tileX,tileY);
             //InitAnimation(); not sure if overriden version gets played right without restating
         }
