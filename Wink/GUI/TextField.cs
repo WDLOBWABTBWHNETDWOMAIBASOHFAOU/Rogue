@@ -44,14 +44,14 @@ namespace Wink
         {
             base.Draw(gameTime, spriteBatch, camera);
             //Draw the contents of this textfield.
-            spriteBatch.DrawString(spriteFont, content, position + offset.ToVector2(), color);
+            spriteBatch.DrawString(spriteFont, content, GlobalPosition + offset.ToVector2(), color);
 
             //Draw cursor but only ever other hald second.
             if (gameTime.TotalGameTime.Milliseconds % 1000 < 500 && hasFocus && Editable)
             {
                 Texture2D tex = GameEnvironment.AssetManager.GetSingleColorPixel(color);
                 float cursorX = spriteFont.MeasureString(content.Substring(0, cursorPosition)).X;
-                Vector2 cursorPos = position + new Vector2(offset.X + cursorX, offset.Y);
+                Vector2 cursorPos = GlobalPosition + new Vector2(offset.X + cursorX, offset.Y);
                 spriteBatch.Draw(tex, null, new Rectangle(cursorPos.ToPoint(), new Point(2, Height - offset.Y * 2)));
             }
         }
