@@ -2,16 +2,32 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Xml.Serialization;
+using System.Runtime.Serialization;
 
+[Serializable]
 public class GameObjectList : GameObject
 {
     protected List<GameObject> children;
+
+    [NonSerialized]
     protected List<GameObject> toRemove;
+
+    public GameObjectList(SerializationInfo info, StreamingContext context) : base(info, context)
+    {
+        children = (List<GameObject>)info.GetValue("children", typeof(List<GameObject>));
+    }
 
     public GameObjectList(int layer = 0, string id = "") : base(layer, id)
     {
         children = new List<GameObject>();
         toRemove = new List<GameObject>();
+    }
+
+    public override void GetObjectData(SerializationInfo info, StreamingContext context)
+    {
+        info.AddValue("children", children);
+        base.GetObjectData(info, context);
     }
 
     public List<GameObject> Children
@@ -116,6 +132,19 @@ public class GameObjectList : GameObject
         foreach (GameObject obj in children)
         {
             obj.Reset();
+        }
+    }
+    
+    public override Rectangle BoundingBox
+    {
+        get
+        {
+            Rectangle bb = new Rectangle();
+            foreach(GameObject go in Children)
+            {
+                bb = Rectangle.Union(bb, go.BoundingBox);
+            }
+            return bb;
         }
     }
 }

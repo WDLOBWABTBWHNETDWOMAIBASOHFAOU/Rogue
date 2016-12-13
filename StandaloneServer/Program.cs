@@ -1,6 +1,11 @@
-﻿using Microsoft.Xna.Framework;
+﻿extern alias monogameframework;
+
+using monogameframework::Microsoft.Xna.Framework;
 using System;
+using System.IO;
 using System.Reflection;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
 using Wink;
 
@@ -24,7 +29,15 @@ class Program
         lue.updatedLevel = server.level;
 
         rc.Send(lue);
+
+
+        IFormatter formatter = new BinaryFormatter();
+        Stream stream = new FileStream("MyTestFile.bin", FileMode.Open, FileAccess.Read, FileShare.Read);
+        Event obj = (Event)formatter.Deserialize(stream);
+        stream.Close();
+
         
+
         startTime = DateTime.UtcNow;
 
         playingState = new PlayingState();

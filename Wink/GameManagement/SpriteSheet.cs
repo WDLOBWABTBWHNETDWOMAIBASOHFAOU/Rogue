@@ -47,18 +47,39 @@ public class SpriteSheet
         }
     }
 
-    public void Draw(SpriteBatch spriteBatch, Vector2 position, Vector2 origin,float scale)
+    public Rectangle SourceRectangle
     {
-        int columnIndex = sheetIndex % sheetColumns;
-        int rowIndex = sheetIndex / sheetColumns % sheetRows;
-        Rectangle spritePart = new Rectangle(columnIndex * Width, rowIndex * Height, Width, Height);
+        get
+        {
+            int columnIndex = sheetIndex % sheetColumns;
+            int rowIndex = sheetIndex / sheetColumns % sheetRows;
+            return new Rectangle(columnIndex * Width, rowIndex * Height, Width, Height);
+        }
+    }
+
+    public void Draw(SpriteBatch spriteBatch, Vector2 origin, float scale, Color color, Rectangle drawBox)
+    {
         SpriteEffects spriteEffects = SpriteEffects.None;
         if (mirror)
         {
             spriteEffects = SpriteEffects.FlipHorizontally;
         }
-        spriteBatch.Draw(sprite, position, spritePart, Color.White,
-            0.0f, origin, scale, spriteEffects, 0.0f);
+        spriteBatch.Draw(sprite, null, drawBox, SourceRectangle, origin, 0.0f, new Vector2(scale), color, spriteEffects, 0.0f);
+    }
+
+    public void Draw(SpriteBatch spriteBatch, Vector2 position, Vector2 origin, float scale, Color color)
+    {
+        SpriteEffects spriteEffects = SpriteEffects.None;
+        if (mirror)
+        {
+            spriteEffects = SpriteEffects.FlipHorizontally;
+        }
+        spriteBatch.Draw(sprite, position, SourceRectangle, color, 0.0f, origin, scale, spriteEffects, 0.0f);
+    }
+
+    public void Draw(SpriteBatch spriteBatch, Vector2 position, Vector2 origin, float scale)
+    {
+        Draw(spriteBatch, position, origin, scale, Color.White);
     }
     
     public bool IsTranslucent(int x, int y)

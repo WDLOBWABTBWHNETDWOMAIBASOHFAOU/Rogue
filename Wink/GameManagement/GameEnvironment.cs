@@ -9,8 +9,8 @@ public class GameEnvironment : Game
     protected SpriteBatch spriteBatch;
     protected InputHelper inputHelper;
     protected Matrix spriteScale;
-    protected Point windowSize;
 
+    protected static Point windowSize;
     protected static Point screen;
     protected static GameStateManager gameStateManager;
     protected static Random random;
@@ -35,6 +35,12 @@ public class GameEnvironment : Game
         gameSettingsManager = new GameSettingsManager();
 
         DefaultCamera = new Camera();
+    }
+
+    public static Point WindowSize
+    {
+        get { return windowSize; }
+        set { windowSize = value; }
     }
 
     public static Point Screen
@@ -71,6 +77,8 @@ public class GameEnvironment : Game
             ApplyResolutionSettings(value);
         }
     }
+
+
 
     public void ApplyResolutionSettings(bool fullScreen = false)
     {
@@ -120,10 +128,6 @@ public class GameEnvironment : Game
     protected void HandleInput()
     {
         inputHelper.Update();
-        if (inputHelper.KeyPressed(Keys.Escape))
-        {
-            Exit();
-        }
         if (inputHelper.KeyPressed(Keys.F5))
         {
             FullScreen = !FullScreen;

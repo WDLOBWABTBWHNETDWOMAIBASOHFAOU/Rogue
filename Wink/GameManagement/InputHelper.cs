@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using System.Linq;
 
 public class InputHelper
 {
@@ -61,6 +62,11 @@ public class InputHelper
     public bool IsKeyDown(Keys k)
     {
         return currentKeyboardState.IsKeyDown(k);
+    }
+
+    public Keys[] GetPressedKeys()
+    {
+        return currentKeyboardState.GetPressedKeys().Where(key => !previousKeyboardState.GetPressedKeys().Contains(key)).ToArray();
     }
 
     public bool AnyKeyPressed

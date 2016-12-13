@@ -60,7 +60,15 @@
     <Compile Include="GameObjects\Items\TestItem.cs" />
     <Compile Include="GameObjects\Tile.cs" />
     <Compile Include="GameObjects\TileField.cs" />
+    <Compile Include="GUI\Bar.cs" />
+    <Compile Include="GUI\PlayingGUI.cs" />
+    <Compile Include="GUI\PlayingMenu.cs" />
+    <Compile Include="GUI\SelectField.cs" />
+    <Compile Include="GUI\TabField.cs" />
+    <Compile Include="GUI\Table.cs" />
+    <Compile Include="GUI\TextField.cs" />
     <Compile Include="Level\Level.cs" />
+    <Compile Include="GUI\Button.cs" />
     <Compile Include="Multiplayer\Client.cs" />
     <Compile Include="GameManagement\Collision.cs" />
     <Compile Include="GameManagement\DrawingHelper.cs" />
@@ -85,6 +93,9 @@
     <Compile Include="GameManagement\SpriteSheet.cs" />
     <Compile Include="GameManagement\TextBox.cs" />
     <Compile Include="GameManagement\TextGameObject.cs" />
+    <Compile Include="States\MainMenuState.cs" />
+    <Compile Include="States\MultiplayerMenu.cs" />
+    <Compile Include="States\OptionsMenu.cs" />
     <Compile Include="States\PlayingState.cs" />
   </ItemGroup>
   <ItemGroup>

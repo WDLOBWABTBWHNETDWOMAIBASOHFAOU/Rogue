@@ -9,7 +9,7 @@ namespace Wink
 
         public override void OnClientReceive(LocalClient client)
         {
-            client.level = updatedLevel;
+            client.Level = updatedLevel;
         }
 
         public override void OnServerReceive(LocalServer server)

@@ -1,6 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.Serialization;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Wink
 {
@@ -12,6 +17,7 @@ namespace Wink
         Inventory
     }
 
+    [Serializable]
     public class Tile : SpriteGameObject, ClickableGameObject
     {
         public const int TileWidth = 65;
@@ -21,14 +27,20 @@ namespace Wink
 
         public Point TilePosition { get { return new Point((int)Position.X / TileWidth, (int)Position.Y / TileHeight); } }
 
-        public Tile() : base("")
-        {
-
-        }
-
         public Tile(string assetname = "", TileType tp = TileType.Background, int layer = 0, string id = "") : base(assetname, layer, id)
         {
             type = tp;
+        }
+
+        public Tile(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+            type = (TileType)info.GetValue("type", typeof(TileType));
+        }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("type", type);
+            base.GetObjectData(info, context);
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)

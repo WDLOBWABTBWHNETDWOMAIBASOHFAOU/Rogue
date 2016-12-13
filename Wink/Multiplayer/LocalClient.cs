@@ -7,71 +7,84 @@ namespace Wink
 {
     public class LocalClient : Client
     {
-        public Level level { get; set; }
+        private GameObjectList gameObjects;
+        public Level Level
+        {
+            get
+            {
+                return gameObjects.Find("Level") as Level;
+            }
+            set
+            {
+                if(Level != null)
+                    gameObjects.Remove(Level);
 
-        public Camera camera;
-        private InputHelper ih;
-        private const int cameraMoveSpeed = 4;
+                gameObjects.Add(value);
+            }
+        }
+
+        private Camera camera;
 
         public LocalClient(Server server) : base(server)
         {
-            clientName = System.Environment.MachineName;
-            ih = new InputHelper();
-            camera = new Camera();
-            server.AddLocalClient(this);
+            ClientName = System.Environment.MachineName;
             
+            camera = new Camera();
+
+            gameObjects = new GameObjectList();
+            gameObjects.Add(new PlayingGUI());
+
+            server.AddLocalClient(this);
         }
 
         public void Update(GameTime gameTime)
         {
-            ih.Update();
+        }
 
-            if (ih.IsKeyDown(Keys.W))
-                camera.Position += new Vector2(0, -cameraMoveSpeed);
-
-            if (ih.IsKeyDown(Keys.A))
-                camera.Position += new Vector2(-cameraMoveSpeed, 0);
-
-            if (ih.IsKeyDown(Keys.S))
-                camera.Position += new Vector2(0, cameraMoveSpeed);
-
-            if (ih.IsKeyDown(Keys.D))
-                camera.Position += new Vector2(cameraMoveSpeed, 0);
-
-            
-            if(ih.MouseLeftButtonPressed() && level != null)
+        public void HandleInput(InputHelper inputHelper) 
+        {
+            if (inputHelper.MouseLeftButtonPressed() && Level != null)
             {
-                Vector2 mousePos = ih.MousePosition;
+                Vector2 mousePos = inputHelper.MousePosition;
                 Vector2 globalPos = mousePos + camera.GlobalPosition;
-                FindClicked(level.Children, globalPos);
+                FindClicked(gameObjects.Children, globalPos);
             }
+
+            camera.HandleInput(inputHelper);
+            gameObjects.HandleInput(inputHelper);
         }
 
         private void FindClicked(List<GameObject> gameObjects, Vector2 mousePos)
         {
             //Right way round?
-            gameObjects.Sort((obj1, obj2) => obj1.Layer - obj2.Layer); // is it supposed to actualy change the layer of the objects?
+            //Sort gameobjects by layer
+            gameObjects.Sort((obj1, obj2) => obj1.Layer - obj2.Layer);
 
             for (int i = 0; i < gameObjects.Count; i++)
             {
-                bool emptyBB = gameObjects[i].BoundingBox.Width * gameObjects[i].BoundingBox.Height == 0;
-                if (gameObjects[i].BoundingBox.Contains(mousePos) || emptyBB)
+                //First check whether current gameObject was clicked
+                if (gameObjects[i].BoundingBox.Contains(mousePos))
                 {
+                    //Then check whether the gameObject is clickable
                     if (gameObjects[i] is ClickableGameObject)
                     {
+                        //If so execute OnClick and return
                         (gameObjects[i] as ClickableGameObject).OnClick(server);
                         return;
                     }
                     else if (gameObjects[i] is GameObjectList)
                     {
+                        //If the object is not clickable, but is a list, search the list
                         FindClicked((gameObjects[i] as GameObjectList).Children, mousePos);
                     }
                     else if (gameObjects[i] is GameObjectGrid)
                     {
+                        //If the object is a grid, find the gameObject that was clicked and execute OnClick.
                         GameObject gObj = (gameObjects[i] as GameObjectGrid).Find(obj => obj.BoundingBox.Contains(mousePos));
                         if(gObj is ClickableGameObject)
                         {
                             (gObj as ClickableGameObject).OnClick(server);
+                            return;
                         }
                     }
                 }
@@ -80,8 +93,7 @@ namespace Wink
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera cam)
         {
-            if(level != null)
-                level.Draw(gameTime, spriteBatch, camera);
+            gameObjects.Draw(gameTime, spriteBatch, camera);
         }
 
         public override void Send(Event e)
