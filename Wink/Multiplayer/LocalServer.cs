@@ -67,6 +67,7 @@ namespace Wink
             if (levelChanged)
             {
                 SendOutUpdatedLevel();
+                levelChanged = false;
             }
         }
         

@@ -8,9 +8,12 @@ namespace Wink
     {
         private PlayingMenu playingMenu;
         private int testValue = 10;
+        private Player thisPlayer;
 
-        public PlayingGUI()
+        public PlayingGUI(Player thisPlayer)
         {
+            this.thisPlayer = thisPlayer;
+
             Layer = 1;
 
             const int barX = 150;
@@ -32,13 +35,12 @@ namespace Wink
             Vector2 MPBarPosition = new Vector2(barX, HPBarPosition.Y + 32);
 
             //Healthbar
-            //Bar<Player> hpBar = new Bar<Player>(thisPlayer, player => player.health, thisPlayer.MaxHealth, textfieldFont, Color.Red, 2, "HealthBar", 2.5f);
-            Bar<PlayingGUI> hpBar = new Bar<PlayingGUI>(this, obj => obj.testValue, 100, textfieldFont, Color.Red, 2, "HealthBar", 2.5f);
+            Bar<Player> hpBar = new Bar<Player>(thisPlayer, player => thisPlayer.health, thisPlayer.MaxHealth, textfieldFont, Color.Red, 2, "HealthBar", 2.5f);
             hpBar.Position = new Vector2(HPBarPosition.X, HPBarPosition.Y);
             Add(hpBar);
 
             //Manabar
-            Bar<PlayingGUI> mpBar = new Bar<PlayingGUI>(this, obj => obj.testValue, 100, textfieldFont, Color.Blue, 2, "ManaBar", 2.5f);
+            Bar<Player> mpBar = new Bar<Player>(thisPlayer, player => thisPlayer.mana, thisPlayer.MaxMana, textfieldFont, Color.Blue, 2, "ManaBar", 2.5f);
             mpBar.Position = new Vector2(MPBarPosition.X, MPBarPosition.Y);
             Add(mpBar);
 
