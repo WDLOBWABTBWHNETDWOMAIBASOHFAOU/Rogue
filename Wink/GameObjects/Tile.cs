@@ -17,6 +17,8 @@ namespace Wink
         Inventory
     }
 
+
+
     [Serializable]
     public class Tile : SpriteGameObject, ClickableGameObject
     {
@@ -26,6 +28,19 @@ namespace Wink
         protected TileType type;
 
         public Point TilePosition { get { return new Point((int)Position.X / TileWidth, (int)Position.Y / TileHeight); } }
+
+        // For pathfinding
+        public Tile originNode;
+        public int hCost;
+        public int gCost;
+        public int fCost
+        {
+            get
+            {
+                return hCost + gCost;
+            }
+        }
+        // No longer for pathfinding
 
         public Tile(string assetname = "", TileType tp = TileType.Background, int layer = 0, string id = "") : base(assetname, layer, id)
         {
