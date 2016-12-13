@@ -27,7 +27,7 @@ namespace Wink
 
         private void InitAnimation()
         {
-            LoadAnimation("empty:65:65:10:DarkGreen", "default", true);
+            LoadAnimation("empty:65:65:10:Red", "default", true);
             PlayAnimation("default");
         }
 

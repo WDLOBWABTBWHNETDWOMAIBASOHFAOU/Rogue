@@ -24,6 +24,7 @@ namespace Wink
         public const int TileHeight = 65;
 
         protected TileType type;
+        protected bool passable;
 
         public Point TilePosition { get { return new Point((int)Position.X / TileWidth, (int)Position.Y / TileHeight); } }
 
@@ -55,6 +56,12 @@ namespace Wink
         public TileType TileType
         {
             get { return type; }
+        }
+
+        public bool Passable
+        {
+            get { return passable; }
+            set { passable = value; }
         }
 
         public virtual void OnClick(Server server)

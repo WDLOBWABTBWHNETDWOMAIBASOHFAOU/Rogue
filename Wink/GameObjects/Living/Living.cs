@@ -24,7 +24,7 @@ namespace Wink
 
         protected virtual void InitAnimation()
         {//General animations
-            idleAnimation = "empty:65:65:10:DarkGreen";
+            idleAnimation = "empty:65:65:10:Magenta";
             moveAnimation = "empty:65:65:10:DarkBlue";
             dieAnimation = "empty:65:65:10:DarkRed";
             LoadAnimation(idleAnimation, "idle", true);
