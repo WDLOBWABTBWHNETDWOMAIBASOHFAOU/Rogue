@@ -9,7 +9,7 @@ namespace Wink
         protected int exp;
         public MouseSlot mouseSlot;
         
-        public Player(Client client, Level level,int layer) : base(level, layer, "player_" + client.clientName)
+        public Player(Client client, Level level,int layer) : base(level, layer, "player_" + client.ClientName)
         {
             this.client = client;
 

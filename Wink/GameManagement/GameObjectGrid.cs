@@ -107,7 +107,10 @@ public class GameObjectGrid : GameObject
     {
         foreach (GameObject obj in grid)
         {
-            obj.HandleInput(inputHelper);
+            if(obj != null)
+            {
+                obj.HandleInput(inputHelper);
+            }
         }
     }
 
