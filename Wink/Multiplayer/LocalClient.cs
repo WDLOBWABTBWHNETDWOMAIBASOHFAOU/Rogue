@@ -32,9 +32,9 @@ namespace Wink
             camera = new Camera();
 
             gameObjects = new GameObjectList();
-            gameObjects.Add(new PlayingGUI());
-
             server.AddLocalClient(this);
+
+            gameObjects.Add(new PlayingGUI(Level.Find("player_" + ClientName) as Player));
         }
 
         public void Update(GameTime gameTime)
@@ -57,8 +57,8 @@ namespace Wink
         private void FindClicked(List<GameObject> gameObjects, Vector2 mousePos)
         {
             //Right way round?
-            //Sort gameobjects by layer
-            gameObjects.Sort((obj1, obj2) => obj1.Layer - obj2.Layer);
+            ////Sort gameobjects by layer
+            //gameObjects.Sort((obj1, obj2) => obj1.Layer - obj2.Layer);
 
             for (int i = 0; i < gameObjects.Count; i++)
             {
@@ -84,7 +84,7 @@ namespace Wink
                         if(gObj is ClickableGameObject)
                         {
                             (gObj as ClickableGameObject).OnClick(server);
-                            return;
+                            //return;
                         }
                     }
                 }
