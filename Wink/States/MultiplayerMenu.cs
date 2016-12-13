@@ -12,11 +12,24 @@ namespace Wink
     {
         Button back;
 
-        class OnlineTab : GameObjectList
+        private class OnlineTab : GameObjectList
         {   
+            public OnlineTab()
+            {
+                Point screen = GameEnvironment.Screen;
+                Table availableHosts = new Table();
+                availableHosts.AddColumn();
+                availableHosts.AddColumn();
+
+                availableHosts.AddRow(new List<object>() { "test", "192.168.153.1" });
+                availableHosts.AddRow(new List<object>() { "test2", "192.168.153.2" });
+
+                availableHosts.Position = new Vector2((screen.X - availableHosts.Width)/2, 50);
+                Add(availableHosts);
+            }
         }
 
-        class LANTab : GameObjectList
+        private class LANTab : GameObjectList
         {
             Button connectButton;
 

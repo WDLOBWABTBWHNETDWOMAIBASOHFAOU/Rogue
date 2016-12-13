@@ -57,6 +57,7 @@ namespace Wink
 
             GameObjectList newContent = new GameObjectList(0, "Content");
             newContent.Add(tabs[index].content);
+            newContent.Position = new Vector2(0, 50);
             Add(newContent);
         }
 
