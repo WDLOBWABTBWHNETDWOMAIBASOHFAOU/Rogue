@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 [Serializable]
@@ -157,7 +158,30 @@ public class GameObjectGrid : GameObject
         }
         return null;
     }
-    
+
+    public List<GameObject> FindAll(Func<GameObject, bool> del)
+    {
+        List<GameObject> result = new List<GameObject>();
+        foreach (GameObject obj in grid)
+        {
+            if (del.Invoke(obj))
+            {
+                result.Add(obj);
+            }
+            if (obj is GameObjectList)
+            {
+                GameObjectList objList = obj as GameObjectList;
+                result.AddRange(objList.FindAll(del));
+            }
+            if (obj is GameObjectGrid)
+            {
+                GameObjectGrid objGrid = obj as GameObjectGrid;
+                result.AddRange(objGrid.FindAll(del));
+            }
+        }
+        return result;
+    }
+
     public override Rectangle BoundingBox
     {
         get

@@ -55,6 +55,30 @@ public class GameObjectList : GameObject
         obj.Parent = null;
     }
 
+    public List<GameObject> FindAll(Func<GameObject, bool> del)
+    {
+        List<GameObject> result = new List<GameObject>();
+
+        foreach (GameObject obj in children)
+        {
+            if (del.Invoke(obj))
+            {
+                result.Add(obj);
+            }
+            if (obj is GameObjectList)
+            {
+                GameObjectList objList = obj as GameObjectList;
+                result.AddRange(objList.FindAll(del));
+            }
+            if (obj is GameObjectGrid)
+            {
+                GameObjectGrid objGrid = obj as GameObjectGrid;
+                result.AddRange(objGrid.FindAll(del));
+            }
+        }
+        return result;
+    }
+
     public GameObject Find(Func<GameObject, bool> del)
     {
         foreach (GameObject obj in children)
