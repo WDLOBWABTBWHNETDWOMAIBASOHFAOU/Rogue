@@ -16,9 +16,13 @@ namespace Wink
             {
                 case GameMode.MultiplayerClient:
                     //Initialize RemoteServer and LocalClient
+                    server = new RemoteServer();
+                    client = new LocalClient(server);
                     break;
                 case GameMode.MultiplayerHost:
                     //Initialize LocalServer(public) and LocalClient
+                    server = new LocalServer(true);
+                    client = new LocalClient(server);
                     break;
                 case GameMode.Singleplayer:
                     //Initialize LocalServer(private) and LocalClient
@@ -27,6 +31,7 @@ namespace Wink
                     break;
                 case GameMode.MultiplayerServer:
                     //Initialize LocalServer(public)
+                    //server = new LocalServer(true);
                     break;
             }
         }

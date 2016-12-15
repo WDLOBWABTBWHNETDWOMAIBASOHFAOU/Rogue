@@ -79,7 +79,7 @@ public class SpriteGameObject : GameObject
         get { return new Vector2(Width, Height) / 2; }
     }
 
-    public int Width
+    public virtual int Width
     {
         get
         {
@@ -87,7 +87,7 @@ public class SpriteGameObject : GameObject
         }
     }
 
-    public int Height
+    public virtual int Height
     {
         get
         {

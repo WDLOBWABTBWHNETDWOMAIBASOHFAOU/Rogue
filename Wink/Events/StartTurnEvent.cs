@@ -1,12 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Wink
 {
-    [Serializable()]
-    public class PlayerMoveEvent : Event
+    class StartTurnEvent : Event
     {
-        public Player Player { get; set; }
-        public Tile Tile { get; set; }
+        Living whoseTurnItIs;
 
         public override void OnClientReceive(LocalClient client)
         {
@@ -15,15 +17,12 @@ namespace Wink
 
         public override void OnServerReceive(LocalServer server)
         {
-            Player.MoveTo(Tile);
-            server.LevelChanged();
+            throw new NotImplementedException();
         }
 
         public override bool Validate()
         {
-            //TODO: Implement Validation.
-            //Enough action points..
-            return true;
+            throw new NotImplementedException();
         }
     }
 }

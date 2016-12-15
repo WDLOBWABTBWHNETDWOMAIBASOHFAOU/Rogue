@@ -1,5 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using System.Collections.Generic;
+using System.Net;
+using System.Net.Sockets;
 
 namespace Wink
 {
@@ -8,6 +10,9 @@ namespace Wink
         private List<Client> clients;
         public Level level { get; }
         bool levelChanged;
+
+        private bool isPublic;
+        private TcpListener tcpListener;
 
         /// <summary>
         /// 
@@ -19,8 +24,7 @@ namespace Wink
 
             Level l = new Level(1);
             level = l;
-
-
+            
             if (publicServer)
             {
                 MakePublic();
@@ -29,7 +33,10 @@ namespace Wink
 
         public override void Send(Event e)
         {
-            e.OnServerReceive(this);
+            if (e.Validate())
+            {
+                e.OnServerReceive(this);
+            }
         }
 
         public override void AddLocalClient(LocalClient localClient)
@@ -40,7 +47,7 @@ namespace Wink
 
         private void ClientAdded(Client client)
         {
-            Player player = new Player(client, level,level.Layer+1);
+            Player player = new Player(client, level, level.Layer+1);
             SendOutUpdatedLevel();
         }
 
@@ -56,8 +63,9 @@ namespace Wink
 
         private void MakePublic()
         {
-            //setup TCP with masterserver, 
-            
+            isPublic = true;
+            tcpListener = new TcpListener(IPAddress.Any, 29793);
+            tcpListener.Start();
         }
 
         public void Update(GameTime gameTime)
@@ -68,6 +76,15 @@ namespace Wink
             {
                 SendOutUpdatedLevel();
                 levelChanged = false;
+            }
+            if (isPublic)
+            {
+                if (tcpListener.Pending())
+                {
+                    TcpClient tcpClient = tcpListener.AcceptTcpClient();
+                    Client newClient = new RemoteClient(this, tcpClient);
+                    clients.Add(newClient);
+                }
             }
         }
         

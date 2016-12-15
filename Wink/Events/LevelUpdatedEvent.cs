@@ -16,5 +16,10 @@ namespace Wink
         {
             throw new NotImplementedException();
         }
+
+        public override bool Validate()
+        {
+            return true;
+        }
     }
 }

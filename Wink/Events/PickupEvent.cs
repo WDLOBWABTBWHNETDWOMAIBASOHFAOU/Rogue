@@ -18,5 +18,13 @@ namespace Wink
             player.mouseSlot.AddTo(item,target);
             server.LevelChanged();
         }
+
+        public override bool Validate()
+        {
+            //TODO: Implement Validation.
+            //Within Reach
+            //
+            return true;
+        }
     }
 }

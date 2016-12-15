@@ -10,8 +10,6 @@ namespace Wink
 {
     class MultiplayerMenu : GameObjectList
     {
-        Button back;
-
         private class OnlineTab : GameObjectList
         {   
             public OnlineTab()
@@ -32,6 +30,7 @@ namespace Wink
         private class LANTab : GameObjectList
         {
             Button connectButton;
+            TextField ipAddress;
 
             public LANTab()
             {
@@ -39,15 +38,16 @@ namespace Wink
                 SpriteFont buttonFont = GameEnvironment.AssetManager.GetFont("TextFieldFont");
 
                 //Create a text field for the ip address
-                TextField ipAddress = new TextField(buttonFont, Color.Red);
-                ipAddress.Position = new Vector2((screen.X - ipAddress.Width) / 2, screen.Y / 2);
+                ipAddress = new TextField(buttonFont, Color.Red);
+                ipAddress.Position = new Vector2((screen.X - ipAddress.Width) / 2, 50);
                 ipAddress.Editable = true;
                 Add(ipAddress);
 
                 //Create a button to start connecting.
                 connectButton = new Button("button", "Connect", buttonFont, Color.Black);
-                connectButton.Position = new Vector2((screen.X - connectButton.Width) / 2, screen.Y - 300);
+                connectButton.Position = new Vector2((screen.X - connectButton.Width) / 2, 125);
                 Add(connectButton);
+
             }
 
             public override void HandleInput(InputHelper inputHelper)
@@ -57,9 +57,16 @@ namespace Wink
                 if (connectButton.Pressed)
                 {
                     //Connect here...
+                    GameEnvironment.GameSettingsManager.SetValue("server_ip_address", ipAddress.Text);
+                    PlayingState ps = GameEnvironment.GameStateManager.GetGameState("playingState") as PlayingState;
+                    ps.InitializeGameMode(PlayingState.GameMode.MultiplayerClient);
+                    GameEnvironment.GameStateManager.SwitchTo("playingState");
                 }
             }
         }
+
+        Button backButton;
+        Button hostButton;
 
         public MultiplayerMenu()
         {
@@ -75,18 +82,29 @@ namespace Wink
             Add(tabField);
 
             //Create a button to go back to the main menu.
-            back = new Button("button", "Back", tabTitleFont, Color.Black);
-            back.Position = new Vector2(100, screen.Y - 100);
-            Add(back);
+            backButton = new Button("button", "Back", tabTitleFont, Color.Black);
+            backButton.Position = new Vector2(100, screen.Y - 100);
+            Add(backButton);
+
+            //Create a button to start hosting.
+            hostButton = new Button("button", "Host a Game", tabTitleFont, Color.Black);
+            hostButton.Position = new Vector2(screen.X - hostButton.Width - 100, screen.Y - 100);
+            Add(hostButton);
         }
 
         public override void HandleInput(InputHelper inputHelper)
         {
             base.HandleInput(inputHelper);
 
-            if (back.Pressed)
+            if (backButton.Pressed)
             {
                 GameEnvironment.GameStateManager.SwitchTo("mainMenuState");
+            }
+            else if (hostButton.Pressed)
+            {
+                PlayingState ps = GameEnvironment.GameStateManager.GetGameState("playingState") as PlayingState;
+                ps.InitializeGameMode(PlayingState.GameMode.MultiplayerHost);
+                GameEnvironment.GameStateManager.SwitchTo("playingState");
             }
         }
     }

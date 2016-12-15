@@ -18,5 +18,12 @@ namespace Wink
             Attacker.Attack(Defender);
             server.LevelChanged();
         }
+
+        public override bool Validate()
+        {
+            //TODO: Implement Validation.
+            //Within Reach, attacker still has action points, etc.
+            return true;
+        }
     }
 }

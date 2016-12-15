@@ -28,13 +28,20 @@ namespace Wink
         public LocalClient(Server server) : base(server)
         {
             ClientName = System.Environment.MachineName;
-            
+
             camera = new Camera();
 
             gameObjects = new GameObjectList();
             server.AddLocalClient(this);
+            
+            gameObjects.Add(new PlayingGUI());
+        }
 
-            gameObjects.Add(new PlayingGUI(Level.Find("player_" + ClientName) as Player));
+        public void LoadPlayerGUI()
+        {
+            PlayingGUI pgui = gameObjects.Find(obj => obj is PlayingGUI) as PlayingGUI;
+            Player p = gameObjects.Find("player_" + ClientName) as Player;
+            pgui.AddPlayerGUI(p);
         }
 
         public void Update(GameTime gameTime)
@@ -56,10 +63,6 @@ namespace Wink
 
         private void FindClicked(List<GameObject> gameObjects, Vector2 mousePos)
         {
-            //Right way round?
-            ////Sort gameobjects by layer
-            //gameObjects.Sort((obj1, obj2) => obj1.Layer - obj2.Layer);
-
             for (int i = 0; i < gameObjects.Count; i++)
             {
                 //First check whether current gameObject was clicked
@@ -98,7 +101,10 @@ namespace Wink
 
         public override void Send(Event e)
         {
-            e.OnClientReceive(this);
+            if (e.Validate())
+            {
+                e.OnClientReceive(this);
+            }
         }
     }
 }

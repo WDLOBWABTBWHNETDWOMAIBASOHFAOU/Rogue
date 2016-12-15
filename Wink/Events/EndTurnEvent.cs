@@ -1,25 +1,26 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Wink
 {
-    [Serializable()]
-    public class JoinServerEvent : Event
+    class EndTurnEvent : Event
     {
-        public string clientName { get; set; }
-
         public override void OnClientReceive(LocalClient client)
         {
+            throw new NotImplementedException();
         }
 
         public override void OnServerReceive(LocalServer server)
         {
-
+            throw new NotImplementedException();
         }
 
         public override bool Validate()
         {
-            //TODO: Implement Validation.
-            return true;
+            throw new NotImplementedException();
         }
     }
 }

@@ -7,20 +7,13 @@ namespace Wink
     class PlayingGUI : GameObjectList
     {
         private PlayingMenu playingMenu;
-        private int testValue = 10;
-        private Player thisPlayer;
 
-        public PlayingGUI(Player thisPlayer)
+        public PlayingGUI()
         {
-            this.thisPlayer = thisPlayer;
-
             Layer = 1;
-
-            const int barX = 150;
 
             Point screen = GameEnvironment.Screen;
             SpriteFont defaultFont = GameEnvironment.AssetManager.GetFont("default");
-            SpriteFont textfieldFont = GameEnvironment.AssetManager.GetFont("TextFieldFont");
 
             SpriteGameObject topBar = new SpriteGameObject("HUD/topbar", 0, "TopBar", 0, 0);
             Add(topBar);
@@ -31,35 +24,36 @@ namespace Wink
             playingMenu.Visible = false;
             Add(playingMenu);
 
-            Vector2 HPBarPosition = new Vector2(barX, 14);
-            Vector2 MPBarPosition = new Vector2(barX, HPBarPosition.Y + 32);
-
-            //Healthbar
-            Bar<Player> hpBar = new Bar<Player>(thisPlayer, player => thisPlayer.health, thisPlayer.MaxHealth, textfieldFont, Color.Red, 2, "HealthBar", 2.5f);
-            hpBar.Position = new Vector2(HPBarPosition.X, HPBarPosition.Y);
-            Add(hpBar);
-
-            //Manabar
-            Bar<Player> mpBar = new Bar<Player>(thisPlayer, player => thisPlayer.mana, thisPlayer.MaxMana, textfieldFont, Color.Blue, 2, "ManaBar", 2.5f);
-            mpBar.Position = new Vector2(MPBarPosition.X, MPBarPosition.Y);
-            Add(mpBar);
-
-            //Action Points
-
             SpriteGameObject floor = new SpriteGameObject("empty:85:85:15:Orange", 1, "Floor", 0, 0);
             floor.Position = new Vector2((screen.X - floor.Width)/2, 7.5f);
             Add(floor);
         }
 
-        /// <summary>
-        /// TEST CODE
-        /// </summary>
-        /// <param name="inputHelper"></param>
+        public void AddPlayerGUI(Player player)
+        {
+            SpriteFont textfieldFont = GameEnvironment.AssetManager.GetFont("TextFieldFont");
+
+            const int barX = 150;
+            Vector2 HPBarPosition = new Vector2(barX, 14);
+            Vector2 MPBarPosition = new Vector2(barX, HPBarPosition.Y + 32);
+
+            //Healthbar
+            Bar<Player> hpBar = new Bar<Player>(player, p => p.health, player.MaxHealth, textfieldFont, Color.Red, 2, "HealthBar", 2.5f);
+            hpBar.Position = new Vector2(HPBarPosition.X, HPBarPosition.Y);
+            Add(hpBar);
+
+            //Manabar
+            Bar<Player> mpBar = new Bar<Player>(player, p => p.mana, player.MaxMana, textfieldFont, Color.Blue, 2, "ManaBar", 2.5f);
+            mpBar.Position = new Vector2(MPBarPosition.X, MPBarPosition.Y);
+            Add(mpBar);
+
+            //Action Points
+
+        }
+
         public override void HandleInput(InputHelper inputHelper)
         {
             base.HandleInput(inputHelper);
-
-            testValue += inputHelper.ScrollWheelDelta / 100;
 
             if (inputHelper.KeyPressed(Keys.Escape))
             {
