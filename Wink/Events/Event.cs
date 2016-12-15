@@ -5,6 +5,8 @@ namespace Wink
     [Serializable()]
     public abstract class Event
     {
+        protected Sender sender;
+
         public abstract void OnClientReceive(LocalClient client);
         public abstract void OnServerReceive(LocalServer server);
 
@@ -13,7 +15,8 @@ namespace Wink
         /// If the event is invalid, it is not sent.
         /// It is called again on the server as anti-cheating measure. (In case people use unofficial or modified clients)
         /// </summary>
+        /// <param name="level"></param>
         /// <returns>A bool indicating whether or not this event is valid.</returns>
-        public abstract bool Validate();
+        public abstract bool Validate(Level level);
     }
 }

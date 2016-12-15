@@ -22,7 +22,6 @@ namespace Wink
             back = new Button("button", "Back to Main Menu", sf, Color.Black);
             back.Position = new Vector2(25, 25);
             Add(back);
-
         }
 
         public override void HandleInput(InputHelper inputHelper)

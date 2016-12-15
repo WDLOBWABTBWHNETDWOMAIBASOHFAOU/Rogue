@@ -18,7 +18,7 @@ namespace Wink
             throw new NotImplementedException();
         }
 
-        public override bool Validate()
+        public override bool Validate(Level level)
         {
             throw new NotImplementedException();
         }

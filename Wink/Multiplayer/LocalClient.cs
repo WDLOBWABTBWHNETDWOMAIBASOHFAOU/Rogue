@@ -101,7 +101,7 @@ namespace Wink
 
         public override void Send(Event e)
         {
-            if (e.Validate())
+            if (e.Validate(Level))
             {
                 e.OnClientReceive(this);
             }

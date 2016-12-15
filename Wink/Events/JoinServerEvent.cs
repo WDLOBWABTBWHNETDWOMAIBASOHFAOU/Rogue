@@ -16,7 +16,7 @@ namespace Wink
 
         }
 
-        public override bool Validate()
+        public override bool Validate(Level level)
         {
             //TODO: Implement Validation.
             return true;

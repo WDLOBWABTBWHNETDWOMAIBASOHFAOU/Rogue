@@ -26,7 +26,7 @@ namespace Wink
         {
             foreach(Event e in pendingEvents)
             {
-                if (e.Validate())
+                if (e.Validate((server as LocalServer).Level))
                 {
                     e.OnServerReceive((LocalServer)server);
                 }
@@ -58,7 +58,7 @@ namespace Wink
 
         public override void Send(Event e)
         {
-            if (e.Validate())
+            if (e.Validate((server as LocalServer).Level))
             {
                 //Serialize and send event over TCP connection.
                 binaryFormatter.Serialize(tcp.GetStream(), e);

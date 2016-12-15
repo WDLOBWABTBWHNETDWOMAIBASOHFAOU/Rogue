@@ -49,8 +49,7 @@ namespace Wink
                 }
             }
         }
-
-
+        
         public void MoveTo(Tile tile)
         {
             float TileX = (tile.TilePosition.X + 1) * Tile.TileWidth;

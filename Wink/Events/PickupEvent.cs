@@ -19,7 +19,7 @@ namespace Wink
             server.LevelChanged();
         }
 
-        public override bool Validate()
+        public override bool Validate(Level level)
         {
             //TODO: Implement Validation.
             //Within Reach

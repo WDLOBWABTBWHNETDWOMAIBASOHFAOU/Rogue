@@ -10,7 +10,7 @@ namespace Wink
     public class LocalServer : Server
     {
         private List<Client> clients;
-        public Level level { get; }
+        public Level Level { get; }
         private List<Living> livingObjects;
         bool levelChanged;
 
@@ -28,9 +28,9 @@ namespace Wink
             clients = new List<Client>();
 
             Level l = new Level(1);
-            level = l;
+            Level = l;
 
-            livingObjects = level.FindAll(obj => obj is Living).Cast<Living>().ToList();
+            livingObjects = Level.FindAll(obj => obj is Living).Cast<Living>().ToList();
             livingObjects.Sort((obj1, obj2)=> obj1.Dexterity - obj2.Dexterity);
 
             if (publicServer)
@@ -41,7 +41,7 @@ namespace Wink
 
         public override void Send(Event e)
         {
-            if (e.Validate())
+            if (e.Validate(Level))
             {
                 e.OnServerReceive(this);
                 UpdateTurn();
@@ -56,14 +56,14 @@ namespace Wink
 
         private void ClientAdded(Client client)
         {
-            Player player = new Player(client, level,level.Layer+1);
+            Player player = new Player(client, Level,Level.Layer+1);
 
-            addPlayer(player);
+            AddPlayer(player);
         
             SendOutUpdatedLevel();
         }
 
-        void addPlayer(Living player)
+        private void AddPlayer(Living player)
         {
             for (int i = 0; i < livingObjects.Count; i++)
             {
@@ -81,7 +81,7 @@ namespace Wink
             foreach(Client c in clients)
             {
                 LevelUpdatedEvent e = new LevelUpdatedEvent();
-                e.updatedLevel = level;
+                e.updatedLevel = Level;
                 c.Send(e);
             }
         }
@@ -95,7 +95,7 @@ namespace Wink
 
         public void Update(GameTime gameTime)
         {
-            level.Update(gameTime);
+            Level.Update(gameTime);
 
             if (levelChanged)
             {

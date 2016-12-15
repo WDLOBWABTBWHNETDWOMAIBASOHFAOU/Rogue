@@ -38,6 +38,7 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Events\ActionEvent.cs" />
     <Compile Include="Events\AttackEvent.cs" />
     <Compile Include="Events\EndTurnEvent.cs" />
     <Compile Include="Events\Event.cs" />
@@ -46,6 +47,7 @@
     <Compile Include="Events\LevelUpdatedEvent.cs" />
     <Compile Include="Events\PickupEvent.cs" />
     <Compile Include="Events\PlayerMoveEvent.cs" />
+    <Compile Include="Multiplayer\Sender.cs" />
     <Compile Include="Events\StartTurnEvent.cs" />
     <Compile Include="GameManagement\AnimatedGameObject.cs" />
     <Compile Include="GameManagement\Animation.cs" />

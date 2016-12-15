@@ -1,7 +1,7 @@
 ﻿
 namespace Wink
 {
-    public abstract class Client
+    public abstract class Client : Sender
     {
         protected Server server;
 

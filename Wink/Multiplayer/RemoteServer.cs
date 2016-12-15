@@ -29,7 +29,7 @@ namespace Wink
         {
             foreach (Event e in pendingEvents)
             {
-                if (e.Validate())
+                if (e.Validate(client.Level))
                 {
                     e.OnClientReceive(client);
                 }
@@ -66,7 +66,7 @@ namespace Wink
 
         public override void Send(Event e)
         {
-            if (e.Validate())
+            if (e.Validate(client.Level))
             {
                 //Serialize and send the event over TCP connection.
                 binaryFormatter.Serialize(tcp.GetStream(), e);

@@ -78,6 +78,7 @@ namespace Wink
             inventory.Position = new Vector2((tf.Columns + 1) * tf.CellWidth, 0);
             Add(inventory);
         }
+
         private Tile LoadTile(char tileType, int x, int y)
         {
             switch (tileType)
@@ -108,6 +109,7 @@ namespace Wink
             t.Passable = true;
             return t;
         }
+
         private Tile LoadStartTile()
         {
             Tile t = new Tile("empty:65:65:10:Red", TileType.Normal, 0, "startTile");
