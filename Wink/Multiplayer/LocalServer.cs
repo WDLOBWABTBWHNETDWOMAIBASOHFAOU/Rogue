@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Wink
 {
@@ -7,6 +8,7 @@ namespace Wink
     {
         private List<Client> clients;
         public Level level { get; }
+        private List<Living> livingObjects;
         bool levelChanged;
 
         /// <summary>
@@ -20,6 +22,9 @@ namespace Wink
             Level l = new Level(1);
             level = l;
 
+            livingObjects = level.FindAll(obj => obj is Living).Cast<Living>().ToList();
+            livingObjects.Sort((obj1, obj2)=> obj1.Dexterity - obj2.Dexterity);
+            livingObjects.ElementAt(0).isTurn = true;
 
             if (publicServer)
             {
@@ -41,7 +46,23 @@ namespace Wink
         private void ClientAdded(Client client)
         {
             Player player = new Player(client, level,level.Layer+1);
+
+            addPlayer(player);
+        
             SendOutUpdatedLevel();
+        }
+
+        void addPlayer(Living player)
+        {
+            for (int i = 0; i < livingObjects.Count; i++)
+            {
+                if (livingObjects[i].Dexterity > player.Dexterity)
+                {
+                    livingObjects.Insert(i, player);
+                    return;
+                }
+            }
+            livingObjects.Add(player);
         }
 
         private void SendOutUpdatedLevel()

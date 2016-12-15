@@ -4,6 +4,8 @@
     {
         protected int manaPoints, healthPoints, actionPoints, baseAttack, strenght, dexterity, intelligence, creatureLevel;
 
+        public int Dexterity { get { return dexterity; } }
+
         public int health { get { return healthPoints; } }
         public int mana { get { return manaPoints; } }
         //protected IList<Equipment> EquipedItems;
