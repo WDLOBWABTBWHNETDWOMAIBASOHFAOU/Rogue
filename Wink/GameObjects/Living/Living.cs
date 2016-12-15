@@ -8,6 +8,7 @@ namespace Wink
         protected Level level;
         private int timeleft;
         private bool startTimer;
+        public bool isTurn;
 
         protected string idleAnimation, moveAnimation, dieAnimation;
         string dieSound;
