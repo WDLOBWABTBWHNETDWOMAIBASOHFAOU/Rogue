@@ -16,6 +16,7 @@ namespace Wink
         public override void OnServerReceive(LocalServer server)
         {
             Player.MoveTo(Tile);
+            Player.ActionPoints = Player.ActionPoints -1;
             server.LevelChanged();
         }
 
