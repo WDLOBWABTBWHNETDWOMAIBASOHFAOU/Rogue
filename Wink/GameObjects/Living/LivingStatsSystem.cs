@@ -2,7 +2,7 @@
 {
     public abstract partial class Living : AnimatedGameObject
     {
-        protected int manaPoints, healthPoints, actionPoints, baseAttack, strenght, dexterity, intelligence, creatureLevel;
+        protected int manaPoints, healthPoints, actionPoints, baseAttack, strength, dexterity, intelligence, creatureLevel;
 
         public int Dexterity { get { return dexterity; } }
 
@@ -21,7 +21,7 @@
         protected void SetStats(int creatureLevel = 1, int strenght = 2, int dexterity = 2, int intelligence = 2, int baseAttack = 40)
         {
             this.creatureLevel = creatureLevel;
-            this.strenght = strenght;
+            this.strength = strenght;
             this.dexterity = dexterity;
             this.intelligence = intelligence;
             //EquipedItems = new List<Equipment>();
@@ -94,7 +94,7 @@
             // get the baseattack value of the equiped weapon, if non equiped use baseattack of living
             // min max base attack value for each weapon and random inbetween or random between 0.8 and 1.2 of base (for example)
             int attack = baseAttack;            
-            int attackValue = (int)calculateValue(attack, strenght);     
+            int attackValue = (int)calculateValue(attack, strength);     
 
             return attackValue;
         }

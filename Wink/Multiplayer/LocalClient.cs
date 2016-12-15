@@ -63,7 +63,7 @@ namespace Wink
 
         private void FindClicked(List<GameObject> gameObjects, Vector2 mousePos)
         {
-            for (int i = 0; i < gameObjects.Count; i++)
+            for (int i = gameObjects.Count-1; i >= 0; i--)
             {
                 //First check whether current gameObject was clicked
                 if (gameObjects[i].BoundingBox.Contains(mousePos))
@@ -87,7 +87,7 @@ namespace Wink
                         if(gObj is ClickableGameObject)
                         {
                             (gObj as ClickableGameObject).OnClick(server);
-                            //return;
+                            return;
                         }
                     }
                 }

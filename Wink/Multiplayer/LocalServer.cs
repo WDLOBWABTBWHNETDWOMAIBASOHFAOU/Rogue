@@ -29,7 +29,7 @@ namespace Wink
 
             livingObjects = level.FindAll(obj => obj is Living).Cast<Living>().ToList();
             livingObjects.Sort((obj1, obj2)=> obj1.Dexterity - obj2.Dexterity);
-            livingObjects.ElementAt(0).isTurn = true;
+            //livingObjects.ElementAt(0).isTurn = true;
 
             if (publicServer)
             {

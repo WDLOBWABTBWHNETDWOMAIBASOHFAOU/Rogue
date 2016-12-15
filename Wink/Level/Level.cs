@@ -66,11 +66,15 @@ namespace Wink
                 }
             }
 
-            Item testItem = new TestItem("empty:65:65:10:Pink", 1, layer + 1);
+            //Putting the item one layer above the inventory box
+            int inventoryLayer = layer + 1;
+            int itemLayer = layer + 2;
+
+            Item testItem = new TestItem("empty:65:65:10:Pink", 1, itemLayer); 
             testItem.Position = new Vector2(GameEnvironment.Random.Next(0, tf.Columns - 1) * Tile.TileWidth, GameEnvironment.Random.Next(0, tf.Rows - 1) * Tile.TileHeight);
             Add(testItem);
 
-            InventoryBox inventory = new InventoryBox(3, 6, layer + 1);
+            InventoryBox inventory = new InventoryBox(3, 6, inventoryLayer);
             inventory.Position = new Vector2((tf.Columns + 1) * tf.CellWidth, 0);
             Add(inventory);
         }
