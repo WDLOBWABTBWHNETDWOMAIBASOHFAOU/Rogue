@@ -10,6 +10,11 @@ namespace Wink
     {
         Living whoseTurnItIs;
 
+        public StartTurnEvent(Sender sender) : base(sender)
+        {
+
+        }
+
         public override void OnClientReceive(LocalClient client)
         {
             throw new NotImplementedException();

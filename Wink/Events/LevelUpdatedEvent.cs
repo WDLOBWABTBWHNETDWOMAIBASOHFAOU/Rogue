@@ -7,6 +7,11 @@ namespace Wink
     {
         public Level updatedLevel { get; set; }
 
+        public LevelUpdatedEvent(Sender sender) : base(sender)
+        {
+
+        }
+
         public override void OnClientReceive(LocalClient client)
         {
             client.Level = updatedLevel;

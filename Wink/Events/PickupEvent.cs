@@ -8,6 +8,11 @@ namespace Wink
         public Player player { get; set; }
         public GameObjectGrid target { get; set; }
 
+        public PickupEvent(Sender sender) : base(sender)
+        {
+
+        }
+
         public override void OnClientReceive(LocalClient client)
         {
             throw new NotImplementedException();

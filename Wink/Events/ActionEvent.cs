@@ -11,6 +11,11 @@ namespace Wink
     {
         protected abstract int Cost { get; }
 
+        public ActionEvent(Sender sender) : base(sender)
+        {
+
+        }
+
         public sealed override void OnServerReceive(LocalServer server)
         {
             Player p = server.Level.Find("player_" + (sender as Client).ClientName) as Player;
@@ -22,7 +27,7 @@ namespace Wink
         public sealed override bool Validate(Level level)
         {
             Player p = level.Find("player_" + (sender as Client).ClientName) as Player;
-            return ValidateAction(level) && p.ActionPoints >= Cost;
+            return ValidateAction(level) && p.isTurn && p.ActionPoints >= Cost;
         }
 
         protected abstract bool ValidateAction(Level level);

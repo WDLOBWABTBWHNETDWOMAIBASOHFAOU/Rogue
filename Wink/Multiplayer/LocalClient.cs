@@ -32,9 +32,9 @@ namespace Wink
             camera = new Camera();
 
             gameObjects = new GameObjectList();
-            server.AddLocalClient(this);
-            
             gameObjects.Add(new PlayingGUI());
+
+            server.AddLocalClient(this);
         }
 
         public void LoadPlayerGUI()
@@ -72,7 +72,7 @@ namespace Wink
                     if (gameObjects[i] is ClickableGameObject)
                     {
                         //If so execute OnClick and return
-                        (gameObjects[i] as ClickableGameObject).OnClick(server);
+                        (gameObjects[i] as ClickableGameObject).OnClick(server, this);
                         return;
                     }
                     else if (gameObjects[i] is GameObjectList)

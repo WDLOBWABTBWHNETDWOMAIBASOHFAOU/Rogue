@@ -7,6 +7,11 @@ namespace Wink
     {
         protected Sender sender;
 
+        public Event(Sender sender)
+        {
+            this.sender = sender;
+        }
+
         public abstract void OnClientReceive(LocalClient client);
         public abstract void OnServerReceive(LocalServer server);
 

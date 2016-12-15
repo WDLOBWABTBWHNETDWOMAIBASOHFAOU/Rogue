@@ -64,11 +64,11 @@ namespace Wink
             set { passable = value; }
         }
 
-        public virtual void OnClick(Server server)
+        public virtual void OnClick(Server server, LocalClient sender)
         {
             if( TileType == TileType.Normal)
             {
-                PlayerMoveEvent pme = new PlayerMoveEvent();
+                PlayerMoveEvent pme = new PlayerMoveEvent(sender);
                 pme.Player = (Root as GameObjectList).Find("player_" + Environment.MachineName) as Player;
                 pme.Tile = this;
 
@@ -85,7 +85,7 @@ namespace Wink
             }
             else if(TileType == TileType.Inventory)
             {
-                PickupEvent PuE = new PickupEvent();
+                PickupEvent PuE = new PickupEvent(sender);
                 PuE.player = (Root as GameObjectList).Find("player_" + Environment.MachineName) as Player;
                 InventoryBox target = this.parent as InventoryBox;
 

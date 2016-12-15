@@ -8,6 +8,11 @@ namespace Wink
         public Player Player { get; set; }
         public Tile Tile { get; set; }
 
+        public PlayerMoveEvent(Sender sender) : base(sender)
+        {
+
+        }
+
         protected override int Cost
         {
             get { return 1; }
@@ -21,7 +26,6 @@ namespace Wink
         protected override void DoAction(LocalServer server)
         {
             Player.MoveTo(Tile);
-            Player.ActionPoints = Player.ActionPoints - 1;
             server.LevelChanged();
         }
 

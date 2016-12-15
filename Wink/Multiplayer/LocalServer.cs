@@ -56,11 +56,13 @@ namespace Wink
 
         private void ClientAdded(Client client)
         {
-            Player player = new Player(client, Level,Level.Layer+1);
-
+            Player player = new Player(client, Level, Level.Layer + 1);
             AddPlayer(player);
-        
-            SendOutUpdatedLevel();
+            player.isTurn = livingObjects[turnIndex] == player ? true : false;
+
+            LevelUpdatedEvent e = new JoinedServerEvent(this);
+            e.updatedLevel = Level;
+            client.Send(e);
         }
 
         private void AddPlayer(Living player)
@@ -80,7 +82,7 @@ namespace Wink
         {
             foreach(Client c in clients)
             {
-                LevelUpdatedEvent e = new LevelUpdatedEvent();
+                LevelUpdatedEvent e = new LevelUpdatedEvent(this);
                 e.updatedLevel = Level;
                 c.Send(e);
             }
@@ -120,7 +122,7 @@ namespace Wink
 
         public void UpdateTurn()
         {
-            if( livingObjects.ElementAt(turnIndex).ActionPoints <= 0)
+            if (livingObjects.ElementAt(turnIndex).ActionPoints <= 0)
             {
                 livingObjects.ElementAt(turnIndex).isTurn = false;
                 turnIndex = (turnIndex +1)% livingObjects.Count;

@@ -7,6 +7,11 @@ namespace Wink
     {
         public string clientName { get; set; }
 
+        public JoinServerEvent(Sender sender) : base(sender)
+        {
+
+        }
+
         public override void OnClientReceive(LocalClient client)
         {
         }

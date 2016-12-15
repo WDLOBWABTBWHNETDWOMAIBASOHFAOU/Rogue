@@ -8,6 +8,11 @@ namespace Wink
         public Living Attacker { get; set; }
         public Living Defender { get; set; }
 
+        public AttackEvent(Sender sender) : base(sender)
+        {
+
+        }
+
         protected override int Cost
         {
             get { return 1;  }
