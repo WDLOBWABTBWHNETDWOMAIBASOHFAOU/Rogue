@@ -2,6 +2,8 @@
 {
     public abstract partial class Living : AnimatedGameObject
     {
+        public const int MaxActionPoints = 4;
+
         protected int manaPoints, healthPoints, actionPoints, baseAttack, strength, dexterity, intelligence, creatureLevel;
 
         public int Dexterity { get { return dexterity; } }
@@ -27,7 +29,7 @@
             this.intelligence = intelligence;
             //EquipedItems = new List<Equipment>();
             this.baseAttack = baseAttack;
-            actionPoints = 4;
+            actionPoints = MaxActionPoints;
         }
 
         /// <summary>

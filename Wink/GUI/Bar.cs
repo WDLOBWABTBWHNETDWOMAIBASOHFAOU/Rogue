@@ -47,8 +47,7 @@ namespace Wink
         public int Width {
             get { return (int)font.MeasureString(inner.Value.ToString()).X + outer.Width; }
         }
-
-
+        
         public Bar(T o, Func<T, int> test, int maxValue, SpriteFont font, Color color, int layer = 0, string id = "", float scale = 1) : base(layer, id)
         {
             this.font = font;

@@ -48,7 +48,7 @@ namespace Wink
             Add(mpBar);
 
             //Action Points
-            Bar<Player> apBar = new Bar<Player>(player, p => p.ActionPoints, 4, textfieldFont, Color.Yellow, 2, "ActionBar", 2.5f);
+            Bar<Player> apBar = new Bar<Player>(player, p => p.ActionPoints, Living.MaxActionPoints, textfieldFont, Color.Yellow, 2, "ActionBar", 2.5f);
             int screenWidth = GameEnvironment.Screen.X;
             Vector2 APBarPosition = new Vector2(screenWidth - barX - apBar.Width, HPBarPosition.Y);
             apBar.Position = new Vector2(APBarPosition.X, APBarPosition.Y);

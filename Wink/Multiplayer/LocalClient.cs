@@ -8,6 +8,8 @@ namespace Wink
     public class LocalClient : Client
     {
         private GameObjectList gameObjects;
+        private Camera camera;
+
         public Level Level
         {
             get
@@ -22,8 +24,11 @@ namespace Wink
                 gameObjects.Add(value);
             }
         }
-
-        private Camera camera;
+        
+        public Player Player
+        {
+            get { return gameObjects.Find("player_" + ClientName) as Player; }
+        }
 
         public LocalClient(Server server) : base(server)
         {
@@ -40,8 +45,7 @@ namespace Wink
         public void LoadPlayerGUI()
         {
             PlayingGUI pgui = gameObjects.Find(obj => obj is PlayingGUI) as PlayingGUI;
-            Player p = gameObjects.Find("player_" + ClientName) as Player;
-            pgui.AddPlayerGUI(p);
+            pgui.AddPlayerGUI(Player);
         }
 
         public void Update(GameTime gameTime)
