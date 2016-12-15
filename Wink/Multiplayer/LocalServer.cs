@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Linq;
+using System;
 
 namespace Wink
 {
@@ -12,6 +13,8 @@ namespace Wink
         public Level level { get; }
         private List<Living> livingObjects;
         bool levelChanged;
+
+        private int turnIndex;
 
         private bool isPublic;
         private TcpListener tcpListener;
@@ -29,7 +32,6 @@ namespace Wink
 
             livingObjects = level.FindAll(obj => obj is Living).Cast<Living>().ToList();
             livingObjects.Sort((obj1, obj2)=> obj1.Dexterity - obj2.Dexterity);
-            livingObjects.ElementAt(0).isTurn = true;
 
             if (publicServer)
             {
@@ -42,6 +44,7 @@ namespace Wink
             if (e.Validate())
             {
                 e.OnServerReceive(this);
+                UpdateTurn();
             }
         }
 
@@ -113,6 +116,17 @@ namespace Wink
         public void LevelChanged()
         {
             levelChanged = true;
+        }
+
+        public void UpdateTurn()
+        {
+            if( livingObjects.ElementAt(turnIndex).ActionPoints <= 0)
+            {
+                livingObjects.ElementAt(turnIndex).isTurn = false;
+                turnIndex = (turnIndex +1)% livingObjects.Count;
+                livingObjects.ElementAt(turnIndex).isTurn = true;
+                livingObjects.ElementAt(turnIndex).ActionPoints = 4;
+            }
         }
     }
 }
