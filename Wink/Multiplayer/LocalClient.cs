@@ -52,9 +52,8 @@ namespace Wink
         {
             if (inputHelper.MouseLeftButtonPressed() && Level != null)
             {
-                Vector2 mousePos = inputHelper.MousePosition;
-                Vector2 globalPos = mousePos + camera.GlobalPosition;
-                FindClicked(gameObjects.Children, globalPos);
+                Vector2 globalPos = inputHelper.MousePosition + camera.GlobalPosition;
+                FindClicked(Level.Children, globalPos);
             }
 
             camera.HandleInput(inputHelper);
@@ -63,6 +62,7 @@ namespace Wink
 
         private void FindClicked(List<GameObject> gameObjects, Vector2 mousePos)
         {
+            //Search through gameObjects from back to front, so highest layer objects go first.
             for (int i = gameObjects.Count-1; i >= 0; i--)
             {
                 //First check whether current gameObject was clicked
@@ -79,16 +79,16 @@ namespace Wink
                     {
                         //If the object is not clickable, but is a list, search the list
                         FindClicked((gameObjects[i] as GameObjectList).Children, mousePos);
+                        return;
                     }
                     else if (gameObjects[i] is GameObjectGrid)
                     {
-                        //If the object is a grid, find the gameObject that was clicked and execute OnClick.
-                        GameObject gObj = (gameObjects[i] as GameObjectGrid).Find(obj => obj.BoundingBox.Contains(mousePos));
-                        if(gObj is ClickableGameObject)
-                        {
-                            (gObj as ClickableGameObject).OnClick(server);
-                            return;
-                        }
+                        //If the object is a grid, find the gameObject that was clicked and call this method again 
+                        //(to make sure it is not a list or grid too)
+                        GameObjectGrid gObjGrid = gameObjects[i] as GameObjectGrid;
+                        GameObject gObj = gObjGrid.Find(obj => obj.BoundingBox.Contains(mousePos));
+                        FindClicked(new List<GameObject>() { gObj }, mousePos);
+                        return;
                     }
                 }
             }
