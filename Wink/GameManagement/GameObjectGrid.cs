@@ -115,7 +115,7 @@ public class GameObjectGrid : GameObject
     {
         foreach (GameObject obj in grid)
         {
-            if(obj != null)
+            if (obj != null)
             {
                 obj.HandleInput(inputHelper);
             }
