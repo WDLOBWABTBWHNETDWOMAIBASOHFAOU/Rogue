@@ -89,7 +89,7 @@ namespace Wink
                 PuE.player = (Root as GameObjectList).Find("player_" + Environment.MachineName) as Player;
                 InventoryBox target = this.parent as InventoryBox;
 
-                if (target.itemGrid.Get((int)position.X, (int)position.Y) == null)
+                if (target.itemGrid[(int)position.X, (int)position.Y] == null)
                 {
                     Item newItem = new EmptyItem("empty:65:65:10:Gray");
                     newItem.Position = this.Position;
@@ -97,7 +97,7 @@ namespace Wink
                 }
                 else
                 {
-                    PuE.item = target.itemGrid.Get((int)position.X, (int)position.Y) as Item;
+                    PuE.item = target.itemGrid[(int)position.X, (int)position.Y] as Item;
                 }
                 PuE.target = target.itemGrid;
                 server.Send(PuE);
