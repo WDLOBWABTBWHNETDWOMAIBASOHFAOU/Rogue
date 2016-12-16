@@ -57,6 +57,7 @@
     <Compile Include="GameObjects\Items\EmptyItem.cs" />
     <Compile Include="GameObjects\InventorySystem\InventoryBox.cs" />
     <Compile Include="GameObjects\Items\Item.cs" />
+    <Compile Include="GameObjects\Living\Enemy.cs" />
     <Compile Include="GameObjects\Living\Living.cs" />
     <Compile Include="GameObjects\Living\LivingCombat.cs" />
     <Compile Include="GameObjects\Living\LivingStatsSystem.cs" />
