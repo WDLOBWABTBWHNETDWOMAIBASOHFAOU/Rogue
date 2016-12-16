@@ -3,6 +3,9 @@
     public abstract partial class Living : AnimatedGameObject
     {
         protected int manaPoints, healthPoints, actionPoints, baseAttack, strenght, dexterity, intelligence, creatureLevel;
+
+        public int health { get { return healthPoints; } }
+        public int mana { get { return manaPoints; } }
         //protected IList<Equipment> EquipedItems;
 
         /// <summary>
@@ -47,6 +50,7 @@
             int maxHP=(int)calculateValue(40, creatureLevel - 1, 4);
             return maxHP;
         }
+        public int MaxHealth { get {return MaxHP(); } }
 
         /// <summary>
         /// returns the maximum of manapoints the living object can have
@@ -57,6 +61,7 @@
             int maxManaPoints = (int)calculateValue(50, intelligence, 15);
             return maxManaPoints;
         }
+        public int MaxMana { get { return MaxManaPoints(); } }
 
         /// <summary>
         /// returns HitChance based on stats

@@ -14,10 +14,10 @@ namespace Wink
 
         public void AddTo(Item newItem, GameObjectGrid target)
         {
-            if(target != null)
+            if (target != null)
             {
-            Vector2 targetPosition = newItem.Position / target.CellHeight;
-            target.Add(oldItem, (int)targetPosition.X, (int)targetPosition.Y);
+                Vector2 targetPosition = newItem.Position / target.CellHeight;
+                target.Add(oldItem, (int)targetPosition.X, (int)targetPosition.Y);
             }
 
             Add(newItem, 0, 0);
@@ -27,16 +27,23 @@ namespace Wink
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
-            Position = Mouse.GetState().Position.ToVector2() + new Vector2(10,10);
-            if (Get(0,0) is EmptyItem)
-            {
-                grid[0, 0] = null;
-            } 
+            
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
         {
             base.Draw(gameTime, spriteBatch, camera);
+        }
+
+        public override void HandleInput(InputHelper inputHelper)
+        {
+            base.HandleInput(inputHelper);
+
+            Position = inputHelper.MousePosition + new Vector2(10, 10);
+            if (Get(0, 0) is EmptyItem)
+            {
+                grid[0, 0] = null;
+            }
         }
     }
 }

@@ -17,7 +17,7 @@ namespace Wink
         {
             clients = new List<Client>();
 
-            Level l = new Level();
+            Level l = new Level(1);
             level = l;
 
 
@@ -67,6 +67,7 @@ namespace Wink
             if (levelChanged)
             {
                 SendOutUpdatedLevel();
+                levelChanged = false;
             }
         }
         

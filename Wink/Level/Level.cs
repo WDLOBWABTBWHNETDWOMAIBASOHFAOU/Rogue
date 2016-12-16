@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace Wink
 {
@@ -15,9 +16,11 @@ namespace Wink
         {
         }
 
-        public Level() : base(0, "Level")
+        public Level(int levelIndex) : base(0, "Level")
         {
-            int rows= 10;
+            LoadTiles("Content/Levels/" + levelIndex + ".txt");
+
+            /*int rows= 10;
             int columns=10;
             TileField tf = new TileField(columns, rows, 0, "TileField");
             Point startTile = new Point(GameEnvironment.Random.Next(0, columns - 1), GameEnvironment.Random.Next(0, rows - 1));
@@ -35,15 +38,77 @@ namespace Wink
                     }                    
                 }
             }
-            Add(tf);
+            Add(tf);*/
+        }
 
-            Item testItem = new TestItem("empty:65:65:10:Pink",1,layer+1);
-            testItem.Position = new Vector2(GameEnvironment.Random.Next(0, columns - 1) * Tile.TileWidth, GameEnvironment.Random.Next(0, rows - 1) * Tile.TileHeight);
+        public void LoadTiles(string path)
+        {
+            List<string> textLines = new List<string>();
+            StreamReader fileReader = new StreamReader(path);
+            string line = fileReader.ReadLine();
+            int width = line.Length;
+            while (line != null)
+            {
+                textLines.Add(line);
+                line = fileReader.ReadLine();
+            }
+            //timelimit = int.Parse(textLines[textLines.Count - 1]);
+            TileField tf = new TileField(textLines.Count, width, 0, "TileField");
+
+
+            Add(tf);
+            for (int x = 0; x < width; ++x)
+            {
+                for (int y = 0; y < textLines.Count; ++y)
+                {
+                    Tile t = LoadTile(textLines[y][x], x, y);
+                    tf.Add(t, x, y);
+                }
+            }
+
+            Item testItem = new TestItem("empty:65:65:10:Pink", 1, layer + 1);
+            testItem.Position = new Vector2(GameEnvironment.Random.Next(0, tf.Columns - 1) * Tile.TileWidth, GameEnvironment.Random.Next(0, tf.Rows - 1) * Tile.TileHeight);
             Add(testItem);
 
-            InventoryBox inventory = new InventoryBox(3,6,layer+1);
-            inventory.Position = new Vector2((tf.Columns+1)*tf.CellWidth,0);
+            InventoryBox inventory = new InventoryBox(3, 6, layer + 1);
+            inventory.Position = new Vector2((tf.Columns + 1) * tf.CellWidth, 0);
             Add(inventory);
+        }
+        private Tile LoadTile(char tileType, int x, int y)
+        {
+            switch (tileType)
+            {
+                case '.':
+                    return new Tile();
+                case '1':
+                    return LoadStartTile();
+                case '#':
+                    return LoadWallTile("spr_wall", TileType.Wall);
+                case '-':
+                    return LoadFloorTile("spr_floor", TileType.Normal);
+                default:
+                    return new Tile("");
+            }
+        }
+
+        private Tile LoadWallTile(string name, TileType tileType)
+        {
+            Tile t = new Tile("empty:65:65:10:Blue", tileType);
+            t.Passable = false;
+            return t;
+        }
+
+        private Tile LoadFloorTile(string name, TileType tileType)
+        {
+            Tile t = new Tile("empty:65:65:10:DarkGreen", tileType);
+            t.Passable = true;
+            return t;
+        }
+        private Tile LoadStartTile()
+        {
+            Tile t = new Tile("empty:65:65:10:Red", TileType.Normal, 0, "startTile");
+            t.Passable = true;
+            return t;
         }
     }
 }
