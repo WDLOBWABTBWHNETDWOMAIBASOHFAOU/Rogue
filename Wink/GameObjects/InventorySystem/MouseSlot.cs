@@ -40,7 +40,9 @@ namespace Wink
             base.HandleInput(inputHelper);
 
             Position = inputHelper.MousePosition + new Vector2(10, 10);
-            if (Get(0, 0) is EmptyItem)
+            // if (Get(0, 0) is EmptyItem)
+            if (this[0, 0] is EmptyItem)
+            // it's not shorter but it is more consistent.
             {
                 grid[0, 0] = null;
             }

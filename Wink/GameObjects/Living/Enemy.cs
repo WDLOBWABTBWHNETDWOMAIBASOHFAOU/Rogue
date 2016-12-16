@@ -19,7 +19,7 @@ namespace Wink
             Tile ST = grid[GameEnvironment.Random.Next(grid.Columns - 1), GameEnvironment.Random.Next(grid.Rows - 1)] as Tile;
             while (!ST.Passable)
             {
-                ST = grid.Get(GameEnvironment.Random.Next(grid.Columns - 1), GameEnvironment.Random.Next(grid.Rows - 1)) as Tile;
+                ST = grid[GameEnvironment.Random.Next(grid.Columns - 1), GameEnvironment.Random.Next(grid.Rows - 1)] as Tile;
             }
             float tileX = (ST.TilePosition.ToVector2().X + 1) * ST.Height - ST.Height / 2;
             float tileY = (ST.TilePosition.ToVector2().Y + 1) * ST.Width;
