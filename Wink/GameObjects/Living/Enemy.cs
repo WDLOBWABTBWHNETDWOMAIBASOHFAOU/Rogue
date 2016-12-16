@@ -30,5 +30,17 @@ namespace Wink
             base.InitAnimation();
             PlayAnimation("idle");
         }
+
+        public override void Update(GameTime gameTime)
+        {
+            base.Update(gameTime);
+
+            // Turn based testing AI
+            if (this.isTurn)
+            {
+                this.position = position + new Vector2(Tile.TileHeight,0);
+                ActionPoints = 0;
+            }
+        }
     }
 }

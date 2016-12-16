@@ -30,8 +30,13 @@ namespace Wink
             Level l = new Level(1);
             Level = l;
 
+            turnIndex = 0;
+
             livingObjects = Level.FindAll(obj => obj is Living).Cast<Living>().ToList();
             livingObjects.Sort((obj1, obj2)=> obj1.Dexterity - obj2.Dexterity);
+
+            //ToDo seperate 1. loading and setting level and players and 2. start playing a level
+            InitTurn();
 
             if (publicServer)
             {
@@ -44,7 +49,7 @@ namespace Wink
             if (e.Validate(Level))
             {
                 e.OnServerReceive(this);
-                UpdateTurn();
+                //UpdateTurn();
             }
         }
 
@@ -98,6 +103,7 @@ namespace Wink
         public void Update(GameTime gameTime)
         {
             Level.Update(gameTime);
+            UpdateTurn();
 
             if (levelChanged)
             {
@@ -120,7 +126,7 @@ namespace Wink
             levelChanged = true;
         }
 
-        public void UpdateTurn()
+        private void UpdateTurn()
         {
             if (livingObjects.ElementAt(turnIndex).ActionPoints <= 0)
             {
@@ -129,6 +135,11 @@ namespace Wink
                 livingObjects.ElementAt(turnIndex).isTurn = true;
                 livingObjects.ElementAt(turnIndex).ActionPoints = 4;
             }
+        }
+
+        public void InitTurn()
+        {
+            livingObjects.ElementAt(turnIndex).isTurn = true;
         }
     }
 }
