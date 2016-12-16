@@ -19,8 +19,8 @@ namespace Wink
             int leftx = (GameEnvironment.Screen.X - (buttonWidth * 2 + buffer)) / 2;
             int rightx = leftx + buttonWidth + buffer;
 
-            SpriteFont defaultFont = GameEnvironment.AssetManager.GetFont("default");
-            SpriteFont textfieldFont = GameEnvironment.AssetManager.GetFont("TextFieldFont");
+            SpriteFont defaultFont = GameEnvironment.AssetManager.GetFont("Arial12");
+            SpriteFont textfieldFont = GameEnvironment.AssetManager.GetFont("Arial26");
 
             singlePlayerButton = new Button("button", "Singleplayer", textfieldFont, Color.Black);
             singlePlayerButton.Position = new Vector2(leftx, 300);

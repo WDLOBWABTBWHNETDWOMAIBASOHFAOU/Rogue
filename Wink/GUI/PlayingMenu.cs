@@ -1,23 +1,15 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Wink
 {
-    class PlayingMenu : GameObjectList
+    class PlayingMenu : Window
     {
         Button back;
 
-        public PlayingMenu()
+        public PlayingMenu() : base(350, 500, true, false)
         {
-            SpriteFont sf = GameEnvironment.AssetManager.GetFont("TextFieldFont");
-
-            SpriteGameObject bg = new SpriteGameObject("empty:350:500:75:Black", 0, "", 0, 0, 1);
-            Add(bg);
+            SpriteFont sf = GameEnvironment.AssetManager.GetFont("Arial26");
 
             back = new Button("button", "Back to Main Menu", sf, Color.Black);
             back.Position = new Vector2(25, 25);
@@ -32,6 +24,5 @@ namespace Wink
                 GameEnvironment.GameStateManager.SwitchTo("mainMenuState");
             }
         }
-
     }
 }

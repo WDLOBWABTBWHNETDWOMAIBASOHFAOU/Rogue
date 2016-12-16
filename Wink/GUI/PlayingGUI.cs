@@ -13,7 +13,7 @@ namespace Wink
             Layer = 1;
 
             Point screen = GameEnvironment.Screen;
-            SpriteFont defaultFont = GameEnvironment.AssetManager.GetFont("default");
+            SpriteFont defaultFont = GameEnvironment.AssetManager.GetFont("Arial12");
 
             SpriteGameObject topBar = new SpriteGameObject("HUD/topbar", 0, "TopBar", 0, 0);
             Add(topBar);
@@ -31,7 +31,7 @@ namespace Wink
 
         public void AddPlayerGUI(Player player)
         {
-            SpriteFont textfieldFont = GameEnvironment.AssetManager.GetFont("TextFieldFont");
+            SpriteFont textfieldFont = GameEnvironment.AssetManager.GetFont("Arial26");
 
             const int barX = 150;
             Vector2 HPBarPosition = new Vector2(barX, 14);

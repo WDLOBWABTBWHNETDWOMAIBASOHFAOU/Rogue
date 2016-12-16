@@ -47,6 +47,7 @@
     <Compile Include="Events\LevelUpdatedEvent.cs" />
     <Compile Include="Events\PickupEvent.cs" />
     <Compile Include="Events\PlayerMoveEvent.cs" />
+    <Compile Include="GUI\Window.cs" />
     <Compile Include="Multiplayer\Sender.cs" />
     <Compile Include="Events\StartTurnEvent.cs" />
     <Compile Include="GameManagement\AnimatedGameObject.cs" />

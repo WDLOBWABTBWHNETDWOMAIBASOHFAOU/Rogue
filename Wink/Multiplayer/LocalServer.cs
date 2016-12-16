@@ -60,7 +60,8 @@ namespace Wink
             AddPlayer(player);
             player.isTurn = livingObjects[turnIndex] == player ? true : false;
 
-            LevelUpdatedEvent e = new JoinedServerEvent(this);
+            //Passing null because whenever a client receives an event it'll always be from the server.
+            JoinedServerEvent e = new JoinedServerEvent(null);
             e.updatedLevel = Level;
             client.Send(e);
         }
@@ -82,7 +83,8 @@ namespace Wink
         {
             foreach(Client c in clients)
             {
-                LevelUpdatedEvent e = new LevelUpdatedEvent(this);
+                //Passing null because whenever a client receives an event it'll always be from the server.
+                LevelUpdatedEvent e = new LevelUpdatedEvent(null); 
                 e.updatedLevel = Level;
                 c.Send(e);
             }

@@ -35,7 +35,7 @@ namespace Wink
             public LANTab()
             {
                 Point screen = GameEnvironment.Screen;
-                SpriteFont buttonFont = GameEnvironment.AssetManager.GetFont("TextFieldFont");
+                SpriteFont buttonFont = GameEnvironment.AssetManager.GetFont("Arial26");
 
                 //Create a text field for the ip address
                 ipAddress = new TextField(buttonFont, Color.Red);
@@ -70,7 +70,7 @@ namespace Wink
 
         public MultiplayerMenu()
         {
-            SpriteFont tabTitleFont = GameEnvironment.AssetManager.GetFont("TextFieldFont");
+            SpriteFont tabTitleFont = GameEnvironment.AssetManager.GetFont("Arial26");
             
             //Define two tabs
             TabField.Tab onlineTab = new TabField.Tab("Online", new OnlineTab());

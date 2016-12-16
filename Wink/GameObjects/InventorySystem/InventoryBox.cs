@@ -5,20 +5,28 @@ namespace Wink
 {
     public class InventoryBox : GameObjectGrid
     {
-        public GameObjectGrid itemGrid;
+        /// <summary>
+        /// The grid that contains the actual items
+        /// </summary>
+        private GameObjectGrid itemGrid;
+
+        public GameObjectGrid ItemGrid {
+            get { return itemGrid; }
+        }
+
         public InventoryBox(int rows=3, int columns=6, int layer = 0, string id = "") : base(rows, columns, layer, id)
         {
             CellHeight = Tile.TileHeight;
             CellWidth = Tile.TileWidth;
-            fillGrid();
+            FillGrid();
+
             itemGrid = new GameObjectGrid(rows, columns, layer + 1, "itemGrid");
             itemGrid.Parent = this;
             itemGrid.CellHeight = CellHeight;
             itemGrid.CellWidth = CellWidth;
-            
         }
 
-        public void fillGrid()
+        private void FillGrid()
         {
             for (int x = 0; x < Columns; x++)
             {
