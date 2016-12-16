@@ -46,6 +46,14 @@ public class GameObjectGrid : GameObject
         }
     }
 
+    public GameObject this[int x, int y]
+    {
+        get
+        {
+            return Get(x, y);
+        }
+    }
+
     public GameObject Get(int x, int y)
     {
         if (x >= 0 && x < grid.GetLength(0) && y >= 0 && y < grid.GetLength(1))
