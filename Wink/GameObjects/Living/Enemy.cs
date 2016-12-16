@@ -14,15 +14,16 @@ namespace Wink
             level.Add(this);
 
             TileField grid = level.Find("TileField") as TileField;
-            Tile ST = grid.Get(GameEnvironment.Random.Next(grid.Columns - 1), GameEnvironment.Random.Next(grid.Rows - 1)) as Tile;
-            if (!ST.Passable) while (!ST.Passable)
+            // This is going to have to be replaced with FindAll but seeing as it's not in this branch and I'm kinda lazy,
+            // I'm not doing that now. For now, this works.
+            Tile ST = grid[GameEnvironment.Random.Next(grid.Columns - 1), GameEnvironment.Random.Next(grid.Rows - 1)] as Tile;
+            while (!ST.Passable)
             {
                 ST = grid.Get(GameEnvironment.Random.Next(grid.Columns - 1), GameEnvironment.Random.Next(grid.Rows - 1)) as Tile;
             }
             float tileX = (ST.TilePosition.ToVector2().X + 1) * ST.Height - ST.Height / 2;
             float tileY = (ST.TilePosition.ToVector2().Y + 1) * ST.Width;
             Position = new Vector2(tileX, tileY);
-            //InitAnimation(); not sure if overriden version gets played right without restating
         }
 
         protected override void InitAnimation()
