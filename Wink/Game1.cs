@@ -41,10 +41,10 @@ namespace Wink
             windowSize = new Point(1024, 586);
             FullScreen = false;
 
-            //This needs to happen when switched to the playingstate(based on what menu option is chosen)
-            PlayingState ps = new PlayingState();
-            ps.InitializeGameMode(PlayingState.GameMode.Singleplayer);
-            gameStateManager.AddGameState("playingState", ps);
+            ////This needs to happen when switched to the playingstate(based on what menu option is chosen)
+            //PlayingState ps = ;
+            //ps.InitializeGameMode(PlayingState.GameMode.Singleplayer);
+            gameStateManager.AddGameState("playingState", new PlayingState());
             gameStateManager.AddGameState("mainMenuState", new MainMenuState());
             gameStateManager.AddGameState("multiplayerMenu", new MultiplayerMenu());
             gameStateManager.AddGameState("optionsMenu", new OptionsMenu());

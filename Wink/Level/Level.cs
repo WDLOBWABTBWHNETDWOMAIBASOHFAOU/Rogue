@@ -71,6 +71,12 @@ namespace Wink
             int itemLayer = layer + 2;
 
             Item testItem = new TestItem("empty:65:65:10:Pink", 1, itemLayer); 
+            // ENEMY CODE (test)
+            Enemy testEnemy = new Enemy(this, layer + 1);
+            Enemy testEnemy2 = new Enemy(this, layer + 1);
+            //Add(testEnemy);
+            // END ENEMY CODE (test)
+            
             testItem.Position = new Vector2(GameEnvironment.Random.Next(0, tf.Columns - 1) * Tile.TileWidth, GameEnvironment.Random.Next(0, tf.Rows - 1) * Tile.TileHeight);
             Add(testItem);
 
