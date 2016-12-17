@@ -100,6 +100,7 @@
     <Compile Include="GameManagement\SpriteSheet.cs" />
     <Compile Include="GameManagement\TextBox.cs" />
     <Compile Include="GameManagement\TextGameObject.cs" />
+    <Compile Include="States\GameSetupState.cs" />
     <Compile Include="States\MainMenuState.cs" />
     <Compile Include="States\MultiplayerMenu.cs" />
     <Compile Include="States\OptionsMenu.cs" />

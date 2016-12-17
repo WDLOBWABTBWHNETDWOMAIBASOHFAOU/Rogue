@@ -58,9 +58,9 @@ namespace Wink
                 {
                     //Connect here...
                     GameEnvironment.GameSettingsManager.SetValue("server_ip_address", ipAddress.Text);
-                    PlayingState ps = GameEnvironment.GameStateManager.GetGameState("playingState") as PlayingState;
-                    ps.InitializeGameMode(PlayingState.GameMode.MultiplayerClient);
-                    GameEnvironment.GameStateManager.SwitchTo("playingState");
+                    GameSetupState gss = GameEnvironment.GameStateManager.GetGameState("gameSetupState") as GameSetupState;
+                    gss.InitializeGameMode(GameSetupState.GameMode.MultiplayerClient);
+                    GameEnvironment.GameStateManager.SwitchTo("gameSetupState");
                 }
             }
         }
@@ -102,9 +102,9 @@ namespace Wink
             }
             else if (hostButton.Pressed)
             {
-                PlayingState ps = GameEnvironment.GameStateManager.GetGameState("playingState") as PlayingState;
-                ps.InitializeGameMode(PlayingState.GameMode.MultiplayerHost);
-                GameEnvironment.GameStateManager.SwitchTo("playingState");
+                GameSetupState gss = GameEnvironment.GameStateManager.GetGameState("GgameSetupState") as GameSetupState;
+                gss.InitializeGameMode(GameSetupState.GameMode.MultiplayerHost);
+                GameEnvironment.GameStateManager.SwitchTo("gameSetupState");
             }
         }
     }

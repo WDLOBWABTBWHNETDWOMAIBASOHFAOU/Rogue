@@ -44,6 +44,7 @@ namespace Wink
             ////This needs to happen when switched to the playingstate(based on what menu option is chosen)
             //PlayingState ps = ;
             //ps.InitializeGameMode(PlayingState.GameMode.Singleplayer);
+            gameStateManager.AddGameState("gameSetupState", new GameSetupState());
             gameStateManager.AddGameState("playingState", new PlayingState());
             gameStateManager.AddGameState("mainMenuState", new MainMenuState());
             gameStateManager.AddGameState("multiplayerMenu", new MultiplayerMenu());

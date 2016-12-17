@@ -17,8 +17,6 @@ namespace Wink
         {
             this.level = level;
             SetStats();
-            healthPoints = MaxHP();
-            manaPoints = MaxManaPoints();
             InitAnimation();
             timeleft = 1000;
         }
