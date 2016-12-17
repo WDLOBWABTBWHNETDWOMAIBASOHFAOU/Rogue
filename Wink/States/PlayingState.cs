@@ -55,6 +55,7 @@ namespace Wink
                 LocalServer ls = (LocalServer)server;
                 ls.Update(gameTime);
             }
+            
         }
 
         public void HandleInput(InputHelper inputHelper)

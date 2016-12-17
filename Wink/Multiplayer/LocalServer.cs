@@ -6,7 +6,8 @@ namespace Wink
     public class LocalServer : Server
     {
         private List<Client> clients;
-        public Level level { get; }
+        public Level level;
+        //{get;}
         bool levelChanged;
 
         /// <summary>
@@ -63,7 +64,7 @@ namespace Wink
         public void Update(GameTime gameTime)
         {
             level.Update(gameTime);
-
+            level.Root.Update(gameTime);
             if (levelChanged)
             {
                 SendOutUpdatedLevel();
