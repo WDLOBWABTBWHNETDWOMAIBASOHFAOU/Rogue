@@ -27,7 +27,7 @@
             if (dodgeNumber > DodgeChance())
             {
                 double defenceValue =ArmorValue();
-                healthPoints = (int)(attackValue / defenceValue);
+                healthPoints -= (int)(attackValue / defenceValue);
                 //Display damage taken
             }
             // Display attack dodged (feedback on succes)
