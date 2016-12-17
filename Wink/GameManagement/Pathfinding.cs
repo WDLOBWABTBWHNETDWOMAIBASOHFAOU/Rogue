@@ -17,15 +17,13 @@ namespace Wink
             List<Tile> closedTile = new List<Tile>();
             List<Tile> path = new List<Tile>();
             // Need grid positions
-            startingNode = tf.Get((int)start.X, (int)start.Y) as Tile;
-            endingNode = tf.Get((int)end.X, (int)end.Y) as Tile; ;
+            startingNode = tf[(int)start.X, (int)start.Y] as Tile;
+            endingNode = tf[(int)end.X, (int)end.Y] as Tile;
             openTile.Add(startingNode);
 
             while (openTile.Count > 0)
             {
                 Tile currentNode = openTile[0];
-                closedTile.Add(currentNode);
-                openTile.Remove(currentNode);
 
                 // Replaces current node with new current node
                 for (int i = 0; i < openTile.Count; i++)
@@ -36,6 +34,9 @@ namespace Wink
                     }
                 }
 
+                closedTile.Add(currentNode);
+                openTile.Remove(currentNode);
+                if (!currentNode.Passable) continue;
                 // Opens the surrounding Tile
                 // Add the surrounding 8 Tile to the openTile if they are walkable and not in the closedTile list and set gCost and hCost(hCost will be calculated and wont change later on)
                 // If a node is already in the openTile list check if the gCost is lower from this currentNode and update the gCost and originNode when true
@@ -44,12 +45,15 @@ namespace Wink
                 {
                     for (int y = -1; y <= 1; y++)
                     {
-                        Tile surroundingNode = tf.Get(currentNode.TilePosition.X + x, currentNode.TilePosition.Y + y) as Tile; // Again with the grid positions
+                        Tile surroundingNode = tf[currentNode.TilePosition.X + x, currentNode.TilePosition.Y + y] as Tile; // Again with the grid positions
                         if (surroundingNode == endingNode)
                         {
                             openTile.Clear();
                             closedTile.Clear();
+                            surroundingNode.originNode = currentNode;
                             path = findPath();
+                            path.Reverse();
+                            return path;
                         }
 
                         if (!closedTile.Contains(surroundingNode))
@@ -98,7 +102,7 @@ namespace Wink
         {
             Tile currentNode = endingNode;
             List<Tile> path = new List<Tile>();
-            while (currentNode != startingNode)
+            while (!currentNode.Equals(startingNode))
             {
                 path.Add(currentNode);
                 currentNode = currentNode.originNode;

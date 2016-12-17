@@ -22,11 +22,11 @@ namespace Wink
             timeleft = 1000;
         }
 
-        protected virtual void InitAnimation()
+        protected virtual void InitAnimation(string idleColor = "empty:65:65:10:Magenta")
         {//General animations
-            idleAnimation = "empty:65:65:10:Magenta";
+            idleAnimation = idleColor;
             moveAnimation = "empty:65:65:10:DarkBlue";
-            dieAnimation = "empty:65:65:10:DarkRed";
+            dieAnimation = "empty:65:65:10:LightBlue";
             LoadAnimation(idleAnimation, "idle", true);
             LoadAnimation(moveAnimation, "move", true, 0.05f);
             LoadAnimation(dieAnimation, "die", false);
@@ -62,7 +62,7 @@ namespace Wink
                     position.X = TileX - 0.5f * Tile.TileWidth;
                     position.Y = TileY;
                 }
-            }            
+            }
         }
     }
 }

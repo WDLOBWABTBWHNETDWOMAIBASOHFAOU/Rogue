@@ -25,9 +25,9 @@ namespace Wink
             //InitAnimation(); not sure if overriden version gets played right without restating
         }
 
-        protected override void InitAnimation()
+        protected override void InitAnimation(string idleColor = "empty:65:65:10:Magenta")
         {            
-            base.InitAnimation();
+            base.InitAnimation(idleColor);
             PlayAnimation("idle");
         }
 

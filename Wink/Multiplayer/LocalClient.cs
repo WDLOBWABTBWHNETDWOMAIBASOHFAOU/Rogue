@@ -49,7 +49,12 @@ namespace Wink
                 Vector2 globalPos = mousePos + camera.GlobalPosition;
                 FindClicked(gameObjects.Children, globalPos);
             }
-
+            if (inputHelper.KeyPressed(Keys.U))
+            {
+                Enemy e = Level.Find("Enemy") as Enemy;
+                Player p = Level.Find("player_" + ClientName) as Player;
+                e.GoTo(p);
+            }
             camera.HandleInput(inputHelper);
             gameObjects.HandleInput(inputHelper);
         }
