@@ -14,8 +14,7 @@ namespace Wink
         {
             public ClientField(Client client, int nr)
             {
-                TextGameObject name = new TextGameObject("Arial26");
-                name.Text = nr + ". " + client.ClientName ?? "";
+                TextGameObject name = new TrackingTextGameObject<Client>(client, c => nr + ". " + c.ClientName, "Arial26");
                 name.Color = Color.White;
                 Add(name);
 
