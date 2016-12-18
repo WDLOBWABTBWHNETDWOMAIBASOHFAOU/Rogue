@@ -9,6 +9,5 @@ namespace Wink
         }
 
         public abstract void Send(Event e);
-        public abstract void AddLocalClient(LocalClient localClient);
     }
 }

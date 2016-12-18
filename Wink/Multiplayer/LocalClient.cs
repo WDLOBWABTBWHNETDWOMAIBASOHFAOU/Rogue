@@ -38,8 +38,6 @@ namespace Wink
 
             gameObjects = new GameObjectList();
             gameObjects.Add(new PlayingGUI());
-
-            server.AddLocalClient(this);
         }
 
         public void LoadPlayerGUI()

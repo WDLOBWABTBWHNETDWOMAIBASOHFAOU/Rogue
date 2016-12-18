@@ -10,38 +10,32 @@ namespace Wink
     public class LocalServer : Server
     {
         private List<Client> clients;
-        public Level Level { get; }
         private List<Living> livingObjects;
-        bool levelChanged;
 
+        bool levelChanged;
         private int turnIndex;
 
-        private bool isPublic;
-        private TcpListener tcpListener;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="publicServer">Wether or not the server can be joined by others.</param>
-        public LocalServer(bool publicServer = false)
+        public Level Level { get; private set; }
+        
+        public LocalServer ()
         {
-            clients = new List<Client>();
+        }
 
-            Level l = new Level(1);
-            Level = l;
+        public void Init(List<Client> clients)
+        {
+            Level = new Level(1);
 
-            turnIndex = 0;
+            this.clients = clients;
+            foreach (Client c in clients)
+            {
+                Player player = new Player(c, Level, Level.Layer + 1);
+            }
 
             livingObjects = Level.FindAll(obj => obj is Living).Cast<Living>().ToList();
-            livingObjects.Sort((obj1, obj2)=> obj1.Dexterity - obj2.Dexterity);
+            livingObjects.Sort((obj1, obj2) => obj1.Dexterity - obj2.Dexterity);
+            livingObjects.ElementAt(turnIndex).isTurn = true;
 
-            //ToDo seperate 1. loading and setting level and players and 2. start playing a level
-            InitTurn();
-
-            if (publicServer)
-            {
-                MakePublic();
-            }
+            SendOutUpdatedLevel(true);
         }
 
         public override void Send(Event e)
@@ -49,57 +43,18 @@ namespace Wink
             if (e.Validate(Level))
             {
                 e.OnServerReceive(this);
-                //UpdateTurn();
             }
         }
 
-        public override void AddLocalClient(LocalClient localClient)
-        {
-            clients.Add(localClient);
-            ClientAdded(localClient);
-        }
-
-        private void ClientAdded(Client client)
-        {
-            Player player = new Player(client, Level, Level.Layer + 1);
-            AddPlayer(player);
-            player.isTurn = livingObjects[turnIndex] == player ? true : false;
-
-            //Passing null because whenever a client receives an event it'll always be from the server.
-            JoinedServerEvent e = new JoinedServerEvent(null);
-            e.updatedLevel = Level;
-            client.Send(e);
-        }
-
-        private void AddPlayer(Living player)
-        {
-            for (int i = 0; i < livingObjects.Count; i++)
-            {
-                if (livingObjects[i].Dexterity > player.Dexterity)
-                {
-                    livingObjects.Insert(i, player);
-                    return;
-                }
-            }
-            livingObjects.Add(player);
-        }
-
-        private void SendOutUpdatedLevel()
+        private void SendOutUpdatedLevel(bool first = false)
         {
             foreach(Client c in clients)
             {
                 //Passing null because whenever a client receives an event it'll always be from the server.
-                LevelUpdatedEvent e = new LevelUpdatedEvent(null); 
+                LevelUpdatedEvent e = first ? new JoinedServerEvent(null) : new LevelUpdatedEvent(null); 
                 e.updatedLevel = Level;
                 c.Send(e);
             }
-        }
-
-        private void MakePublic()
-        {
-            isPublic = true;
-            tcpListener = new TcpListener(IPAddress.Any, 29793);
-            tcpListener.Start();
         }
 
         public void Update(GameTime gameTime)
@@ -111,15 +66,6 @@ namespace Wink
             {
                 SendOutUpdatedLevel();
                 levelChanged = false;
-            }
-            if (isPublic)
-            {
-                if (tcpListener.Pending())
-                {
-                    TcpClient tcpClient = tcpListener.AcceptTcpClient();
-                    Client newClient = new RemoteClient(this, tcpClient);
-                    clients.Add(newClient);
-                }
             }
         }
         
@@ -137,11 +83,6 @@ namespace Wink
                 livingObjects.ElementAt(turnIndex).isTurn = true;
                 livingObjects.ElementAt(turnIndex).ActionPoints = 4;
             }
-        }
-
-        public void InitTurn()
-        {
-            livingObjects.ElementAt(turnIndex).isTurn = true;
         }
     }
 }

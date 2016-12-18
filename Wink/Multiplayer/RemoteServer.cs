@@ -15,8 +15,10 @@ namespace Wink
 
         Thread receivingThread;
 
-        public RemoteServer()
+        public RemoteServer(LocalClient client)
         {
+            this.client = client;
+
             string ip = GameEnvironment.GameSettingsManager.GetValue("server_ip_address");
             tcp = new TcpClient(ip, 29793);
 
@@ -57,11 +59,6 @@ namespace Wink
                     pendingEvents.Add(e);
                 }
             }
-        }
-
-        public override void AddLocalClient(LocalClient localClient)
-        {
-            client = localClient;
         }
 
         public override void Send(Event e)

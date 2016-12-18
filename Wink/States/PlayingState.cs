@@ -5,35 +5,13 @@ namespace Wink
 {
     public class PlayingState : IGameLoopObject
     {
-        public enum GameMode { Singleplayer, MultiplayerClient, MultiplayerHost, MultiplayerServer }
-
         private Server server;
         private Client client;
 
-        public void InitializeGameMode(GameMode gameMode)
+        public void SetClientAndServer(Client client, Server server)
         {
-            switch (gameMode)
-            {
-                case GameMode.MultiplayerClient:
-                    //Initialize RemoteServer and LocalClient
-                    server = new RemoteServer();
-                    client = new LocalClient(server);
-                    break;
-                case GameMode.MultiplayerHost:
-                    //Initialize LocalServer(public) and LocalClient
-                    server = new LocalServer(true);
-                    client = new LocalClient(server);
-                    break;
-                case GameMode.Singleplayer:
-                    //Initialize LocalServer(private) and LocalClient
-                    server = new LocalServer();
-                    client = new LocalClient(server);
-                    break;
-                case GameMode.MultiplayerServer:
-                    //Initialize LocalServer(public)
-                    //server = new LocalServer(true);
-                    break;
-            }
+            this.client = client;
+            this.server = server;
         }
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
@@ -43,7 +21,6 @@ namespace Wink
                 LocalClient lc = (LocalClient)client;
                 lc.Draw(gameTime, spriteBatch, camera);
             }
-                
         }
 
         public void Update(GameTime gameTime)
