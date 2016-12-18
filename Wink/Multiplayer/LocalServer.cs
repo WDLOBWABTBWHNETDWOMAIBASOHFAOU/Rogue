@@ -28,6 +28,7 @@ namespace Wink
             this.clients = clients;
             foreach (Client c in clients)
             {
+                //Player adds itself to level.
                 Player player = new Player(c, Level, Level.Layer + 1);
             }
 
