@@ -8,10 +8,10 @@ public class TextGameObject : GameObject
     protected string text;
     public float CameraSensitivity { get; protected set; }
 
-    public TextGameObject(string assetname, float cameraSensitivity=1.0f, int layer = 0, string id = "")
+    public TextGameObject(string fontName, float cameraSensitivity=1.0f, int layer = 0, string id = "")
         : base(layer, id)
     {
-        spriteFont = GameEnvironment.AssetManager.Content.Load<SpriteFont>(assetname);
+        spriteFont = GameEnvironment.AssetManager.Content.Load<SpriteFont>(fontName);
         color = Color.White;
         CameraSensitivity = cameraSensitivity;
     }

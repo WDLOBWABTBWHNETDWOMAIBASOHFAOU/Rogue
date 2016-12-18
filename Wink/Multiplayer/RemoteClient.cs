@@ -51,6 +51,7 @@ namespace Wink
                 if (s.DataAvailable)
                 {
                     Event e = (Event)binaryFormatter.Deserialize(s);
+                    
                     pendingEvents.Add(e);
                 }
             }

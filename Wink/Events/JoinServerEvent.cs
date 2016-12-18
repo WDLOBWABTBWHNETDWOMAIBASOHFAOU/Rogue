@@ -18,7 +18,7 @@ namespace Wink
 
         public override void OnServerReceive(LocalServer server)
         {
-
+            (sender as RemoteClient).ClientName = clientName;
         }
 
         public override bool Validate(Level level)

@@ -10,6 +10,20 @@ namespace Wink
 {
     class GameSetupState : GameObjectList
     {
+        private class ClientField : GameObjectList
+        {
+            public ClientField(Client client, int nr)
+            {
+                TextGameObject name = new TextGameObject("Arial26");
+                name.Text = nr + ". " + client.ClientName ?? "";
+                name.Color = Color.White;
+                Add(name);
+
+                //SelectField for heroes.
+                //SelectField<> sf = new SelectField<>();
+            }
+        }
+
         public enum GameMode { Singleplayer, MultiplayerClient, MultiplayerHost, MultiplayerServer }
 
         private TcpListener tcpListener;
@@ -18,13 +32,17 @@ namespace Wink
         private List<Client> clients;
         
         private Button startButton;
+        private Button backButton;
 
         public GameSetupState()
         {
-            //SelectField for heroes.
-            //SelectField<> sf = new SelectField<>();
             clients = new List<Client>();
-            
+
+            //Create a button to go back to the main menu.
+            SpriteFont arial26 = GameEnvironment.AssetManager.GetFont("Arial26");
+            backButton = new Button("button", "Back", arial26, Color.Black);
+            backButton.Position = new Vector2(100, Game1.Screen.Y - 100);
+            Add(backButton);
         }
 
         private void AddStartGame()
@@ -36,6 +54,14 @@ namespace Wink
             Add(startButton);
         }
 
+        private void AddClient(Client c)
+        {
+            clients.Add(c);
+            ClientField cf = new ClientField(c, clients.Count);
+            cf.Position = new Vector2(100, 100 * clients.Count);
+            Add(cf);
+        }
+
         public void InitializeGameMode(GameMode gameMode)
         {
             PlayingState ps = GameEnvironment.GameStateManager.GetGameState("playingState") as PlayingState;
@@ -44,14 +70,14 @@ namespace Wink
                 case GameMode.MultiplayerClient:
                     //Initialize RemoteServer and LocalClient
                     LocalClient lc = new LocalClient(server);
-                    clients.Add(lc);
+                    AddClient(lc);
                     server = new RemoteServer(lc);
                     ps.SetClientAndServer(lc, server);
                     break;
                 case GameMode.MultiplayerHost:
                     //Initialize LocalServer(public) and LocalClient
                     server = new LocalServer();
-                    clients.Add(new LocalClient(server));
+                    AddClient(new LocalClient(server));
                     ps.SetClientAndServer(clients[0], server);
                     tcpListener = new TcpListener(IPAddress.Any, 29793);
                     tcpListener.Start();
@@ -60,7 +86,7 @@ namespace Wink
                 case GameMode.Singleplayer:
                     //Initialize LocalServer(private) and LocalClient
                     server = new LocalServer();
-                    clients.Add(new LocalClient(server));
+                    AddClient(new LocalClient(server));
                     ps.SetClientAndServer(clients[0], server);
                     AddStartGame();
                     break;
@@ -95,7 +121,7 @@ namespace Wink
             {
                 TcpClient tcpClient = tcpListener.AcceptTcpClient();
                 Client newClient = new RemoteClient((LocalServer)server, tcpClient);
-                clients.Add(newClient);
+                AddClient(newClient);
             }
         }
 
@@ -103,13 +129,31 @@ namespace Wink
         {
             base.HandleInput(inputHelper);
 
+            if (backButton.Pressed)
+            {
+                Reset();
+                GameEnvironment.GameStateManager.SwitchTo("mainMenuState");
+            }
+
             if (startButton != null && startButton.Pressed)
             {
                 LocalServer ls = (LocalServer)server;
                 ls.SetupLevel(1, clients);
 
+                Reset();
                 GameEnvironment.GameStateManager.SwitchTo("playingState");
             }
+        }
+
+        public override void Reset()
+        {
+            base.Reset();
+            clients = new List<Client>();
+            server = null;
+            startButton = null;
+            if (tcpListener != null)
+                tcpListener.Stop();
+            tcpListener = null;
         }
     }
 }

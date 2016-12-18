@@ -70,7 +70,7 @@ namespace Wink
 
         public MultiplayerMenu()
         {
-            SpriteFont tabTitleFont = GameEnvironment.AssetManager.GetFont("Arial26");
+            SpriteFont arial26 = GameEnvironment.AssetManager.GetFont("Arial26");
             
             //Define two tabs
             TabField.Tab onlineTab = new TabField.Tab("Online", new OnlineTab());
@@ -78,16 +78,16 @@ namespace Wink
 
             Point screen = GameEnvironment.Screen;
             //Make a TabField and add the two tabs.
-            TabField tabField = new TabField(new List<TabField.Tab> { lanTab, onlineTab }, Color.Black, tabTitleFont, screen.X, screen.Y - 200);
+            TabField tabField = new TabField(new List<TabField.Tab> { lanTab, onlineTab }, Color.Black, arial26, screen.X, screen.Y - 200);
             Add(tabField);
 
             //Create a button to go back to the main menu.
-            backButton = new Button("button", "Back", tabTitleFont, Color.Black);
+            backButton = new Button("button", "Back", arial26, Color.Black);
             backButton.Position = new Vector2(100, screen.Y - 100);
             Add(backButton);
 
             //Create a button to start hosting.
-            hostButton = new Button("button", "Host a Game", tabTitleFont, Color.Black);
+            hostButton = new Button("button", "Host a Game", arial26, Color.Black);
             hostButton.Position = new Vector2(screen.X - hostButton.Width - 100, screen.Y - 100);
             Add(hostButton);
         }
@@ -102,7 +102,7 @@ namespace Wink
             }
             else if (hostButton.Pressed)
             {
-                GameSetupState gss = GameEnvironment.GameStateManager.GetGameState("GgameSetupState") as GameSetupState;
+                GameSetupState gss = GameEnvironment.GameStateManager.GetGameState("gameSetupState") as GameSetupState;
                 gss.InitializeGameMode(GameSetupState.GameMode.MultiplayerHost);
                 GameEnvironment.GameStateManager.SwitchTo("gameSetupState");
             }
