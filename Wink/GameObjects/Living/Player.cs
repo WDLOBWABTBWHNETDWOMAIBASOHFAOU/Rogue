@@ -14,6 +14,8 @@ namespace Wink
             this.client = client;
 
             mouseSlot = new MouseSlot(layer + 11, "mouseSlot");
+
+            SetStats(5, 5, 5, 5, 55);
             level.Add(mouseSlot);
 
             level.Add(this);

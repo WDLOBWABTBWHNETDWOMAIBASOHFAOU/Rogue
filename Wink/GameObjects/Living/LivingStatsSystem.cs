@@ -30,6 +30,9 @@
             //EquipedItems = new List<Equipment>();
             this.baseAttack = baseAttack;
             actionPoints = MaxActionPoints;
+
+            healthPoints = MaxHP();
+            manaPoints = MaxManaPoints();
         }
 
         /// <summary>

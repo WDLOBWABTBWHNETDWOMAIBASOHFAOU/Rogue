@@ -39,6 +39,7 @@ namespace Wink
             if (this.isTurn)
             {
                 this.position = position + new Vector2(Tile.TileHeight,0);
+                PlayAnimation("die");
                 ActionPoints = 0;
             }
         }
