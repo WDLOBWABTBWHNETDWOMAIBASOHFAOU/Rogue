@@ -52,8 +52,8 @@ namespace Wink
             base.HandleInput(inputHelper);
             if (singlePlayerButton.Pressed)
             {
-                GameSetupState ps = GameEnvironment.GameStateManager.GetGameState("gameSetupState") as GameSetupState;
-                ps.InitializeGameMode(GameSetupState.GameMode.Singleplayer);
+                GameSetupState gss = GameEnvironment.GameStateManager.GetGameState("gameSetupState") as GameSetupState;
+                gss.InitializeGameMode(GameSetupState.GameMode.Singleplayer);
                 GameEnvironment.GameStateManager.SwitchTo("gameSetupState");
             }
             else if (multiPlayerButton.Pressed)
