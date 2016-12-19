@@ -7,6 +7,7 @@ namespace Wink
     class PlayingGUI : GameObjectList
     {
         private PlayingMenu playingMenu;
+        private InventoryBox inventoryBox;
         private int testValue = 10;
         private Player thisPlayer;
 
@@ -30,6 +31,11 @@ namespace Wink
             playingMenu.Position = new Vector2((screen.X - pmBB.Width) / 2, (screen.Y - pmBB.Height) / 2);
             playingMenu.Visible = false;
             Add(playingMenu);
+
+            inventoryBox = new InventoryBox();
+            inventoryBox.Position = new Vector2((screen.X - 500) / 2, (screen.Y - 500) / 2);
+            inventoryBox.isVisible = false;
+            Add(inventoryBox);
 
             Vector2 HPBarPosition = new Vector2(barX, 14);
             Vector2 MPBarPosition = new Vector2(barX, HPBarPosition.Y + 32);

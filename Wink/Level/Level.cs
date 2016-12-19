@@ -70,9 +70,6 @@ namespace Wink
             testItem.Position = new Vector2(GameEnvironment.Random.Next(0, tf.Columns - 1) * Tile.TileWidth, GameEnvironment.Random.Next(0, tf.Rows - 1) * Tile.TileHeight);
             Add(testItem);
 
-            InventoryBox inventory = new InventoryBox(3, 6, layer + 1);
-            inventory.Position = new Vector2((tf.Columns + 1) * tf.CellWidth, 0);
-            Add(inventory);
         }
         private Tile LoadTile(char tileType, int x, int y)
         {
@@ -86,6 +83,8 @@ namespace Wink
                     return LoadWallTile("spr_wall", TileType.Wall);
                 case '-':
                     return LoadFloorTile("spr_floor", TileType.Normal);
+                case 'D':
+                    return LoadDoorTile("spr_door", TileType.Door);
                 default:
                     return new Tile("");
             }
@@ -108,6 +107,12 @@ namespace Wink
         {
             Tile t = new Tile("empty:65:65:10:Red", TileType.Normal, 0, "startTile");
             t.Passable = true;
+            return t;
+        }
+        private Tile LoadDoorTile(string name, TileType tileType)
+        {
+            Tile t = new Tile("empty:65:65:10:Orange", tileType);
+            t.Passable = false;
             return t;
         }
     }

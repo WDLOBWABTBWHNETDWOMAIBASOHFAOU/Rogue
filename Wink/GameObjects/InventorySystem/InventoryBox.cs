@@ -1,12 +1,14 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace Wink
 {
     public class InventoryBox : GameObjectGrid
     {
         public GameObjectGrid itemGrid;
-        public InventoryBox(int rows=3, int columns=6, int layer = 0, string id = "") : base(rows, columns, layer, id)
+        public bool isVisible = false;
+        public InventoryBox(int rows=3, int columns=6, int layer = 0, float cameraSensitivity = 0.0f, string id = "") : base(rows, columns, layer, id)
         {
             CellHeight = Tile.TileHeight;
             CellWidth = Tile.TileWidth;
@@ -29,16 +31,31 @@ namespace Wink
             }
         }
 
+        public override void HandleInput(InputHelper inputHelper)
+        {
+            if (inputHelper.KeyPressed(Keys.E))
+            {
+                isVisible = !isVisible;
+            }
+        }
+
         public override void Update(GameTime gameTime)
         {
-            base.Update(gameTime);
-            itemGrid.Update(gameTime);
+            if (isVisible)
+            {
+                base.Update(gameTime);
+                itemGrid.Update(gameTime);
+            }
+           
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
         {
-            base.Draw(gameTime, spriteBatch, camera);
-            itemGrid.Draw(gameTime, spriteBatch, camera);
+            if (isVisible)
+            {
+                base.Draw(gameTime, spriteBatch, camera);
+                itemGrid.Draw(gameTime, spriteBatch, camera);
+            }
         }
     } 
 }
