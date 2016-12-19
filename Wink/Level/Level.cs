@@ -98,7 +98,8 @@ namespace Wink
                 case '-':
                     return LoadFloorTile("spr_floor", TileType.Normal);
                 default:
-                    return new Tile("");
+                    return LoadWTFTile();
+                    //return new Tile("");
             }
         }
 
@@ -120,6 +121,13 @@ namespace Wink
         {
             Tile t = new Tile("empty:65:65:10:Red", TileType.Normal, 0, "startTile");
             t.Passable = true;
+            return t;
+        }
+
+        private Tile LoadWTFTile()
+        {
+            Tile t = new Tile("empty:65:65:10:Black", TileType.Wall);
+            t.Passable = false;
             return t;
         }
     }

@@ -47,6 +47,14 @@ public class GameObjectGrid : GameObject
         }
     }
 
+    public GameObject this[int x, int y]
+    {
+        get
+        {
+            return Get(x, y);
+        }
+    }
+
     public GameObject Get(int x, int y)
     {
         if (x >= 0 && x < grid.GetLength(0) && y >= 0 && y < grid.GetLength(1))
@@ -108,7 +116,7 @@ public class GameObjectGrid : GameObject
     {
         foreach (GameObject obj in grid)
         {
-            if(obj != null)
+            if (obj != null)
             {
                 obj.HandleInput(inputHelper);
             }

@@ -50,6 +50,7 @@ namespace Wink
                     GameEnvironment.GameStateManager.SwitchTo("gameOverState");
                 }
             }
+            
         }
 
         public void HandleInput(InputHelper inputHelper)

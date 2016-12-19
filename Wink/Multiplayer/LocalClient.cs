@@ -57,10 +57,7 @@ namespace Wink
                 Vector2 globalPos = inputHelper.MousePosition + camera.GlobalPosition;
                 FindClicked(Level.Children, globalPos);
             }
-            if (inputHelper.KeyPressed(Keys.K))
-            {
-                Player.health -= 30;
-            }
+            
             camera.HandleInput(inputHelper);
             gameObjects.HandleInput(inputHelper);
         }

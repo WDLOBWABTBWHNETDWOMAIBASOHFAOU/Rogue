@@ -62,7 +62,7 @@ namespace Wink
         {
             Level.Update(gameTime);
             UpdateTurn();
-
+            level.Root.Update(gameTime);
             if (levelChanged)
             {
                 SendOutUpdatedLevel();
