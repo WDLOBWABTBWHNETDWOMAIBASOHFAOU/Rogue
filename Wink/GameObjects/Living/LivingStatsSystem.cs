@@ -9,7 +9,7 @@
         public int Dexterity { get { return dexterity; } }
         public int ActionPoints { get { return actionPoints; } set { actionPoints = value; } }
 
-        public int health { get { return healthPoints; } }
+        public int health { get { return healthPoints; } set { healthPoints = value; } }
         public int mana { get { return manaPoints; } }
         //protected IList<Equipment> EquipedItems;
 

@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Wink
 {
-    class GameOverState : IGameLoopObject
+    class GameOverState : GameObjectList
     {
         // ToDo:
         //GameOver overlay
@@ -16,22 +16,57 @@ namespace Wink
         //restart button
         //show score / acievements / unlocked content
 
+        Button mainMenuButton;
+        Button restartButton;
+        Button quitButton;
 
-        public void Update(GameTime gameTime)
+        GameSetupState.GameMode gameMode;
+        public GameSetupState.GameMode GameMode { get { return gameMode; } set { gameMode = value; } }
+
+        public GameOverState()
         {
-            // for now go direcly back to main menu
-            GameEnvironment.GameStateManager.SwitchTo("mainMenuState");
-        }
-        public void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
-        {
+            const int buffer = 50;
+            const int buttonWidth = 300;
+            int leftx = (GameEnvironment.Screen.X - (buttonWidth * 2 + buffer)) / 2;
+            int rightx = leftx + buttonWidth + buffer;
+
+            SpriteFont defaultFont = GameEnvironment.AssetManager.GetFont("Arial12");
+            SpriteFont textfieldFont = GameEnvironment.AssetManager.GetFont("Arial26");
+
+            mainMenuButton = new Button("button", "MainMenu", textfieldFont, Color.Black);
+            mainMenuButton.Position = new Vector2(leftx, 300);
+            Add(mainMenuButton);
+
+            restartButton = new Button("button", "Restart", textfieldFont, Color.Black);
+            restartButton.Position = new Vector2(rightx, 300);
+            Add(restartButton);
+
+            quitButton = new Button("button", "Quit", textfieldFont, Color.Black);
+            quitButton.Position = new Vector2(leftx, 375);
+            Add(quitButton);
+
         }
 
-        public void HandleInput(InputHelper inputHelper)
+        public override void HandleInput(InputHelper inputHelper)
         {
-        }
+            base.HandleInput(inputHelper);
 
-        public void Reset()
-        {            
+            if (mainMenuButton.Pressed)
+            {
+                GameEnvironment.GameStateManager.SwitchTo("mainMenuState");
+            }
+
+            if (restartButton.Pressed)
+            {
+                GameSetupState gss = GameEnvironment.GameStateManager.GetGameState("gameSetupState") as GameSetupState;
+                gss.InitializeGameMode(gameMode);
+                GameEnvironment.GameStateManager.SwitchTo("gameSetupState");
+            }
+
+            if (quitButton.Pressed)
+            {
+                Game1.QuitGame();
+            }
         }
     }
 }

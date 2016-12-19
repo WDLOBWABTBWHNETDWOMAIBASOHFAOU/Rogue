@@ -8,7 +8,7 @@ using System.Net.Sockets;
 
 namespace Wink
 {
-    class GameSetupState : GameObjectList
+    public class GameSetupState : GameObjectList
     {
         private class ClientField : GameObjectList
         {
@@ -64,6 +64,7 @@ namespace Wink
         public void InitializeGameMode(GameMode gameMode)
         {
             PlayingState ps = GameEnvironment.GameStateManager.GetGameState("playingState") as PlayingState;
+            ps.CurrentGameMode = gameMode;
             switch (gameMode)
             {
                 case GameMode.MultiplayerClient:

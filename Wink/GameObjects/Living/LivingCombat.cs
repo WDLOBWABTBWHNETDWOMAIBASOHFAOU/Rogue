@@ -42,7 +42,7 @@
         private void DeathFeedback(string idA, string idS)
         {
             PlayAnimation(idA);
-            PlaySound(idS);
+            //PlaySound(idS);
         }
 
     }

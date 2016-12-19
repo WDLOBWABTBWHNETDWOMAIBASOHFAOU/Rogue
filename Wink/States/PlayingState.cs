@@ -8,6 +8,9 @@ namespace Wink
         private Server server;
         private Client client;
 
+        GameSetupState.GameMode currentGameMode;
+        public GameSetupState.GameMode CurrentGameMode { get { return currentGameMode; } set { currentGameMode = value; } }
+
         public void SetClientAndServer(Client client, Server server)
         {
             this.client = client;
@@ -41,6 +44,9 @@ namespace Wink
                 Player player = ls.Level.Find((p) => p.GetType() == typeof(Player)) as Player;
                 if (player.health<=0)
                 {
+
+                    GameOverState gos = GameEnvironment.GameStateManager.GetGameState("gameOverState") as GameOverState;
+                    gos.GameMode = currentGameMode;
                     GameEnvironment.GameStateManager.SwitchTo("gameOverState");
                 }
             }
