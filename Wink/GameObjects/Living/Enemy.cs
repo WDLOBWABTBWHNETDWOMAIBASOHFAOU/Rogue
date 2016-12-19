@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,8 @@ namespace Wink
     public class Enemy : Living, ClickableGameObject
     {
         TileField grid;
+        Bar<Enemy> hpBar;
+
         public Enemy(Level level, int layer) : base(level, layer, "Enemy")
         {
             level.Add(this);
@@ -25,6 +28,19 @@ namespace Wink
             float tileX = (ST.TilePosition.ToVector2().X + 1) * ST.Height - ST.Height / 2;
             float tileY = (ST.TilePosition.ToVector2().Y + 1) * ST.Width;
             Position = new Vector2(tileX, tileY);
+
+            AddHPBar(this);
+        }
+
+        void AddHPBar(Enemy enemy)
+        {
+            enemy = this;  
+            SpriteFont textfieldFont = GameEnvironment.AssetManager.GetFont("Arial26");
+            
+            //Healthbar
+            hpBar = new Bar<Enemy>(enemy, e => e.health, enemy.MaxHealth, textfieldFont, Color.Red, 2, "HealthBar",1.0f,1f,false);
+
+
         }
 
         protected override void InitAnimation(string idleColor = "empty:65:65:10:Magenta")
@@ -57,6 +73,11 @@ namespace Wink
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
+            
+            hpBar.Position = new Vector2(position.X - hpBar.Origin.X, position.Y - Sprite.Height - 25); ;
+            hpBar.Update(gameTime);
+            
+
             if (this.isTurn && this.health > 0)
             {
                 GoTo(level.Find(p => p.GetType() == typeof(Player)) as Player);
@@ -64,6 +85,15 @@ namespace Wink
             else
             {
                 ActionPoints = 0;
+            }
+        }
+
+        public override void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
+        {
+            base.Draw(gameTime, spriteBatch, camera);
+            if (health < MaxHealth && visible)
+            {
+                hpBar.Draw(gameTime, spriteBatch, camera);
             }
         }
 
