@@ -36,6 +36,13 @@ namespace Wink
             {
                 LocalServer ls = (LocalServer)server;
                 ls.Update(gameTime);
+
+                // temp gameover check
+                Player player = ls.Level.Find((p) => p.GetType() == typeof(Player)) as Player;
+                if (player.health<=0)
+                {
+                    GameEnvironment.GameStateManager.SwitchTo("gameOverState");
+                }
             }
         }
 

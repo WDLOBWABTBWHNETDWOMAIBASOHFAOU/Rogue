@@ -46,6 +46,7 @@ namespace Wink
             //ps.InitializeGameMode(PlayingState.GameMode.Singleplayer);
             gameStateManager.AddGameState("gameSetupState", new GameSetupState());
             gameStateManager.AddGameState("playingState", new PlayingState());
+            gameStateManager.AddGameState("gameOverState", new GameOverState());
             gameStateManager.AddGameState("mainMenuState", new MainMenuState());
             gameStateManager.AddGameState("multiplayerMenu", new MultiplayerMenu());
             gameStateManager.AddGameState("optionsMenu", new OptionsMenu());
