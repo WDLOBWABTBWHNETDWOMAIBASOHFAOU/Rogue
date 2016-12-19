@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Wink
 {
-    public class Enemy : Living
+    public class Enemy : Living, ClickableGameObject
     {
         TileField grid;
         public Enemy(Level level, int layer) : base(level, layer, "Enemy")
@@ -42,11 +42,18 @@ namespace Wink
             if (path.Count > 1)
             {
                 MoveTo(path[0]);
+                actionPoints--;
             }
             else
             {
                 Attack(player);
+                actionPoints--;
             }
+        }
+
+        public void OnClick(Server server, LocalClient sender)
+        {
+            throw new NotImplementedException();
         }
     }
 }
