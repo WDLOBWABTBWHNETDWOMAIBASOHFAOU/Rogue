@@ -56,10 +56,14 @@ namespace Wink
             apBar.Position = new Vector2(APBarPosition.X, APBarPosition.Y);
             Add(apBar);
 
-            inventory = new Window(500, 300);
+            GameObjectGrid items = player.ItemGrid;
+            inventory = new Window(items.Columns * Tile.TileWidth, items.Rows * Tile.TileHeight);
             inventory.Add(new InventoryBox(player.ItemGrid));
             inventory.Position = new Vector2(300, 300);
+            inventory.Visible = false;
             Add(inventory);
+
+            Add(player.mouseSlot);
         }
 
         public override void HandleInput(InputHelper inputHelper)

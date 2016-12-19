@@ -25,7 +25,7 @@ namespace Wink
 
             SetStats(5, 5, 5, 5, 55);
 
-            level.Add(mouseSlot);
+            //level.Add(mouseSlot);
             level.Add(this);
 
             //Put player on start tile.

@@ -55,7 +55,7 @@ namespace Wink
             if (inputHelper.MouseLeftButtonPressed() && Level != null)
             {
                 Vector2 globalPos = inputHelper.MousePosition + camera.GlobalPosition;
-                FindClicked(Level.Children, globalPos);
+                FindClicked(gameObjects.Children, globalPos);
             }
             
             camera.HandleInput(inputHelper);
@@ -81,7 +81,7 @@ namespace Wink
                     {
                         //If the object is not clickable, but is a list, search the list
                         FindClicked((gameObjects[i] as GameObjectList).Children, mousePos);
-                        return;
+                        continue;
                     }
                     else if (gameObjects[i] is GameObjectGrid)
                     {
@@ -90,7 +90,7 @@ namespace Wink
                         GameObjectGrid gObjGrid = gameObjects[i] as GameObjectGrid;
                         GameObject gObj = gObjGrid.Find(obj => obj.BoundingBox.Contains(mousePos));
                         FindClicked(new List<GameObject>() { gObj }, mousePos);
-                        return;
+                        continue;
                     }
                 }
             }

@@ -17,7 +17,7 @@ namespace Wink
         private bool isDraggable;
         
         private int width, height;
-        Button closeButton;
+        private Button closeButton;
 
         const int BorderWidth = 2;
         const int TitleBarHeight = 20;
