@@ -13,7 +13,7 @@ namespace Wink
         public PlayingMenu() : base(350, 500, true, false)
         {
             SpriteFont sf = GameEnvironment.AssetManager.GetFont("Arial26");
-
+            
             backButton = new Button("button", "Back to Main Menu", sf, Color.Black);
             backButton.Position = new Vector2(25, 25);
             Add(backButton);
