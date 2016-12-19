@@ -35,6 +35,12 @@ namespace Wink
             SpriteFont defaultFont = GameEnvironment.AssetManager.GetFont("Arial12");
             SpriteFont textfieldFont = GameEnvironment.AssetManager.GetFont("Arial26");
 
+            TextGameObject gameOverMessage = new TextGameObject("Arial26");
+            gameOverMessage.Text = "GameOver";
+            gameOverMessage.Color = Color.Red;
+            gameOverMessage.Position = new Vector2(centerx, 200);
+            Add(gameOverMessage);
+
             mainMenuButton = new Button("button", "MainMenu", textfieldFont, Color.Black);
             mainMenuButton.Position = new Vector2(centerx, 300);
             Add(mainMenuButton);
