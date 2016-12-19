@@ -44,16 +44,35 @@ namespace Wink
                 MoveTo(path[0]);
                 actionPoints--;
             }
+            else if (player.Position.X - Position.X <= Tile.TileWidth && player.Position.X - Position.X >= -Tile.TileWidth * 2)
+            {
+                if (player.Position.Y - Position.Y <= Tile.TileHeight && player.Position.Y - Position.Y >= -Tile.TileHeight)
+                {
+                    Attack(player);
+                    actionPoints--;
+                }
+            }
+        }
+
+        public override void Update(GameTime gameTime)
+        {
+            base.Update(gameTime);
+            if (this.isTurn && this.health > 0)
+            {
+                GoTo(level.Find(p => p.GetType() == typeof(Player)) as Player);
+            }
             else
             {
-                Attack(player);
-                actionPoints--;
+                ActionPoints = 0;
             }
         }
 
         public void OnClick(Server server, LocalClient sender)
         {
-            throw new NotImplementedException();
+            AttackEvent aE = new AttackEvent(sender);
+            aE.Attacker = sender.Player;
+            aE.Defender = this;
+            server.Send(aE);
         }
     }
 }

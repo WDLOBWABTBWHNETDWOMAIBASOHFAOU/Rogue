@@ -37,7 +37,8 @@
         protected void Death()
         {
             //What happens on death. Drop equipment/loot, remove itself from world, etc
-            level.Remove(this);
+            //level.Remove(this);
+            visible = false;
         }
 
         private void DeathFeedback(string idA, string idS)
