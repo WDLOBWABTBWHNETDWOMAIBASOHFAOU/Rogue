@@ -14,16 +14,20 @@ namespace Wink
             get { return itemGrid; }
         }
 
-        public InventoryBox(int rows=3, int columns=6, int layer = 0, string id = "") : base(rows, columns, layer, id)
+        public InventoryBox(GameObjectGrid itemGrid, int layer = 0, string id = "") : base(itemGrid.Rows, itemGrid.Columns, layer, id)
         {
             CellHeight = Tile.TileHeight;
             CellWidth = Tile.TileWidth;
             FillGrid();
-
-            itemGrid = new GameObjectGrid(rows, columns, layer + 1, "itemGrid");
+            
             itemGrid.Parent = this;
             itemGrid.CellHeight = CellHeight;
             itemGrid.CellWidth = CellWidth;
+            this.itemGrid = itemGrid;
+        }
+
+        public InventoryBox(int rows=3, int columns=6, int layer = 0, string id = "") : this(new GameObjectGrid(rows, columns, layer + 1, "itemGrid"), layer, id)
+        {
         }
 
         private void FillGrid()
@@ -32,7 +36,7 @@ namespace Wink
             {
                 for (int y = 0; y < Rows; y++)
                 {
-                    Add(new Tile("empty:65:65:10:Gray", TileType.Inventory), x, y);                    
+                    Add(new Tile("empty:65:65:10:Gray", TileType.Inventory, 0, "", 0), x, y);
                 }
             }
         }

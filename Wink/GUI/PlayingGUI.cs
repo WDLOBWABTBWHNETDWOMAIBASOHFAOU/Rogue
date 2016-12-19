@@ -7,6 +7,7 @@ namespace Wink
     class PlayingGUI : GameObjectList
     {
         private PlayingMenu playingMenu;
+        private Window inventory;
 
         public PlayingGUI()
         {
@@ -22,6 +23,7 @@ namespace Wink
             Rectangle pmBB = playingMenu.BoundingBox;
             playingMenu.Position = new Vector2((screen.X - pmBB.Width) / 2, (screen.Y - pmBB.Height) / 2);
             playingMenu.Visible = false;
+            playingMenu.Layer = 100;
             Add(playingMenu);
 
             SpriteGameObject floor = new SpriteGameObject("empty:85:85:15:Orange", 1, "Floor", 0, 0);
@@ -53,6 +55,11 @@ namespace Wink
             Vector2 APBarPosition = new Vector2(screenWidth - barX - apBar.Width, HPBarPosition.Y);
             apBar.Position = new Vector2(APBarPosition.X, APBarPosition.Y);
             Add(apBar);
+
+            inventory = new Window(500, 300);
+            inventory.Add(new InventoryBox(player.ItemGrid));
+            inventory.Position = new Vector2(300, 300);
+            Add(inventory);
         }
 
         public override void HandleInput(InputHelper inputHelper)
@@ -62,6 +69,11 @@ namespace Wink
             if (inputHelper.KeyPressed(Keys.Escape))
             {
                 playingMenu.Visible = !playingMenu.Visible;
+            }
+
+            if (inputHelper.KeyPressed(Keys.I))
+            {
+                inventory.Visible = !inventory.Visible;
             }
         }
     }

@@ -8,16 +8,24 @@ namespace Wink
         private Client client;
         protected int exp;
         public MouseSlot mouseSlot;
-        
-        public Player(Client client, Level level,int layer) : base(level, layer, "player_" + client.ClientName)
+
+        private readonly GameObjectGrid itemGrid;
+        public GameObjectGrid ItemGrid
+        {
+            get { return itemGrid; }
+        }
+
+        public Player(Client client, Level level, int layer) : base(level, layer, "player_" + client.ClientName)
         {
             this.client = client;
 
+            //Inventory
             mouseSlot = new MouseSlot(layer + 11, "mouseSlot");
+            itemGrid = new GameObjectGrid(3, 6);
 
             SetStats(5, 5, 5, 5, 55);
-            level.Add(mouseSlot);
 
+            level.Add(mouseSlot);
             level.Add(this);
 
             //Put player on start tile.

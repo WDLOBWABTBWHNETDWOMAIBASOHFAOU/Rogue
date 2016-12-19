@@ -17,8 +17,6 @@ namespace Wink
         Inventory
     }
 
-
-
     [Serializable]
     public class Tile : SpriteGameObject, ClickableGameObject
     {
@@ -43,7 +41,7 @@ namespace Wink
         }
         // No longer for pathfinding
 
-        public Tile(string assetname = "", TileType tp = TileType.Background, int layer = 0, string id = "") : base(assetname, layer, id)
+        public Tile(string assetname = "", TileType tp = TileType.Background, int layer = 0, string id = "", float cameraSensitivity = 1) : base(assetname, layer, id, 0, cameraSensitivity)
         {
             type = tp;
         }

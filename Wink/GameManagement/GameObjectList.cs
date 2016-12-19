@@ -35,7 +35,7 @@ public class GameObjectList : GameObject
         get { return children; }
     }
 
-    public void Add(GameObject obj)
+    public virtual void Add(GameObject obj)
     {
         obj.Parent = this;
         for (int i = 0; i < children.Count; i++)
