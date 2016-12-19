@@ -29,20 +29,22 @@ namespace Wink
             const int buttonWidth = 300;
             int leftx = (GameEnvironment.Screen.X - (buttonWidth * 2 + buffer)) / 2;
             int rightx = leftx + buttonWidth + buffer;
+            int centerx = (GameEnvironment.Screen.X - buttonWidth ) / 2;
+            int buttonOffSett= 75;
 
             SpriteFont defaultFont = GameEnvironment.AssetManager.GetFont("Arial12");
             SpriteFont textfieldFont = GameEnvironment.AssetManager.GetFont("Arial26");
 
             mainMenuButton = new Button("button", "MainMenu", textfieldFont, Color.Black);
-            mainMenuButton.Position = new Vector2(leftx, 300);
+            mainMenuButton.Position = new Vector2(centerx, 300);
             Add(mainMenuButton);
 
             restartButton = new Button("button", "Restart", textfieldFont, Color.Black);
-            restartButton.Position = new Vector2(rightx, 300);
+            restartButton.Position = new Vector2(centerx, mainMenuButton.Position.Y + buttonOffSett);
             Add(restartButton);
 
             quitButton = new Button("button", "Quit", textfieldFont, Color.Black);
-            quitButton.Position = new Vector2(leftx, 375);
+            quitButton.Position = new Vector2(centerx, restartButton.Position.Y + buttonOffSett);
             Add(quitButton);
 
         }
