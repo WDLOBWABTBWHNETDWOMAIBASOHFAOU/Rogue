@@ -39,7 +39,7 @@ namespace Wink
         {
             Point screen = GameEnvironment.Screen;
 
-            SpriteFont textFieldFont = GameEnvironment.AssetManager.GetFont("TextFieldFont");
+            SpriteFont textFieldFont = GameEnvironment.AssetManager.GetFont("Arial26");
             SelectField<Resolution> resolutionSelect = new SelectField<Resolution>(true, textFieldFont, Color.Red);
             resolutionSelect.Options = new List<Resolution>() { new Resolution(1024, 586), new Resolution(1440, 825) };
             resolutionSelect.Position = new Vector2((screen.X - resolutionSelect.Width) / 2, 100);

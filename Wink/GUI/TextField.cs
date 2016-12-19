@@ -46,7 +46,7 @@ namespace Wink
             //Draw the contents of this textfield.
             spriteBatch.DrawString(spriteFont, content, GlobalPosition + offset.ToVector2(), color);
 
-            //Draw cursor but only ever other hald second.
+            //Draw cursor but only ever other half second.
             if (gameTime.TotalGameTime.Milliseconds % 1000 < 500 && hasFocus && Editable)
             {
                 Texture2D tex = GameEnvironment.AssetManager.GetSingleColorPixel(color);

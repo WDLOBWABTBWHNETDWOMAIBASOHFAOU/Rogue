@@ -79,7 +79,7 @@ namespace Wink
         {
             columns = new List<Column>();
             values = new List<List<object>>();
-            sf = GameEnvironment.AssetManager.GetFont("TextFieldFont");
+            sf = GameEnvironment.AssetManager.GetFont("Arial26");
         }
 
         /// <summary>

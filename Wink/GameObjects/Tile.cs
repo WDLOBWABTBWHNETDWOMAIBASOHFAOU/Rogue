@@ -29,7 +29,20 @@ namespace Wink
 
         public Point TilePosition { get { return new Point((int)Position.X / TileWidth, (int)Position.Y / TileHeight); } }
 
-        public Tile(string assetname = "", TileType tp = TileType.Background, int layer = 0, string id = "") : base(assetname, layer, id)
+        // For pathfinding
+        public Tile originNode;
+        public int hCost;
+        public int gCost;
+        public int fCost
+        {
+            get
+            {
+                return hCost + gCost;
+            }
+        }
+        // No longer for pathfinding
+
+        public Tile(string assetname = "", TileType tp = TileType.Background, int layer = 0, string id = "", float cameraSensitivity = 1) : base(assetname, layer, id, 0, cameraSensitivity)
         {
             type = tp;
         }
@@ -65,43 +78,34 @@ namespace Wink
             set { passable = value; }
         }
 
-        public virtual void OnClick(Server server)
+        public virtual void OnClick(Server server, LocalClient sender)
         {
             if( TileType == TileType.Normal)
             {
-                PlayerMoveEvent pme = new PlayerMoveEvent();
-                pme.Player = (Root as GameObjectList).Find("player_" + Environment.MachineName) as Player;
+                PlayerMoveEvent pme = new PlayerMoveEvent(sender);
+                pme.Player = sender.Player;
                 pme.Tile = this;
 
-                float TileX = (TilePosition.X + 1) * TileWidth;
-                float TileY = (TilePosition.Y + 1) * TileHeight;
-
-                if (pme.Player.Position.X - TileX <= TileWidth && pme.Player.Position.X - TileX >= -TileWidth * 2)
-                {
-                    if (pme.Player.Position.Y - TileY <= TileHeight && pme.Player.Position.Y - TileY >= -TileHeight)
-                    {
-                        server.Send(pme);                    
-                    }
-                }
+                server.Send(pme);
             }
             else if(TileType == TileType.Inventory)
             {
-                PickupEvent PuE = new PickupEvent();
-                PuE.player = (Root as GameObjectList).Find("player_" + Environment.MachineName) as Player;
-                InventoryBox target = this.parent as InventoryBox;
+                PickupEvent puEvent = new PickupEvent(sender);
+                puEvent.player = (Root as GameObjectList).Find("player_" + Environment.MachineName) as Player;
+                InventoryBox target = Parent as InventoryBox;
 
-                if (target.itemGrid.Get((int)position.X, (int)position.Y) == null)
+                if (target.ItemGrid.Get((int)position.X, (int)position.Y) == null)
                 {
                     Item newItem = new EmptyItem("empty:65:65:10:Gray");
-                    newItem.Position = this.Position;
-                    PuE.item = newItem;
+                    newItem.Position = Position;
+                    puEvent.item = newItem;
                 }
                 else
                 {
-                    PuE.item = target.itemGrid.Get((int)position.X, (int)position.Y) as Item;
+                    puEvent.item = target.ItemGrid.Get((int)position.X, (int)position.Y) as Item;
                 }
-                PuE.target = target.itemGrid;
-                server.Send(PuE);
+                puEvent.target = target.ItemGrid;
+                server.Send(puEvent);
             }
         }
     }

@@ -8,10 +8,9 @@ public class TextGameObject : GameObject
     protected string text;
     public float CameraSensitivity { get; protected set; }
 
-    public TextGameObject(string assetname, float cameraSensitivity=1.0f, int layer = 0, string id = "")
-        : base(layer, id)
+    public TextGameObject(string fontName, float cameraSensitivity=1.0f, int layer = 0, string id = "") : base(layer, id)
     {
-        spriteFont = GameEnvironment.AssetManager.Content.Load<SpriteFont>(assetname);
+        spriteFont = GameEnvironment.AssetManager.Content.Load<SpriteFont>(fontName);
         color = Color.White;
         CameraSensitivity = cameraSensitivity;
     }
@@ -20,7 +19,7 @@ public class TextGameObject : GameObject
     {
         if (visible)
         {
-            spriteBatch.DrawString(spriteFont, text, GlobalPosition - (CameraSensitivity * camera.GlobalPosition), color);
+            spriteBatch.DrawString(spriteFont, Text, GlobalPosition - (CameraSensitivity * camera.GlobalPosition), color);
         }
     }
 
@@ -30,7 +29,7 @@ public class TextGameObject : GameObject
         set { color = value; }
     }
 
-    public string Text
+    public virtual string Text
     {
         get { return text; }
         set { text = value; }

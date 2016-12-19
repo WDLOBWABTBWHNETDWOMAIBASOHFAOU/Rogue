@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Xml.Serialization;
+﻿using System.Collections.Generic;
+using System.Net.Sockets;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Threading;
 
 namespace Wink
 {
@@ -11,24 +9,65 @@ namespace Wink
     {
         private LocalClient client;
 
-        public override void AddLocalClient(LocalClient localClient)
+        TcpClient tcp;
+        BinaryFormatter binaryFormatter;
+        List<Event> pendingEvents; //For the server
+
+        Thread receivingThread;
+
+        public RemoteServer(LocalClient client)
         {
-            client = localClient;
+            this.client = client;
+
+            string ip = GameEnvironment.GameSettingsManager.GetValue("server_ip_address");
+            tcp = new TcpClient(ip, 29793);
+
+            receivingThread = new Thread(new ThreadStart(Receive));
+            binaryFormatter = new BinaryFormatter();
+            pendingEvents = new List<Event>();
+        }
+
+        public void ProcessEvents()
+        {
+            foreach (Event e in pendingEvents)
+            {
+                if (e.Validate(client.Level))
+                {
+                    e.OnClientReceive(client);
+                }
+            }
+        }
+
+        private void StartReceiving()
+        {
+            
+        }
+
+        public void StopReceiving()
+        {
+            receivingThread.Abort();
+        }
+
+        private void Receive()
+        {
+            while (true)
+            {
+                NetworkStream s = tcp.GetStream();
+                if (s.DataAvailable)
+                {
+                    Event e = (Event)binaryFormatter.Deserialize(s);
+                    pendingEvents.Add(e);
+                }
+            }
         }
 
         public override void Send(Event e)
         {
-            //Serialize and send the event over TCP connection.
-            StringWriter sw = new StringWriter();
-
-            Assembly assembly = typeof(Event).Assembly;
-            IEnumerable<Type> types = assembly.GetTypes().Where(t => t.BaseType == typeof(Event));
-
-            XmlSerializer mySerializer = new XmlSerializer(typeof(Event), null, types.ToArray(), null, "Wink");
-            mySerializer.Serialize(sw, e);
-
-            string test = sw.ToString();
-            Console.Write(test);
+            if (e.Validate(client.Level))
+            {
+                //Serialize and send the event over TCP connection.
+                binaryFormatter.Serialize(tcp.GetStream(), e);
+            }
         }
     }
 }

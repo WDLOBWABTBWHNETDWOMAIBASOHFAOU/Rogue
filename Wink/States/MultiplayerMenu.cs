@@ -10,8 +10,6 @@ namespace Wink
 {
     class MultiplayerMenu : GameObjectList
     {
-        Button back;
-
         private class OnlineTab : GameObjectList
         {   
             public OnlineTab()
@@ -32,22 +30,24 @@ namespace Wink
         private class LANTab : GameObjectList
         {
             Button connectButton;
+            TextField ipAddress;
 
             public LANTab()
             {
                 Point screen = GameEnvironment.Screen;
-                SpriteFont buttonFont = GameEnvironment.AssetManager.GetFont("TextFieldFont");
+                SpriteFont buttonFont = GameEnvironment.AssetManager.GetFont("Arial26");
 
                 //Create a text field for the ip address
-                TextField ipAddress = new TextField(buttonFont, Color.Red);
-                ipAddress.Position = new Vector2((screen.X - ipAddress.Width) / 2, screen.Y / 2);
+                ipAddress = new TextField(buttonFont, Color.Red);
+                ipAddress.Position = new Vector2((screen.X - ipAddress.Width) / 2, 50);
                 ipAddress.Editable = true;
                 Add(ipAddress);
 
                 //Create a button to start connecting.
                 connectButton = new Button("button", "Connect", buttonFont, Color.Black);
-                connectButton.Position = new Vector2((screen.X - connectButton.Width) / 2, screen.Y - 300);
+                connectButton.Position = new Vector2((screen.X - connectButton.Width) / 2, 125);
                 Add(connectButton);
+
             }
 
             public override void HandleInput(InputHelper inputHelper)
@@ -57,13 +57,20 @@ namespace Wink
                 if (connectButton.Pressed)
                 {
                     //Connect here...
+                    GameEnvironment.GameSettingsManager.SetValue("server_ip_address", ipAddress.Text);
+                    GameSetupState gss = GameEnvironment.GameStateManager.GetGameState("gameSetupState") as GameSetupState;
+                    gss.InitializeGameMode(GameSetupState.GameMode.MultiplayerClient);
+                    GameEnvironment.GameStateManager.SwitchTo("gameSetupState");
                 }
             }
         }
 
+        Button backButton;
+        Button hostButton;
+
         public MultiplayerMenu()
         {
-            SpriteFont tabTitleFont = GameEnvironment.AssetManager.GetFont("TextFieldFont");
+            SpriteFont arial26 = GameEnvironment.AssetManager.GetFont("Arial26");
             
             //Define two tabs
             TabField.Tab onlineTab = new TabField.Tab("Online", new OnlineTab());
@@ -71,22 +78,33 @@ namespace Wink
 
             Point screen = GameEnvironment.Screen;
             //Make a TabField and add the two tabs.
-            TabField tabField = new TabField(new List<TabField.Tab> { lanTab, onlineTab }, Color.Black, tabTitleFont, screen.X, screen.Y - 200);
+            TabField tabField = new TabField(new List<TabField.Tab> { lanTab, onlineTab }, Color.Black, arial26, screen.X, screen.Y - 200);
             Add(tabField);
 
             //Create a button to go back to the main menu.
-            back = new Button("button", "Back", tabTitleFont, Color.Black);
-            back.Position = new Vector2(100, screen.Y - 100);
-            Add(back);
+            backButton = new Button("button", "Back", arial26, Color.Black);
+            backButton.Position = new Vector2(100, screen.Y - 100);
+            Add(backButton);
+
+            //Create a button to start hosting.
+            hostButton = new Button("button", "Host a Game", arial26, Color.Black);
+            hostButton.Position = new Vector2(screen.X - hostButton.Width - 100, screen.Y - 100);
+            Add(hostButton);
         }
 
         public override void HandleInput(InputHelper inputHelper)
         {
             base.HandleInput(inputHelper);
 
-            if (back.Pressed)
+            if (backButton.Pressed)
             {
                 GameEnvironment.GameStateManager.SwitchTo("mainMenuState");
+            }
+            else if (hostButton.Pressed)
+            {
+                GameSetupState gss = GameEnvironment.GameStateManager.GetGameState("gameSetupState") as GameSetupState;
+                gss.InitializeGameMode(GameSetupState.GameMode.MultiplayerHost);
+                GameEnvironment.GameStateManager.SwitchTo("gameSetupState");
             }
         }
     }

@@ -1,69 +1,68 @@
 ﻿using Microsoft.Xna.Framework;
 using System.Collections.Generic;
+using System.Net;
+using System.Net.Sockets;
+using System.Linq;
+using System;
 
 namespace Wink
 {
     public class LocalServer : Server
     {
         private List<Client> clients;
-        public Level level { get; }
+        private List<Living> livingObjects;
+
         bool levelChanged;
+        private int turnIndex;
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="publicServer">Wether or not the server can be joined by others.</param>
-        public LocalServer(bool publicServer = false)
+        public Level Level { get; private set; }
+        
+        public LocalServer ()
         {
-            clients = new List<Client>();
+        }
 
-            Level l = new Level(1);
-            level = l;
+        public void SetupLevel(int level, List<Client> clients)
+        {
+            Level = new Level(level);
 
-
-            if (publicServer)
+            this.clients = clients;
+            foreach (Client c in clients)
             {
-                MakePublic();
+                //Player adds itself to level.
+                Player player = new Player(c, Level, Level.Layer + 1);
             }
+
+            livingObjects = Level.FindAll(obj => obj is Living).Cast<Living>().ToList();
+            livingObjects.Sort((obj1, obj2) => obj1.Dexterity - obj2.Dexterity);
+            livingObjects.ElementAt(turnIndex).isTurn = true;
+
+            SendOutUpdatedLevel(true);
         }
 
         public override void Send(Event e)
         {
-            e.OnServerReceive(this);
+            if (e.Validate(Level))
+            {
+                e.OnServerReceive(this);
+            }
         }
 
-        public override void AddLocalClient(LocalClient localClient)
-        {
-            clients.Add(localClient);
-            ClientAdded(localClient);
-        }
-
-        private void ClientAdded(Client client)
-        {
-            Player player = new Player(client, level,level.Layer+1);
-            SendOutUpdatedLevel();
-        }
-
-        private void SendOutUpdatedLevel()
+        private void SendOutUpdatedLevel(bool first = false)
         {
             foreach(Client c in clients)
             {
-                LevelUpdatedEvent e = new LevelUpdatedEvent();
-                e.updatedLevel = level;
+                //Passing null because whenever a client receives an event it'll always be from the server.
+                LevelUpdatedEvent e = first ? new JoinedServerEvent(null) : new LevelUpdatedEvent(null); 
+                e.updatedLevel = Level;
                 c.Send(e);
             }
         }
 
-        private void MakePublic()
-        {
-            //setup TCP with masterserver, 
-            
-        }
-
         public void Update(GameTime gameTime)
         {
-            level.Update(gameTime);
-
+            Level.Update(gameTime);
+            UpdateTurn();
+            Level.Root.Update(gameTime);
             if (levelChanged)
             {
                 SendOutUpdatedLevel();
@@ -74,6 +73,17 @@ namespace Wink
         public void LevelChanged()
         {
             levelChanged = true;
+        }
+
+        private void UpdateTurn()
+        {
+            if (livingObjects.ElementAt(turnIndex).ActionPoints <= 0)
+            {
+                livingObjects.ElementAt(turnIndex).isTurn = false;
+                turnIndex = (turnIndex +1)% livingObjects.Count;
+                livingObjects.ElementAt(turnIndex).isTurn = true;
+                livingObjects.ElementAt(turnIndex).ActionPoints = 4;
+            }
         }
     }
 }

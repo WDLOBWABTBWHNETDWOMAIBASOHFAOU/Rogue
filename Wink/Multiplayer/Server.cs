@@ -1,7 +1,7 @@
 ﻿
 namespace Wink
 {
-    public abstract class Server
+    public abstract class Server : Sender
     {
         
         public Server()
@@ -9,6 +9,5 @@ namespace Wink
         }
 
         public abstract void Send(Event e);
-        public abstract void AddLocalClient(LocalClient localClient);
     }
 }

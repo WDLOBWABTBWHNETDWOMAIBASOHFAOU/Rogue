@@ -1,20 +1,23 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Wink
 {
-    [Serializable()]
-    public class LevelUpdatedEvent : Event
+    class StartTurnEvent : Event
     {
-        public Level updatedLevel { get; set; }
+        Living whoseTurnItIs;
 
-        public LevelUpdatedEvent(Sender sender) : base(sender)
+        public StartTurnEvent(Sender sender) : base(sender)
         {
 
         }
 
         public override void OnClientReceive(LocalClient client)
         {
-            client.Level = updatedLevel;
+            throw new NotImplementedException();
         }
 
         public override void OnServerReceive(LocalServer server)
@@ -24,7 +27,7 @@ namespace Wink
 
         public override bool Validate(Level level)
         {
-            return true;
+            throw new NotImplementedException();
         }
     }
 }

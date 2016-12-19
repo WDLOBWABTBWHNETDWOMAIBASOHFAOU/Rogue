@@ -8,6 +8,7 @@ namespace Wink
         protected Level level;
         private int timeleft;
         private bool startTimer;
+        public bool isTurn;
 
         protected string idleAnimation, moveAnimation, dieAnimation;
         string dieSound;
@@ -16,17 +17,15 @@ namespace Wink
         {
             this.level = level;
             SetStats();
-            healthPoints = MaxHP();
-            manaPoints = MaxManaPoints();
             InitAnimation();
             timeleft = 1000;
         }
 
-        protected virtual void InitAnimation()
+        protected virtual void InitAnimation(string idleColor = "empty:65:65:10:Magenta")
         {//General animations
-            idleAnimation = "empty:65:65:10:Magenta";
+            idleAnimation = idleColor;
             moveAnimation = "empty:65:65:10:DarkBlue";
-            dieAnimation = "empty:65:65:10:DarkRed";
+            dieAnimation = "empty:65:65:10:LightBlue";
             LoadAnimation(idleAnimation, "idle", true);
             LoadAnimation(moveAnimation, "move", true, 0.05f);
             LoadAnimation(dieAnimation, "die", false);
@@ -48,8 +47,7 @@ namespace Wink
                 }
             }
         }
-
-
+        
         public void MoveTo(Tile tile)
         {
             float TileX = (tile.TilePosition.X + 1) * Tile.TileWidth;
@@ -62,7 +60,7 @@ namespace Wink
                     position.X = TileX - 0.5f * Tile.TileWidth;
                     position.Y = TileY;
                 }
-            }            
+            }
         }
     }
 }

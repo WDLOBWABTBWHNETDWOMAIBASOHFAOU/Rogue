@@ -27,7 +27,8 @@
             if (dodgeNumber > DodgeChance())
             {
                 double defenceValue =ArmorValue();
-                healthPoints = (int)(attackValue / defenceValue);
+                if (defenceValue < 1) defenceValue = 5;
+                healthPoints -= (int)(attackValue / defenceValue);
                 //Display damage taken
             }
             // Display attack dodged (feedback on succes)
@@ -36,13 +37,14 @@
         protected void Death()
         {
             //What happens on death. Drop equipment/loot, remove itself from world, etc
-            level.Remove(this);
+            //level.Remove(this);
+            visible = false;
         }
 
         private void DeathFeedback(string idA, string idS)
         {
             PlayAnimation(idA);
-            PlaySound(idS);
+            //PlaySound(idS);
         }
 
     }
