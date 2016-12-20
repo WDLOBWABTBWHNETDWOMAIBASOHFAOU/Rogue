@@ -26,7 +26,7 @@ class Program
         //JoinServerEvent jse = new JoinServerEvent();
         //jse.clientName = "test";
         LevelUpdatedEvent lue = new LevelUpdatedEvent();
-        lue.updatedLevel = server.level;
+        lue.updatedLevel = server.Level;
 
         rc.Send(lue);
 

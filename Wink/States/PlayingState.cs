@@ -5,30 +5,16 @@ namespace Wink
 {
     public class PlayingState : IGameLoopObject
     {
-        public enum GameMode { Singleplayer, MultiplayerClient, MultiplayerHost, MultiplayerServer }
-
         private Server server;
         private Client client;
 
-        public void InitializeGameMode(GameMode gameMode)
+        GameSetupState.GameMode currentGameMode;
+        public GameSetupState.GameMode CurrentGameMode { get { return currentGameMode; } set { currentGameMode = value; } }
+
+        public void SetClientAndServer(Client client, Server server)
         {
-            switch (gameMode)
-            {
-                case GameMode.MultiplayerClient:
-                    //Initialize RemoteServer and LocalClient
-                    break;
-                case GameMode.MultiplayerHost:
-                    //Initialize LocalServer(public) and LocalClient
-                    break;
-                case GameMode.Singleplayer:
-                    //Initialize LocalServer(private) and LocalClient
-                    server = new LocalServer();
-                    client = new LocalClient(server);
-                    break;
-                case GameMode.MultiplayerServer:
-                    //Initialize LocalServer(public)
-                    break;
-            }
+            this.client = client;
+            this.server = server;
         }
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
@@ -38,7 +24,6 @@ namespace Wink
                 LocalClient lc = (LocalClient)client;
                 lc.Draw(gameTime, spriteBatch, camera);
             }
-                
         }
 
         public void Update(GameTime gameTime)
@@ -54,6 +39,16 @@ namespace Wink
             {
                 LocalServer ls = (LocalServer)server;
                 ls.Update(gameTime);
+
+                // temp gameover check
+                Player player = ls.Level.Find((p) => p.GetType() == typeof(Player)) as Player;
+                if (player.health<=0)
+                {
+
+                    GameOverState gos = GameEnvironment.GameStateManager.GetGameState("gameOverState") as GameOverState;
+                    gos.GameMode = currentGameMode;
+                    GameEnvironment.GameStateManager.SwitchTo("gameOverState");
+                }
             }
             
         }

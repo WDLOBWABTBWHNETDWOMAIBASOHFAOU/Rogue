@@ -8,6 +8,7 @@ namespace Wink
         protected Level level;
         private int timeleft;
         private bool startTimer;
+        public bool isTurn;
 
         protected string idleAnimation, moveAnimation, dieAnimation;
         string dieSound;
@@ -16,8 +17,6 @@ namespace Wink
         {
             this.level = level;
             SetStats();
-            healthPoints = MaxHP();
-            manaPoints = MaxManaPoints();
             InitAnimation();
             timeleft = 1000;
         }
@@ -48,8 +47,7 @@ namespace Wink
                 }
             }
         }
-
-
+        
         public void MoveTo(Tile tile)
         {
             float TileX = (tile.TilePosition.X + 1) * Tile.TileWidth;

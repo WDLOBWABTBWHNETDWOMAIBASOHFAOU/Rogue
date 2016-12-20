@@ -38,12 +38,19 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Events\ActionEvent.cs" />
     <Compile Include="Events\AttackEvent.cs" />
+    <Compile Include="Events\EndTurnEvent.cs" />
     <Compile Include="Events\Event.cs" />
+    <Compile Include="Events\JoinedServerEvent.cs" />
     <Compile Include="Events\JoinServerEvent.cs" />
     <Compile Include="Events\LevelUpdatedEvent.cs" />
     <Compile Include="Events\PickupEvent.cs" />
     <Compile Include="Events\PlayerMoveEvent.cs" />
+    <Compile Include="GUI\TrackingTextGameObject.cs" />
+    <Compile Include="GUI\Window.cs" />
+    <Compile Include="Multiplayer\Sender.cs" />
+    <Compile Include="Events\StartTurnEvent.cs" />
     <Compile Include="GameManagement\AnimatedGameObject.cs" />
     <Compile Include="GameManagement\Animation.cs" />
     <Compile Include="GameManagement\AssetManager.cs" />
@@ -95,6 +102,8 @@
     <Compile Include="GameManagement\SpriteSheet.cs" />
     <Compile Include="GameManagement\TextBox.cs" />
     <Compile Include="GameManagement\TextGameObject.cs" />
+    <Compile Include="States\GameOverState.cs" />
+    <Compile Include="States\GameSetupState.cs" />
     <Compile Include="States\MainMenuState.cs" />
     <Compile Include="States\MultiplayerMenu.cs" />
     <Compile Include="States\OptionsMenu.cs" />

@@ -12,9 +12,15 @@ namespace Wink
         }
         public override void Update(GameTime gameTime)
         {
+            base.Update(gameTime);
             if (Parent is MouseSlot)
             {
                 cameraSensitivity = 0;
+            }
+            else if (Parent is GameObjectGrid)
+            {
+                GameObjectGrid p = Parent as GameObjectGrid;
+                cameraSensitivity = p.CameraSensitivity;
             }
             else
             {
@@ -22,9 +28,9 @@ namespace Wink
             }
         }
 
-        public void OnClick(Server server)
+        public void OnClick(Server server, LocalClient sender)
         {
-            PickupEvent PuE = new PickupEvent();
+            PickupEvent PuE = new PickupEvent(sender);
             PuE.player=(Root as GameObjectList).Find("player_" + Environment.MachineName) as Player;
             PuE.item = this;
             PuE.target = PuE.item.Parent as GameObjectGrid;

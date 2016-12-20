@@ -8,20 +8,30 @@ namespace Wink
         private Client client;
         protected int exp;
         public MouseSlot mouseSlot;
-        
-        public Player(Client client, Level level,int layer) : base(level, layer, "player_" + client.ClientName)
+
+        //private readonly GameObjectGrid itemGrid;
+        //public GameObjectGrid ItemGrid
+        //{
+        //    get { return itemGrid; }
+        //}
+
+        public Player(Client client, Level level, int layer) : base(level, layer, "player_" + client.ClientName)
         {
             this.client = client;
 
+            //Inventory
             mouseSlot = new MouseSlot(layer + 11, "mouseSlot");
-            level.Add(mouseSlot);
+            //itemGrid = new GameObjectGrid(3, 6,0,"",0);
 
+            SetStats(5, 5, 5, 5, 55);
+
+            //level.Add(mouseSlot);
             level.Add(this);
 
-            Tile ST = level.Find("startTile") as Tile;
-            float tileX = (ST.TilePosition.ToVector2().X + 1) * ST.Height- ST.Height / 2;
-            float tileY = (ST.TilePosition.ToVector2().Y + 1) * ST.Width;
-            Position = new Vector2(tileX,tileY);
+            //Put player on start tile.
+            Tile startTile = level.Find("startTile") as Tile;
+            Position = startTile.Position - startTile.Origin + Origin;
+
             //InitAnimation(); not sure if overriden version gets played right without restating
         }
 

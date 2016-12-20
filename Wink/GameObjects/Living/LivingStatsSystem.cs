@@ -2,9 +2,14 @@
 {
     public abstract partial class Living : AnimatedGameObject
     {
-        protected int manaPoints, healthPoints, actionPoints, baseAttack, strenght, dexterity, intelligence, creatureLevel;
+        public const int MaxActionPoints = 4;
 
-        public int health { get { return healthPoints; } }
+        protected int manaPoints, healthPoints, actionPoints, baseAttack, strength, dexterity, intelligence, creatureLevel;
+
+        public int Dexterity { get { return dexterity; } }
+        public int ActionPoints { get { return actionPoints; } set { actionPoints = value; } }
+
+        public int health { get { return healthPoints; } set { healthPoints = value; } }
         public int mana { get { return manaPoints; } }
         //protected IList<Equipment> EquipedItems;
 
@@ -19,12 +24,15 @@
         protected void SetStats(int creatureLevel = 1, int strenght = 2, int dexterity = 2, int intelligence = 2, int baseAttack = 40)
         {
             this.creatureLevel = creatureLevel;
-            this.strenght = strenght;
+            this.strength = strenght;
             this.dexterity = dexterity;
             this.intelligence = intelligence;
             //EquipedItems = new List<Equipment>();
             this.baseAttack = baseAttack;
-            actionPoints = 3;
+            actionPoints = MaxActionPoints;
+
+            healthPoints = MaxHP();
+            manaPoints = MaxManaPoints();
         }
 
         /// <summary>
@@ -92,7 +100,7 @@
             // get the baseattack value of the equiped weapon, if non equiped use baseattack of living
             // min max base attack value for each weapon and random inbetween or random between 0.8 and 1.2 of base (for example)
             int attack = baseAttack;            
-            int attackValue = (int)calculateValue(attack, strenght);     
+            int attackValue = (int)calculateValue(attack, strength);     
 
             return attackValue;
         }

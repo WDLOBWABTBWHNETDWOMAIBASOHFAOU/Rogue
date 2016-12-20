@@ -35,7 +35,7 @@ public class AssetManager
         return contentManager.Load<SpriteFont>(assetName);
     }
 
-    public virtual Texture2D GetSprite(string assetName)
+    public Texture2D GetSprite(string assetName)
     {
         if (assetName == "" || assetName == null)
         { 
@@ -56,7 +56,7 @@ public class AssetManager
         }
     }
 
-    public virtual Texture2D GetEmptySprite(string emptyString)
+    public Texture2D GetEmptySprite(string emptyString)
     {
         //Split up the string and get the parameters
         string[] parts = emptyString.Split(':');
@@ -88,13 +88,13 @@ public class AssetManager
         return emptyTexture;
     }
 
-    public virtual void PlaySound(string assetName)
+    public void PlaySound(string assetName)
     {
         SoundEffect snd = contentManager.Load<SoundEffect>(assetName);
         snd.Play();
     }
 
-    public virtual void PlayMusic(string assetName, bool repeat = true)
+    public void PlayMusic(string assetName, bool repeat = true)
     {
         MediaPlayer.IsRepeating = repeat;
         MediaPlayer.Play(contentManager.Load<Song>(assetName));
@@ -103,30 +103,5 @@ public class AssetManager
     public ContentManager Content
     {
         get { return contentManager; }
-    }
-}
-
-public class EmptyAssetManager : AssetManager
-{
-    public EmptyAssetManager() : base(null, null)
-    {
-    }
-
-    public override Texture2D GetSprite(string assetName)
-    {
-        return null;
-    }
-
-    public override Texture2D GetEmptySprite(string emptyString)
-    {
-        return null;
-    }
-
-    public override void PlaySound(string assetName)
-    {
-    }
-
-    public override void PlayMusic(string assetName, bool repeat = true)
-    {
     }
 }
