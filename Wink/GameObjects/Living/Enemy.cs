@@ -91,19 +91,20 @@ namespace Wink
 
         public override void HandleInput(InputHelper inputHelper)
         {
-            if (Health > 0 && Visible)
+            if(Health > 0)
             {
-                Action onClick = () =>
+                Action onClick = () => 
                 {
                     Player player = GameWorld.Find(p => p is Player) as Player;
                     AttackEvent aE = new AttackEvent(player, this);
                     Server.Send(aE);
                 };
-
+            
                 inputHelper.IfMouseLeftButtonPressedOn(this, onClick);
-            }
 
-            base.HandleInput(inputHelper);
+                base.HandleInput(inputHelper);
+
+            }
 
         }
     }
