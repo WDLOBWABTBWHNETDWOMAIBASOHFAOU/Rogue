@@ -12,7 +12,6 @@ class TextBox : GameObjectList
 
     public TextBox(string path, int textPlace, string overlay, string font, float objPositionX, float objPositionY, Vector2 textPosition, int cameraSensitivity) : base(100, "")
     {
-
         visible = true;
         List<string> textLines = new List<string>();
         StreamReader fileReader = new StreamReader(path);
@@ -27,14 +26,12 @@ class TextBox : GameObjectList
         if (textPlace == 0)
             textPlace = r.Next(1, textLines.Count);
 
-
         SpriteGameObject textFrame = new SpriteGameObject(overlay, 1, "", 0, cameraSensitivity, 1);
         Add(textFrame);
 
         objPosition = new Vector2(objPositionX, objPositionY);
         center = new Vector2(textFrame.Width / 2, textFrame.Height);
         Position = objPosition - center;
-
         
         TextGameObject text = new TextGameObject(font, cameraSensitivity, 2);
 

@@ -1,10 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Wink
 {
@@ -18,13 +14,11 @@ namespace Wink
             level.Add(this);
 
             grid = level.Find("TileField") as TileField;
-            // This is going to have to be replaced with FindAll but seeing as it's not in this branch and I'm kinda lazy,
-            // I'm not doing that now. For now, this works.
-            Tile ST = grid[GameEnvironment.Random.Next(grid.Columns - 1), GameEnvironment.Random.Next(grid.Rows - 1)] as Tile;
-            while (!ST.Passable)
-            {
-                ST = grid[GameEnvironment.Random.Next(grid.Columns - 1), GameEnvironment.Random.Next(grid.Rows - 1)] as Tile;
-            }
+
+            //First find all passable tiles then select one at random.
+            List<GameObject> tileCandidates = grid.FindAll(obj => obj is Tile && (obj as Tile).Passable);
+            Tile ST = tileCandidates[GameEnvironment.Random.Next(tileCandidates.Count)] as Tile;
+
             float tileX = (ST.TilePosition.ToVector2().X + 1) * ST.Height - ST.Height / 2;
             float tileY = (ST.TilePosition.ToVector2().Y + 1) * ST.Width;
             Position = new Vector2(tileX, tileY);
