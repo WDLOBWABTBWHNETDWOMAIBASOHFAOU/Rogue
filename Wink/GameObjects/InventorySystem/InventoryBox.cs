@@ -45,15 +45,8 @@ namespace Wink
         {
             base.GetObjectData(info, context);
             info.AddValue("itemGrid", itemGrid);
-        }
+        }   
 
-        private void FillGrid()
-        {
-            for (int x = 0; x < Columns; x++)
-            {
-                for (int y = 0; y < Rows; y++)
-                {
-                    Add(new Tile("empty:65:65:10:Gray", TileType.Inventory), x, y);                    
         private void CheckGrid(GameObjectGrid itemGrid)
         {
             for (int x = 0; x < itemGrid.Columns; x++)

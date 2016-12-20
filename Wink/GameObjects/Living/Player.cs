@@ -11,17 +11,12 @@ namespace Wink
         private MouseSlot mouseSlot;
 
         public MouseSlot MouseSlot { get { return mouseSlot; } }
-        public MouseSlot mouseSlot;
 
         //private readonly GameObjectGrid itemGrid;
         //public GameObjectGrid ItemGrid
         //{
         //    get { return itemGrid; }
         //}
-
-        public Player(Client client, Level level, int layer) : base(level, layer, "player_" + client.ClientName)
-        {
-            this.client = client;
 
         public Player(string clientName, int layer) : base(layer, "player_" + clientName)
         {
