@@ -64,6 +64,8 @@ namespace Wink
         public void InitializeGameMode(GameMode gameMode)
         {
             PlayingState ps = GameEnvironment.GameStateManager.GetGameState("playingState") as PlayingState;
+            Reset();
+            ps.Reset();
             ps.CurrentGameMode = gameMode;
             switch (gameMode)
             {
