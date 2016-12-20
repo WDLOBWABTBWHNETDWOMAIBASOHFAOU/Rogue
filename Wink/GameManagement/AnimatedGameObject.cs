@@ -1,18 +1,32 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using System.Runtime.Serialization;
 
 public class AnimatedGameObject : SpriteGameObject
 {
-    protected Dictionary<string,Animation> animations;
+    protected Dictionary<string, Animation> animations;
 
-    public AnimatedGameObject(int layer = 0, string id = "", float scale=1.0f)
-        : base("", layer, id, 0, 1, scale)
+    public AnimatedGameObject(int layer = 0, string id = "", float scale=1.0f) : base("", layer, id, 0, 1, scale)
     {
         animations = new Dictionary<string, Animation>();
     }
 
-    public void LoadAnimation(string assetName, string id, bool looping, 
-                              float frameTime = 0.1f)
+    public AnimatedGameObject(SerializationInfo info, StreamingContext context) : base(info, context)
+    {
+
+    }
+
+    public override void GetObjectData(SerializationInfo info, StreamingContext context)
+    {
+        foreach(KeyValuePair<string, Animation> pair in animations)
+        {
+            info.AddValue(pair.Key, pair.Value);
+        }
+        
+        base.GetObjectData(info, context);
+    }
+
+    public void LoadAnimation(string assetName, string id, bool looping, float frameTime = 0.1f)
     {
         Animation anim = new Animation(assetName, looping, frameTime);
         animations[id] = anim;        

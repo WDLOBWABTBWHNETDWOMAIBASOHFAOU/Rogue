@@ -1,10 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
 
 namespace Wink
@@ -12,33 +9,35 @@ namespace Wink
     [Serializable]
     public class Level : GameObjectList
     {
-        public Level(SerializationInfo info, StreamingContext context) : base(info, context)
+        public Level(SerializationInfo info, StreamingContext context)
         {
+            children = (List<GameObject>)info.GetValue("children", typeof(List<GameObject>));
+
+            position = new Vector2((float)info.GetDouble("posX"), (float)info.GetDouble("posY"));
+            velocity = new Vector2((float)info.GetDouble("velX"), (float)info.GetDouble("velY"));
+            layer = info.GetInt32("layer");
+            id = info.GetString("id");
+            visible = info.GetBoolean("vis");
+        }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("children", children);
+
+            //Reimplemented this her specifically to not have parent included, since this causes the GUI to be serialized as well.
+            //info.AddValue("parent", parent);
+            info.AddValue("posX", position.X);
+            info.AddValue("posY", position.Y);
+            info.AddValue("velX", velocity.X);
+            info.AddValue("velY", velocity.Y);
+            info.AddValue("layer", layer);
+            info.AddValue("id", id);
+            info.AddValue("vis", visible);
         }
 
         public Level(int levelIndex) : base(0, "Level")
         {
             LoadTiles("Content/Levels/" + levelIndex + ".txt");
-
-            /*int rows= 10;
-            int columns=10;
-            TileField tf = new TileField(columns, rows, 0, "TileField");
-            Point startTile = new Point(GameEnvironment.Random.Next(0, columns - 1), GameEnvironment.Random.Next(0, rows - 1));
-            for (int x = 0; x < tf.Columns; x++)
-            {
-                for(int y = 0; y < tf.Rows; y++)
-                {
-                    if(startTile.X == x && startTile.Y == y)
-                    {
-                        tf.Add(new Tile("empty:65:65:10:Red", TileType.Normal, layer, "startTile"), x, y);
-                    }
-                    else
-                    {
-                        tf.Add(new Tile("empty:65:65:10:Magenta", TileType.Normal,layer), x, y);
-                    }                    
-                }
-            }
-            Add(tf);*/
         }
 
         public void LoadTiles(string path)
@@ -54,8 +53,7 @@ namespace Wink
             }
             //timelimit = int.Parse(textLines[textLines.Count - 1]);
             TileField tf = new TileField(textLines.Count, width, 0, "TileField");
-
-
+            
             Add(tf);
             for (int x = 0; x < width; ++x)
             {
@@ -71,12 +69,16 @@ namespace Wink
             int itemLayer = layer + 2;
 
             Item testItem = new TestItem("empty:65:65:10:Pink", 1, itemLayer); 
+
             // ENEMY CODE (test)
-            Enemy testEnemy = new Enemy(this, layer + 1);
-            Enemy testEnemy2 = new Enemy(this, layer + 1);
-            //Add(testEnemy);
+            for(int i = 0; i < 2; i++)
+            {
+                Enemy testEnemy = new Enemy(layer + 1);
+                Add(testEnemy);
+                testEnemy.InitPosition();
+            }
             // END ENEMY CODE (test)
-            
+
             testItem.Position = new Vector2(GameEnvironment.Random.Next(0, tf.Columns - 1) * Tile.TileWidth, GameEnvironment.Random.Next(0, tf.Rows - 1) * Tile.TileHeight);
             Add(testItem);
 

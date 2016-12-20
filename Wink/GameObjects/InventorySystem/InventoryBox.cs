@@ -1,8 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
+using System.Runtime.Serialization;
 
 namespace Wink
 {
+    [Serializable]
     public class InventoryBox : GameObjectGrid
     {
         /// <summary>
@@ -24,6 +27,17 @@ namespace Wink
             itemGrid.Parent = this;
             itemGrid.CellHeight = CellHeight;
             itemGrid.CellWidth = CellWidth;
+        }
+
+        public InventoryBox(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+            itemGrid = info.GetValue("itemGrid", typeof(GameObjectGrid)) as GameObjectGrid;
+        }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            base.GetObjectData(info, context);
+            info.AddValue("itemGrid", itemGrid);
         }
 
         private void FillGrid()

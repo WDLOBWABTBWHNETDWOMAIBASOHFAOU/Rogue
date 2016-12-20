@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 public class SpriteSheet
 {
+    protected string assetName;
     protected Texture2D sprite;
     protected bool[] collisionMask;
     protected int sheetIndex;
@@ -12,6 +13,8 @@ public class SpriteSheet
 
     public SpriteSheet(string assetname, int sheetIndex = 0)
     {
+        assetName = assetname;
+
         // retrieve the sprite
         sprite = GameEnvironment.AssetManager.GetSprite(assetname);
 

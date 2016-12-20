@@ -1,4 +1,6 @@
 ﻿
+using Microsoft.Xna.Framework;
+
 namespace Wink
 {
     public abstract class Server : Sender
@@ -9,5 +11,7 @@ namespace Wink
         }
 
         public abstract void Send(Event e);
+
+        public abstract void Update(GameTime gameTime);
     }
 }

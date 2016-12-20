@@ -1,30 +1,44 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
+using System.Runtime.Serialization;
 
 namespace Wink
 {
+    [Serializable]
     public class Player : Living
     {
-        private Client client;
         protected int exp;
-        public MouseSlot mouseSlot;
-        
-        public Player(Client client, Level level,int layer) : base(level, layer, "player_" + client.ClientName)
-        {
-            this.client = client;
+        private MouseSlot mouseSlot;
 
+        public MouseSlot MouseSlot { get { return mouseSlot; } }
+
+        public Player(string clientName, int layer) : base(layer, "player_" + clientName)
+        {
             mouseSlot = new MouseSlot(layer + 11, "mouseSlot");
 
             SetStats(5, 5, 5, 5, 55);
-            level.Add(mouseSlot);
-
-            level.Add(this);
-
-            //Put player on start tile.
-            Tile startTile = level.Find("startTile") as Tile;
-            Position = startTile.Position - startTile.Origin + Origin;
 
             //InitAnimation(); not sure if overriden version gets played right without restating
+        }
+
+        public Player(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+            exp = info.GetInt32("exp");
+            mouseSlot = info.GetValue("mouseSlot", typeof(MouseSlot)) as MouseSlot;
+        }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            base.GetObjectData(info, context);
+            info.AddValue("exp", exp);
+            info.AddValue("mouseSlot", mouseSlot);
+        }
+
+        public void InitPosition()
+        {
+            //Put player on start tile.
+            Tile startTile = GameWorld.Find("startTile") as Tile;
+            Position = startTile.Position - startTile.Origin + Origin;
         }
 
         protected override void InitAnimation(string idleColor = "empty:65:65:10:Magenta")

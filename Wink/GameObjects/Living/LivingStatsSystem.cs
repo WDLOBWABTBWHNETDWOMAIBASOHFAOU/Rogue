@@ -9,8 +9,8 @@
         public int Dexterity { get { return dexterity; } }
         public int ActionPoints { get { return actionPoints; } set { actionPoints = value; } }
 
-        public int health { get { return healthPoints; } set { healthPoints = value; } }
-        public int mana { get { return manaPoints; } }
+        public int Health { get { return healthPoints; } set { healthPoints = value; } }
+        public int Mana { get { return manaPoints; } }
         //protected IList<Equipment> EquipedItems;
 
         /// <summary>
@@ -43,7 +43,7 @@
         /// <param name="extra">Sum of extra effects</param>
         /// <param name="modifier"></param>
         /// <returns></returns>
-        protected double calculateValue(double baseValue, int stat = 0, double modifier = 1, double extra = 0)
+        protected double CalculateValue(double baseValue, int stat = 0, double modifier = 1, double extra = 0)
         {
             double value = baseValue + modifier * stat + extra;
             return value;
@@ -55,7 +55,7 @@
         /// <returns></returns>
         protected int MaxHP()
         {
-            int maxHP=(int)calculateValue(40, creatureLevel - 1, 4);
+            int maxHP = (int)CalculateValue(40, creatureLevel - 1, 4);
             return maxHP;
         }
         public int MaxHealth { get {return MaxHP(); } }
@@ -66,7 +66,7 @@
         /// <returns></returns>
         protected int MaxManaPoints()
         {
-            int maxManaPoints = (int)calculateValue(50, intelligence, 15);
+            int maxManaPoints = (int)CalculateValue(50, intelligence, 15);
             return maxManaPoints;
         }
         public int MaxMana { get { return MaxManaPoints(); } }
@@ -77,7 +77,7 @@
         /// <returns></returns>
         protected double HitChance()
         {
-            double hitChance = calculateValue(0.7, dexterity, 0.01);
+            double hitChance = CalculateValue(0.7, dexterity, 0.01);
             return hitChance;
         }
 
@@ -87,7 +87,7 @@
         /// <returns></returns>
         protected double DodgeChance()
         {
-            double dodgeChance = calculateValue(0.3, dexterity, 0.01);
+            double dodgeChance = CalculateValue(0.3, dexterity, 0.01);
             return dodgeChance;
         }
 
@@ -100,7 +100,7 @@
             // get the baseattack value of the equiped weapon, if non equiped use baseattack of living
             // min max base attack value for each weapon and random inbetween or random between 0.8 and 1.2 of base (for example)
             int attack = baseAttack;            
-            int attackValue = (int)calculateValue(attack, strength);     
+            int attackValue = (int)CalculateValue(attack, strength);     
 
             return attackValue;
         }

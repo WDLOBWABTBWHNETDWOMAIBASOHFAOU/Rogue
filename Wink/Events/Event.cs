@@ -2,12 +2,13 @@
 
 namespace Wink
 {
-    [Serializable()]
+    [Serializable]
     public abstract class Event
     {
         public class InvalidEventException : Exception { }
 
-        protected Sender sender;
+        [NonSerialized]
+        public Sender sender;
 
         public Event(Sender sender)
         {

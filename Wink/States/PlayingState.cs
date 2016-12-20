@@ -34,23 +34,25 @@ namespace Wink
                 LocalClient lc = (LocalClient)client;
                 lc.Update(gameTime);
             }
-            //Then update server so it can process events and send back the new level state.
-            if (server is LocalServer && server != null)
+
+            if(server != null)
             {
-                LocalServer ls = (LocalServer)server;
-                ls.Update(gameTime);
+                //Then update server so it can process events and send back the new level state.
+                server.Update(gameTime);
 
-                // temp gameover check
-                Player player = ls.Level.Find((p) => p.GetType() == typeof(Player)) as Player;
-                if (player.health<=0)
+                if (server is LocalServer)
                 {
-
-                    GameOverState gos = GameEnvironment.GameStateManager.GetGameState("gameOverState") as GameOverState;
-                    gos.GameMode = currentGameMode;
-                    GameEnvironment.GameStateManager.SwitchTo("gameOverState");
+                    LocalServer ls = server as LocalServer;
+                    // temp gameover check
+                    Player player = ls.Level.Find((p) => p.GetType() == typeof(Player)) as Player;
+                    if (player.Health <= 0)
+                    {
+                        GameOverState gos = GameEnvironment.GameStateManager.GetGameState("gameOverState") as GameOverState;
+                        gos.GameMode = currentGameMode;
+                        GameEnvironment.GameStateManager.SwitchTo("gameOverState");
+                    }
                 }
             }
-            
         }
 
         public void HandleInput(InputHelper inputHelper)

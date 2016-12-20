@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Runtime.Serialization;
 
 namespace Wink
 {
+    [Serializable]
     class PickupEvent : Event
     {
         public Item item { get; set; }
@@ -10,7 +12,6 @@ namespace Wink
 
         public PickupEvent(Sender sender) : base(sender)
         {
-
         }
 
         public override void OnClientReceive(LocalClient client)
@@ -20,7 +21,7 @@ namespace Wink
 
         public override void OnServerReceive(LocalServer server)
         {
-            player.mouseSlot.AddTo(item,target);
+            player.MouseSlot.AddTo(item,target);
             server.LevelChanged();
         }
 

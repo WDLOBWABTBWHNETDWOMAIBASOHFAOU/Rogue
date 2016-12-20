@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Wink
 {
+    [Serializable]
     class JoinedServerEvent : LevelUpdatedEvent
     {
         public JoinedServerEvent(Sender sender) : base(sender)
@@ -16,6 +17,7 @@ namespace Wink
         {
             base.OnClientReceive(client);
             client.LoadPlayerGUI();
+            GameEnvironment.GameStateManager.SwitchTo("playingState");
         }
     }
 }

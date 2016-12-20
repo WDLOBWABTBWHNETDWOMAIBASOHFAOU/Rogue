@@ -2,7 +2,7 @@
 
 namespace Wink
 {
-    [Serializable()]
+    [Serializable]
     public class AttackEvent : ActionEvent
     {
         public Living Attacker { get; set; }

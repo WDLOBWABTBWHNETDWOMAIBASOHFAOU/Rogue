@@ -1,9 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
+using System;
 
 namespace Wink
 {
+    [Serializable]
     public class MouseSlot : GameObjectGrid
     {
         public Item oldItem;
@@ -22,17 +22,6 @@ namespace Wink
 
             Add(newItem, 0, 0);
             oldItem = newItem;
-        }
-
-        public override void Update(GameTime gameTime)
-        {
-            base.Update(gameTime);
-            
-        }
-
-        public override void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
-        {
-            base.Draw(gameTime, spriteBatch, camera);
         }
 
         public override void HandleInput(InputHelper inputHelper)
