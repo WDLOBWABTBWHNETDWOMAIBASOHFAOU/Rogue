@@ -12,6 +12,7 @@ namespace Wink
 
         public Enemy(int layer, string id = "Enemy") : base(layer, id)
         {
+            AddHPBar();
         }
 
         public void InitPosition()
@@ -26,7 +27,6 @@ namespace Wink
             float tileY = (ST.TilePosition.ToVector2().Y + 1) * ST.Width;
             Position = new Vector2(tileX, tileY);
 
-            AddHPBar(this);
         }
 
         protected override void InitAnimation(string idleColor = "empty:65:65:10:Magenta")
@@ -57,19 +57,20 @@ namespace Wink
             }
         }
 
-        private void AddHPBar(Enemy enemy)
+        private void AddHPBar()
         {
-            enemy = this;
             SpriteFont textfieldFont = GameEnvironment.AssetManager.GetFont("Arial26");
 
             //Healthbar
-            hpBar = new Bar<Enemy>(enemy, e => e.Health, enemy.MaxHealth, textfieldFont, Color.Red, 2, "HealthBar", 1.0f, 1f, false);
+            hpBar = new Bar<Enemy>(this, e => e.Health, MaxHealth, textfieldFont, Color.Red, 2, "HealthBar", 1.0f, 1f, false);
+            hpBar.Parent = this;
+            hpBar.Position = new Vector2((Width - hpBar.Width - origin.X) / 2, -Height);
         }
 
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
-            if (this.isTurn && this.Health > 0)
+            if (isTurn && Health > 0)
             {
                 GoTo(GameWorld.Find(p => p is Player) as Player);
             }

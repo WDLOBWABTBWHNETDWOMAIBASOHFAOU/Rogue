@@ -40,12 +40,12 @@ namespace Wink
             Vector2 MPBarPosition = new Vector2(barX, HPBarPosition.Y + 32);
 
             //Healthbar
-            Bar<Player> hpBar = new Bar<Player>(player, p => p.health, player.MaxHealth, textfieldFont, Color.Red, 2, "HealthBar",0 ,2.5f);
+            Bar<Player> hpBar = new Bar<Player>(player, p => p.Health, player.MaxHealth, textfieldFont, Color.Red, 2, "HealthBar",0 ,2.5f);
             hpBar.Position = new Vector2(HPBarPosition.X, HPBarPosition.Y);
             Add(hpBar);
 
             //Manabar
-            Bar<Player> mpBar = new Bar<Player>(player, p => p.mana, player.MaxMana, textfieldFont, Color.Blue, 2, "ManaBar", 0,2.5f);
+            Bar<Player> mpBar = new Bar<Player>(player, p => p.Mana, player.MaxMana, textfieldFont, Color.Blue, 2, "ManaBar", 0,2.5f);
             mpBar.Position = new Vector2(MPBarPosition.X, MPBarPosition.Y);
             Add(mpBar);
 
@@ -64,7 +64,7 @@ namespace Wink
             inventory.Visible = false;
             Add(inventory);
 
-            Add(player.mouseSlot);
+            Add(player.MouseSlot);
         }
         public override void Update(GameTime gameTime)
         {

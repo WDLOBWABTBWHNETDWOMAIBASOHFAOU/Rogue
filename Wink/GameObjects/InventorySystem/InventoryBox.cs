@@ -6,7 +6,7 @@ using System.Runtime.Serialization;
 namespace Wink
 {
     [Serializable]
-    public class InventoryBox : GameObjectGrid
+    public class InventoryBox : GameObjectList
     {
         /// <summary>
         /// The grid that contains the actual items
@@ -20,7 +20,7 @@ namespace Wink
         private float cameraSensitivity;
         public float CameraSensitivity { get { return cameraSensitivity; } }
         
-        public InventoryBox(GameObjectGrid itemGrid, int layer = 0, string id = "",float cameraSensitivity=0) : base(layer, id)
+        public InventoryBox(GameObjectGrid itemGrid, int layer = 0, string id = "", float cameraSensitivity = 0) : base(layer, id)
         {
             this.cameraSensitivity = cameraSensitivity;
             itemGrid.CameraSensitivity = cameraSensitivity;

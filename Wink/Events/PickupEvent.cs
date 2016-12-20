@@ -21,7 +21,7 @@ namespace Wink
 
         public override void OnServerReceive(LocalServer server)
         {
-            player.mouseSlot.AddTo(item, target);
+            player.MouseSlot.AddTo(item, target);
             server.LevelChanged();
         }
 
