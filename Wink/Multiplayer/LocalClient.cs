@@ -70,7 +70,7 @@ namespace Wink
                 //First check whether current gameObject was clicked
                 if (gameObjects[i].BoundingBox.Contains(mousePos))
                 {
-                    //Then check whether the gameObject is clickable
+                    //Then check whether the gameObject is clickable and Visible to the user
                     if (gameObjects[i] is ClickableGameObject && gameObjects[i].Visible)
                     {
                         //If so execute OnClick and return

@@ -25,15 +25,16 @@ namespace Wink
                 value = new Tuple<T, Func<T, int>>(o , test);
             }
 
-            public InnerBar(int maxValue, int layer = 0, string id = "", float scale = 1) : base("HUD/innerbar", layer, id, 0, 0, scale)
+            public InnerBar(int maxValue, int layer = 0, string id = "", float cameraSensitivity = 0, float scale = 1) : base("HUD/innerbar", layer, id, 0, 0, scale)
             {
                 this.maxValue = maxValue;
+                this.cameraSensitivity = cameraSensitivity;
             }
 
             public override void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
             {
                 float w = Value / (float)maxValue;
-                sprite.Draw(spriteBatch, origin, scale, DrawColor, new Rectangle(GlobalPosition.ToPoint(), new Point((int)(w * Width), (int)(8 * scale))));
+                sprite.Draw(spriteBatch, origin, scale, DrawColor, new Rectangle(GlobalPosition.ToPoint() - (cameraSensitivity * camera.GlobalPosition).ToPoint(), new Point((int)(w * Width), (int)(8 * scale))));
             }
         }
 
@@ -43,29 +44,39 @@ namespace Wink
         private SpriteFont font;
         private Color color;
         private float scale;
+        private Vector2 origin;
+        public Vector2 Origin { get { return origin; } }
+        private bool stringVisible;
 
         public int Width {
             get { return (int)font.MeasureString(inner.Value.ToString()).X + outer.Width; }
         }
-        
-        public Bar(T o, Func<T, int> test, int maxValue, SpriteFont font, Color color, int layer = 0, string id = "", float scale = 1) : base(layer, id)
+
+        float cameraSensitivity;
+        public Bar(T o, Func<T, int> test, int maxValue, SpriteFont font, Color color, int layer = 0, string id = "",float cameraSensitivity = 0, float scale = 1, bool stringVisible = true) : base(layer, id)
         {
+            this.cameraSensitivity = cameraSensitivity;
             this.font = font;
             this.color = color;
             this.scale = scale;
+            this.stringVisible = stringVisible;
 
-            inner = new InnerBar(maxValue, layer, id + "_inner", scale);
+            outer = new SpriteGameObject("HUD/emptybar", layer, id + "_outer", 0, cameraSensitivity, scale);
+            outer.DrawColor = color;
+            Add(outer);
+
+            inner = new InnerBar(maxValue, layer, id + "_inner", cameraSensitivity, scale);
             inner.DrawColor = color;
-            inner.Position = new Vector2(4.5f, 6f);
+            float xdif = (outer.Sprite.Width - inner.Sprite.Width) / 2;
+            float ydif = (outer.Sprite.Height - inner.Sprite.Height) / 2; 
+            inner.Position = new Vector2(xdif, ydif)*scale;
             Add(inner);
 
             this.inner.maxValue = maxValue;
 
             inner.AddValue(o, test);
+            this.origin = new Vector2(outer.Sprite.Width / 2, 0);
 
-            outer = new SpriteGameObject("HUD/emptybar", layer, id + "_outer", 0, 0, scale);
-            outer.DrawColor = color;
-            Add(outer);
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
@@ -77,7 +88,10 @@ namespace Wink
             float x = GlobalPosition.X + outer.Width + 10;
             float y = inner.GlobalPosition.Y - inner.Height / 2;
 
-            spriteBatch.DrawString(font, inner.Value.ToString() + "/" + inner.maxValue, new Vector2(x, y), color);
+            if (stringVisible)
+            {
+                spriteBatch.DrawString(font, inner.Value.ToString() + "/" + inner.maxValue, new Vector2(x, y) - (cameraSensitivity * camera.GlobalPosition), color, 0, Vector2.Zero, scale / 2.5f, SpriteEffects.None, 0);
+            }
         }
     }
 }

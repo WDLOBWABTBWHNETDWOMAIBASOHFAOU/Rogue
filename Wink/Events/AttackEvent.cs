@@ -31,9 +31,11 @@ namespace Wink
 
         protected override bool ValidateAction(Level level)
         {
-            //TODO: Implement Validation.
-            //Within Reach, attacker still has action points, etc.
-            return true;
+            int dx = (int)Math.Abs(Attacker.Position.X - Defender.Position.X);
+            int dy = (int)Math.Abs(Attacker.Position.Y -  Defender.Position.Y);
+            
+            bool withinReach = dx <= Tile.TileWidth && dy <= Tile.TileHeight;
+            return withinReach;
         }
     }
 }
