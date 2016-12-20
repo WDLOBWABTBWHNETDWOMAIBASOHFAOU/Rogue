@@ -57,6 +57,9 @@ namespace Wink
                 SpriteFont arial12Bold = GameEnvironment.AssetManager.GetFont("Arial12Bold");
                 closeButton = new Button("empty:" + TitleBarHeight + ":" + TitleBarHeight + ":" + TitleBarHeight + ":Red", "X", arial12Bold, Color.Black);
                 closeButton.Position = new Vector2(width - closeButton.Width - BorderWidth, -closeButton.Height - BorderWidth);
+                closeButton.Action = () => {
+                    visible = false;
+                };
                 Add(closeButton);
             }
         }
@@ -96,21 +99,15 @@ namespace Wink
             {
                 base.HandleInput(inputHelper);
             }
-            if (closeButton != null && closeButton.Pressed)
-            {
-                visible = false;
-            }
 
             if (isDraggable)
             {
-                if (TitleBar.Contains(inputHelper.MousePosition))
+                Action onClick = () =>
                 {
-                    if (inputHelper.MouseLeftButtonPressed())
-                    {
-                        mouseOffset = inputHelper.MousePosition - Position;
-                        dragging = true;
-                    }
-                }
+                    mouseOffset = inputHelper.MousePosition - Position;
+                    dragging = true;
+                };
+                inputHelper.IfMouseLeftButtonPressedOn(this, onClick, TitleBar);
 
                 if (inputHelper.MouseLeftButtonDown() && dragging)
                 {

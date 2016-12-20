@@ -1,6 +1,4 @@
-﻿
-
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using System.Net;
@@ -40,6 +38,11 @@ namespace Wink
             //Create a button to go back to the main menu.
             SpriteFont arial26 = GameEnvironment.AssetManager.GetFont("Arial26");
             backButton = new Button("button", "Back", arial26, Color.Black);
+            backButton.Action = () =>
+            {
+                Reset();
+                GameEnvironment.GameStateManager.SwitchTo("mainMenuState");
+            };
             backButton.Position = new Vector2(100, Game1.Screen.Y - 100);
             Add(backButton);
         }
@@ -49,6 +52,12 @@ namespace Wink
             Point screen = GameEnvironment.Screen;
             SpriteFont arial26 = GameEnvironment.AssetManager.GetFont("Arial26");
             startButton = new Button("button", "Start Game", arial26, Color.Black);
+            startButton.Action = () =>
+            {
+                LocalServer ls = (LocalServer)server;
+                ls.SetupLevel(1, clients);
+                GameEnvironment.GameStateManager.SwitchTo("playingState");
+            };
             startButton.Position = new Vector2(screen.X - startButton.Width - 50, screen.Y  - startButton.Height - 50);
             Add(startButton);
         }
@@ -124,26 +133,6 @@ namespace Wink
                 TcpClient tcpClient = tcpListener.AcceptTcpClient();
                 Client newClient = new RemoteClient((LocalServer)server, tcpClient);
                 AddClient(newClient);
-            }
-        }
-
-        public override void HandleInput(InputHelper inputHelper)
-        {
-            base.HandleInput(inputHelper);
-
-            if (backButton.Pressed)
-            {
-                Reset();
-                GameEnvironment.GameStateManager.SwitchTo("mainMenuState");
-            }
-
-            if (startButton != null && startButton.Pressed)
-            {
-                LocalServer ls = (LocalServer)server;
-                ls.SetupLevel(1, clients);
-
-                //Reset();
-                GameEnvironment.GameStateManager.SwitchTo("playingState");
             }
         }
 

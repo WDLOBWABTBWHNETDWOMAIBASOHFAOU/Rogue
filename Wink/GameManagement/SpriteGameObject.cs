@@ -15,6 +15,7 @@ public class SpriteGameObject : GameObject
     public bool PerPixelCollisionDetection = true;
 
     public Color DrawColor { get; set; }
+    public float CameraSensitivity { get { return cameraSensitivity; } }
 
     public SpriteGameObject(string assetName, int layer = 0, string id = "", int sheetIndex = 0, float cameraSensitivity = 1.0f, float scale = 1.0f) : base(layer, id)
     {

@@ -6,12 +6,11 @@ namespace Wink
     [Serializable]
     public class PlayerMoveEvent : ActionEvent
     {
-        public Player Player { get; set; }
-        public Tile Tile { get; set; }
+        private Tile tile;
 
-        public PlayerMoveEvent(Sender sender) : base(sender)
+        public PlayerMoveEvent(Player player, Tile tile) : base(player)
         {
-
+            this.tile = tile;
         }
 
         protected override int Cost
@@ -26,14 +25,14 @@ namespace Wink
 
         protected override void DoAction(LocalServer server)
         {
-            Player.MoveTo(Tile);
+            player.MoveTo(tile);
             server.LevelChanged();
         }
 
         protected override bool ValidateAction(Level level)
         {
-            int dx = (int)Math.Abs(Player.Position.X - Player.Origin.X - Tile.Position.X);
-            int dy = (int)Math.Abs(Player.Position.Y - Player.Origin.Y - Tile.Position.Y);
+            int dx = (int)Math.Abs(player.Position.X - player.Origin.X - tile.Position.X);
+            int dy = (int)Math.Abs(player.Position.Y - player.Origin.Y - tile.Position.Y);
 
             bool theSame = dx == 0 && dy == 0;
             bool withinReach = dx <= Tile.TileWidth && dy <= Tile.TileHeight;

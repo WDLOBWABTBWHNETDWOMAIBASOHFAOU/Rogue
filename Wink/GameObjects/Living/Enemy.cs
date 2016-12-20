@@ -6,7 +6,7 @@ using System.Collections.Generic;
 namespace Wink
 {
     [Serializable]
-    public class Enemy : Living, ClickableGameObject
+    public class Enemy : Living
     {
         Bar<Enemy> hpBar;
 
@@ -89,12 +89,19 @@ namespace Wink
             }
         }
 
-        public void OnClick(Server server, LocalClient sender)
+        public override void HandleInput(InputHelper inputHelper)
         {
-            AttackEvent aE = new AttackEvent(sender);
-            aE.Attacker = sender.Player;
-            aE.Defender = this;
-            server.Send(aE);
+            Action onClick = () => 
+            {
+                Player player = GameWorld.Find(p => p is Player) as Player;
+                AttackEvent aE = new AttackEvent(player, this);
+                Server.Send(aE);
+            };
+            
+            inputHelper.IfMouseLeftButtonPressedOn(this, onClick);
+
+            base.HandleInput(inputHelper);
+
         }
     }
 }

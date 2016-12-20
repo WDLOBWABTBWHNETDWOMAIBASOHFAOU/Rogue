@@ -5,12 +5,13 @@ namespace Wink
     [Serializable]
     public class AttackEvent : ActionEvent
     {
-        public Living Attacker { get; set; }
+        public Player Attacker { get; set; }
         public Living Defender { get; set; }
 
-        public AttackEvent(Sender sender) : base(sender)
+        public AttackEvent(Player attacker, Living defender) : base(attacker)
         {
-
+            Attacker = attacker;
+            Defender = defender;
         }
 
         protected override int Cost

@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 
 namespace Wink
 {
-    public abstract class Item : SpriteGameObject, ClickableGameObject
+    public abstract class Item : SpriteGameObject
     {
         int stackSize;
 
@@ -42,13 +42,19 @@ namespace Wink
             }
         }
 
-        public void OnClick(Server server, LocalClient sender)
+        public override void HandleInput(InputHelper inputHelper)
         {
-            PickupEvent PuE = new PickupEvent(sender);
-            PuE.player = (Root as GameObjectList).Find("player_" + Environment.MachineName) as Player;
-            PuE.item = this;
-            PuE.target = PuE.item.Parent as GameObjectGrid;
-            server.Send(PuE);
+            Action onClick = () =>
+            {
+                PickupEvent PuE = new PickupEvent();
+                PuE.player = (Root as GameObjectList).Find("player_" + Environment.MachineName) as Player;
+                PuE.item = this;
+                PuE.target = PuE.item.Parent as GameObjectGrid;
+                Server.Send(PuE);
+            };
+            inputHelper.IfMouseLeftButtonPressedOn(this, onClick);
+
+            base.HandleInput(inputHelper);
         }
     }   
 }

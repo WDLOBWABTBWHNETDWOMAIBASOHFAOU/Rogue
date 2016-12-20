@@ -41,7 +41,7 @@ namespace Wink
             SendOutUpdatedLevel(true);
         }
 
-        public override void Send(Event e)
+        protected override void ReallySend(Event e)
         {
             if (e.Validate(Level))
             {
@@ -54,8 +54,7 @@ namespace Wink
             foreach(Client c in clients)
             {
                 //Passing null because whenever a client receives an event it'll always be from the server.
-                LevelUpdatedEvent e = first ? new JoinedServerEvent(null) : new LevelUpdatedEvent(null); 
-                e.updatedLevel = Level;
+                LevelUpdatedEvent e = first ? new JoinedServerEvent(Level) : new LevelUpdatedEvent(Level);
                 c.Send(e);
             }
         }

@@ -47,17 +47,12 @@ namespace Wink
             
             //Create a button to go back to the main menu.
             back = new Button("button", "Back", textFieldFont, Color.Black);
-            back.Position = new Vector2(100, screen.Y - 100);
-            Add(back);
-        }
-
-        public override void HandleInput(InputHelper inputHelper)
-        {
-            base.HandleInput(inputHelper);
-            if (back.Pressed)
+            back.Action = () =>
             {
                 GameEnvironment.GameStateManager.SwitchTo("mainMenuState");
-            }
+            };
+            back.Position = new Vector2(100, screen.Y - 100);
+            Add(back);
         }
     }
 }

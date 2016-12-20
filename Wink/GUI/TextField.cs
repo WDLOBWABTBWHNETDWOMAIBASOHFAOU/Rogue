@@ -58,7 +58,7 @@ namespace Wink
 
         public override void HandleInput(InputHelper inputHelper)
         {
-            if (inputHelper.MouseLeftButtonPressed())
+            if (inputHelper.IsMouseLeftButtonPressed())
             {
                 Vector2 mouse = inputHelper.MousePosition;
                 //If the mouseclick was inside the textfield, we need to move the cursor.

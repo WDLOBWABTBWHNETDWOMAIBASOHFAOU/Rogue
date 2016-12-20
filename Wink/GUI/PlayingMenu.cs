@@ -16,12 +16,24 @@ namespace Wink
             
             backButton = new Button("button", "Back to Main Menu", sf, Color.Black);
             backButton.Position = new Vector2(25, 25);
+            backButton.Action = () =>
+            {
+                GameEnvironment.GameStateManager.SwitchTo("mainMenuState");
+            };
             Add(backButton);
 
             Vector2 buttonDistance = new Vector2(0, backButton.Sprite.Height + 15);
 
             restartButton = new Button("button", "Restart", sf, Color.Black);
             restartButton.Position = backButton.Position + buttonDistance;
+            restartButton.Action = () =>
+            {
+                GameSetupState gss = GameEnvironment.GameStateManager.GetGameState("gameSetupState") as GameSetupState;
+                PlayingState ps = GameEnvironment.GameStateManager.GetGameState("playingState") as PlayingState;
+                ps.Reset();
+                gss.InitializeGameMode(ps.CurrentGameMode);
+                GameEnvironment.GameStateManager.SwitchTo("gameSetupState");
+            };
             Add(restartButton);
 
             optionsButton = new Button("button", "Options", sf, Color.Black);
@@ -30,36 +42,11 @@ namespace Wink
 
             quitButton = new Button("button", "Quit", sf, Color.Black);
             quitButton.Position = optionsButton.Position + buttonDistance;
-            Add(quitButton);
-        }
-
-        public override void HandleInput(InputHelper inputHelper)
-        {
-            base.HandleInput(inputHelper);
-            if (backButton.Pressed)
-            {
-                GameEnvironment.GameStateManager.SwitchTo("mainMenuState");
-            }
-
-            if (restartButton.Pressed)
-            {
-                GameSetupState gss = GameEnvironment.GameStateManager.GetGameState("gameSetupState") as GameSetupState;
-                PlayingState ps = GameEnvironment.GameStateManager.GetGameState("playingState") as PlayingState;
-                ps.Reset();
-                gss.InitializeGameMode(ps.CurrentGameMode);
-                GameEnvironment.GameStateManager.SwitchTo("gameSetupState");
-            }
-
-            if (optionsButton.Pressed)
-            {
-                // ToDo:
-                // Menu to chance options without leaving the current playingstate
-            }
-
-            if (quitButton.Pressed)
+            quitButton.Action = () =>
             {
                 Game1.QuitGame();
-            }
+            };
+            Add(quitButton);
         }
     }
 }

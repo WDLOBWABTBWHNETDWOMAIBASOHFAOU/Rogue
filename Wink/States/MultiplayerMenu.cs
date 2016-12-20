@@ -45,23 +45,16 @@ namespace Wink
 
                 //Create a button to start connecting.
                 connectButton = new Button("button", "Connect", buttonFont, Color.Black);
-                connectButton.Position = new Vector2((screen.X - connectButton.Width) / 2, 125);
-                Add(connectButton);
-
-            }
-
-            public override void HandleInput(InputHelper inputHelper)
-            {
-                base.HandleInput(inputHelper);
-
-                if (connectButton.Pressed)
+                connectButton.Action = () =>
                 {
-                    //Connect here...
                     GameEnvironment.GameSettingsManager.SetValue("server_ip_address", ipAddress.Text);
                     GameSetupState gss = GameEnvironment.GameStateManager.GetGameState("gameSetupState") as GameSetupState;
                     gss.InitializeGameMode(GameSetupState.GameMode.MultiplayerClient);
                     GameEnvironment.GameStateManager.SwitchTo("gameSetupState");
-                }
+                };
+                connectButton.Position = new Vector2((screen.X - connectButton.Width) / 2, 125);
+                Add(connectButton);
+
             }
         }
 
@@ -83,29 +76,23 @@ namespace Wink
 
             //Create a button to go back to the main menu.
             backButton = new Button("button", "Back", arial26, Color.Black);
+            backButton.Action = () =>
+            {
+                GameEnvironment.GameStateManager.SwitchTo("mainMenuState");
+            };
             backButton.Position = new Vector2(100, screen.Y - 100);
             Add(backButton);
 
             //Create a button to start hosting.
             hostButton = new Button("button", "Host a Game", arial26, Color.Black);
-            hostButton.Position = new Vector2(screen.X - hostButton.Width - 100, screen.Y - 100);
-            Add(hostButton);
-        }
-
-        public override void HandleInput(InputHelper inputHelper)
-        {
-            base.HandleInput(inputHelper);
-
-            if (backButton.Pressed)
-            {
-                GameEnvironment.GameStateManager.SwitchTo("mainMenuState");
-            }
-            else if (hostButton.Pressed)
+            hostButton.Action = () =>
             {
                 GameSetupState gss = GameEnvironment.GameStateManager.GetGameState("gameSetupState") as GameSetupState;
                 gss.InitializeGameMode(GameSetupState.GameMode.MultiplayerHost);
                 GameEnvironment.GameStateManager.SwitchTo("gameSetupState");
-            }
+            };
+            hostButton.Position = new Vector2(screen.X - hostButton.Width - 100, screen.Y - 100);
+            Add(hostButton);
         }
     }
 }
