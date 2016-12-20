@@ -79,6 +79,8 @@ namespace Wink
                     return LoadFloorTile("spr_floor", TileType.Normal);
                 case 'c':
                     return LoadChestTile("spr_ChestTile", TileType.chest);
+                case 'D':
+                    return LoadDoorTile("spr_door", TileType.Door);
                 default:
                     return LoadWTFTile();
                     //return new Tile("");
@@ -103,6 +105,12 @@ namespace Wink
         {
             Tile t = new Tile("empty:65:65:10:Red", TileType.Normal, 0, "startTile");
             t.Passable = true;
+            return t;
+        }
+        private Tile LoadDoorTile(string name, TileType tileType)
+        {
+            Tile t = new Tile("empty:65:65:10:Orange", tileType);
+            t.Passable = false;
             return t;
         }
 

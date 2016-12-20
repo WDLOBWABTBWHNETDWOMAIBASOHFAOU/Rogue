@@ -14,7 +14,9 @@ namespace Wink
         Background,
         Normal,
         Wall,
-        chest
+        chest,
+        Door,
+        Inventory
     }
 
     [Serializable]
