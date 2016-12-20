@@ -33,8 +33,7 @@ namespace Wink
             }
             else if (Parent is GameObjectGrid)
             {
-                GameObjectGrid p = Parent as GameObjectGrid;
-                cameraSensitivity = p.CameraSensitivity;
+                cameraSensitivity = 0;
             }
             else
             {

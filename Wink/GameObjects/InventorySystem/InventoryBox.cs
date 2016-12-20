@@ -17,25 +17,19 @@ namespace Wink
         {
             get { return itemGrid; }
         }
-        private float cameraSensitivity;
-        public float CameraSensitivity { get { return cameraSensitivity; } }
         
         public InventoryBox(GameObjectGrid itemGrid, int layer = 0, string id = "", float cameraSensitivity = 0) : base(layer, id)
         {
-            this.cameraSensitivity = cameraSensitivity;
-            itemGrid.CameraSensitivity = cameraSensitivity;
+            this.itemGrid = itemGrid;
+
             itemGrid.CellHeight = Tile.TileHeight;
             itemGrid.CellWidth = Tile.TileWidth;
             CheckGrid(itemGrid);
             itemGrid.Add(new TestItem(), 2, 2);
             Add(itemGrid);
-            this.itemGrid = itemGrid;
+            
         }
-
-        //public InventoryBox(int rows=3, int columns=6, int layer = 0, string id = "") : this(new GameObjectGrid(rows, columns, layer + 1, "itemGrid"), layer, id)
-        //{
-        //}
-
+        
         public InventoryBox(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             itemGrid = info.GetValue("itemGrid", typeof(GameObjectGrid)) as GameObjectGrid;
@@ -64,7 +58,6 @@ namespace Wink
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
-            itemGrid.Update(gameTime);
             CheckGrid(ItemGrid);
             for (int x = 0; x < itemGrid.Columns; x++)
             {
@@ -73,12 +66,6 @@ namespace Wink
                     itemGrid.Get(x, y).Visible = visible;
                 }
             }
-        }
-
-        public override void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
-        {
-            base.Draw(gameTime, spriteBatch, camera);
-            itemGrid.Draw(gameTime, spriteBatch, camera);
         }
     } 
 }
