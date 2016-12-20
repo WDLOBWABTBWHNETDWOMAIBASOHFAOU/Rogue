@@ -1,7 +1,9 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
+using System.Runtime.Serialization;
 
-public class Animation : SpriteSheet
+[Serializable]
+public class Animation : SpriteSheet, ISerializable
 {
     protected float frameTime;
     protected bool isLooping;
@@ -11,6 +13,17 @@ public class Animation : SpriteSheet
     {
         this.frameTime = frameTime;
         this.isLooping = isLooping;
+    }
+
+    public Animation(SerializationInfo info, StreamingContext context) : this(info.GetString("assetname"), info.GetBoolean("isLooping"), (float)info.GetDouble("frameTime"))
+    {
+    }
+
+    public void GetObjectData(SerializationInfo info, StreamingContext context)
+    {
+        info.AddValue("assetname", assetName);
+        info.AddValue("isLooping", isLooping);
+        info.AddValue("frameTime", frameTime);
     }
 
     public void Play()

@@ -2,7 +2,7 @@
 
 namespace Wink
 {
-    [Serializable()]
+    [Serializable]
     public class JoinServerEvent : Event
     {
         public string ClientName { get; set; }

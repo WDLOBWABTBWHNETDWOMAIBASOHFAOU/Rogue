@@ -29,7 +29,9 @@ namespace Wink
             foreach (Client c in clients)
             {
                 //Player adds itself to level.
-                Player player = new Player(c, Level, Level.Layer + 1);
+                Player player = new Player(c.ClientName, Level.Layer + 1);
+                Level.Add(player);
+                player.InitPosition();
             }
 
             livingObjects = Level.FindAll(obj => obj is Living).Cast<Living>().ToList();
@@ -58,7 +60,7 @@ namespace Wink
             }
         }
 
-        public void Update(GameTime gameTime)
+        public override void Update(GameTime gameTime)
         {
             Level.Root.Update(gameTime);
             UpdateTurn();

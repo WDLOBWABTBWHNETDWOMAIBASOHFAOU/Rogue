@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Wink
 {
-    [Serializable()]
+    [Serializable]
     public abstract class ActionEvent : Event
     {
         protected abstract int Cost { get; }

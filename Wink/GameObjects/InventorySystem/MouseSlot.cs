@@ -1,9 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
+using System;
 
 namespace Wink
 {
+    [Serializable]
     public class MouseSlot : GameObjectGrid
     {
         public Item oldItem;

@@ -2,7 +2,7 @@
 
 namespace Wink
 {
-    [Serializable()]
+    [Serializable]
     public class LevelUpdatedEvent : Event
     {
         public Level updatedLevel { get; set; }

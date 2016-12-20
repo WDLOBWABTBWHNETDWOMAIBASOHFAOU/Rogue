@@ -3,7 +3,7 @@ using System;
 
 namespace Wink
 {
-    [Serializable()]
+    [Serializable]
     public class PlayerMoveEvent : ActionEvent
     {
         public Player Player { get; set; }

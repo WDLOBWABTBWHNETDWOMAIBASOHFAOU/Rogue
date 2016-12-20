@@ -1,10 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
+using System;
+using System.Runtime.Serialization;
 
 namespace Wink
 {
-    public class InventoryBox : GameObjectList
+    [Serializable]
+    public class InventoryBox : GameObjectGrid
     {
         /// <summary>
         /// The grid that contains the actual items
@@ -34,6 +36,24 @@ namespace Wink
         //{
         //}
 
+        public InventoryBox(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+            itemGrid = info.GetValue("itemGrid", typeof(GameObjectGrid)) as GameObjectGrid;
+        }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            base.GetObjectData(info, context);
+            info.AddValue("itemGrid", itemGrid);
+        }
+
+        private void FillGrid()
+        {
+            for (int x = 0; x < Columns; x++)
+            {
+                for (int y = 0; y < Rows; y++)
+                {
+                    Add(new Tile("empty:65:65:10:Gray", TileType.Inventory), x, y);                    
         private void CheckGrid(GameObjectGrid itemGrid)
         {
             for (int x = 0; x < itemGrid.Columns; x++)

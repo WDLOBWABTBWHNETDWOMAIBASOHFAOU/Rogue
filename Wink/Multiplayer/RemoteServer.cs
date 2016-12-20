@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
+using Microsoft.Xna.Framework;
 
 namespace Wink
 {
@@ -25,6 +27,11 @@ namespace Wink
             receivingThread = new Thread(new ThreadStart(Receive));
             binaryFormatter = new BinaryFormatter();
             pendingEvents = new List<Event>();
+        }
+
+        public override void Update(GameTime gameTime)
+        {
+            ProcessEvents();
         }
 
         public void ProcessEvents()
@@ -55,6 +62,7 @@ namespace Wink
                 NetworkStream s = tcp.GetStream();
                 if (s.DataAvailable)
                 {
+                    System.Diagnostics.Debug.WriteLine("data is available");
                     Event e = (Event)binaryFormatter.Deserialize(s);
                     pendingEvents.Add(e);
                 }

@@ -140,7 +140,7 @@ namespace Wink
                 LocalServer ls = (LocalServer)server;
                 ls.SetupLevel(1, clients);
 
-                Reset();
+                //Reset();
                 GameEnvironment.GameStateManager.SwitchTo("playingState");
             }
         }

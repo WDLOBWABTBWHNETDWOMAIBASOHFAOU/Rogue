@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Runtime.Serialization;
 
 namespace Wink
 {
+    [Serializable]
     class PickupEvent : Event
     {
         public Item item { get; set; }
@@ -10,7 +12,6 @@ namespace Wink
 
         public PickupEvent(Sender sender) : base(sender)
         {
-
         }
 
         public override void OnClientReceive(LocalClient client)
