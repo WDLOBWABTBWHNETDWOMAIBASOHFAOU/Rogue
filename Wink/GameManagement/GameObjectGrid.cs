@@ -10,8 +10,12 @@ public class GameObjectGrid : GameObject
     protected GameObject[,] grid;
     protected int cellWidth, cellHeight;
 
-    public GameObjectGrid(int rows, int columns, int layer = 0, string id = "") : base(layer, id)
+    private float cameraSensitivity;
+    public float CameraSensitivity { get { return cameraSensitivity; } set { cameraSensitivity = value; } }
+
+    public GameObjectGrid(int rows, int columns, int layer = 0, string id = "", float cameraSensitivity=0) : base(layer, id)
     {
+        this.cameraSensitivity = cameraSensitivity;
         grid = new GameObject[columns, rows];
         for (int x = 0; x < columns; x++)
         {
@@ -45,6 +49,10 @@ public class GameObjectGrid : GameObject
         obj.Parent = this;
         obj.Position = new Vector2(x * cellWidth, y * cellHeight);
         }
+    }
+    public void Remove(int x, int y)
+    {
+        grid[x, y] = null;
     }
 
     public GameObject this[int x, int y]

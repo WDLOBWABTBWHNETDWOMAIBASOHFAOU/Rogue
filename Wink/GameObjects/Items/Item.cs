@@ -12,9 +12,15 @@ namespace Wink
         }
         public override void Update(GameTime gameTime)
         {
+            base.Update(gameTime);
             if (Parent is MouseSlot)
             {
                 cameraSensitivity = 0;
+            }
+            else if (Parent is GameObjectGrid)
+            {
+                GameObjectGrid p = Parent as GameObjectGrid;
+                cameraSensitivity = p.CameraSensitivity;
             }
             else
             {

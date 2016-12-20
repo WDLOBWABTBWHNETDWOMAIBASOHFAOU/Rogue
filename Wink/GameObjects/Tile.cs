@@ -14,7 +14,7 @@ namespace Wink
         Background,
         Normal,
         Wall,
-        Inventory
+        chest
     }
 
     [Serializable]
@@ -86,25 +86,6 @@ namespace Wink
                 pme.Tile = this;
 
                 server.Send(pme);
-            }
-            else if(TileType == TileType.Inventory)
-            {
-                PickupEvent puEvent = new PickupEvent(sender);
-                puEvent.player = (Root as GameObjectList).Find("player_" + Environment.MachineName) as Player;
-                InventoryBox target = Parent as InventoryBox;
-
-                if (target.ItemGrid.Get((int)position.X, (int)position.Y) == null)
-                {
-                    Item newItem = new EmptyItem("empty:65:65:10:Gray");
-                    newItem.Position = Position;
-                    puEvent.item = newItem;
-                }
-                else
-                {
-                    puEvent.item = target.ItemGrid.Get((int)position.X, (int)position.Y) as Item;
-                }
-                puEvent.target = target.ItemGrid;
-                server.Send(puEvent);
             }
         }
     }

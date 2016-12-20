@@ -61,6 +61,15 @@ namespace Wink
             }
         }
 
+        public override void Update(GameTime gameTime)
+        {
+            base.Update(gameTime);
+            foreach (GameObject c in Children)
+            {
+                c.Visible = visible;
+            }
+        }
+
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
         {
             if (visible)
@@ -76,6 +85,7 @@ namespace Wink
 
                 spriteBatch.Draw(blackTex, outer, Color.White);
                 spriteBatch.Draw(darkGrayTex, BoundingBox, Color.White);
+
             }
             base.Draw(gameTime, spriteBatch, camera);
         }

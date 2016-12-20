@@ -9,11 +9,11 @@ namespace Wink
         protected int exp;
         public MouseSlot mouseSlot;
 
-        private readonly GameObjectGrid itemGrid;
-        public GameObjectGrid ItemGrid
-        {
-            get { return itemGrid; }
-        }
+        //private readonly GameObjectGrid itemGrid;
+        //public GameObjectGrid ItemGrid
+        //{
+        //    get { return itemGrid; }
+        //}
 
         public Player(Client client, Level level, int layer) : base(level, layer, "player_" + client.ClientName)
         {
@@ -21,7 +21,7 @@ namespace Wink
 
             //Inventory
             mouseSlot = new MouseSlot(layer + 11, "mouseSlot");
-            itemGrid = new GameObjectGrid(3, 6);
+            //itemGrid = new GameObjectGrid(3, 6,0,"",0);
 
             SetStats(5, 5, 5, 5, 55);
 

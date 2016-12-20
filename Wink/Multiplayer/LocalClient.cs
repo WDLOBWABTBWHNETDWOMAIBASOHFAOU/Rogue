@@ -75,7 +75,7 @@ namespace Wink
                     {
                         //If so execute OnClick and return
                         (gameObjects[i] as ClickableGameObject).OnClick(server, this);
-                        return;
+                        continue;
                     }
                     else if (gameObjects[i] is GameObjectList)
                     {

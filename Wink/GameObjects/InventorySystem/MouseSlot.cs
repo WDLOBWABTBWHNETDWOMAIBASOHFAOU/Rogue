@@ -17,7 +17,14 @@ namespace Wink
             if (target != null)
             {
                 Vector2 targetPosition = newItem.Position / target.CellHeight;
-                target.Add(oldItem, (int)targetPosition.X, (int)targetPosition.Y);
+                if (oldItem == null)
+                {
+                    target.Remove((int)targetPosition.X, (int)targetPosition.Y);
+                }
+                else
+                {
+                    target.Add(oldItem, (int)targetPosition.X, (int)targetPosition.Y);
+                }
             }
 
             Add(newItem, 0, 0);
@@ -27,6 +34,13 @@ namespace Wink
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
+            // if (Get(0, 0) is EmptyItem)
+            if (Get(0, 0) is EmptyItem)
+            // it's not shorter but it is more consistent.
+            {
+                grid[0, 0] = null;
+                oldItem = null;
+            }
             
         }
 
@@ -40,12 +54,6 @@ namespace Wink
             base.HandleInput(inputHelper);
 
             Position = inputHelper.MousePosition + new Vector2(10, 10);
-            // if (Get(0, 0) is EmptyItem)
-            if (this[0, 0] is EmptyItem)
-            // it's not shorter but it is more consistent.
-            {
-                grid[0, 0] = null;
-            }
         }
     }
 }

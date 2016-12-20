@@ -3,40 +3,46 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Wink
 {
-    public class InventoryBox : GameObjectGrid
+    public class InventoryBox : GameObjectList
     {
         /// <summary>
         /// The grid that contains the actual items
         /// </summary>
         private GameObjectGrid itemGrid;
 
-        public GameObjectGrid ItemGrid {
+        public GameObjectGrid ItemGrid
+        {
             get { return itemGrid; }
         }
-
-        public InventoryBox(GameObjectGrid itemGrid, int layer = 0, string id = "") : base(itemGrid.Rows, itemGrid.Columns, layer, id)
+        private float cameraSensitivity;
+        public float CameraSensitivity { get { return cameraSensitivity; } }
+        
+        public InventoryBox(GameObjectGrid itemGrid, int layer = 0, string id = "",float cameraSensitivity=0) : base(layer, id)
         {
-            CellHeight = Tile.TileHeight;
-            CellWidth = Tile.TileWidth;
-            FillGrid();
-            
-            itemGrid.Parent = this;
-            itemGrid.CellHeight = CellHeight;
-            itemGrid.CellWidth = CellWidth;
+            this.cameraSensitivity = cameraSensitivity;
+            itemGrid.CameraSensitivity = cameraSensitivity;
+            itemGrid.CellHeight = Tile.TileHeight;
+            itemGrid.CellWidth = Tile.TileWidth;
+            CheckGrid(itemGrid);
+            itemGrid.Add(new TestItem(), 2, 2);
+            Add(itemGrid);
             this.itemGrid = itemGrid;
         }
 
-        public InventoryBox(int rows=3, int columns=6, int layer = 0, string id = "") : this(new GameObjectGrid(rows, columns, layer + 1, "itemGrid"), layer, id)
-        {
-        }
+        //public InventoryBox(int rows=3, int columns=6, int layer = 0, string id = "") : this(new GameObjectGrid(rows, columns, layer + 1, "itemGrid"), layer, id)
+        //{
+        //}
 
-        private void FillGrid()
+        private void CheckGrid(GameObjectGrid itemGrid)
         {
-            for (int x = 0; x < Columns; x++)
+            for (int x = 0; x < itemGrid.Columns; x++)
             {
-                for (int y = 0; y < Rows; y++)
+                for (int y = 0; y < itemGrid.Rows; y++)
                 {
-                    Add(new Tile("empty:65:65:10:Gray", TileType.Inventory, 0, "", 0), x, y);
+                    if ( itemGrid.Get(x,y) == null)
+                    {
+                        itemGrid.Add(new EmptyItem("empty:65:65:10:Gray"),x,y);
+                    }
                 }
             }
         }
@@ -45,6 +51,14 @@ namespace Wink
         {
             base.Update(gameTime);
             itemGrid.Update(gameTime);
+            CheckGrid(ItemGrid);
+            for (int x = 0; x < itemGrid.Columns; x++)
+            {
+                for (int y = 0; y < itemGrid.Rows; y++)
+                {
+                    itemGrid.Get(x, y).Visible = visible;
+                }
+            }
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
