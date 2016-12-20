@@ -77,12 +77,7 @@ namespace Wink
                 AddTab(t);
             }
 
-            ActivateTab(0);
-        }
-
-        private void ActivateTab(int index)
-        {
-            
+            ((Find("TabTitles") as GameObjectList).Children[0] as TabButton).Action.Invoke();
         }
 
         private void AddTab(Tab tab)

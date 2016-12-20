@@ -14,7 +14,7 @@ namespace Wink
         {
             SpriteFont sf = GameEnvironment.AssetManager.GetFont("Arial26");
             
-            backButton = new Button("button", "Back to Main Menu", sf, Color.Black);
+            backButton = new Button("button", "Main Menu", sf, Color.Black);
             backButton.Position = new Vector2(25, 25);
             backButton.Action = () =>
             {
@@ -37,6 +37,7 @@ namespace Wink
             Add(restartButton);
 
             optionsButton = new Button("button", "Options", sf, Color.Black);
+            optionsButton.Action = () => { };
             optionsButton.Position = restartButton.Position + buttonDistance;
             Add(optionsButton);
 
