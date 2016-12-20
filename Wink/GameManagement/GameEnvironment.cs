@@ -128,7 +128,7 @@ public class GameEnvironment : Game
     protected void HandleInput()
     {
         inputHelper.Update();
-        if (inputHelper.KeyPressed(Keys.F4))
+        if (inputHelper.KeyPressed(Keys.F7))
         {
             FullScreen = !FullScreen;
         }
