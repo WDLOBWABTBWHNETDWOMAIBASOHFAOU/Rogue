@@ -12,6 +12,7 @@ namespace Wink
         public PlayingGUI()
         {
             Layer = 1;
+            id = "PlayingGui";
 
             Point screen = GameEnvironment.Screen;
             SpriteFont defaultFont = GameEnvironment.AssetManager.GetFont("Arial12");
@@ -56,8 +57,8 @@ namespace Wink
             apBar.Position = new Vector2(APBarPosition.X, APBarPosition.Y);
             Add(apBar);
 
-            //GameObjectGrid items = player.ItemGrid;
-            GameObjectGrid items = new GameObjectGrid(3,6);
+            GameObjectGrid items = player.ItemGrid;
+            //GameObjectGrid items = new GameObjectGrid(3,6);
             inventory = new Window(items.Columns * Tile.TileWidth, items.Rows * Tile.TileHeight);
             inventory.Add(new InventoryBox(items,0,"",0));
             inventory.Position = new Vector2(300, 300);

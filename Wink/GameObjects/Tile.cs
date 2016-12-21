@@ -14,7 +14,7 @@ namespace Wink
         Background,
         Normal,
         Wall,
-        chest,
+        Chest,
         Door,
         Inventory
     }

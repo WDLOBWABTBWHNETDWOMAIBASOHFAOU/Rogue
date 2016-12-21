@@ -22,13 +22,13 @@ namespace Wink
         
         public InventoryBox(GameObjectGrid itemGrid, int layer = 0, string id = "", float cameraSensitivity = 0) : base(layer, id)
         {
-            this.cameraSensitivity = cameraSensitivity;
-            itemGrid.CameraSensitivity = cameraSensitivity;
+            //this.cameraSensitivity = cameraSensitivity;
+            //itemGrid.CameraSensitivity = cameraSensitivity;
             itemGrid.CellHeight = Tile.TileHeight;
             itemGrid.CellWidth = Tile.TileWidth;
             CheckGrid(itemGrid);
-            itemGrid.Add(new TestItem(), 2, 2);
-            Add(itemGrid);
+            //itemGrid.Add(new TestItem(), 2, 2);
+            //Add(itemGrid);
             this.itemGrid = itemGrid;
         }
 
@@ -66,13 +66,13 @@ namespace Wink
             base.Update(gameTime);
             itemGrid.Update(gameTime);
             CheckGrid(ItemGrid);
-            for (int x = 0; x < itemGrid.Columns; x++)
-            {
-                for (int y = 0; y < itemGrid.Rows; y++)
-                {
-                    itemGrid.Get(x, y).Visible = visible;
-                }
-            }
+            //for (int x = 0; x < itemGrid.Columns; x++)
+            //{
+            //    for (int y = 0; y < itemGrid.Rows; y++)
+            //    {
+            //        itemGrid.Get(x, y).Visible = visible;
+            //    }
+            //}
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
