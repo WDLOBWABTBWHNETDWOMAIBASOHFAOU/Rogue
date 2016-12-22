@@ -37,7 +37,7 @@ namespace Wink
         protected override void LoadContent()
         {
             base.LoadContent();
-            screen = new Point(1440, 825);
+            screen = new Point(1920, 1080);
             windowSize = new Point(1024, 586);
             FullScreen = false;
 

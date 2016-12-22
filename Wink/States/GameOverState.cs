@@ -42,39 +42,31 @@ namespace Wink
             Add(gameOverMessage);
 
             mainMenuButton = new Button("button", "MainMenu", textfieldFont, Color.Black);
+            mainMenuButton.Action = () =>
+            {
+                GameEnvironment.GameStateManager.SwitchTo("mainMenuState");
+            };
             mainMenuButton.Position = new Vector2(centerx, 300);
             Add(mainMenuButton);
 
             restartButton = new Button("button", "Restart", textfieldFont, Color.Black);
-            restartButton.Position = new Vector2(centerx, mainMenuButton.Position.Y + buttonOffSett);
-            Add(restartButton);
-
-            quitButton = new Button("button", "Quit", textfieldFont, Color.Black);
-            quitButton.Position = new Vector2(centerx, restartButton.Position.Y + buttonOffSett);
-            Add(quitButton);
-
-        }
-
-        public override void HandleInput(InputHelper inputHelper)
-        {
-            base.HandleInput(inputHelper);
-
-            if (mainMenuButton.Pressed)
-            {
-                GameEnvironment.GameStateManager.SwitchTo("mainMenuState");
-            }
-
-            if (restartButton.Pressed)
+            restartButton.Action = () =>
             {
                 GameSetupState gss = GameEnvironment.GameStateManager.GetGameState("gameSetupState") as GameSetupState;
                 gss.InitializeGameMode(gameMode);
                 GameEnvironment.GameStateManager.SwitchTo("gameSetupState");
-            }
+            };
+            restartButton.Position = new Vector2(centerx, mainMenuButton.Position.Y + buttonOffSett);
+            Add(restartButton);
 
-            if (quitButton.Pressed)
+            quitButton = new Button("button", "Quit", textfieldFont, Color.Black);
+            quitButton.Action = () =>
             {
                 Game1.QuitGame();
-            }
+            };
+            quitButton.Position = new Vector2(centerx, restartButton.Position.Y + buttonOffSett);
+            Add(quitButton);
+
         }
     }
 }

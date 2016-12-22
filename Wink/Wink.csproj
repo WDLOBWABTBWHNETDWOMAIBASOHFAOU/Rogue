@@ -46,6 +46,9 @@
     <Compile Include="Events\LevelUpdatedEvent.cs" />
     <Compile Include="Events\PickupEvent.cs" />
     <Compile Include="Events\PlayerMoveEvent.cs" />
+    <Compile Include="GameObjects\Door.cs" />
+    <Compile Include="GameObjects\IGUIGameObject.cs" />
+    <Compile Include="GameObjects\InventorySystem\Container.cs" />
     <Compile Include="GUI\TrackingTextGameObject.cs" />
     <Compile Include="GUI\Window.cs" />
     <Compile Include="Multiplayer\Sender.cs" />
@@ -54,7 +57,6 @@
     <Compile Include="GameManagement\AssetManager.cs" />
     <Compile Include="GameManagement\Camera.cs" />
     <Compile Include="GameManagement\Pathfinding.cs" />
-    <Compile Include="GameObjects\ClickableGameObject.cs" />
     <Compile Include="GameObjects\Items\EmptyItem.cs" />
     <Compile Include="GameObjects\InventorySystem\InventoryBox.cs" />
     <Compile Include="GameObjects\Items\Item.cs" />

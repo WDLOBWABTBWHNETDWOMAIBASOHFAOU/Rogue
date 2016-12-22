@@ -7,12 +7,11 @@ namespace Wink
     {
         public class InvalidEventException : Exception { }
 
-        [NonSerialized]
-        public Sender sender;
+        //Should be set when received, before an OnReceive method is called.
+        public Sender Sender { set; get; }
 
-        public Event(Sender sender)
+        public Event()
         {
-            this.sender = sender;
         }
 
         public abstract void OnClientReceive(LocalClient client);

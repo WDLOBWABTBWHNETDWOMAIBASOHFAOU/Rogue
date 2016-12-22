@@ -80,11 +80,7 @@ namespace Wink
             // END ENEMY CODE (test)
 
             testItem.Position = new Vector2(GameEnvironment.Random.Next(0, tf.Columns - 1) * Tile.TileWidth, GameEnvironment.Random.Next(0, tf.Rows - 1) * Tile.TileHeight);
-            Add(testItem);
-
-            //InventoryBox inventory = new InventoryBox(3, 6, inventoryLayer);
-            //inventory.Position = new Vector2((tf.Columns + 1) * tf.CellWidth, 0);
-            //Add(inventory);
+            Add(testItem); 
         }
 
         private Tile LoadTile(char tileType, int x, int y)
@@ -100,12 +96,11 @@ namespace Wink
                 case '-':
                     return LoadFloorTile("spr_floor", TileType.Normal);
                 case 'c':
-                    return LoadChestTile("spr_ChestTile", TileType.chest);
+                    return LoadChestTile("spr_ChestTile", TileType.Chest, x, y);
                 case 'D':
-                    return LoadDoorTile("spr_door", TileType.Door);
+                    return LoadDoorTile("spr_door", TileType.Normal, x, y);
                 default:
                     return LoadWTFTile();
-                    //return new Tile("");
             }
         }
 
@@ -129,9 +124,21 @@ namespace Wink
             t.Passable = true;
             return t;
         }
-        private Tile LoadDoorTile(string name, TileType tileType)
+        private Tile LoadDoorTile(string name, TileType tileType, int x, int y)
         {
-            Tile t = new Tile("empty:65:65:10:Orange", tileType);
+            Tile t = new Tile("empty:65:65:10:DarkGreen", TileType.Normal);
+            Door door = new Door(t);
+            door.Position = new Vector2(x * Tile.TileWidth, y * Tile.TileHeight);
+            Add(door);
+            t.Passable = false;
+            return t;
+        }
+        private Tile LoadChestTile(string name, TileType tileType,int x, int y)
+        {
+            Tile t = new Tile("empty:65:65:10:DarkGreen", TileType.Chest);
+            Container chest = new Container("empty:65:65:10:Brown");
+            chest.Position = new Vector2(x * Tile.TileWidth, y * Tile.TileHeight);
+            Add(chest);
             t.Passable = false;
             return t;
         }
@@ -139,12 +146,6 @@ namespace Wink
         private Tile LoadWTFTile()
         {
             Tile t = new Tile("empty:65:65:10:Black", TileType.Wall);
-            t.Passable = false;
-            return t;
-        }
-        private Tile LoadChestTile(string name, TileType tileType)
-        {
-            Tile t = new Tile("empty:65:65:10:Brown", TileType.Wall);
             t.Passable = false;
             return t;
         }

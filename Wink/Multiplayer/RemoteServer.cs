@@ -69,7 +69,7 @@ namespace Wink
             }
         }
 
-        public override void Send(Event e)
+        protected override void ReallySend(Event e)
         {
             if (e.Validate(client.Level))
             {

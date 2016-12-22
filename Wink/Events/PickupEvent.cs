@@ -10,7 +10,7 @@ namespace Wink
         public Player player { get; set; }
         public GameObjectGrid target { get; set; }
 
-        public PickupEvent(Sender sender) : base(sender)
+        public PickupEvent() : base()
         {
         }
 

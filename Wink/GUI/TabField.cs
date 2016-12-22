@@ -13,7 +13,7 @@ namespace Wink
         private class TabButton : Button
         {
             Point size;
-            Tab tab;
+            public Tab tab;
 
             public TabButton(Point size, Tab tab, SpriteFont titleFont, Color color, int layer = 0, string id = "", int sheetIndex = 0, float scale = 1) : base("", tab.Title, titleFont, color)
             {
@@ -77,25 +77,7 @@ namespace Wink
                 AddTab(t);
             }
 
-            ActivateTab(0);
-        }
-
-        private void ActivateTab(int index)
-        {
-            Tab prevActive = tabs.Find(tab => tab.Active);
-            if (prevActive != null)
-            {
-                prevActive.Active = false;
-            }
-            tabs[index].Active = true;
-
-            GameObjectList content = Find("Content") as GameObjectList;
-            Remove(content);
-
-            GameObjectList newContent = new GameObjectList(0, "Content");
-            newContent.Add(tabs[index].Content);
-            newContent.Position = new Vector2(0, 50);
-            Add(newContent);
+            ((Find("TabTitles") as GameObjectList).Children[0] as TabButton).Action.Invoke();
         }
 
         private void AddTab(Tab tab)
@@ -104,6 +86,22 @@ namespace Wink
             int index = tabs.FindIndex(t => t.Equals(tab));
 
             TabButton b = new TabButton(new Point(width / tabs.Count - 4, 50), tab, titleFont, titleColor);
+            b.Action = () =>
+            {
+                Tab prevActive = tabs.Find(t => t.Active);
+                if (prevActive != null)
+                    prevActive.Active = false;
+
+                b.tab.Active = true;
+
+                GameObjectList content = Find("Content") as GameObjectList;
+                Remove(content);
+
+                GameObjectList newContent = new GameObjectList(0, "Content");
+                newContent.Add(b.tab.Content);
+                newContent.Position = new Vector2(0, 50);
+                Add(newContent);
+            };
             b.Position = new Vector2(width / tabs.Count * index + 2, 2);
 
             (Find("TabTitles") as GameObjectList).Add(b);
@@ -116,22 +114,6 @@ namespace Wink
             spriteBatch.Draw(white, null, new Rectangle(0,52,width,height-54));
 
             base.Draw(gameTime, spriteBatch, camera);
-        }
-
-        public override void HandleInput(InputHelper inputHelper)
-        {
-            base.HandleInput(inputHelper);
-
-            GameObjectList titleButtons = Find("TabTitles") as GameObjectList;
-
-            for (int i = 0; i < titleButtons.Children.Count; i++)
-            {
-                Button b = titleButtons.Children[i] as Button;
-                if (b.Pressed)
-                {
-                    ActivateTab(i);
-                }
-            }
         }
     }
 }

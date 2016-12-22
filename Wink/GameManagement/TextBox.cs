@@ -21,7 +21,6 @@ class TextBox : GameObjectList
     /// <param name="textPosition"> the text offset compared to the overlay</param>
     /// <param name="cameraSensitivity"> weather or not the textbox should be sensitive to camera movement</param>
 
-
     public TextBox(string path, int textPlace, string overlay, string font, float objPositionX, float objPositionY, Vector2 textPosition, int cameraSensitivity) : base(100, "")
     {
         visible = true;

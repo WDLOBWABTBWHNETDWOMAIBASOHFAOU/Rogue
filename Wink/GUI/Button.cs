@@ -10,10 +10,16 @@ namespace Wink
 {
     class Button : SpriteGameObject
     {
-        public bool Pressed { get; private set; }
         private string text;
         private SpriteFont font;
         private Color color;
+        private Action action;
+
+        public Action Action
+        {
+            get { return action; }
+            set { action = value; }
+        }
 
         public Button(string assetName, string text, SpriteFont font, Color color, int layer = 0, string id = "", int sheetIndex = 0, float scale = 1) : base(assetName, layer, id, sheetIndex, 0, scale)
         {
@@ -36,12 +42,14 @@ namespace Wink
         public override void Reset()
         {
             base.Reset();
-            Pressed = false;
         }
 
         public override void HandleInput(InputHelper inputHelper)
         {
-            Pressed = inputHelper.MouseLeftButtonPressed() && BoundingBox.Contains((int)inputHelper.MousePosition.X, (int)inputHelper.MousePosition.Y);
+            if (action != null)
+            {
+                inputHelper.IfMouseLeftButtonPressedOn(this, action); 
+            }
         }
     }
 }

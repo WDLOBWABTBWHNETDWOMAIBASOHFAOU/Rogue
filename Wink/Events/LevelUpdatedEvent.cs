@@ -5,16 +5,23 @@ namespace Wink
     [Serializable]
     public class LevelUpdatedEvent : Event
     {
-        public Level updatedLevel { get; set; }
+        private Level updatedLevel;
 
-        public LevelUpdatedEvent(Sender sender) : base(sender)
+        public LevelUpdatedEvent(Level level) : base()
         {
-
+            updatedLevel = level;
         }
 
         public override void OnClientReceive(LocalClient client)
         {
             client.Level = updatedLevel;
+            foreach (GameObject obj in updatedLevel.Children) 
+            {
+                if(obj is IGUIGameObject)
+                {
+                    (obj as IGUIGameObject).InitGUI();
+                }
+            }
         }
 
         public override void OnServerReceive(LocalServer server)

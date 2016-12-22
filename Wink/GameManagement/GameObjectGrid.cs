@@ -10,12 +10,8 @@ public class GameObjectGrid : GameObject
     protected GameObject[,] grid;
     protected int cellWidth, cellHeight;
 
-    private float cameraSensitivity;
-    public float CameraSensitivity { get { return cameraSensitivity; } set { cameraSensitivity = value; } }
-
-    public GameObjectGrid(int rows, int columns, int layer = 0, string id = "", float cameraSensitivity=0) : base(layer, id)
+    public GameObjectGrid(int rows, int columns, int layer = 0, string id = "") : base(layer, id)
     {
-        this.cameraSensitivity = cameraSensitivity;
         grid = new GameObject[columns, rows];
         for (int x = 0; x < columns; x++)
         {
@@ -41,13 +37,13 @@ public class GameObjectGrid : GameObject
         base.GetObjectData(info, context);
     }
 
-    public void Add(GameObject obj, int x, int y)
+    public virtual void Add(GameObject obj, int x, int y)
     {
         if (obj != null)
         {
-        grid[x, y] = obj;
-        obj.Parent = this;
-        obj.Position = new Vector2(x * cellWidth, y * cellHeight);
+            grid[x, y] = obj;
+            obj.Parent = this;
+            obj.Position = new Vector2(x * cellWidth, y * cellHeight);
         }
     }
     public void Remove(int x, int y)
@@ -146,7 +142,7 @@ public class GameObjectGrid : GameObject
         {
             if (obj != null)
             {
-            obj.Draw(gameTime, spriteBatch, camera);
+                obj.Draw(gameTime, spriteBatch, camera);
             }
         }
     }

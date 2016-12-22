@@ -5,11 +5,11 @@ namespace Wink
     [Serializable]
     public class JoinServerEvent : Event
     {
-        public string ClientName { get; set; }
+        private string clientName;
 
-        public JoinServerEvent(Sender sender) : base(sender)
+        public JoinServerEvent(string clientName) : base()
         {
-
+            this.clientName = clientName;
         }
 
         public override void OnClientReceive(LocalClient client)
@@ -18,7 +18,7 @@ namespace Wink
 
         public override void OnServerReceive(LocalServer server)
         {
-            (sender as RemoteClient).ClientName = ClientName;
+            (Sender as RemoteClient).ClientName = clientName;
         }
 
         public override bool Validate(Level level)

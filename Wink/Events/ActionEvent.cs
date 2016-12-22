@@ -9,25 +9,26 @@ namespace Wink
     [Serializable]
     public abstract class ActionEvent : Event
     {
+        //The player that acted.
+        protected Player player;
+
         protected abstract int Cost { get; }
 
-        public ActionEvent(Sender sender) : base(sender)
+        public ActionEvent(Player player) : base()
         {
-
+            this.player = player;
         }
 
         public sealed override void OnServerReceive(LocalServer server)
         {
-            Player p = server.Level.Find("player_" + (sender as Client).ClientName) as Player;
-            p.ActionPoints -= Cost;
+            player.ActionPoints -= Cost;
 
             DoAction(server);
         }
 
         public sealed override bool Validate(Level level)
         {
-            Player p = level.Find("player_" + (sender as Client).ClientName) as Player;
-            return ValidateAction(level) && p.isTurn && p.ActionPoints >= Cost;
+            return ValidateAction(level) && player.isTurn && player.ActionPoints >= Cost;
         }
 
         protected abstract bool ValidateAction(Level level);

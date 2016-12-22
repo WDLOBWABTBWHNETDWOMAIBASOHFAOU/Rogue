@@ -12,17 +12,17 @@ namespace Wink
 
         public MouseSlot MouseSlot { get { return mouseSlot; } }
 
-        //private readonly GameObjectGrid itemGrid;
-        //public GameObjectGrid ItemGrid
-        //{
-        //    get { return itemGrid; }
-        //}
+        private readonly GameObjectGrid itemGrid;
+        public GameObjectGrid ItemGrid
+        {
+            get { return itemGrid; }
+        }
 
         public Player(string clientName, int layer) : base(layer, "player_" + clientName)
         {
             //Inventory
             mouseSlot = new MouseSlot(layer + 11, "mouseSlot");
-            //itemGrid = new GameObjectGrid(3, 6,0,"",0);
+            itemGrid = new GameObjectGrid(3, 6, 0, "");
 
             SetStats(5, 5, 5, 5, 55);
 

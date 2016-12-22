@@ -14,13 +14,13 @@ namespace Wink
         Background,
         Normal,
         Wall,
-        chest,
+        Chest,
         Door,
         Inventory
     }
 
     [Serializable]
-    public class Tile : SpriteGameObject, ClickableGameObject
+    public class Tile : SpriteGameObject
     {
         public const int TileWidth = 65;
         public const int TileHeight = 65;
@@ -68,6 +68,23 @@ namespace Wink
             base.Draw(gameTime, spriteBatch, camera);
         }
 
+        public override void HandleInput(InputHelper inputHelper)
+        {
+            base.HandleInput(inputHelper);
+
+            if (TileType == TileType.Normal)
+            {
+                Action onClick = () =>
+                {
+                    Player player = GameWorld.Find(p => p is Player) as Player;
+                    PlayerMoveEvent pme = new PlayerMoveEvent(player, this);
+                    Server.Send(pme);
+                };
+
+                inputHelper.IfMouseLeftButtonPressedOn(this, onClick);
+            }
+        }
+
         public TileType TileType
         {
             get { return type; }
@@ -77,18 +94,6 @@ namespace Wink
         {
             get { return passable; }
             set { passable = value; }
-        }
-
-        public virtual void OnClick(Server server, LocalClient sender)
-        {
-            if( TileType == TileType.Normal)
-            {
-                PlayerMoveEvent pme = new PlayerMoveEvent(sender);
-                pme.Player = sender.Player;
-                pme.Tile = this;
-
-                server.Send(pme);
-            }
         }
     }
 }

@@ -7,9 +7,9 @@ public class GameEnvironment : Game
 {
     protected GraphicsDeviceManager graphics;
     protected SpriteBatch spriteBatch;
-    protected InputHelper inputHelper;
     protected Matrix spriteScale;
 
+    protected static InputHelper inputHelper;
     protected static Point windowSize;
     protected static Point screen;
     protected static GameStateManager gameStateManager;
@@ -67,6 +67,11 @@ public class GameEnvironment : Game
     public static GameSettingsManager GameSettingsManager
     {
         get { return gameSettingsManager; }
+    }
+
+    public static InputHelper InputHelper
+    {
+        get { return inputHelper; }
     }
 
     public bool FullScreen

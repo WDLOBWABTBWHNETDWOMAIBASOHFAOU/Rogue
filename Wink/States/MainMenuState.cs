@@ -23,11 +23,21 @@ namespace Wink
             SpriteFont textfieldFont = GameEnvironment.AssetManager.GetFont("Arial26");
 
             singlePlayerButton = new Button("button", "Singleplayer", textfieldFont, Color.Black);
+            singlePlayerButton.Action = () =>
+            {
+                GameSetupState gss = GameEnvironment.GameStateManager.GetGameState("gameSetupState") as GameSetupState;
+                gss.InitializeGameMode(GameSetupState.GameMode.Singleplayer);
+                GameEnvironment.GameStateManager.SwitchTo("gameSetupState");
+            };
             singlePlayerButton.Position = new Vector2(leftx, 300);
             Add(singlePlayerButton);
 
             multiPlayerButton = new Button("button", "Multiplayer", textfieldFont, Color.Black);
             multiPlayerButton.Position = new Vector2(rightx, 300);
+            multiPlayerButton.Action = () =>
+            {
+                GameEnvironment.GameStateManager.SwitchTo("multiplayerMenu");
+            };
             Add(multiPlayerButton);
 
             helpButton = new Button("button", "Help", textfieldFont, Color.Black);
@@ -35,6 +45,10 @@ namespace Wink
             Add(helpButton);
 
             optionsButton = new Button("button", "Options", textfieldFont, Color.Black);
+            optionsButton.Action = () =>
+            {
+                GameEnvironment.GameStateManager.SwitchTo("optionsMenu");
+            };
             optionsButton.Position = new Vector2(rightx, 375);
             Add(optionsButton);
 
@@ -43,39 +57,12 @@ namespace Wink
             Add(highscoreButton);
 
             quitButton = new Button("button", "Quit", textfieldFont, Color.Black);
-            quitButton.Position = new Vector2(rightx, 450);
-            Add(quitButton);
-        }
-
-        public override void HandleInput(InputHelper inputHelper)
-        {
-            base.HandleInput(inputHelper);
-            if (singlePlayerButton.Pressed)
-            {
-                GameSetupState gss = GameEnvironment.GameStateManager.GetGameState("gameSetupState") as GameSetupState;
-                gss.InitializeGameMode(GameSetupState.GameMode.Singleplayer);
-                GameEnvironment.GameStateManager.SwitchTo("gameSetupState");
-            }
-            else if (multiPlayerButton.Pressed)
-            {
-                GameEnvironment.GameStateManager.SwitchTo("multiplayerMenu");
-            }
-            else if (helpButton.Pressed)
-            {
-
-            }
-            else if (optionsButton.Pressed)
-            {
-                GameEnvironment.GameStateManager.SwitchTo("optionsMenu");
-            }
-            else if (highscoreButton.Pressed)
-            {
-
-            }
-            else if (quitButton.Pressed)
+            quitButton.Action = () =>
             {
                 Game1.QuitGame();
-            }
+            };
+            quitButton.Position = new Vector2(rightx, 450);
+            Add(quitButton);
         }
     }
 }
