@@ -16,7 +16,8 @@ namespace Wink
         Wall,
         Chest,
         Door,
-        Inventory
+        Inventory,
+        End
     }
 
     [Serializable]
