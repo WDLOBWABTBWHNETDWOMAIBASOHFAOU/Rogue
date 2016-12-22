@@ -29,7 +29,7 @@ namespace Wink
             foreach (Client c in clients)
             {
                 //Player adds itself to level.
-                Player player = new Player(c.ClientName, Level.Layer + 1);
+                Player player = new Player(c.ClientName, Level.Layer);
                 Level.Add(player);
                 player.InitPosition();
             }

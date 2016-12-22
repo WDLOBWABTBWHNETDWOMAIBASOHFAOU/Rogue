@@ -61,7 +61,7 @@ namespace Wink
             //GameObjectGrid items = new GameObjectGrid(3,6);
             inventory = new Window(items.Columns * Tile.TileWidth, items.Rows * Tile.TileHeight);
             inventory.Add(new InventoryBox(items, 0, ""));
-            inventory.Position = new Vector2(300, 300);
+            inventory.Position = new Vector2(screenWidth-inventory.Width,300);
             inventory.Visible = false;
             Add(inventory);
 

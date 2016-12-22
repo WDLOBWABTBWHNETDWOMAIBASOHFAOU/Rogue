@@ -11,7 +11,7 @@ namespace Wink
     public class Container:SpriteGameObject,IGUIGameObject
     {
         private InventoryBox iBox;
-        private Window inventory;
+        private Window iWindow;
         public Container(string asset, GameObjectGrid itemGrid = null, int layer=0, string id=""):base(asset,layer,id)
         {
             setInventory();
@@ -19,14 +19,17 @@ namespace Wink
 
         public void InitGUI()
         {
-            Window inventory = new Window(iBox.ItemGrid.Columns * Tile.TileWidth, iBox.ItemGrid.Rows * Tile.TileHeight);
-            inventory.Add(iBox);
-            inventory.Position = new Vector2(300, 300);
-            inventory.Visible = false;
-            this.inventory = inventory;
+            if (iWindow == null)
+            {
+                iWindow = new Window(iBox.ItemGrid.Columns * Tile.TileWidth, iBox.ItemGrid.Rows * Tile.TileHeight);
+                iWindow.Add(iBox);
+                iWindow.Position = new Vector2(300, 300);
+                iWindow.Visible = false;
 
-            PlayingGUI gui = GameWorld.Find("PlayingGui") as PlayingGUI;
-            gui.Add(inventory);
+                PlayingGUI gui = GameWorld.Find("PlayingGui") as PlayingGUI;
+                gui.Add(iWindow);
+
+            }
         }
 
         public void setInventory(GameObjectGrid itemGrid = null)
@@ -57,7 +60,7 @@ namespace Wink
         {
             Action onClick = () =>
             {
-                inventory.Visible = !inventory.Visible;
+                iWindow.Visible = !iWindow.Visible;
 
             };
             inputHelper.IfMouseLeftButtonPressedOn(this, onClick);

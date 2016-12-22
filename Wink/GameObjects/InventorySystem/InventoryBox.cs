@@ -25,7 +25,7 @@ namespace Wink
             itemGrid.CellHeight = Tile.TileHeight;
             itemGrid.CellWidth = Tile.TileWidth;
             CheckGrid(itemGrid);
-            itemGrid.Add(new TestItem(), 2, 2);
+            itemGrid.Add(new TestItem(), 0, 0);
             Add(itemGrid);
             
         }
@@ -57,15 +57,8 @@ namespace Wink
 
         public override void Update(GameTime gameTime)
         {
-            base.Update(gameTime);
             CheckGrid(ItemGrid);
-            //for (int x = 0; x < itemGrid.Columns; x++)
-            //{
-            //    for (int y = 0; y < itemGrid.Rows; y++)
-            //    {
-            //        itemGrid.Get(x, y).Visible = visible;
-            //    }
-            //}
+            base.Update(gameTime);
         }
     } 
 }

@@ -80,12 +80,7 @@ namespace Wink
             // END ENEMY CODE (test)
 
             testItem.Position = new Vector2(GameEnvironment.Random.Next(0, tf.Columns - 1) * Tile.TileWidth, GameEnvironment.Random.Next(0, tf.Rows - 1) * Tile.TileHeight);
-            Add(testItem);
-
-            //Container chest = new Container("EmptyItem:65:65:10");
-            
-
-
+            Add(testItem); 
         }
 
         private Tile LoadTile(char tileType, int x, int y)
@@ -106,7 +101,6 @@ namespace Wink
                     return LoadDoorTile("spr_door", TileType.Door);
                 default:
                     return LoadWTFTile();
-                    //return new Tile("");
             }
         }
 
