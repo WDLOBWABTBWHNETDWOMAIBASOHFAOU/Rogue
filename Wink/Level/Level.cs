@@ -101,9 +101,11 @@ namespace Wink
                 case '-':
                     return LoadFloorTile("spr_floor", TileType.Normal);
                 case 'c':
-                    return LoadChestTile("spr_ChestTile", TileType.Chest, x, y);
+                    return LoadChestTile("spr_ChestTile", TileType.Normal, x, y);
                 case 'D':
                     return LoadDoorTile("spr_door", TileType.Normal, x, y);
+                case 't':
+                    return LoadTrapTile("spr_trap", TileType.Normal, x, y);
                 default:
                     return LoadWTFTile();
             }
@@ -138,6 +140,18 @@ namespace Wink
             t.Passable = false;
             return t;
         }
+
+        private Tile LoadTrapTile(string name, TileType tileType, int x, int y)
+        {
+            Tile t = new Tile("empty:65:65:10:DarkGreen", TileType.Normal);
+            //DarkRed for development testing, should have same or simular sprite as the tile in final version
+            Trap trap = new Trap("empty:65:65:10:DarkRed");
+            trap.Position = new Vector2(x * Tile.TileWidth, y * Tile.TileHeight);
+            Add(trap);
+            t.Passable = true;
+            return t;
+        }
+
         private Tile LoadChestTile(string name, TileType tileType,int x, int y)
         {
             Tile t = new Tile("empty:65:65:10:DarkGreen", TileType.Chest);

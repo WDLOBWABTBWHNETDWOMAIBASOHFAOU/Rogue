@@ -51,7 +51,7 @@ namespace Wink
 
             if (Visible)
             {
-                //Not sure if it works with mul
+                //Not sure if it works with multiplayer
                 string ClientName = Environment.MachineName;
                 Player player = GameWorld.Find("player_" + ClientName) as Player;
 
@@ -75,8 +75,9 @@ namespace Wink
         {
             Action onClick = () =>
             {
+                //Not sure if it works with multiplayer
                 string ClientName = Environment.MachineName;
-                Player player = GameWorld.Find("player_" + Environment.MachineName) as Player;
+                Player player = GameWorld.Find("player_" + ClientName) as Player;
 
                 int dx = (int)Math.Abs(player.Position.X - player.Origin.X - Position.X);
                 int dy = (int)Math.Abs(player.Position.Y - player.Origin.Y - Position.Y);

@@ -93,10 +93,11 @@ namespace Wink
         {
             if (Health > 0)
             {
-                Action onClick = () => 
+                Action onClick = () =>
                 {
-                    // correct player when in multiplayer?
-                    Player player = GameWorld.Find(p => p is Player) as Player;
+                    //Not sure if it works with multiplayer
+                    string ClientName = Environment.MachineName;
+                    Player player = GameWorld.Find("player_" + ClientName) as Player;
                     AttackEvent aE = new AttackEvent(player, this);
                     Server.Send(aE);
                 };
