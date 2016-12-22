@@ -46,6 +46,7 @@ namespace Wink
                     for (int y = -1; y <= 1; y++)
                     {
                         Tile surroundingNode = tf[currentNode.TilePosition.X + x, currentNode.TilePosition.Y + y] as Tile; // Again with the grid positions
+                        if (!canDiagonal(currentNode, surroundingNode, tf)) continue;
                         if (surroundingNode == endingNode)
                         {
                             openTile.Clear();
@@ -108,6 +109,31 @@ namespace Wink
                 currentNode = currentNode.originNode;
             }
             return path;
+        }
+
+        private static bool canDiagonal(Tile start, Tile end, TileField tf)
+        {
+            // THINGS TO MAKE THINGS WORK
+            float TileX = (end.TilePosition.X + 1) * Tile.TileWidth;
+            float TileY = (end.TilePosition.Y + 1) * Tile.TileHeight;
+            int xMovement, yMovement;
+            xMovement = Math.Sign((int)(start.Position.X - start.Origin.X - end.Position.X));
+            yMovement = Math.Sign((int)(start.Position.Y - start.Origin.Y - end.Position.Y));
+            bool diagonal = Math.Abs(yMovement) == Math.Abs(xMovement);
+
+            bool canDiagonal = true;
+            if (diagonal)
+            {
+                Tile tile1, tile2;
+                tile1 = tf[end.TilePosition.X + xMovement, end.TilePosition.Y] as Tile;
+                tile2 = tf[end.TilePosition.X, end.TilePosition.Y + yMovement] as Tile;
+                if (tile1.TileType == TileType.Wall || tile2.TileType == TileType.Wall)
+                {
+                    canDiagonal = false;
+                }
+            }
+            // DEAL WITH IT
+            return canDiagonal;
         }
     }
 }

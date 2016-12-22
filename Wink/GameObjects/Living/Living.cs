@@ -96,27 +96,14 @@ namespace Wink
         {
             float TileX = (tile.TilePosition.X + 1) * Tile.TileWidth;
             float TileY = (tile.TilePosition.Y + 1) * Tile.TileHeight;
-            int xMovement, yMovement;
-            xMovement = Math.Sign(position.X - TileX);
-            yMovement = Math.Sign(position.Y - TileY);
-            bool diagonal = (Math.Abs(xMovement) == Math.Abs(yMovement) && xMovement != 0);
-
             if (position.X - TileX <= Tile.TileWidth && position.X - TileX >= -Tile.TileWidth*2)
             {
                 if (position.Y - TileY <= Tile.TileHeight && position.Y - TileY >= -Tile.TileHeight)
                 {
-                    if (checkIfDiagonalMovementIsAllowed(tile) || !diagonal)
-                    {
-                        position.X = TileX - 0.5f * Tile.TileWidth;
-                        position.Y = TileY;
-                    }
+                    position.X = TileX - 0.5f * Tile.TileWidth;
+                    position.Y = TileY;
                 }
             }
-        }
-        private bool checkIfDiagonalMovementIsAllowed(Tile tile)
-        {
-
-            return true;
         }
     }
 }
