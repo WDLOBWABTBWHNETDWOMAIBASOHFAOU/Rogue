@@ -91,7 +91,7 @@ namespace Wink
 
         public override void HandleInput(InputHelper inputHelper)
         {
-            if(Health > 0)
+            if (Health > 0)
             {
                 Action onClick = () => 
                 {
@@ -103,9 +103,7 @@ namespace Wink
                 inputHelper.IfMouseLeftButtonPressedOn(this, onClick);
 
                 base.HandleInput(inputHelper);
-
             }
-
         }
     }
 }

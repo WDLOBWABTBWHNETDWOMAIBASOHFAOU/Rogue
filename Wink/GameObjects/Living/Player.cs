@@ -22,7 +22,7 @@ namespace Wink
         {
             //Inventory
             mouseSlot = new MouseSlot(layer + 11, "mouseSlot");
-            itemGrid = new GameObjectGrid(3, 6, 0, "", 0);
+            itemGrid = new GameObjectGrid(3, 6, 0, "");
 
             SetStats(5, 5, 5, 5, 55);
 

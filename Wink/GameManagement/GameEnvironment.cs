@@ -126,7 +126,7 @@ public class GameEnvironment : Game
 
     protected override void LoadContent()
     {
-        DrawingHelper.Initialize(this.GraphicsDevice);
+        DrawingHelper.Initialize(GraphicsDevice);
         spriteBatch = new SpriteBatch(GraphicsDevice);
     }
 

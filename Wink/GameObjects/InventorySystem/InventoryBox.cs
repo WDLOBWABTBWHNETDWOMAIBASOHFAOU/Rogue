@@ -25,7 +25,7 @@ namespace Wink
             itemGrid.CellHeight = Tile.TileHeight;
             itemGrid.CellWidth = Tile.TileWidth;
             CheckGrid(itemGrid);
-            itemGrid.Add(new TestItem(), 2, 2);
+            itemGrid.Add(new TestItem(), 0, 0);
             Add(itemGrid);
             
         }
