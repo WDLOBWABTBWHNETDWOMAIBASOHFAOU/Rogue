@@ -39,17 +39,17 @@ namespace Wink
         {
             TileField grid = player.GameWorld.Find("TileField") as TileField;
             Tile tempTile = grid[0, 0] as Tile;
-            Vector2 selfPos = new Vector2((Position.X + 0.5f * tempTile.Height) / tempTile.Height - 1, Position.Y / tempTile.Width - 1);
-            Vector2 playPos = new Vector2((player.Position.X + 0.5f * tempTile.Height) / tempTile.Height - 1, player.Position.Y / tempTile.Width - 1);
+            Vector2 selfPos = new Vector2((realPosition.X + 0.5f * tempTile.Height) / tempTile.Height - 1, realPosition.Y / tempTile.Width - 1);
+            Vector2 playPos = new Vector2((player.realPosition.X + 0.5f * tempTile.Height) / tempTile.Height - 1, player.realPosition.Y / tempTile.Width - 1);
             List<Tile> path = Pathfinding.ShortestPath(selfPos, playPos, grid);
             if (path.Count > 1)
             {
                 MoveTo(path[0]);
                 actionPoints--;
             }
-            else if (player.Position.X - Position.X <= Tile.TileWidth && player.Position.X - Position.X >= -Tile.TileWidth * 2)
+            else if (player.realPosition.X - realPosition.X <= Tile.TileWidth && player.realPosition.X - realPosition.X >= -Tile.TileWidth * 2)
             {
-                if (player.Position.Y - Position.Y <= Tile.TileHeight && player.Position.Y - Position.Y >= -Tile.TileHeight)
+                if (player.realPosition.Y - realPosition.Y <= Tile.TileHeight && player.realPosition.Y - realPosition.Y >= -Tile.TileHeight)
                 {
                     Attack(player);
                     actionPoints--;

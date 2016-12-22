@@ -10,6 +10,9 @@ namespace Wink
         private int timeleft;
         private bool startTimer;
         public bool isTurn;
+        public Vector2 realPosition;
+        public Vector2 vel;
+        public bool moving;
 
         protected string idleAnimation, moveAnimation, dieAnimation;
         private string dieSound;
@@ -19,6 +22,8 @@ namespace Wink
             SetStats();
             InitAnimation();
             timeleft = 1000;
+            moving = false;
+            vel = Vector2.Zero;
         }
 
         public Living(SerializationInfo info, StreamingContext context) : base(info, context)
@@ -78,7 +83,21 @@ namespace Wink
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
-            if(healthPoints <= 0)
+            if (!moving && position != realPosition) realPosition = position;
+            if (moving)
+            {
+                if (!closeEnough(0.01))
+                {
+                    position += vel;
+                }
+                else
+                {
+                    position = realPosition;
+                    vel = Vector2.Zero;
+                    moving = false;
+                }
+            }
+            if (healthPoints <= 0)
             {
                 startTimer = true;
                 DeathFeedback("die", dieSound);
@@ -91,18 +110,32 @@ namespace Wink
                 }
             }
         }
-        
+        private bool closeEnough(double margin)
+        {
+            bool a, b, c, d;
+            a = (position.X + vel.X < realPosition.X + margin);
+            b = (position.X + vel.X > realPosition.X - margin);
+            c = (position.Y + vel.Y < realPosition.Y + margin);
+            d = (position.Y + vel.Y > realPosition.Y - margin);
+            return (a && b && c && d);
+        }
+
         public void MoveTo(Tile tile)
         {
             float TileX = (tile.TilePosition.X + 1) * Tile.TileWidth;
             float TileY = (tile.TilePosition.Y + 1) * Tile.TileHeight;
-
-            if (position.X - TileX <= Tile.TileWidth && position.X - TileX >= -Tile.TileWidth*2)
+            if (!moving)
             {
-                if (position.Y - TileY <= Tile.TileHeight && position.Y - TileY >= -Tile.TileHeight)
+                position = realPosition;
+            }
+            if (realPosition.X - TileX <= Tile.TileWidth && realPosition.X - TileX >= -Tile.TileWidth*2)
+            {
+                if (realPosition.Y - TileY <= Tile.TileHeight && realPosition.Y - TileY >= -Tile.TileHeight)
                 {
-                    position.X = TileX - 0.5f * Tile.TileWidth;
-                    position.Y = TileY;
+                    moving = true;
+                    realPosition.X = TileX - 0.5f * Tile.TileWidth;
+                    realPosition.Y = TileY;
+                    vel = (realPosition - position) / 10;
                 }
             }
         }
