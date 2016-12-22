@@ -9,6 +9,17 @@ class TextBox : GameObjectList
     Vector2 objPosition;
     Vector2 center;
     Rectangle limitBB;
+    /// <summary>
+    /// Creates a textbox that draws a (small) background box and text string above it. I has a build in streamReader that selects a line out of a txt file.
+    /// </summary>
+    /// <param name="path">.txt file that contains the text line(s)</param>
+    /// <param name="textPlace">specific line that is in .txt file. if 0 is entered, the textbox selects a random line out of the file</param>
+    /// <param name="overlay"> backgroundsprite</param>
+    /// <param name="font">fond of the text</param>
+    /// <param name="objPositionX">x position of the target object</param>
+    /// <param name="objPositionY">y position of the target object</param>
+    /// <param name="textPosition"> the text offset compared to the overlay</param>
+    /// <param name="cameraSensitivity"> weather or not the textbox should be sensitive to camera movement</param>
 
     public TextBox(string path, int textPlace, string overlay, string font, float objPositionX, float objPositionY, Vector2 textPosition, int cameraSensitivity) : base(100, "")
     {
