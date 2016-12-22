@@ -18,6 +18,8 @@ namespace Wink
         
         private int width, height;
         private Button closeButton;
+        public int Width { get { return width; } }
+        public int Height { get { return height; } }
 
         const int BorderWidth = 2;
         const int TitleBarHeight = 20;
