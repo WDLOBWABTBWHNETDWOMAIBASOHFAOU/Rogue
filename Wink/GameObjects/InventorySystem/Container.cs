@@ -60,7 +60,16 @@ namespace Wink
         {
             Action onClick = () =>
             {
-                iWindow.Visible = !iWindow.Visible;
+                // correct player when in multiplayer?
+                Player player = GameWorld.Find(p => p is Player) as Player;
+
+                int dx = (int)Math.Abs(player.Position.X - player.Origin.X - Position.X);
+                int dy = (int)Math.Abs(player.Position.Y - player.Origin.Y - Position.Y);
+
+                if (dx <= Tile.TileWidth && dy <= Tile.TileHeight)
+                {
+                    iWindow.Visible = !iWindow.Visible;
+                }
 
             };
             inputHelper.IfMouseLeftButtonPressedOn(this, onClick);

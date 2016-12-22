@@ -46,6 +46,7 @@
     <Compile Include="Events\LevelUpdatedEvent.cs" />
     <Compile Include="Events\PickupEvent.cs" />
     <Compile Include="Events\PlayerMoveEvent.cs" />
+    <Compile Include="GameObjects\Door.cs" />
     <Compile Include="GameObjects\IGUIGameObject.cs" />
     <Compile Include="GameObjects\InventorySystem\Container.cs" />
     <Compile Include="GUI\TrackingTextGameObject.cs" />

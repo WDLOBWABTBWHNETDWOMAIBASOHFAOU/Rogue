@@ -95,6 +95,7 @@ namespace Wink
             {
                 Action onClick = () => 
                 {
+                    // correct player when in multiplayer?
                     Player player = GameWorld.Find(p => p is Player) as Player;
                     AttackEvent aE = new AttackEvent(player, this);
                     Server.Send(aE);
