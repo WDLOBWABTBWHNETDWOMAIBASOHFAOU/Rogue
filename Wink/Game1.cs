@@ -38,12 +38,9 @@ namespace Wink
         {
             base.LoadContent();
             screen = new Point(1920, 1080);
-            windowSize = new Point(1024, 586);
+            windowSize = new Point(1024, 576);
             FullScreen = false;
 
-            ////This needs to happen when switched to the playingstate(based on what menu option is chosen)
-            //PlayingState ps = ;
-            //ps.InitializeGameMode(PlayingState.GameMode.Singleplayer);
             gameStateManager.AddGameState("gameSetupState", new GameSetupState());
             gameStateManager.AddGameState("playingState", new PlayingState());
             gameStateManager.AddGameState("gameOverState", new GameOverState());

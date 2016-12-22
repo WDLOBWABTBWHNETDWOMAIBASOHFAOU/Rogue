@@ -7,7 +7,7 @@ using System.IO;
 namespace Wink
 {
     [Serializable]
-    public class Level : GameObjectList
+    public partial class Level : GameObjectList
     {
         public Level(SerializationInfo info, StreamingContext context)
         {
@@ -38,6 +38,11 @@ namespace Wink
         public Level(int levelIndex) : base(0, "Level")
         {
             LoadTiles("Content/Levels/" + levelIndex + ".txt");
+        }
+
+        public Level()
+        {
+            Generate();
         }
 
         public void LoadTiles(string path)

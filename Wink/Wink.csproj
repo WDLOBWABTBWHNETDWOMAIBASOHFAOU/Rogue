@@ -51,6 +51,7 @@
     <Compile Include="GameObjects\InventorySystem\Container.cs" />
     <Compile Include="GUI\TrackingTextGameObject.cs" />
     <Compile Include="GUI\Window.cs" />
+    <Compile Include="Level\LevelGenerator.cs" />
     <Compile Include="Multiplayer\Sender.cs" />
     <Compile Include="GameManagement\AnimatedGameObject.cs" />
     <Compile Include="GameManagement\Animation.cs" />
