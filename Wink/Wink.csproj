@@ -84,7 +84,7 @@
     <Compile Include="Multiplayer\Client.cs" />
     <Compile Include="GameManagement\Collision.cs" />
     <Compile Include="GameManagement\DrawingHelper.cs" />
-    <Compile Include="Game1.cs" />
+    <Compile Include="Treehugger.cs" />
     <Compile Include="GameManagement\GameEnvironment.cs" />
     <Compile Include="GameManagement\GameObject.cs" />
     <Compile Include="GameManagement\GameObjectGrid.cs" />
