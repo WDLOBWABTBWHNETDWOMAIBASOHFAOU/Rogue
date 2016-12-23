@@ -11,19 +11,31 @@ namespace Wink
     {
         private List<Client> clients;
         private List<Living> livingObjects;
+        private Level level;
+        private int levelIndex;
 
         bool levelChanged;
         private int turnIndex;
 
-        public Level Level { get; private set; }
-        
+        public Level Level
+        {
+            get { return level; }
+            set { level = value; }
+        }
+
+        public int LevelIndex
+        {
+            get { return levelIndex; }
+        }
+
         public LocalServer ()
         {
         }
 
-        public void SetupLevel(int level, List<Client> clients)
+        public void SetupLevel(int level2, List<Client> clients)
         {
-            Level = new Level(level);
+            levelIndex = level2;
+            level = new Level(levelIndex);
 
             this.clients = clients;
             foreach (Client c in clients)

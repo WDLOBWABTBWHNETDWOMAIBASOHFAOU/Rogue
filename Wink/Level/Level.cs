@@ -6,9 +6,13 @@ using System.IO;
 
 namespace Wink
 {
+
     [Serializable]
     public partial class Level : GameObjectList
     {
+        private LocalServer server;
+        private int levelIndex;
+
         public Level(SerializationInfo info, StreamingContext context)
         {
             children = (List<GameObject>)info.GetValue("children", typeof(List<GameObject>));
@@ -38,6 +42,7 @@ namespace Wink
         public Level(int levelIndex) : base(0, "Level")
         {
             LoadTiles("Content/Levels/" + levelIndex + ".txt");
+            this.levelIndex = levelIndex;
         }
 
         public Level()
@@ -104,6 +109,8 @@ namespace Wink
                     return LoadChestTile("spr_ChestTile", TileType.Chest, x, y);
                 case 'D':
                     return LoadDoorTile("spr_door", TileType.Normal, x, y);
+                case 'E':
+                    return LoadEndTile("spr_end", TileType.End, x, y);
                 default:
                     return LoadWTFTile();
             }
@@ -151,6 +158,16 @@ namespace Wink
         private Tile LoadWTFTile()
         {
             Tile t = new Tile("empty:65:65:10:Black", TileType.Wall);
+            t.Passable = false;
+            return t;
+        }
+
+        private Tile LoadEndTile(string name, TileType tileType, int x, int y)
+        {
+            Tile t = new Tile("empty:65:65:10:DarkGreen", tileType);
+            End end = new End(t, levelIndex, this);
+            end.Position = new Vector2(x * Tile.TileWidth, y * Tile.TileHeight);
+            Add(end);
             t.Passable = false;
             return t;
         }
