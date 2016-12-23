@@ -20,9 +20,15 @@ namespace Wink
             this.client = client;
             
             level.Add(this);
-            MoveTo(level.Find("startTile") as Tile);
+
+            InitLocation();
 
             InitAnimation();
+        }
+
+        public void InitLocation()
+        {
+            MoveTo(level.Find("startTile") as Tile);
         }
 
         private void InitAnimation()

@@ -42,7 +42,6 @@ namespace Wink
         public Level(int levelIndex) : base(0, "Level")
         {
             LoadTiles("Content/Levels/" + levelIndex + ".txt");
-           // server = server2;
             this.levelIndex = levelIndex;
         }
 
@@ -161,7 +160,7 @@ namespace Wink
         private Tile LoadEndTile(string name, TileType tileType, int x, int y)
         {
             Tile t = new Tile("empty:65:65:10:DarkGreen", tileType);
-            End end = new End(t, server, levelIndex, this);
+            End end = new End(t, levelIndex, this);
             end.Position = new Vector2(x * Tile.TileWidth, y * Tile.TileHeight);
             Add(end);
             t.Passable = false;

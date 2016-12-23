@@ -9,15 +9,13 @@ namespace Wink
     [Serializable]
     class End : SpriteGameObject
     {
-        LocalServer server;
         Tile ParentTile;
         int levelIndex;
         Level level;
-        public End(Tile ParentTile, LocalServer server2, int levelIndex, Level level2, string asset = "empty:65:65:10:Yellow", int layer = 0, string id = "") : base(asset, layer, id)
+        public End(Tile ParentTile, int levelIndex, Level level2, string asset = "empty:65:65:10:Yellow", int layer = 0, string id = "") : base(asset, layer, id)
         {
             this.ParentTile = ParentTile;
             this.levelIndex = levelIndex;
-            server = server2;
             level = level2;
         }
 
@@ -33,7 +31,8 @@ namespace Wink
 
                     if (dx <= Tile.TileWidth && dy <= Tile.TileHeight)
                     {
-                        level = new Level(levelIndex + 1);
+                        Event e = new NextLevelEvent();
+                        Server.Send(e);
                     }
                 };
             inputHelper.IfMouseLeftButtonPressedOn(this, onClick);

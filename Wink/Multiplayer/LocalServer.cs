@@ -26,7 +26,6 @@ namespace Wink
         public int LevelIndex
         {
             get { return levelIndex; }
-            set { levelIndex = value; }
         }
 
         public LocalServer ()
