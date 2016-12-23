@@ -43,7 +43,7 @@ namespace Wink
                 Reset();
                 GameEnvironment.GameStateManager.SwitchTo("mainMenuState");
             };
-            backButton.Position = new Vector2(100, Game1.Screen.Y - 100);
+            backButton.Position = new Vector2(100, Treehugger.Screen.Y - 100);
             Add(backButton);
         }
 

@@ -30,8 +30,8 @@ namespace Wink
 
             public void execute()
             {
-                Game1.WindowSize = new Point(width, height);
-                Game1.ApplyResolutionSettings();
+                Treehugger.WindowSize = new Point(width, height);
+                Treehugger.ApplyResolutionSettings();
             }
         }
 

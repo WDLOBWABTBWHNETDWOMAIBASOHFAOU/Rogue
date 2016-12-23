@@ -5,21 +5,21 @@ namespace Wink
     /// <summary>
     /// This is the main type for your game.
     /// </summary>
-    public class Game1 : GameEnvironment
+    public class Treehugger : GameEnvironment
     {
-        private static Game1 instance;
+        private static Treehugger instance;
 
-        private Game1()
+        private Treehugger()
         {
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
         }
 
-        public static Game1 Instance
+        public static Treehugger Instance
         {
             get {
                 if (instance == null)
-                    instance = new Game1();
+                    instance = new Treehugger();
                 return instance;
             }
         }
