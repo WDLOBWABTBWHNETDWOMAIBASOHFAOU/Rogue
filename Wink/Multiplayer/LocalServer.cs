@@ -32,10 +32,10 @@ namespace Wink
         {
         }
 
-        public void SetupLevel(int level2, List<Client> clients)
+        public void SetupLevel(int levelIndex, List<Client> clients)
         {
-            levelIndex = level2;
             level = new Level(levelIndex);
+            //level = new Level();
 
             this.clients = clients;
             foreach (Client c in clients)

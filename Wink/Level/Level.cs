@@ -10,9 +10,8 @@ namespace Wink
     [Serializable]
     public partial class Level : GameObjectList
     {
-        private LocalServer server;
         private int levelIndex;
-
+        
         public Level(SerializationInfo info, StreamingContext context)
         {
             children = (List<GameObject>)info.GetValue("children", typeof(List<GameObject>));
@@ -23,7 +22,7 @@ namespace Wink
             id = info.GetString("id");
             visible = info.GetBoolean("vis");
         }
-
+        
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             info.AddValue("children", children);
@@ -47,7 +46,11 @@ namespace Wink
 
         public Level()
         {
-            Generate();
+            List<Room> rooms = GenerateRooms();
+            List<Tuple<Room, Room>> hallwayPairs = GenerateHallwayPairs(rooms);
+            TileField tf = GenerateTiles(rooms, hallwayPairs);
+            Add(tf);
+            System.Diagnostics.Debug.Write(ToString());
         }
 
         public void LoadTiles(string path)
@@ -102,30 +105,30 @@ namespace Wink
                 case '1':
                     return LoadStartTile();
                 case '#':
-                    return LoadWallTile("spr_wall", TileType.Wall);
+                    return LoadWallTile("spr_wall");
                 case '-':
-                    return LoadFloorTile("spr_floor", TileType.Normal);
+                    return LoadFloorTile("spr_floor");
                 case 'c':
-                    return LoadChestTile("spr_ChestTile", TileType.Chest, x, y);
+                    return LoadChestTile("spr_ChestTile", x, y);
                 case 'D':
-                    return LoadDoorTile("spr_door", TileType.Normal, x, y);
+                    return LoadDoorTile("spr_door", x, y);
                 case 'E':
-                    return LoadEndTile("spr_end", TileType.End, x, y);
+                    return LoadEndTile("spr_end", x, y);
                 default:
                     return LoadWTFTile();
             }
         }
 
-        private Tile LoadWallTile(string name, TileType tileType)
+        private Tile LoadWallTile(string assetName)
         {
-            Tile t = new Tile("empty:65:65:10:Blue", tileType);
+            Tile t = new Tile("empty:65:65:10:Blue", TileType.Wall);
             t.Passable = false;
             return t;
         }
 
-        private Tile LoadFloorTile(string name, TileType tileType)
+        private Tile LoadFloorTile(string assetName)
         {
-            Tile t = new Tile("empty:65:65:10:DarkGreen", tileType);
+            Tile t = new Tile("empty:65:65:10:DarkGreen", TileType.Normal);
             t.Passable = true;
             return t;
         }
@@ -136,7 +139,7 @@ namespace Wink
             t.Passable = true;
             return t;
         }
-        private Tile LoadDoorTile(string name, TileType tileType, int x, int y)
+        private Tile LoadDoorTile(string assetName, int x, int y)
         {
             Tile t = new Tile("empty:65:65:10:DarkGreen", TileType.Normal);
             Door door = new Door(t);
@@ -145,9 +148,9 @@ namespace Wink
             t.Passable = false;
             return t;
         }
-        private Tile LoadChestTile(string name, TileType tileType,int x, int y)
+        private Tile LoadChestTile(string assetName, int x, int y)
         {
-            Tile t = new Tile("empty:65:65:10:DarkGreen", TileType.Chest);
+            Tile t = new Tile("empty:65:65:10:DarkGreen", TileType.Normal);
             Container chest = new Container("empty:65:65:10:Brown");
             chest.Position = new Vector2(x * Tile.TileWidth, y * Tile.TileHeight);
             Add(chest);
@@ -162,14 +165,30 @@ namespace Wink
             return t;
         }
 
-        private Tile LoadEndTile(string name, TileType tileType, int x, int y)
+        private Tile LoadEndTile(string assetName, int x, int y)
         {
-            Tile t = new Tile("empty:65:65:10:DarkGreen", tileType);
+            Tile t = new Tile("empty:65:65:10:DarkGreen", TileType.Normal);
             End end = new End(t, levelIndex, this);
             end.Position = new Vector2(x * Tile.TileWidth, y * Tile.TileHeight);
             Add(end);
             t.Passable = false;
             return t;
+        }
+
+        public override string ToString()
+        {
+            TileField tf = Find("TileField") as TileField;
+            char[] char1 = new char[(tf.Columns + 1) * tf.Rows];
+            for (int y = 0; y < tf.Rows; y++) 
+            {
+                for (int x = 0; x < tf.Columns; x++)
+                {
+                    TileType tt = (tf.Get(x, y) as Tile).TileType;
+                    char1[y * (tf.Columns + 1) + x] = tt == TileType.Wall ? '#' : tt == TileType.Normal ? '.' : ' ';
+                }
+                char1[y * (tf.Columns + 1) + tf.Columns] = '\n';
+            }
+            return new string(char1);
         }
     }
 }
