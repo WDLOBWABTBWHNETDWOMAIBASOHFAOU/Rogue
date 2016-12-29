@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 
 namespace Wink
 {
-    public class LocalClient : Client
+    public class LocalClient : Client, IGameLoopObject
     {
         private GameObjectList gameObjects;
-        private Camera camera;
+        private Camera newCamera;
 
         public Level Level
         {
@@ -34,8 +35,8 @@ namespace Wink
         {
             ClientName = System.Environment.MachineName;
 
-            camera = new Camera();
-            GameEnvironment.InputHelper.Camera = camera;
+            newCamera = new Camera();
+            GameEnvironment.InputHelper.Camera = newCamera;
 
             gameObjects = new GameObjectList();
             gameObjects.Add(new PlayingGUI());
@@ -53,13 +54,13 @@ namespace Wink
 
         public void HandleInput(InputHelper inputHelper) 
         {
-            camera.HandleInput(inputHelper);
+            newCamera.HandleInput(inputHelper);
             gameObjects.HandleInput(inputHelper);
         }
 
-        public void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera c)
+        public void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
         {
-            gameObjects.Draw(gameTime, spriteBatch, camera);
+            gameObjects.Draw(gameTime, spriteBatch, newCamera);
         }
 
         public override void Send(Event e)
@@ -68,6 +69,16 @@ namespace Wink
             {
                 e.OnClientReceive(this);
             }
+        }
+
+        public void DrawDebug(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
+        {
+            gameObjects.DrawDebug(gameTime, spriteBatch, newCamera);
+        }
+
+        public void Reset()
+        {
+            throw new NotImplementedException();
         }
     }
 }

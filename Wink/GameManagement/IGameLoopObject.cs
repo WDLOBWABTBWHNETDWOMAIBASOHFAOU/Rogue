@@ -9,5 +9,7 @@ public interface IGameLoopObject
 
     void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera);
 
+    void DrawDebug(GameTime gameTime, SpriteBatch spriteBatch, Camera camera);
+
     void Reset();
 }

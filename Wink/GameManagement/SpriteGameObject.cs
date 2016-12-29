@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 public class SpriteGameObject : GameObject
@@ -14,6 +15,8 @@ public class SpriteGameObject : GameObject
 
     public bool PerPixelCollisionDetection = true;
 
+    protected Dictionary<string, string> debugTags;
+
     public Color DrawColor { get; set; }
     public float CameraSensitivity { get { return cameraSensitivity; } }
 
@@ -24,6 +27,7 @@ public class SpriteGameObject : GameObject
         this.scale = scale;
         this.spriteAssetName = assetName;
         this.spriteSheetIndex = sheetIndex;
+        this.debugTags = new Dictionary<string, string>();
         LoadSprite();
     }
 
@@ -34,6 +38,8 @@ public class SpriteGameObject : GameObject
         origin = new Vector2((float)info.GetDouble("originX"), (float)info.GetDouble("originY"));
         scale = (float)info.GetDouble("scale");
         cameraSensitivity = (float)info.GetDouble("cameraSensitivity");
+
+        debugTags = (Dictionary<string, string>)info.GetValue("debugTags", typeof(Dictionary<string, string>));
         LoadSprite();
     }
 
@@ -45,6 +51,7 @@ public class SpriteGameObject : GameObject
         info.AddValue("originY", origin.Y);
         info.AddValue("scale", scale);
         info.AddValue("cameraSensitivity", cameraSensitivity);
+        info.AddValue("debugTags", debugTags);
         base.GetObjectData(info, context);
     }
 
@@ -56,6 +63,21 @@ public class SpriteGameObject : GameObject
         }
         //Draw every SpriteGameObject in its position relative to the camera but only to the extent specified by the CameraSensitivity property.
         sprite.Draw(spriteBatch, GlobalPosition - (cameraSensitivity * camera.GlobalPosition), origin, scale, DrawColor);
+    }
+
+    public override void DrawDebug(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
+    {
+        Dictionary<string, string>.Enumerator enumerator = debugTags.GetEnumerator();
+        while (enumerator.MoveNext())
+        {
+            SpriteFont arial12 = GameEnvironment.AssetManager.GetFont("Arial12");
+            spriteBatch.DrawString(arial12, enumerator.Current.Key + ": " + enumerator.Current.Value, camera.CalculateScreenPosition(this), Color.White);
+        }
+    }
+
+    public void AddDebugTag(string key, string value)
+    {
+        debugTags.Add(key, value);
     }
 
     public void LoadSprite()

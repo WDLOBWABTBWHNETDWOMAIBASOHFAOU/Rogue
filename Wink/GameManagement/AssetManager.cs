@@ -25,9 +25,18 @@ public class AssetManager
     /// </summary>
     public Texture2D GetSingleColorPixel(Color color)
     {
-        Texture2D texture = new Texture2D(graphicsDevice, 1, 1);
-        texture.SetData<Color>(new Color[] { color });
-        return texture;
+        string key = "singleColor:" + color.ToString();
+        if (textures.ContainsKey(key))
+        {
+            return textures[key];
+        }
+        else
+        { 
+            Texture2D texture = new Texture2D(graphicsDevice, 1, 1);
+            texture.SetData<Color>(new Color[] { color });
+            textures.Add(key, texture);
+            return texture;
+        }
     }
 
     public SpriteFont GetFont(string assetName)

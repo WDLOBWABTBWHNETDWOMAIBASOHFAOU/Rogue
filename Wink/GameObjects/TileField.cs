@@ -32,5 +32,20 @@ namespace Wink
             Tile current = Objects[x, y] as Tile;
             return current.TileType;
         }
+
+        public override string ToString()
+        {
+            char[] char1 = new char[(Columns + 1) * Rows];
+            for (int y = 0; y < Rows; y++)
+            {
+                for (int x = 0; x < Columns; x++)
+                {
+                    TileType tt = (Get(x, y) as Tile).TileType;
+                    char1[y * (Columns + 1) + x] = tt == TileType.Wall ? '#' : tt == TileType.Normal ? '.' : ' ';
+                }
+                char1[y * (Columns + 1) + Columns] = '\n';
+            }
+            return new string(char1);
+        }
     }
 }

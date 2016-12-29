@@ -68,6 +68,14 @@ public class GameStateManager : IGameLoopObject
         }
     }
 
+    public void DrawDebug(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
+    {
+        if (currentGameState != null)
+        {
+            currentGameState.DrawDebug(gameTime, spriteBatch, camera);
+        }
+    }
+
     public void Reset()
     {
         if (currentGameState != null)

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 [Serializable]
@@ -56,6 +57,10 @@ public abstract class GameObject : IGameLoopObject, ISerializable
     }
 
     public virtual void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
+    {
+    }
+
+    public virtual void DrawDebug(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
     {
     }
 

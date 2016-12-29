@@ -26,6 +26,15 @@ namespace Wink
             }
         }
 
+        public virtual void DrawDebug(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
+        {
+            if (client != null && client is LocalClient)
+            {
+                LocalClient lc = (LocalClient)client;
+                lc.DrawDebug(gameTime, spriteBatch, camera);
+            }
+        }
+
         public void Update(GameTime gameTime)
         {
             //First update client so it can read input and send appropriate events.

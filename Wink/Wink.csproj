@@ -111,6 +111,7 @@
     <Compile Include="States\MultiplayerMenu.cs" />
     <Compile Include="States\OptionsMenu.cs" />
     <Compile Include="States\PlayingState.cs" />
+    <Compile Include="Util\Line.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">

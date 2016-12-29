@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using XNAPoint = Microsoft.Xna.Framework.Point;
 using System;
 using System.Collections.Generic;
 using TriangleNet;
@@ -19,14 +20,19 @@ namespace Wink
                 case Collision.Side.Top:
                     return new Vector2(rect.Center.X, rect.Top);
                 case Collision.Side.Bottom:
-                    return new Vector2(rect.Center.X, rect.Bottom);
+                    return new Vector2(rect.Center.X, rect.Bottom - 1);
                 case Collision.Side.Left:
                     return new Vector2(rect.Left, rect.Center.Y);
                 case Collision.Side.Right:
-                    return new Vector2(rect.Right, rect.Center.Y);
+                    return new Vector2(rect.Right - 1, rect.Center.Y);
                 default:
                     return Vector2.Zero;
             }
+        }
+
+        public static XNAPoint ToRoundedPoint(this Vector2 vector)
+        {
+            return new XNAPoint((int)Math.Round(vector.X), (int)Math.Round(vector.Y));
         }
     }
 
@@ -34,21 +40,21 @@ namespace Wink
     {
         private class Room : ICloneable
         {
-            public Room(Vector2 location, Microsoft.Xna.Framework.Point size)
+            public Room(Vector2 location, XNAPoint size)
             {
                 Location = location;
                 Size = size;
             }
 
             public Vector2 Location { get; set; }
-            public Microsoft.Xna.Framework.Point Size { get; set; }
+            public XNAPoint Size { get; set; }
 
             //public Vector2 Velocity { get; set; }
             public Rectangle BoundingBox
             {
                 get
                 {
-                    return new Rectangle(Location.ToPoint(), Size);
+                    return new Rectangle(Location.ToRoundedPoint(), Size);
                 }
             }
 
@@ -121,12 +127,12 @@ namespace Wink
             {
                 for (int y = minDim; y <= maxDim; y++)
                 {
-                    Vector2 v = new Vector2(x, y);
-                    double gaussianDistribution = GaussianDistribution(v);
+                    XNAPoint p = new XNAPoint(x, y);
+                    double gaussianDistribution = GaussianDistribution(p.ToVector2());
                     int roomAmount = (int)(multiplier * gaussianDistribution);
                     for (int i = 0; i < roomAmount; i++)
                     {
-                        allRooms.Add(new Room(new Vector2(), v.ToPoint()));
+                        allRooms.Add(new Room(new Vector2(), p));
                     }
                 }
             }
@@ -145,7 +151,7 @@ namespace Wink
             }
 
             int collisions = int.MaxValue;
-            Microsoft.Xna.Framework.Point buffer = new Microsoft.Xna.Framework.Point(1, 1);
+            XNAPoint buffer = new XNAPoint(2, 2);
             while (collisions > 0)
             {
                 collisions = 0;
@@ -237,7 +243,6 @@ namespace Wink
             }
 
             //Convert the Minimum Spanning Tree to a list of Room pairs.
-            //List<Room> roomsClone = rooms.Select(item => (Room)item.Clone()).ToList();
             List<Tuple<Room, Room>> roomPairs = new List<Tuple<Room, Room>>();
             foreach (TaggedUndirectedEdge<int, string> edge in mst)
             {
@@ -260,53 +265,6 @@ namespace Wink
             return roomPairs;
         }
 
-        private string ConvertRoomsToTestString(List<Room> rooms)
-        {
-            //Get the highest coordinates so we know the size of the level.
-            int highestX = int.MinValue;
-            int highestY = int.MinValue;
-            foreach (Room r in rooms)
-            {
-                if (r.BoundingBox.Right > highestX)
-                    highestX = r.BoundingBox.Right;
-
-                if (r.BoundingBox.Bottom > highestY)
-                    highestY = r.BoundingBox.Bottom;
-            }
-
-            //Make a two-dimensional character array that is big enough.
-            char[,] char2 = new char[highestX + 1, highestY + 1];
-
-            //Fill the 2D array with characters
-            for (int r = 0; r < rooms.Count; r++)
-            {
-                Room room = rooms[r];
-                int width = room.BoundingBox.Width;
-                int height = room.BoundingBox.Height;
-                for (int x = 0; x < width; x++)
-                {
-                    for (int y = 0; y < height; y++)
-                    {
-                        char c = x == 0 || x == width - 1 || y == 0 || y == height - 1 ? '+' : '-';
-                        char2[room.BoundingBox.X + x, room.BoundingBox.Y + y] = c;
-                    }
-                }
-            }
-
-            //Convert 2-dimensional char array to 1-dimensional array with \n charachters
-            char[] char1 = new char[(highestX + 1 + 1) * (highestY + 1)];
-            for (int y = 0; y < highestY + 1; y++)
-            {
-                for (int x = 0; x < highestX + 1; x++)
-                {
-                    char1[y * (highestX + 2) + x] = char2[x, y] != '\0' ? char2[x, y] : '.';
-                }
-                char1[y * (highestX + 2) + highestX + 1] = '\n';
-            }
-
-            return new string(char1);
-        }
-
         private TileField GenerateTiles(List<Room> rooms, List<Tuple<Room,Room>> hallwayPairs)
         {
             //Get the highest coordinates so we know the size of the TileField.
@@ -321,37 +279,16 @@ namespace Wink
                     highestY = r.BoundingBox.Bottom + 1;
             }
 
-            //Find good points for the hallways to meet the rooms.
-            Dictionary<Room, List<Microsoft.Xna.Framework.Point>> roomExitPoints = new Dictionary<Room, List<Microsoft.Xna.Framework.Point>>();
+            //Make a dictionary with rooms and an empty list that will contain their exitpoints.
+            Dictionary<Room, Dictionary<XNAPoint, Tuple<Room, XNAPoint>>> roomExitPoints =
+                new Dictionary<Room, Dictionary<XNAPoint, Tuple<Room, XNAPoint>>>();
+
             foreach (Room r in rooms)
             {
-                roomExitPoints.Add(r, new List<Microsoft.Xna.Framework.Point>());
-            }
-            
-            foreach (Tuple<Room, Room> pair in hallwayPairs)
-            {
-                Vector2 center1 = pair.Item1.BoundingBox.Center.ToVector2();
-                Vector2 center2 = pair.Item2.BoundingBox.Center.ToVector2();
-
-                //Vector from center of item1 to center of item2
-                Vector2 v1 = center2 - center1;
-                Vector2 v2 = center1 - center2;
-
-                Collision.Side s1 = CalculateExitSides(pair.Item1, v1);
-                Collision.Side s2 = CalculateExitSides(pair.Item2, v2);
-
-                v1.Normalize();
-                v2.Normalize();
-
-                Vector2 exit1 = CalculateExit(v1, center1, s1, pair.Item1.BoundingBox.GetMiddleOfSide(s1));
-                Vector2 exit2 = CalculateExit(v2, center2, s2, pair.Item2.BoundingBox.GetMiddleOfSide(s2));
-
-                roomExitPoints[pair.Item1].Add(exit1.ToPoint());
-                roomExitPoints[pair.Item2].Add(exit2.ToPoint());
-
-                //TODO: Generate hallways here
+                roomExitPoints.Add(r, new Dictionary<XNAPoint, Tuple<Room, XNAPoint>>());
             }
 
+            //Make the tilefield and fill with default Tiles.
             TileField tf = new TileField(highestY + 1, highestX + 1, 0, "TileField");
             for (int x = 0; x < tf.Columns; x++)
             {
@@ -360,7 +297,37 @@ namespace Wink
                     tf.Add(new Tile(), x, y);
                 }
             }
+
+            //Find good points for the hallways to meet the rooms.
+            foreach (Tuple<Room, Room> pair in hallwayPairs)
+            {
+                Vector2 center1 = pair.Item1.BoundingBox.Center.ToVector2();
+                Vector2 center2 = pair.Item2.BoundingBox.Center.ToVector2();
+
+                //Vector from center of item1 to center of item2 and vice versa
+                Vector2 v1 = center2 - center1;
+                Vector2 v2 = center1 - center2;
+
+                Collision.Side s1 = CalculateExitSide(pair.Item1, v1);
+                Collision.Side s2 = CalculateExitSide(pair.Item2, v2);
+
+                v1.Normalize();
+                v2.Normalize();
+
+                XNAPoint exit1 = CalculateExit(v1, center1, s1, pair.Item1.BoundingBox.GetMiddleOfSide(s1)).ToPoint();
+                XNAPoint exit2 = CalculateExit(v2, center2, s2, pair.Item2.BoundingBox.GetMiddleOfSide(s2)).ToPoint();
+
+                XNAPoint exit1Point = exit1 + pair.Item1.BoundingBox.Center - pair.Item1.BoundingBox.Location;
+                XNAPoint exit2Point = exit2 + pair.Item2.BoundingBox.Center - pair.Item2.BoundingBox.Location;
+
+                roomExitPoints[pair.Item1].Add(exit1Point, new Tuple<Room, XNAPoint>(pair.Item2, exit2Point));
+                roomExitPoints[pair.Item2].Add(exit2Point, new Tuple<Room, XNAPoint>(pair.Item1, exit1Point));
+                //TODO: Fix issue that sometimes an item with same key gets added (multiple hallways same exit)
+
+                //TODO: Generate hallways here
+            }
             
+            #region for each room, add floor and wall tiles to the tilefield.
             foreach (Room r in rooms)
             {
                 int width = r.BoundingBox.Width;
@@ -370,35 +337,82 @@ namespace Wink
                 {
                     for (int y = 0; y < height; y++)
                     {
-                        TileType t = TileType.Normal;
+                        Tile tile = null;
                         if (x == 0 || x == width - 1 || y == 0 || y == height - 1)
                         {
-                            t = TileType.Wall;
-                            foreach (Microsoft.Xna.Framework.Point p in roomExitPoints[r])
+                            KeyValuePair<XNAPoint, Tuple<Room, XNAPoint>>? exitPair = null;
+                            foreach (KeyValuePair<XNAPoint, Tuple<Room, XNAPoint>> kvp in roomExitPoints[r])
                             {
+                                XNAPoint p = kvp.Key;
                                 if (p.X == x && p.Y == y)
                                 {
-                                    t = TileType.Normal;
+                                    exitPair = kvp;
                                 }
                             }
+                            if (exitPair.HasValue)
+                            {
+                                XNAPoint thisExit = exitPair.Value.Key;
+                                Room connectingRoom = exitPair.Value.Value.Item1;
+                                XNAPoint connectingPoint = exitPair.Value.Value.Item2;
+                                int cx = connectingRoom.BoundingBox.X + connectingPoint.X;
+                                int cy = connectingRoom.BoundingBox.Y + connectingPoint.Y;
+                                tile = LoadFloorTile();
+                                tile.AddDebugTag("ExitConnectionPoint", cx + "," + cy);
+                            }
+                            else
+                                tile = LoadWallTile();
                         }
-
-                        Tile tile = null;
-                        switch (t)
+                        else if (x == r.BoundingBox.Center.X && y == r.BoundingBox.Center.Y)
                         {
-                            case TileType.Normal:
-                                tile = LoadFloorTile("");
-                                break;
-                            case TileType.Wall:
-                                tile = LoadWallTile("");
-                                break;
+                            tile = LoadFloorTile();
+                            //tile.AddDebugTag("Room", );
+                        }
+                        else
+                        {
+                            tile = LoadFloorTile();
                         }
                         tf.Add(tile, x + r.BoundingBox.X, y + r.BoundingBox.Y);
                     }
                 }
             }
-            tf.Add(LoadStartTile(), (int)rooms[0].Location.X, (int)rooms[0].Location.Y);
+            #endregion
+
+            tf.Add(LoadStartTile(), rooms[0].Location.ToRoundedPoint().X + 1, rooms[0].Location.ToRoundedPoint().Y + 1);
             return tf;
+        }
+
+        private Collision.Side CalculateExitSide(Room r, Vector2 relVector)
+        {
+            Vector2 center = r.BoundingBox.Center.ToVector2();
+
+            //Calculate angles of vector.
+            double relAngle = Math.Atan2(relVector.Y, relVector.X);
+
+            //Calculate the angles of the line 
+            Vector2[] cornerVectors = new Vector2[4];
+            cornerVectors[0] = new Vector2(r.BoundingBox.Left, r.BoundingBox.Top) - center;
+            cornerVectors[1] = new Vector2(r.BoundingBox.Right, r.BoundingBox.Top) - center;
+            cornerVectors[2] = new Vector2(r.BoundingBox.Right, r.BoundingBox.Bottom) - center;
+            cornerVectors[3] = new Vector2(r.BoundingBox.Left, r.BoundingBox.Bottom) - center;
+
+            double[] cornerAngles = new double[4];
+            cornerAngles[0] = Math.Atan2(cornerVectors[0].Y, cornerVectors[0].X);
+            cornerAngles[1] = Math.Atan2(cornerVectors[1].Y, cornerVectors[1].X);
+            cornerAngles[2] = Math.Atan2(cornerVectors[2].Y, cornerVectors[2].X);
+            cornerAngles[3] = Math.Atan2(cornerVectors[3].Y, cornerVectors[3].X);
+
+            //Calculate Sides based on angle
+            Collision.Side s = default(Collision.Side);
+            if (relAngle >= cornerAngles[0] && relAngle < cornerAngles[1])
+                s = Collision.Side.Top;
+            else if (relAngle >= cornerAngles[1] && relAngle < cornerAngles[2])
+                s = Collision.Side.Right;
+            else if (relAngle >= cornerAngles[2] && relAngle < cornerAngles[3])
+                s = Collision.Side.Bottom;
+            else if (relAngle >= cornerAngles[3]/* && relAngle < cornerAngles[0] + 2 * Math.PI*/)
+                s = Collision.Side.Left;
+
+            return s;
         }
 
         private Vector2 CalculateExit(Vector2 direction, Vector2 center, Collision.Side s, Vector2 middleOfSide)
@@ -417,38 +431,6 @@ namespace Wink
             }
 
             return exitPoint;
-        }
-
-        private Collision.Side CalculateExitSides(Room r, Vector2 relVector)
-        {
-            Vector2 center = r.BoundingBox.Center.ToVector2();
-
-            //Calculate angles of vector.
-            double relAngle = Math.Atan2(relVector.Y, relVector.X);
-
-            //Calculate 2 corner angles per room the other 2 are these + pi
-            Vector2[] cornerVectors = new Vector2[2];
-            cornerVectors[0] = new Vector2(r.BoundingBox.Left, r.BoundingBox.Top) - center;
-            cornerVectors[1] = new Vector2(r.BoundingBox.Right, r.BoundingBox.Top) - center;
-
-            double[] cornerAngles = new double[4];
-            cornerAngles[0] = Math.Atan2(cornerVectors[0].Y, cornerVectors[0].X);
-            cornerAngles[1] = Math.Atan2(cornerVectors[1].Y, cornerVectors[1].X);
-            cornerAngles[2] = cornerAngles[0] + Math.PI;
-            cornerAngles[3] = cornerAngles[1] + Math.PI;
-            
-            //Calculate Sides based on angle
-            Collision.Side s = default(Collision.Side);
-            if (relAngle >= cornerAngles[0] && relAngle < cornerAngles[1])
-                s = Collision.Side.Top;
-            else if (relAngle >= cornerAngles[1] && relAngle < cornerAngles[2])
-                s = Collision.Side.Right;
-            else if (relAngle >= cornerAngles[2] && relAngle < cornerAngles[3])
-                s = Collision.Side.Bottom;
-            else if (relAngle >= cornerAngles[3]/* && relAngle < cornerAngles[0] + 2 * Math.PI*/)
-                s = Collision.Side.Left;
-
-            return s;
         }
     }
 }

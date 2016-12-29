@@ -8,6 +8,7 @@ public class GameEnvironment : Game
     protected GraphicsDeviceManager graphics;
     protected SpriteBatch spriteBatch;
     protected Matrix spriteScale;
+    protected bool debuggingMode;
 
     protected static InputHelper inputHelper;
     protected static Point windowSize;
@@ -137,6 +138,10 @@ public class GameEnvironment : Game
         {
             FullScreen = !FullScreen;
         }
+        if (inputHelper.KeyPressed(Keys.F8))
+        {
+            debuggingMode = !debuggingMode;
+        }
         gameStateManager.HandleInput(inputHelper);
     }
 
@@ -153,6 +158,10 @@ public class GameEnvironment : Game
 
         //Pass along the default camera in the draw methods.
         gameStateManager.Draw(gameTime, spriteBatch, DefaultCamera);
+
+        if (debuggingMode)
+            gameStateManager.DrawDebug(gameTime, spriteBatch, DefaultCamera);
+
         spriteBatch.End();
     }
 }

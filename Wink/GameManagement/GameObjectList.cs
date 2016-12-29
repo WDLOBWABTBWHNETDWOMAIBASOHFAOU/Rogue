@@ -149,6 +149,19 @@ public class GameObjectList : GameObject
         }
     }
 
+    public override void DrawDebug(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
+    {
+        if (!visible)
+        {
+            return;
+        }
+        List<GameObject>.Enumerator e = children.GetEnumerator();
+        while (e.MoveNext())
+        {
+            e.Current.DrawDebug(gameTime, spriteBatch, camera);
+        }
+    }
+
     public override void Reset()
     {
         base.Reset();

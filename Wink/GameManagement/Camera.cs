@@ -12,17 +12,30 @@ public class Camera : GameObject
 
     public override void HandleInput(InputHelper inputHelper)
     {
+        float realSpeed = cameraMoveSpeed * (inputHelper.IsKeyDown(Keys.LeftShift) ? 2.5f : 1);
         if (inputHelper.IsKeyDown(Keys.W))
-            Position += new Vector2(0, -cameraMoveSpeed);
+            Position += new Vector2(0, -realSpeed);
 
         if (inputHelper.IsKeyDown(Keys.A))
-            Position += new Vector2(-cameraMoveSpeed, 0);
+            Position += new Vector2(-realSpeed, 0);
 
         if (inputHelper.IsKeyDown(Keys.S))
-            Position += new Vector2(0, cameraMoveSpeed);
+            Position += new Vector2(0, realSpeed);
 
         if (inputHelper.IsKeyDown(Keys.D))
-            Position += new Vector2(cameraMoveSpeed, 0);
+            Position += new Vector2(realSpeed, 0);
+    }
+
+    public Vector2 CalculateScreenPosition(SpriteGameObject go)
+    {
+        if (go != null)
+        {
+            return go.GlobalPosition - (go.CameraSensitivity * GlobalPosition);
+        }
+        else
+        {
+            throw new System.NullReferenceException();
+        }
     }
 
     //The bounding box of the camera, begins at its position and is the same size as the screen.
