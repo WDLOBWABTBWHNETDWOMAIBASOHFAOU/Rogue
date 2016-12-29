@@ -39,6 +39,7 @@ namespace Wink
         {
             TileField grid = player.GameWorld.Find("TileField") as TileField;
             Tile tempTile = grid[0, 0] as Tile;
+            //TODO: replace tempTile with Tile.TileHeight/Tile.TileWidth?
             Vector2 selfPos = new Vector2((Position.X + 0.5f * tempTile.Height) / tempTile.Height - 1, Position.Y / tempTile.Width - 1);
             Vector2 playPos = new Vector2((player.Position.X + 0.5f * tempTile.Height) / tempTile.Height - 1, player.Position.Y / tempTile.Width - 1);
             List<Tile> path = Pathfinding.ShortestPath(selfPos, playPos, grid);

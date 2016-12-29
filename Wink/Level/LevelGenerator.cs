@@ -315,25 +315,34 @@ namespace Wink
                 v1.Normalize();
                 v2.Normalize();
 
-                XNAPoint exit1 = CalculateExit(v1, center1, s1, pair.Item1.BoundingBox.GetMiddleOfSide(s1)).ToPoint();
-                XNAPoint exit2 = CalculateExit(v2, center2, s2, pair.Item2.BoundingBox.GetMiddleOfSide(s2)).ToPoint();
+                XNAPoint cRelExit1 = CalculateExit(v1, center1, s1, pair.Item1.BoundingBox.GetMiddleOfSide(s1)).ToPoint();
+                XNAPoint cRelExit2 = CalculateExit(v2, center2, s2, pair.Item2.BoundingBox.GetMiddleOfSide(s2)).ToPoint();
+                XNAPoint absExit1 = cRelExit1 + pair.Item1.BoundingBox.Center;
+                XNAPoint absExit2 = cRelExit2 + pair.Item2.BoundingBox.Center;
+                XNAPoint oRelExit1 = absExit1 - pair.Item1.BoundingBox.Location;
+                XNAPoint oRelExit2 = absExit2 - pair.Item2.BoundingBox.Location;
 
-                XNAPoint exit1Point = exit1 + pair.Item1.BoundingBox.Center - pair.Item1.BoundingBox.Location;
-                XNAPoint exit2Point = exit2 + pair.Item2.BoundingBox.Center - pair.Item2.BoundingBox.Location;
-
-                roomExitPoints[pair.Item1].Add(exit1Point, new Tuple<Room, XNAPoint>(pair.Item2, exit2Point));
-                roomExitPoints[pair.Item2].Add(exit2Point, new Tuple<Room, XNAPoint>(pair.Item1, exit1Point));
+                roomExitPoints[pair.Item1].Add(oRelExit1, new Tuple<Room, XNAPoint>(pair.Item2, oRelExit2));
+                roomExitPoints[pair.Item2].Add(oRelExit2, new Tuple<Room, XNAPoint>(pair.Item1, oRelExit1));
                 //TODO: Fix issue that sometimes an item with same key gets added (multiple hallways, same exit)
 
-                //TODO: Generate hallways here
+                //Generate path without diagonals and without limiting ourselfs to passable tiles.
+                List<Tile> path = Pathfinding.ShortestPath(absExit1.ToVector2(), absExit2.ToVector2(), tf, tile => true, 10, 500);
+                foreach (Tile t in path)
+                {
+                    tf.Add(LoadFloorTile(), t.TilePosition.X, t.TilePosition.Y);
+                }
             }
             
             #region for each room, add floor and wall tiles to the tilefield.
-            foreach (Room r in rooms)
+            for (int i = 0; i < rooms.Count; i++)
             {
+                Room r = rooms[i];
                 int width = r.BoundingBox.Width;
                 int height = r.BoundingBox.Height;
-                
+
+                XNAPoint relCenter = r.BoundingBox.Center - r.BoundingBox.Location;
+
                 for (int x = 0; x < width; x++)
                 {
                     for (int y = 0; y < height; y++)
@@ -358,15 +367,15 @@ namespace Wink
                                 int cx = connectingRoom.BoundingBox.X + connectingPoint.X;
                                 int cy = connectingRoom.BoundingBox.Y + connectingPoint.Y;
                                 tile = LoadFloorTile();
-                                tile.AddDebugTag("ExitConnectionPoint", cx + "," + cy);
+                                tile.AddDebugTag("ExitConnectionPoint", rooms.FindIndex(room => room.Equals(connectingRoom)) + ":" + cx + "," + cy);
                             }
                             else
                                 tile = LoadWallTile();
                         }
-                        else if (x == r.BoundingBox.Center.X && y == r.BoundingBox.Center.Y)
+                        else if (x == relCenter.X && y == relCenter.Y)
                         {
                             tile = LoadFloorTile();
-                            //tile.AddDebugTag("Room", );
+                            tile.AddDebugTag("Room", ""+i);
                         }
                         else
                         {
@@ -410,7 +419,7 @@ namespace Wink
                 s = Collision.Side.Right;
             else if (relAngle >= cornerAngles[2] && relAngle < cornerAngles[3])
                 s = Collision.Side.Bottom;
-            else if (relAngle >= cornerAngles[3]/* && relAngle < cornerAngles[0] + 2 * Math.PI*/)
+            else if (relAngle >= cornerAngles[3] || relAngle < cornerAngles[0])
                 s = Collision.Side.Left;
 
             return s;

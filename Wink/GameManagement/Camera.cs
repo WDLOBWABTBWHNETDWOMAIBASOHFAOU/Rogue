@@ -8,7 +8,7 @@ public class Camera : GameObject
         id = "camera";
     }
     
-    private const int cameraMoveSpeed = 4;
+    private const int cameraMoveSpeed = 6;
 
     public override void HandleInput(InputHelper inputHelper)
     {

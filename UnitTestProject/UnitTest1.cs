@@ -7,8 +7,14 @@ namespace UnitTestProject
     [TestClass]
     public class UnitTest1
     {
+        [TestInitialize()]
+        public void Initialize()
+        {
+            Treehugger th = Treehugger.Instance;
+        }
+
         [TestMethod]
-        public void TestMethod1()
+        public void TestLevelGeneration()
         {
             Level level = new Level();
             Debug.Write(level.ToString());

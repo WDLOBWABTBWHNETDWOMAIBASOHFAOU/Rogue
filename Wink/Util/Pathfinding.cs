@@ -11,7 +11,12 @@ namespace Wink
     {
         static Tile startingNode, endingNode;
 
-        public static List<Tile> ShortestPath(Vector2 start, Vector2 end, TileField tf)
+        public static List<Tile> ShortestPath(Vector2 start, Vector2 end, TileField tf, int cost = 10, int diagCost = 14)
+        {
+            return ShortestPath(start, end, tf, tile => tile.Passable, cost, diagCost);
+        }
+
+        public static List<Tile> ShortestPath(Vector2 start, Vector2 end, TileField tf, Func<Tile, bool> validTile, int cost = 10, int diagCost = 14)
         {
             List<Tile> openTile = new List<Tile>();
             List<Tile> closedTile = new List<Tile>();
@@ -36,7 +41,7 @@ namespace Wink
 
                 closedTile.Add(currentNode);
                 openTile.Remove(currentNode);
-                if (!currentNode.Passable) continue;
+                if (!validTile.Invoke(currentNode)) continue;
                 // Opens the surrounding Tile
                 // Add the surrounding 8 Tile to the openTile if they are walkable and not in the closedTile list and set gCost and hCost(hCost will be calculated and wont change later on)
                 // If a node is already in the openTile list check if the gCost is lower from this currentNode and update the gCost and originNode when true
@@ -51,28 +56,28 @@ namespace Wink
                             openTile.Clear();
                             closedTile.Clear();
                             surroundingNode.originNode = currentNode;
-                            path = findPath();
+                            path = FindPath();
                             path.Reverse();
                             return path;
                         }
 
-                        if (!closedTile.Contains(surroundingNode))
+                        if (!closedTile.Contains(surroundingNode) && surroundingNode != null)
                         {
                             if (openTile.Contains(surroundingNode))
                             {
                                 if (x == 0 || y == 0)
                                 {
-                                    if (surroundingNode.gCost > currentNode.gCost + 10)
+                                    if (surroundingNode.gCost > currentNode.gCost + cost)
                                     {
-                                        surroundingNode.gCost = currentNode.gCost + 10;
+                                        surroundingNode.gCost = currentNode.gCost + cost;
                                         surroundingNode.originNode = currentNode;
                                     }
                                 }
                                 else
                                 {
-                                    if (surroundingNode.gCost > currentNode.gCost + 14)
+                                    if (surroundingNode.gCost > currentNode.gCost + diagCost)
                                     {
-                                        surroundingNode.gCost = currentNode.gCost + 14;
+                                        surroundingNode.gCost = currentNode.gCost + diagCost;
                                         surroundingNode.originNode = currentNode;
                                     }
                                 }
@@ -84,11 +89,11 @@ namespace Wink
                                 surroundingNode.originNode = currentNode;
                                 if (x == 0 || y == 0)
                                 {
-                                    surroundingNode.gCost = currentNode.gCost + 10;
+                                    surroundingNode.gCost = currentNode.gCost + cost;
                                 }
                                 else
                                 {
-                                    surroundingNode.gCost = currentNode.gCost + 14;
+                                    surroundingNode.gCost = currentNode.gCost + diagCost;
                                 }
                             }
                         }
@@ -98,7 +103,7 @@ namespace Wink
             return path;
         }
 
-        private static List<Tile> findPath()
+        private static List<Tile> FindPath()
         {
             Tile currentNode = endingNode;
             List<Tile> path = new List<Tile>();

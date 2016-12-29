@@ -8,7 +8,7 @@ namespace Wink
     /// The code in this class is based on:
     /// http://gamedev.stackexchange.com/a/44016
     /// 
-    /// As a stackexchange contribution it is licensed using The MIT License.
+    /// As a stackexchange contribution its license is The MIT License.
     /// </summary>
     class Line
     {
