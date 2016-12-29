@@ -66,20 +66,22 @@ namespace Wink
 
         private Random random = new Random();
         Random Random { get { return random; } }
-        
+
+        //These are the minimum and maximum width and height of any room
+        const int minDim = 5;
+        const int maxDim = 13;
+
+        //Values for the Normal Distribution
+        int gaussMean = (minDim + maxDim) / 2;
+        const double gaussVariance = 5d;
+
+        const double TargetSurfaceArea = 750;
+
         const double circleRadius = 7;
-        
         double CircleArea
         {
             get { return Math.PI * Math.Pow(circleRadius, 2); }
         }
-
-        //These are the minimum and maximum width and height of any room
-        const int minDim = 4;
-        const int maxDim = 10;
-
-        int gaussMean = (minDim + maxDim) / 2;
-        const double gaussVariance = 5d;
 
         double GaussianDistribution(double x)
         {
@@ -105,8 +107,6 @@ namespace Wink
 
             return new Vector2((float)(circleRadius * r * Math.Cos(t)), (float)(circleRadius * r * Math.Sin(t)));
         }
-        
-        const double TargetSurfaceArea = 1000;
 
         private List<Room> GenerateRooms()
         {
@@ -137,6 +137,7 @@ namespace Wink
                 }
             }
 
+            //Select the rooms that are actually going to be used.
             List<Room> roomSelection = new List<Room>();
             int totalRoomArea = 0;
             while (totalRoomArea < TargetSurfaceArea)
@@ -150,6 +151,7 @@ namespace Wink
                 totalRoomArea += toAdd.Size.X * toAdd.Size.Y;
             }
 
+            //A simple physics simulation that pushes rooms apart.
             int collisions = int.MaxValue;
             XNAPoint buffer = new XNAPoint(2, 2);
             while (collisions > 0)
@@ -242,7 +244,7 @@ namespace Wink
                 }
             }
 
-            //Convert the Minimum Spanning Tree to a list of Room pairs.
+            //Convert the MST + 10% to a list of Room pairs.
             List<Tuple<Room, Room>> roomPairs = new List<Tuple<Room, Room>>();
             foreach (TaggedUndirectedEdge<int, string> edge in mst)
             {
@@ -282,7 +284,6 @@ namespace Wink
             //Make a dictionary with rooms and an empty list that will contain their exitpoints.
             Dictionary<Room, Dictionary<XNAPoint, Tuple<Room, XNAPoint>>> roomExitPoints =
                 new Dictionary<Room, Dictionary<XNAPoint, Tuple<Room, XNAPoint>>>();
-
             foreach (Room r in rooms)
             {
                 roomExitPoints.Add(r, new Dictionary<XNAPoint, Tuple<Room, XNAPoint>>());
@@ -298,13 +299,13 @@ namespace Wink
                 }
             }
 
-            //Find good points for the hallways to meet the rooms.
+            //Find good points for the hallways connect to.
             foreach (Tuple<Room, Room> pair in hallwayPairs)
             {
                 Vector2 center1 = pair.Item1.BoundingBox.Center.ToVector2();
                 Vector2 center2 = pair.Item2.BoundingBox.Center.ToVector2();
 
-                //Vector from center of item1 to center of item2 and vice versa
+                //Vector from center of room1 to center of room2 and vice versa
                 Vector2 v1 = center2 - center1;
                 Vector2 v2 = center1 - center2;
 
@@ -322,7 +323,7 @@ namespace Wink
 
                 roomExitPoints[pair.Item1].Add(exit1Point, new Tuple<Room, XNAPoint>(pair.Item2, exit2Point));
                 roomExitPoints[pair.Item2].Add(exit2Point, new Tuple<Room, XNAPoint>(pair.Item1, exit1Point));
-                //TODO: Fix issue that sometimes an item with same key gets added (multiple hallways same exit)
+                //TODO: Fix issue that sometimes an item with same key gets added (multiple hallways, same exit)
 
                 //TODO: Generate hallways here
             }
@@ -394,7 +395,7 @@ namespace Wink
             cornerVectors[1] = new Vector2(r.BoundingBox.Right, r.BoundingBox.Top) - center;
             cornerVectors[2] = new Vector2(r.BoundingBox.Right, r.BoundingBox.Bottom) - center;
             cornerVectors[3] = new Vector2(r.BoundingBox.Left, r.BoundingBox.Bottom) - center;
-
+            //Use Math.Atan2 to convert vectors to angles.
             double[] cornerAngles = new double[4];
             cornerAngles[0] = Math.Atan2(cornerVectors[0].Y, cornerVectors[0].X);
             cornerAngles[1] = Math.Atan2(cornerVectors[1].Y, cornerVectors[1].X);
