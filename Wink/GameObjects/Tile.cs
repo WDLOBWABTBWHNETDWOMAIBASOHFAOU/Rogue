@@ -29,20 +29,15 @@ namespace Wink
         protected TileType type;
         protected bool passable;
 
-        public Point TilePosition { get { return new Point((int)Position.X / TileWidth, (int)Position.Y / TileHeight); } }
-
-        // For pathfinding
-        public Tile originNode;
-        public int hCost;
-        public int gCost;
-        public int fCost
-        {
+        public Point TilePosition {
             get
             {
-                return hCost + gCost;
+                return new Point(
+                    (int)Position.X / TileWidth, 
+                    (int)Position.Y / TileHeight
+                );
             }
         }
-        // No longer for pathfinding
 
         public Tile(string assetname = "", TileType tp = TileType.Background, int layer = 0, string id = "", float cameraSensitivity = 1) : base(assetname, layer, id, 0, cameraSensitivity)
         {

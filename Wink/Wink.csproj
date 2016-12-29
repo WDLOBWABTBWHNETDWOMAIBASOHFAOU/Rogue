@@ -59,7 +59,7 @@
     <Compile Include="GameManagement\Animation.cs" />
     <Compile Include="GameManagement\AssetManager.cs" />
     <Compile Include="GameManagement\Camera.cs" />
-    <Compile Include="Util\Pathfinding.cs" />
+    <Compile Include="Util\PathFinder.cs" />
     <Compile Include="GameObjects\Items\EmptyItem.cs" />
     <Compile Include="GameObjects\InventorySystem\InventoryBox.cs" />
     <Compile Include="GameObjects\Items\Item.cs" />

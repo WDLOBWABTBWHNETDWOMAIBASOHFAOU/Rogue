@@ -92,7 +92,7 @@ namespace Wink
             if (livingObjects.ElementAt(turnIndex).ActionPoints <= 0)
             {
                 livingObjects.ElementAt(turnIndex).isTurn = false;
-                turnIndex = (turnIndex +1)% livingObjects.Count;
+                turnIndex = (turnIndex + 1) % livingObjects.Count;
                 livingObjects.ElementAt(turnIndex).isTurn = true;
                 livingObjects.ElementAt(turnIndex).ActionPoints = 4;
             }

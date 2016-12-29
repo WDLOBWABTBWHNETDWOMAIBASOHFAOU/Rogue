@@ -168,8 +168,8 @@ namespace Wink
                         if (room1 != room2 && r1.Intersects(r2))
                         {
                             Rectangle intersection = Rectangle.Intersect(r1, r2);
-                            room1.Location += (r1.Center.ToVector2() - intersection.Center.ToVector2()) / 8;
-                            room2.Location += (r2.Center.ToVector2() - intersection.Center.ToVector2()) / 8;
+                            room1.Location += new Vector2((float)Random.NextDouble() / 10) + (r1.Center.ToVector2() - intersection.Center.ToVector2()) / 8;
+                            room2.Location += new Vector2((float)Random.NextDouble() / 10) + (r2.Center.ToVector2() - intersection.Center.ToVector2()) / 8;
                             collisions++;
                         }
                     }
@@ -327,7 +327,9 @@ namespace Wink
                 //TODO: Fix issue that sometimes an item with same key gets added (multiple hallways, same exit)
 
                 //Generate path without diagonals and without limiting ourselfs to passable tiles.
-                List<Tile> path = Pathfinding.ShortestPath(absExit1.ToVector2(), absExit2.ToVector2(), tf, tile => true, 10, 500);
+                PathFinder pf = new PathFinder(tf);
+                pf.EnableStraightLines();
+                List<Tile> path = pf.ShortestPath(absExit1, absExit2, tf, tile => true);
                 foreach (Tile t in path)
                 {
                     tf.Add(LoadFloorTile(), t.TilePosition.X, t.TilePosition.Y);
