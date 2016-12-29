@@ -72,8 +72,7 @@ namespace Wink
             //Putting the item one layer above the inventory box
             int inventoryLayer = layer + 1;
             int itemLayer = layer + 2;
-
-            Item testItem = new TestItem("empty:65:65:10:Pink", 1, itemLayer); 
+            
 
             // ENEMY CODE (test)
             for(int i = 0; i < 2; i++)
@@ -83,9 +82,7 @@ namespace Wink
                 testEnemy.InitPosition();
             }
             // END ENEMY CODE (test)
-
-            testItem.Position = new Vector2(GameEnvironment.Random.Next(0, tf.Columns - 1) * Tile.TileWidth, GameEnvironment.Random.Next(0, tf.Rows - 1) * Tile.TileHeight);
-            Add(testItem); 
+            
         }
 
         private Tile LoadTile(char tileType, int x, int y)

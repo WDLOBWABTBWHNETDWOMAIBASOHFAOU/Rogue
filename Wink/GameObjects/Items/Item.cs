@@ -10,7 +10,8 @@ namespace Wink
 
         public Item(string assetName, int stackSize = 1, int layer = 0, string id = "") : base(assetName, layer, id)
         {
-            this.stackSize = stackSize;    
+            this.stackSize = stackSize;
+            cameraSensitivity = 0;    
         }
 
         public Item(SerializationInfo info, StreamingContext context) : base(info, context)
@@ -27,31 +28,20 @@ namespace Wink
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
-            if (Parent is MouseSlot)
-            {
-                cameraSensitivity = 0;
-            }
-            else if (Parent is GameObjectGrid)
-            {
-                cameraSensitivity = 0;
-            }
-            else
-            {
-                cameraSensitivity = 1;
-            }
+           //osition = parent.Position;
         }
 
         public override void HandleInput(InputHelper inputHelper)
         {
-            Action onClick = () =>
-            {
-                PickupEvent PuE = new PickupEvent();
-                PuE.player = (Root as GameObjectList).Find("player_" + Environment.MachineName) as Player;
-                PuE.item = this;
-                PuE.target = PuE.item.Parent as GameObjectGrid;
-                Server.Send(PuE);
-            };
-            inputHelper.IfMouseLeftButtonPressedOn(this, onClick);
+            //Action onClick = () =>
+            //{
+            //    PickupEvent PuE = new PickupEvent();
+            //    PuE.player = (Root as GameObjectList).Find("player_" + Environment.MachineName) as Player;
+            //    PuE.item = this;
+            //    PuE.target = PuE.item.Parent as GameObjectGrid;
+            //    Server.Send(PuE);
+            //};
+            //inputHelper.IfMouseLeftButtonPressedOn(this, onClick);
 
             base.HandleInput(inputHelper);
         }

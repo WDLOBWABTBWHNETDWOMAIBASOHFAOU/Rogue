@@ -24,8 +24,17 @@ namespace Wink
 
             itemGrid.CellHeight = Tile.TileHeight;
             itemGrid.CellWidth = Tile.TileWidth;
-            CheckGrid(itemGrid);
-            itemGrid.Add(new TestItem(), 0, 0);
+
+            for (int x = 0; x < itemGrid.Columns; x++)
+            {
+                for (int y = 0; y < itemGrid.Rows; y++)
+                {
+                    itemGrid.Add(new ItemSlot(), x, y);
+                }
+            }
+            ItemSlot testItem = itemGrid.Get(0, 0) as ItemSlot;
+            testItem.SlotItem = new TestItem();
+
             Add(itemGrid);
             
         }
@@ -41,24 +50,24 @@ namespace Wink
             info.AddValue("itemGrid", itemGrid);
         }   
 
-        private void CheckGrid(GameObjectGrid itemGrid)
-        {
-            for (int x = 0; x < itemGrid.Columns; x++)
-            {
-                for (int y = 0; y < itemGrid.Rows; y++)
-                {
-                    if ( itemGrid.Get(x,y) == null)
-                    {
-                        itemGrid.Add(new EmptyItem("empty:65:65:10:Gray"),x,y);
-                    }
-                }
-            }
-        }
+        //private void CheckGrid(GameObjectGrid itemGrid)
+        //{
+        //    for (int x = 0; x < itemGrid.Columns; x++)
+        //    {
+        //        for (int y = 0; y < itemGrid.Rows; y++)
+        //        {
+        //            if ( itemGrid.Get(x,y) == null)
+        //            {
+        //                itemGrid.Add(new EmptyItem("empty:65:65:10:Gray"),x,y);
+        //            }
+        //        }
+        //    }
+        //}
 
         public override void Update(GameTime gameTime)
         {
-            CheckGrid(ItemGrid);
             base.Update(gameTime);
+            itemGrid.Update(gameTime);
         }
     } 
 }

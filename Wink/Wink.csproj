@@ -49,6 +49,7 @@
     <Compile Include="GameObjects\Door.cs" />
     <Compile Include="GameObjects\IGUIGameObject.cs" />
     <Compile Include="GameObjects\InventorySystem\Container.cs" />
+    <Compile Include="GameObjects\InventorySystem\ItemSlot.cs" />
     <Compile Include="GameObjects\Trap.cs" />
     <Compile Include="GUI\TrackingTextGameObject.cs" />
     <Compile Include="GUI\Window.cs" />
