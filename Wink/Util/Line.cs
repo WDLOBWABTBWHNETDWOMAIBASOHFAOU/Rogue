@@ -14,7 +14,6 @@ namespace Wink
     {
         public static void DrawLine(SpriteBatch sb, Vector2 start, Vector2 end, Color color, int thickness = 1)
         {
-            counter++;
             Vector2 edge = end - start;
             // calculate angle to rotate line
             float angle = (float)Math.Atan2(edge.Y, edge.X);
