@@ -133,7 +133,7 @@ namespace Wink
         }
         private Tile LoadDoorTile(string name, TileType tileType, int x, int y)
         {
-            Tile t = new Tile("empty:65:65:10:DarkGreen", TileType.Normal);
+            Tile t = new Tile("empty:65:65:10:DarkGreen", tileType);
             Door door = new Door(t);
             door.Position = new Vector2(x * Tile.TileWidth, y * Tile.TileHeight);
             Add(door);
@@ -143,7 +143,7 @@ namespace Wink
 
         private Tile LoadTrapTile(string name, TileType tileType, int x, int y)
         {
-            Tile t = new Tile("empty:65:65:10:DarkGreen", TileType.Normal);
+            Tile t = new Tile("empty:65:65:10:DarkGreen", tileType);
             //DarkRed for development testing, should have same or simular sprite as the tile in final version
             Trap trap = new Trap("empty:65:65:10:DarkRed");
             trap.Position = new Vector2(x * Tile.TileWidth, y * Tile.TileHeight);
@@ -154,7 +154,7 @@ namespace Wink
 
         private Tile LoadChestTile(string name, TileType tileType,int x, int y)
         {
-            Tile t = new Tile("empty:65:65:10:DarkGreen", TileType.Chest);
+            Tile t = new Tile("empty:65:65:10:DarkGreen", tileType);
             Container chest = new Container("empty:65:65:10:Brown");
             chest.Position = new Vector2(x * Tile.TileWidth, y * Tile.TileHeight);
             Add(chest);

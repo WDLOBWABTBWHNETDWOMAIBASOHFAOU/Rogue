@@ -13,10 +13,7 @@ namespace Wink
     {
         Background,
         Normal,
-        Wall,
-        Chest,
-        Door,
-        Inventory
+        Wall,        
     }
 
     [Serializable]
@@ -51,11 +48,13 @@ namespace Wink
         public Tile(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             type = (TileType)info.GetValue("type", typeof(TileType));
+            passable = info.GetBoolean("passable");
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             info.AddValue("type", type);
+            info.AddValue("passable", passable);
             base.GetObjectData(info, context);
         }
 
