@@ -12,8 +12,6 @@ namespace Wink
     /// </summary>
     class Line
     {
-        public static int counter;
-
         public static void DrawLine(SpriteBatch sb, Vector2 start, Vector2 end, Color color, int thickness = 1)
         {
             counter++;
