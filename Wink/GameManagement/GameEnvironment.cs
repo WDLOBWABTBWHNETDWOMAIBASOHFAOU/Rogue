@@ -161,7 +161,7 @@ public class GameEnvironment : Game
 
         if (debuggingMode)
             gameStateManager.DrawDebug(gameTime, spriteBatch, DefaultCamera);
-
+        
         spriteBatch.End();
     }
 }

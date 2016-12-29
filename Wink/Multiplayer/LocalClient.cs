@@ -19,8 +19,9 @@ namespace Wink
             }
             set
             {
-                if(Level != null)
-                    gameObjects.Remove(Level);
+                Level lvl = Level;
+                if(lvl != null)
+                    gameObjects.Remove(lvl);
 
                 gameObjects.Add(value);
             }

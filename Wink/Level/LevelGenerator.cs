@@ -153,7 +153,7 @@ namespace Wink
 
             //A simple physics simulation that pushes rooms apart.
             int collisions = int.MaxValue;
-            XNAPoint buffer = new XNAPoint(2, 2);
+            XNAPoint buffer = new XNAPoint(1, 1);
             while (collisions > 0)
             {
                 collisions = 0;

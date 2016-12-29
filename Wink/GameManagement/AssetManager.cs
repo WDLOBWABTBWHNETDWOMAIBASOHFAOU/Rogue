@@ -12,12 +12,14 @@ public class AssetManager
     protected SpriteFont defaultFont;
 
     protected Dictionary<string, Texture2D> textures;
+    protected Dictionary<string, SpriteFont> fonts;
 
     public AssetManager(ContentManager content, GraphicsDevice graphics)
     {
         contentManager = content;
         graphicsDevice = graphics;
         textures = new Dictionary<string, Texture2D>();
+        fonts = new Dictionary<string, SpriteFont>();
     }
 
     /// <summary>
@@ -26,22 +28,22 @@ public class AssetManager
     public Texture2D GetSingleColorPixel(Color color)
     {
         string key = "singleColor:" + color.ToString();
-        if (textures.ContainsKey(key))
+        if (!textures.ContainsKey(key))
         {
-            return textures[key];
-        }
-        else
-        { 
             Texture2D texture = new Texture2D(graphicsDevice, 1, 1);
             texture.SetData<Color>(new Color[] { color });
             textures.Add(key, texture);
-            return texture;
         }
+        return textures[key];
     }
 
     public SpriteFont GetFont(string assetName)
     {
-        return contentManager.Load<SpriteFont>(assetName);
+        if (!fonts.ContainsKey(assetName))
+        {
+            fonts.Add(assetName, contentManager.Load<SpriteFont>(assetName));
+        }
+        return fonts[assetName];
     }
 
     public Texture2D GetSprite(string assetName)

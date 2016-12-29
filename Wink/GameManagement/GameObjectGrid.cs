@@ -131,8 +131,10 @@ public class GameObjectGrid : GameObject
     {
         foreach (GameObject obj in grid)
         {
-            if(obj !=null)
-            obj.Update(gameTime);
+            if (obj != null)
+            {
+                obj.Update(gameTime);
+            }
         }
     }
 
