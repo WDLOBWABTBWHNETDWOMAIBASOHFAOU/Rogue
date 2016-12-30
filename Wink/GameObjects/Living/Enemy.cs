@@ -44,7 +44,7 @@ namespace Wink
             Vector2 playPos = new Vector2((player.Position.X + 0.5f * tempTile.Height) / tempTile.Height - 1, player.Position.Y / tempTile.Width - 1);
 
             PathFinder pf = new PathFinder(tf);
-            List<Tile> path = pf.ShortestPath(selfPos.ToPoint(), playPos.ToPoint(), tf);
+            List<Tile> path = pf.ShortestPath(selfPos.ToPoint(), playPos.ToPoint());
             if (path.Count > 1)
             {
                 MoveTo(path[0]);

@@ -280,7 +280,7 @@ namespace Wink
                 if (r.BoundingBox.Bottom + 1 > highestY)
                     highestY = r.BoundingBox.Bottom + 1;
             }
-
+            
             //Make a dictionary with rooms and an empty list that will contain their exitpoints.
             Dictionary<Room, Dictionary<XNAPoint, Tuple<Room, XNAPoint>>> roomExitPoints =
                 new Dictionary<Room, Dictionary<XNAPoint, Tuple<Room, XNAPoint>>>();
@@ -288,7 +288,7 @@ namespace Wink
             {
                 roomExitPoints.Add(r, new Dictionary<XNAPoint, Tuple<Room, XNAPoint>>());
             }
-
+            
             //Make the tilefield and fill with default Tiles.
             TileField tf = new TileField(highestY + 1, highestX + 1, 0, "TileField");
             for (int x = 0; x < tf.Columns; x++)
@@ -298,6 +298,8 @@ namespace Wink
                     tf.Add(new Tile(), x, y);
                 }
             }
+
+            List<Tuple<XNAPoint, XNAPoint>> hallways = new List<Tuple<XNAPoint, XNAPoint>>();
 
             //Find good points for the hallways connect to.
             foreach (Tuple<Room, Room> pair in hallwayPairs)
@@ -326,14 +328,18 @@ namespace Wink
                 roomExitPoints[pair.Item2].Add(oRelExit2, new Tuple<Room, XNAPoint>(pair.Item1, oRelExit1));
                 //TODO: Fix issue that sometimes an item with same key gets added (multiple hallways, same exit)
 
+                hallways.Add(new Tuple<XNAPoint, XNAPoint>(absExit1, absExit2));
+
+                /*
                 //Generate path without diagonals and without limiting ourselfs to passable tiles.
                 PathFinder pf = new PathFinder(tf);
                 pf.EnableStraightLines();
-                List<Tile> path = pf.ShortestPath(absExit1, absExit2, tf, tile => true);
+                List<Tile> path = pf.ShortestPath(absExit1, absExit2, tile => true);
                 foreach (Tile t in path)
                 {
                     tf.Add(LoadFloorTile(), t.TilePosition.X, t.TilePosition.Y);
                 }
+                */
             }
             
             #region for each room, add floor and wall tiles to the tilefield.
@@ -388,6 +394,19 @@ namespace Wink
                 }
             }
             #endregion
+
+            foreach (Tuple<XNAPoint, XNAPoint> pair in hallways)
+            {
+                PathFinder pf = new PathFinder(tf);
+                pf.EnableStraightLines();
+                List<Tile> path = pf.ShortestPath(pair.Item1, pair.Item2, tile => tile.TileType != TileType.Wall);
+                foreach (Tile tile in path)
+                {
+                    Tile newTile = LoadFloorTile();
+                    newTile.AddDebugTags(tile.DebugTags);
+                    tf.Add(newTile, tile.TilePosition.X, tile.TilePosition.Y);
+                }
+            }
 
             tf.Add(LoadStartTile(), rooms[0].Location.ToRoundedPoint().X + 1, rooms[0].Location.ToRoundedPoint().Y + 1);
             return tf;

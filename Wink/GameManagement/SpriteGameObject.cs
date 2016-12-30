@@ -19,6 +19,7 @@ public class SpriteGameObject : GameObject
 
     public Color DrawColor { get; set; }
     public float CameraSensitivity { get { return cameraSensitivity; } }
+    public Dictionary<string, string> DebugTags { get { return debugTags; } }
 
     public SpriteGameObject(string assetName, int layer = 0, string id = "", int sheetIndex = 0, float cameraSensitivity = 1.0f, float scale = 1.0f) : base(layer, id)
     {
@@ -78,6 +79,14 @@ public class SpriteGameObject : GameObject
     public void AddDebugTag(string key, string value)
     {
         debugTags.Add(key, value);
+    }
+
+    public void AddDebugTags(Dictionary<string, string> tags)
+    {
+        foreach (KeyValuePair<string, string> kvp in tags)
+        {
+            debugTags.Add(kvp.Key, kvp.Value);
+        }
     }
 
     public void LoadSprite()
