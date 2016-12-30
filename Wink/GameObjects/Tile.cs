@@ -1,22 +1,15 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Wink
 {
     public enum TileType
     {
         Background,
-        Normal,
+        Floor,
         Wall,
-        Chest,
-        Door,
-        Inventory,
         End
     }
 
@@ -84,7 +77,7 @@ namespace Wink
         {
             base.HandleInput(inputHelper);
 
-            if (TileType == TileType.Normal)
+            if (TileType == TileType.Floor)
             {
                 Action onClick = () =>
                 {

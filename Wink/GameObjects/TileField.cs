@@ -23,7 +23,7 @@ namespace Wink
         {
             if (x < 0 || x >= Columns)
             {
-                return TileType.Normal;
+                return TileType.Floor;
             }
             if (y < 0 || y >= Rows)
             {
@@ -41,7 +41,7 @@ namespace Wink
                 for (int x = 0; x < Columns; x++)
                 {
                     TileType tt = (Get(x, y) as Tile).TileType;
-                    char1[y * (Columns + 1) + x] = tt == TileType.Wall ? '#' : tt == TileType.Normal ? '.' : ' ';
+                    char1[y * (Columns + 1) + x] = tt == TileType.Wall ? '#' : tt == TileType.Floor ? '.' : ' ';
                 }
                 char1[y * (Columns + 1) + Columns] = '\n';
             }

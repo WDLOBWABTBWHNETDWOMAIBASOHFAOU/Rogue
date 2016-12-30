@@ -85,18 +85,14 @@ namespace Wink
             AddCost((current, adjacent) =>
             {
                 Point diff = adjacent.tile.TilePosition - current.tile.TilePosition;
-                return diff.X == 0 || diff.Y == 0 ? 0 : 26;
+                return diff.X == 0 || diff.Y == 0 ? 0 : 26; // Adding another 26 for a total diagonal cost of 30 (meaning it won't be used)
             });
 
-            //Add a cost that punishes going in a different direction.
-            AddCost(
-                (current, adjacent) =>
+            //Add a cost that punishes going in a different direction, to avoid zigzagging.
+            AddCost((current, adjacent) =>
                 {
                     Point diff = adjacent.tile.TilePosition - current.tile.TilePosition;
-                    if (
-                        current.DirectionFromOrigin != Point.Zero &&
-                        current.DirectionFromOrigin != diff
-                    )
+                    if (current.DirectionFromOrigin != Point.Zero && current.DirectionFromOrigin != diff)
                         return 5;
                     else
                         return 0;
@@ -166,11 +162,7 @@ namespace Wink
 
                 closedNodes.Add(currentNode);
                 openNodes.Remove(currentNode);
-
-                // Check the validity Func, if it returns false, skip this.
-                //if ()
-                //    continue;
-
+                
                 if (currentNode.tile.Equals(endingNode.tile))
                 { //Found the tile to reach.
                     openNodes.Clear();
@@ -182,9 +174,8 @@ namespace Wink
                 }
 
                 // Opens the surrounding Tile
-                // Add the surrounding 8 Tile to the openTile if they are walkable and not in the closedTile list and set gCost and hCost(hCost will be calculated and wont change later on)
+                // Add the surrounding 8 Tile to the openTile if they are valid and not in the closedTile list and set gCost and hCost(hCost will be calculated and wont change later on)
                 // If a node is already in the openTile list check if the gCost is lower from this currentNode and update the gCost and originNode when true
-                // Also check if the endingNode is one of these 8
                 for (int x = -1; x <= 1; x++)
                 {
                     for (int y = -1; y <= 1; y++)
@@ -206,8 +197,7 @@ namespace Wink
                                 }
                             }
                             else if (validTile.Invoke(surroundingNode.tile))
-                            { 
-                                // This is a newly discovered node (it was contained in neither the closednodes nor the opennodes)
+                            {   // This is a valid newly discovered node (it was contained in neither the closednodes nor the opennodes)
                                 openNodes.Add(surroundingNode);
                                 surroundingNode.originNode = currentNode;
                                 surroundingNode.gCost = currentNode.gCost + CalculateCost(currentNode, surroundingNode);

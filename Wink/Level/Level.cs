@@ -128,20 +128,20 @@ namespace Wink
 
         private Tile LoadFloorTile(string id = "", string assetName = "empty:65:65:10:DarkGreen")
         {
-            Tile t = new Tile(assetName, TileType.Normal, 0, id);
+            Tile t = new Tile(assetName, TileType.Floor, 0, id);
             t.Passable = true;
             return t;
         }
 
         private Tile LoadStartTile(string assetName = "empty:65:65:10:Red")
         {
-            Tile t = new Tile(assetName, TileType.Normal, 0, "startTile");
+            Tile t = new Tile(assetName, TileType.Floor, 0, "startTile");
             t.Passable = true;
             return t;
         }
         private Tile LoadDoorTile(int x, int y, string assetName = "empty:65:65:10:DarkGreen")
         {
-            Tile t = new Tile(assetName, TileType.Normal);
+            Tile t = new Tile(assetName, TileType.Floor);
             Door door = new Door(t);
             door.Position = new Vector2(x * Tile.TileWidth, y * Tile.TileHeight);
             Add(door);
@@ -150,7 +150,7 @@ namespace Wink
         }
         private Tile LoadChestTile(int x, int y, string assetName = "empty:65:65:10:DarkGreen")
         {
-            Tile t = new Tile(assetName, TileType.Normal);
+            Tile t = new Tile(assetName, TileType.Floor);
             Container chest = new Container("empty:65:65:10:Brown");
             chest.Position = new Vector2(x * Tile.TileWidth, y * Tile.TileHeight);
             Add(chest);
@@ -167,7 +167,7 @@ namespace Wink
 
         private Tile LoadEndTile(int x, int y, string assetName = "empty:65:65:10:DarkGreen")
         {
-            Tile t = new Tile(assetName, TileType.Normal);
+            Tile t = new Tile(assetName, TileType.Floor);
             End end = new End(t, levelIndex, this);
             end.Position = new Vector2(x * Tile.TileWidth, y * Tile.TileHeight);
             Add(end);
