@@ -281,14 +281,6 @@ namespace Wink
                     highestY = r.BoundingBox.Bottom + 1;
             }
             
-            //Make a dictionary with rooms and an empty list that will contain their exitpoints.
-            Dictionary<Room, Dictionary<XNAPoint, Tuple<Room, XNAPoint>>> roomExitPoints =
-                new Dictionary<Room, Dictionary<XNAPoint, Tuple<Room, XNAPoint>>>();
-            foreach (Room r in rooms)
-            {
-                roomExitPoints.Add(r, new Dictionary<XNAPoint, Tuple<Room, XNAPoint>>());
-            }
-            
             //Make the tilefield and fill with default Tiles.
             TileField tf = new TileField(highestY + 1, highestX + 1, 0, "TileField");
             for (int x = 0; x < tf.Columns; x++)
@@ -321,25 +313,8 @@ namespace Wink
                 XNAPoint cRelExit2 = CalculateExit(v2, center2, s2, pair.Item2.BoundingBox.GetMiddleOfSide(s2)).ToPoint();
                 XNAPoint absExit1 = cRelExit1 + pair.Item1.BoundingBox.Center;
                 XNAPoint absExit2 = cRelExit2 + pair.Item2.BoundingBox.Center;
-                XNAPoint oRelExit1 = absExit1 - pair.Item1.BoundingBox.Location;
-                XNAPoint oRelExit2 = absExit2 - pair.Item2.BoundingBox.Location;
-
-                roomExitPoints[pair.Item1].Add(oRelExit1, new Tuple<Room, XNAPoint>(pair.Item2, oRelExit2));
-                roomExitPoints[pair.Item2].Add(oRelExit2, new Tuple<Room, XNAPoint>(pair.Item1, oRelExit1));
-                //TODO: Fix issue that sometimes an item with same key gets added (multiple hallways, same exit)
 
                 hallways.Add(new Tuple<XNAPoint, XNAPoint>(absExit1, absExit2));
-
-                /*
-                //Generate path without diagonals and without limiting ourselfs to passable tiles.
-                PathFinder pf = new PathFinder(tf);
-                pf.EnableStraightLines();
-                List<Tile> path = pf.ShortestPath(absExit1, absExit2, tile => true);
-                foreach (Tile t in path)
-                {
-                    tf.Add(LoadFloorTile(), t.TilePosition.X, t.TilePosition.Y);
-                }
-                */
             }
             
             #region for each room, add floor and wall tiles to the tilefield.
@@ -358,27 +333,7 @@ namespace Wink
                         Tile tile = null;
                         if (x == 0 || x == width - 1 || y == 0 || y == height - 1)
                         {
-                            KeyValuePair<XNAPoint, Tuple<Room, XNAPoint>>? exitPair = null;
-                            foreach (KeyValuePair<XNAPoint, Tuple<Room, XNAPoint>> kvp in roomExitPoints[r])
-                            {
-                                XNAPoint p = kvp.Key;
-                                if (p.X == x && p.Y == y)
-                                {
-                                    exitPair = kvp;
-                                }
-                            }
-                            if (exitPair.HasValue)
-                            {
-                                XNAPoint thisExit = exitPair.Value.Key;
-                                Room connectingRoom = exitPair.Value.Value.Item1;
-                                XNAPoint connectingPoint = exitPair.Value.Value.Item2;
-                                int cx = connectingRoom.BoundingBox.X + connectingPoint.X;
-                                int cy = connectingRoom.BoundingBox.Y + connectingPoint.Y;
-                                tile = LoadFloorTile();
-                                tile.AddDebugTag("ExitConnectionPoint", rooms.FindIndex(room => room.Equals(connectingRoom)) + ":" + cx + "," + cy);
-                            }
-                            else
-                                tile = LoadWallTile();
+                            tile = LoadWallTile();
                         }
                         else if (x == relCenter.X && y == relCenter.Y)
                         {
@@ -395,15 +350,21 @@ namespace Wink
             }
             #endregion
 
+            //Generate hallways
             foreach (Tuple<XNAPoint, XNAPoint> pair in hallways)
             {
                 PathFinder pf = new PathFinder(tf);
                 pf.EnableStraightLines();
-                List<Tile> path = pf.ShortestPath(pair.Item1, pair.Item2, tile => tile.TileType != TileType.Wall);
+                List<Tile> path = pf.ShortestPath(pair.Item1, pair.Item2, tile => tile.TilePosition == pair.Item1 || tile.TilePosition == pair.Item2 || tile.TileType != TileType.Wall);
+
+                Tile t = tf[pair.Item1.X, pair.Item1.Y] as Tile;
+                t.AddDebugTag("ExitConnectionPoint", ":" + pair.Item2.X + "," + pair.Item2.Y);
+                path.Add(t);
                 foreach (Tile tile in path)
                 {
                     Tile newTile = LoadFloorTile();
                     newTile.AddDebugTags(tile.DebugTags);
+                    
                     tf.Add(newTile, tile.TilePosition.X, tile.TilePosition.Y);
                 }
             }
