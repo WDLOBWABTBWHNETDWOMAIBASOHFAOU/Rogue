@@ -47,7 +47,7 @@ namespace Wink
 
         private Node startingNode, endingNode;
         private List<Func<Node, Node, int>> addedCosts;
-        private int baseCost = 10;
+        private int baseCost = 100;
         private TileField tileField;
 
         private Dictionary<Tile, Node> nodeTable;
@@ -62,7 +62,7 @@ namespace Wink
             AddCost((current, adjacent) =>
             {
                 Point diff = adjacent.tile.TilePosition - current.tile.TilePosition;
-                return diff.X == 0 || diff.Y == 0 ? 0 : 4;
+                return diff.X == 0 || diff.Y == 0 ? 0 : 40;
             });
         }
 
@@ -85,7 +85,7 @@ namespace Wink
             AddCost((current, adjacent) =>
             {
                 Point diff = adjacent.tile.TilePosition - current.tile.TilePosition;
-                return diff.X == 0 || diff.Y == 0 ? 0 : 26; // Adding another 26 for a total diagonal cost of 30 (meaning it won't be used)
+                return diff.X == 0 || diff.Y == 0 ? 0 : 260; // Adding another 26 for a total diagonal cost of 30 (meaning it won't be used)
             });
 
             //Add a cost that punishes going in a different direction, to avoid zigzagging.
@@ -93,7 +93,14 @@ namespace Wink
                 {
                     Point diff = adjacent.tile.TilePosition - current.tile.TilePosition;
                     if (current.DirectionFromOrigin != Point.Zero && current.DirectionFromOrigin != diff)
-                        return 5;
+                    {
+                        float dStart = (adjacent.tile.TilePosition - startingNode.tile.TilePosition).ToVector2().Length();
+                        float dEnd = (endingNode.tile.TilePosition - adjacent.tile.TilePosition).ToVector2().Length();
+                        float totalLength = dStart + dEnd;
+                        //TODO: find out why this only works when effectively rewarding a bend in the middle, and not when evening out.
+                        //Maybe because A* only visits opennodes with the lowest cost?
+                        return (int)(50 - (1 - Math.Abs(dStart / totalLength - dEnd / totalLength)) * 60);
+                    }
                     else
                         return 0;
                 }
