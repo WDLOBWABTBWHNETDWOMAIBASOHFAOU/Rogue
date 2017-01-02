@@ -119,7 +119,7 @@ namespace Wink
             }
         }
 
-        private Tile LoadWallTile(int x, int y, string assetName = "empty:64:64:10:Blue", string id = "")
+        private Tile LoadWallTile(int x, int y, string assetName = "test-wall-sprite2@10x5", string id = "")
         {
             Tile t = new Tile(assetName, TileType.Wall, 0, id);
             t.Passable = false;
@@ -127,7 +127,7 @@ namespace Wink
             return t;
         }
 
-        private Tile LoadFloorTile(string id = "", string assetName = "empty:64:64:10:DarkGreen")
+        private Tile LoadFloorTile(string id = "", string assetName = "teal_tile")
         {
             Tile t = new Tile(assetName, TileType.Floor, 0, id);
             t.Passable = true;

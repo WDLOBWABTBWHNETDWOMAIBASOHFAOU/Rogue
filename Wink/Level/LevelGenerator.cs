@@ -190,7 +190,7 @@ namespace Wink
 
             foreach (Room r in roomSelection)
             {
-                r.Location -= new Vector2(lowestX, lowestY);
+                r.Location -= new Vector2(lowestX - 1, lowestY - 1);
             }
 
              return roomSelection;
@@ -287,7 +287,8 @@ namespace Wink
             {
                 for (int y = 0; y < tf.Rows; y++)
                 {
-                    tf.Add(new Tile(), x, y);
+                    //tf.Add(new Tile(), x, y);
+                    tf.Add(LoadWallTile(x, y), x, y);
                 }
             }
 
@@ -331,11 +332,11 @@ namespace Wink
                     for (int y = 0; y < height; y++)
                     {
                         Tile tile = null;
-                        if (x == 0 || x == width - 1 || y == 0 || y == height - 1)
+                        /*if (x == 0 || x == width - 1 || y == 0 || y == height - 1)
                         {
-                            tile = LoadWallTile(x, y, "test-wall-sprite2@10x5");
+                            tile = LoadWallTile(x, y);
                         }
-                        else if (x == relCenter.X && y == relCenter.Y)
+                        else */if (x == relCenter.X && y == relCenter.Y)
                         {
                             tile = LoadFloorTile();
                             tile.AddDebugTag("Room", ""+i);
@@ -355,7 +356,7 @@ namespace Wink
             {
                 PathFinder pf = new PathFinder(tf);
                 pf.EnableStraightLines();
-                List<Tile> path = pf.ShortestPath(pair.Item1, pair.Item2, tile => tile.TilePosition == pair.Item1 || tile.TilePosition == pair.Item2 || tile.TileType != TileType.Wall);
+                List<Tile> path = pf.ShortestPath(pair.Item1, pair.Item2, tile => /*tile.TilePosition == pair.Item1 || tile.TilePosition == pair.Item2 || tile.TileType != TileType.Wall*/ true);
 
                 Tile t = tf[pair.Item1.X, pair.Item1.Y] as Tile;
                 t.AddDebugTag("ExitConnectionPoint", ":" + pair.Item2.X + "," + pair.Item2.Y);
@@ -390,7 +391,7 @@ namespace Wink
 
                     if (isWall)
                     {
-                        Tile t2 = LoadWallTile(x, y, "test-wall-sprite2@10x5");
+                        Tile t2 = LoadWallTile(x, y);
                         t2.AddDebugTags(t.DebugTags);
                         tf.Add(t2, x, y);
                     }
@@ -401,6 +402,7 @@ namespace Wink
 
             //Must be last statement, executed after the Tilefield is done.
             tf.InitSpriteSheetIndexation();
+            tf.InitTileAlpha();
             return tf;
         }
 
