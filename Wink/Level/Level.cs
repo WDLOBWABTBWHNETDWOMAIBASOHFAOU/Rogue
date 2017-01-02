@@ -81,7 +81,7 @@ namespace Wink
             int inventoryLayer = layer + 1;
             int itemLayer = layer + 2;
 
-            Item testItem = new TestItem("empty:65:65:10:Pink", 1, itemLayer); 
+            Item testItem = new TestItem("empty:64:64:10:Pink", 1, itemLayer); 
 
             // ENEMY CODE (test)
             for(int i = 0; i < 2; i++)
@@ -105,7 +105,7 @@ namespace Wink
                 case '1':
                     return LoadStartTile();
                 case '#':
-                    return LoadWallTile(/*"spr_wall"*/);
+                    return LoadWallTile(x, y/*, "spr_wall"*/);
                 case '-':
                     return LoadFloorTile(/*"spr_floor"*/);
                 case 'c':
@@ -119,27 +119,28 @@ namespace Wink
             }
         }
 
-        private Tile LoadWallTile(string assetName = "empty:65:65:10:Blue", string id = "")
+        private Tile LoadWallTile(int x, int y, string assetName = "empty:64:64:10:Blue", string id = "")
         {
             Tile t = new Tile(assetName, TileType.Wall, 0, id);
             t.Passable = false;
+            t.Layer = y;
             return t;
         }
 
-        private Tile LoadFloorTile(string id = "", string assetName = "empty:65:65:10:DarkGreen")
+        private Tile LoadFloorTile(string id = "", string assetName = "empty:64:64:10:DarkGreen")
         {
             Tile t = new Tile(assetName, TileType.Floor, 0, id);
             t.Passable = true;
             return t;
         }
 
-        private Tile LoadStartTile(string assetName = "empty:65:65:10:Red")
+        private Tile LoadStartTile(string assetName = "empty:64:64:10:Red")
         {
             Tile t = new Tile(assetName, TileType.Floor, 0, "startTile");
             t.Passable = true;
             return t;
         }
-        private Tile LoadDoorTile(int x, int y, string assetName = "empty:65:65:10:DarkGreen")
+        private Tile LoadDoorTile(int x, int y, string assetName = "empty:64:64:10:DarkGreen")
         {
             Tile t = new Tile(assetName, TileType.Floor);
             Door door = new Door(t);
@@ -148,10 +149,10 @@ namespace Wink
             t.Passable = false;
             return t;
         }
-        private Tile LoadChestTile(int x, int y, string assetName = "empty:65:65:10:DarkGreen")
+        private Tile LoadChestTile(int x, int y, string assetName = "empty:64:64:10:DarkGreen")
         {
             Tile t = new Tile(assetName, TileType.Floor);
-            Container chest = new Container("empty:65:65:10:Brown");
+            Container chest = new Container("empty:64:64:10:Brown");
             chest.Position = new Vector2(x * Tile.TileWidth, y * Tile.TileHeight);
             Add(chest);
             t.Passable = false;
@@ -160,12 +161,12 @@ namespace Wink
 
         private Tile LoadWTFTile()
         {
-            Tile t = new Tile("empty:65:65:10:Black", TileType.Wall);
+            Tile t = new Tile("empty:64:64:10:Black", TileType.Wall);
             t.Passable = false;
             return t;
         }
 
-        private Tile LoadEndTile(int x, int y, string assetName = "empty:65:65:10:DarkGreen")
+        private Tile LoadEndTile(int x, int y, string assetName = "empty:64:64:10:DarkGreen")
         {
             Tile t = new Tile(assetName, TileType.Floor);
             End end = new End(t, levelIndex, this);

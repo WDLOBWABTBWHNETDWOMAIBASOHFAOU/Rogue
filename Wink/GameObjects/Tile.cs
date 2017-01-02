@@ -16,8 +16,8 @@ namespace Wink
     [Serializable]
     public class Tile : SpriteGameObject
     {
-        public const int TileWidth = 65;
-        public const int TileHeight = 65;
+        public const int TileWidth = 64;
+        public const int TileHeight = 64;
 
         protected TileType type;
         protected bool passable;
@@ -35,6 +35,10 @@ namespace Wink
         public Tile(string assetname = "", TileType tp = TileType.Background, int layer = 0, string id = "", float cameraSensitivity = 1) : base(assetname, layer, id, 0, cameraSensitivity)
         {
             type = tp;
+            if (sprite != null)
+            {
+                origin = new Vector2(0, sprite.Height - TileHeight);
+            }
         }
 
         public Tile(SerializationInfo info, StreamingContext context) : base(info, context)

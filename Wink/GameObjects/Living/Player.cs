@@ -18,6 +18,11 @@ namespace Wink
             get { return itemGrid; }
         }
 
+        public override Point PointInTile
+        {
+            get { return new Point(Tile.TileWidth / 2, Tile.TileHeight / 2); }
+        }
+
         public Player(string clientName, int layer) : base(layer, "player_" + clientName)
         {
             //Inventory
@@ -26,7 +31,7 @@ namespace Wink
 
             SetStats(5, 5, 5, 5, 55);
 
-            //InitAnimation(); not sure if overriden version gets played right without restating
+            InitAnimation(); //not sure if overriden version gets played right without restating
         }
 
         public Player(SerializationInfo info, StreamingContext context) : base(info, context)
@@ -46,10 +51,10 @@ namespace Wink
         {
             //Put player on start tile.
             Tile startTile = GameWorld.Find("startTile") as Tile;
-            Position = startTile.Position - startTile.Origin + Origin;
+            MoveTo(startTile);
         }
 
-        protected override void InitAnimation(string idleColor = "empty:65:65:10:Magenta")
+        protected override void InitAnimation(string idleColor = "player")
         {            
             base.InitAnimation(idleColor);
             PlayAnimation("idle");

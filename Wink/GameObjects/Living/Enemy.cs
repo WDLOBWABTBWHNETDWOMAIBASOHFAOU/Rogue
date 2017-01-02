@@ -29,9 +29,9 @@ namespace Wink
 
         }
 
-        protected override void InitAnimation(string idleColor = "empty:65:65:10:Magenta")
+        protected override void InitAnimation(string idleColor = "empty:64:64:10:Magenta")
         {
-            base.InitAnimation("empty:65:65:10:Purple");
+            base.InitAnimation("empty:64:64:10:Purple");
             PlayAnimation("idle");
         }
 

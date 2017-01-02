@@ -12,7 +12,7 @@ namespace Wink
         Tile ParentTile;
         int levelIndex;
         Level level;
-        public End(Tile ParentTile, int levelIndex, Level level2, string asset = "empty:65:65:10:Yellow", int layer = 0, string id = "") : base(asset, layer, id)
+        public End(Tile ParentTile, int levelIndex, Level level2, string asset = "empty:64:64:10:Yellow", int layer = 0, string id = "") : base(asset, layer, id)
         {
             this.ParentTile = ParentTile;
             this.levelIndex = levelIndex;

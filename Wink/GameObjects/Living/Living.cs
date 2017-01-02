@@ -14,6 +14,11 @@ namespace Wink
         protected string idleAnimation, moveAnimation, dieAnimation;
         private string dieSound;
         
+        public virtual Point PointInTile
+        {
+            get { return Point.Zero; }
+        }
+
         public Living(int layer = 0, string id = "", float scale = 1.0f) : base(layer, id, scale)
         {
             SetStats();
@@ -64,12 +69,12 @@ namespace Wink
             info.AddValue("creatureLevel", creatureLevel);
         }
 
-        protected virtual void InitAnimation(string idleColor = "empty:65:65:10:Magenta")
+        protected virtual void InitAnimation(string idleColor = "empty:64:64:10:Magenta")
         {
             //General animations
             idleAnimation = idleColor;
-            moveAnimation = "empty:65:65:10:DarkBlue";
-            dieAnimation = "empty:65:65:10:LightBlue";
+            moveAnimation = "empty:64:64:10:DarkBlue";
+            dieAnimation = "empty:64:64:10:LightBlue";
             LoadAnimation(idleAnimation, "idle", true);
             LoadAnimation(moveAnimation, "move", true, 0.05f);
             LoadAnimation(dieAnimation, "die", false);
@@ -94,17 +99,7 @@ namespace Wink
         
         public void MoveTo(Tile tile)
         {
-            float TileX = (tile.TilePosition.X + 1) * Tile.TileWidth;
-            float TileY = (tile.TilePosition.Y + 1) * Tile.TileHeight;
-
-            if (position.X - TileX <= Tile.TileWidth && position.X - TileX >= -Tile.TileWidth*2)
-            {
-                if (position.Y - TileY <= Tile.TileHeight && position.Y - TileY >= -Tile.TileHeight)
-                {
-                    position.X = TileX - 0.5f * Tile.TileWidth;
-                    position.Y = TileY;
-                }
-            }
+            position = tile.Position + PointInTile.ToVector2();
         }
     }
 }

@@ -49,7 +49,7 @@ namespace Wink
                 {
                     if ( itemGrid.Get(x,y) == null)
                     {
-                        itemGrid.Add(new EmptyItem("empty:65:65:10:Gray"),x,y);
+                        itemGrid.Add(new EmptyItem("empty:64:64:10:Gray"),x,y);
                     }
                 }
             }

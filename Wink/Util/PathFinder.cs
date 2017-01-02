@@ -62,7 +62,7 @@ namespace Wink
             AddCost((current, adjacent) =>
             {
                 Point diff = adjacent.tile.TilePosition - current.tile.TilePosition;
-                return diff.X == 0 || diff.Y == 0 ? 0 : 40;
+                return diff.X == 0 || diff.Y == 0 ? 0 : 41;
             });
         }
 
@@ -85,14 +85,14 @@ namespace Wink
             AddCost((current, adjacent) =>
             {
                 Point diff = adjacent.tile.TilePosition - current.tile.TilePosition;
-                return diff.X == 0 || diff.Y == 0 ? 0 : 260; // Adding another 26 for a total diagonal cost of 30 (meaning it won't be used)
+                return diff.X == 0 || diff.Y == 0 ? 0 : 259; // Adding another 259 for a total diagonal cost of 300 (meaning it won't be used)
             });
 
             //Add a cost that punishes going in a different direction, to avoid zigzagging.
             AddCost((current, adjacent) =>
                 {
                     Point diff = adjacent.tile.TilePosition - current.tile.TilePosition;
-                    if (current.DirectionFromOrigin != Point.Zero && current.DirectionFromOrigin != diff)
+                    if (current.DirectionFromOrigin != diff)
                     {
                         float dStart = (adjacent.tile.TilePosition - startingNode.tile.TilePosition).ToVector2().Length();
                         float dEnd = (endingNode.tile.TilePosition - adjacent.tile.TilePosition).ToVector2().Length();

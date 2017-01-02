@@ -153,7 +153,7 @@ namespace Wink
 
             //A simple physics simulation that pushes rooms apart.
             int collisions = int.MaxValue;
-            XNAPoint buffer = new XNAPoint(1, 1);
+            XNAPoint buffer = new XNAPoint(2, 2);
             while (collisions > 0)
             {
                 collisions = 0;
@@ -333,7 +333,7 @@ namespace Wink
                         Tile tile = null;
                         if (x == 0 || x == width - 1 || y == 0 || y == height - 1)
                         {
-                            tile = LoadWallTile();
+                            tile = LoadWallTile(x, y, "test-wall-sprite2@10x5");
                         }
                         else if (x == relCenter.X && y == relCenter.Y)
                         {
@@ -369,7 +369,38 @@ namespace Wink
                 }
             }
 
+            for (int x = 0; x < tf.Columns; x++)
+            {
+                for (int y = 0; y < tf.Rows; y++)
+                {
+                    Tile t = tf[x, y] as Tile;
+                    if (t.TileType != TileType.Background)
+                        continue;
+
+                    bool isWall = false;
+                    for (int x2 = -1; x2 <= 1; x2++)
+                    {
+                        for (int y2 = -1; y2 <= 1; y2++)
+                        {
+                            Tile t2 = tf[x + x2, y + y2] as Tile;
+                            if (t2 != null && t2.TileType == TileType.Floor)
+                                isWall = true;
+                        }
+                    }
+
+                    if (isWall)
+                    {
+                        Tile t2 = LoadWallTile(x, y, "test-wall-sprite2@10x5");
+                        t2.AddDebugTags(t.DebugTags);
+                        tf.Add(t2, x, y);
+                    }
+                }
+            }
+
             tf.Add(LoadStartTile(), rooms[0].Location.ToRoundedPoint().X + 1, rooms[0].Location.ToRoundedPoint().Y + 1);
+
+            //Must be last statement, executed after the Tilefield is done.
+            tf.InitSpriteSheetIndexation();
             return tf;
         }
 

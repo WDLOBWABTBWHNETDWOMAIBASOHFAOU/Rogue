@@ -7,7 +7,14 @@ public class SpriteGameObject : GameObject
 {
     protected SpriteSheet sprite;
     protected string spriteAssetName;
-    protected int spriteSheetIndex;
+    protected int SpriteSheetIndex
+    {
+        get { return sprite != null ? sprite.SheetIndex : -1; }
+        set {
+            if (sprite != null)
+                sprite.SheetIndex = value;
+        }
+    }
 
     protected Vector2 origin;
     protected float scale;
@@ -27,27 +34,26 @@ public class SpriteGameObject : GameObject
         this.cameraSensitivity = cameraSensitivity;
         this.scale = scale;
         this.spriteAssetName = assetName;
-        this.spriteSheetIndex = sheetIndex;
         this.debugTags = new Dictionary<string, string>();
-        LoadSprite();
+        LoadSprite(sheetIndex);
     }
 
     public SpriteGameObject(SerializationInfo info, StreamingContext context) : base(info, context)
     {
         spriteAssetName = info.GetString("spriteAssetName");
-        spriteSheetIndex = info.GetInt32("spriteSheetIndex");
+        //spriteSheetIndex = info.GetInt32("spriteSheetIndex");
         origin = new Vector2((float)info.GetDouble("originX"), (float)info.GetDouble("originY"));
         scale = (float)info.GetDouble("scale");
         cameraSensitivity = (float)info.GetDouble("cameraSensitivity");
 
         debugTags = (Dictionary<string, string>)info.GetValue("debugTags", typeof(Dictionary<string, string>));
-        LoadSprite();
+        LoadSprite(info.GetInt32("spriteSheetIndex"));
     }
 
     public override void GetObjectData(SerializationInfo info, StreamingContext context)
     {
         info.AddValue("spriteAssetName", spriteAssetName);
-        info.AddValue("spriteSheetIndex", spriteSheetIndex);
+        info.AddValue("spriteSheetIndex", sprite.SheetIndex);
         info.AddValue("originX", origin.X);
         info.AddValue("originY", origin.Y);
         info.AddValue("scale", scale);
@@ -89,7 +95,7 @@ public class SpriteGameObject : GameObject
         }
     }
 
-    public void LoadSprite()
+    public void LoadSprite(int spriteSheetIndex)
     {
         if (spriteAssetName != "")
         {

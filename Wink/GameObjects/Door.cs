@@ -10,7 +10,7 @@ namespace Wink
     class Door:SpriteGameObject
     {
         Tile ParentTile;
-        public Door(Tile ParentTile,string asset = "empty:65:65:10:DarkGray", int layer = 0, string id = "") : base(asset, layer, id)
+        public Door(Tile ParentTile,string asset = "empty:64:64:10:DarkGray", int layer = 0, string id = "") : base(asset, layer, id)
         {
             this.ParentTile = ParentTile;
         }
