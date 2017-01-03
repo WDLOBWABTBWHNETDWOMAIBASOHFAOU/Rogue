@@ -332,11 +332,7 @@ namespace Wink
                     for (int y = 0; y < height; y++)
                     {
                         Tile tile = null;
-                        /*if (x == 0 || x == width - 1 || y == 0 || y == height - 1)
-                        {
-                            tile = LoadWallTile(x, y);
-                        }
-                        else */if (x == relCenter.X && y == relCenter.Y)
+                        if (x == relCenter.X && y == relCenter.Y)
                         {
                             tile = LoadFloorTile();
                             tile.AddDebugTag("Room", ""+i);
@@ -369,40 +365,28 @@ namespace Wink
                     tf.Add(newTile, tile.TilePosition.X, tile.TilePosition.Y);
                 }
             }
-
+            
             for (int x = 0; x < tf.Columns; x++)
             {
                 for (int y = 0; y < tf.Rows; y++)
                 {
-                    Tile t = tf[x, y] as Tile;
-                    if (t.TileType != TileType.Background)
-                        continue;
-
-                    bool isWall = false;
-                    for (int x2 = -1; x2 <= 1; x2++)
+                    Tile currentTile = tf[x, y] as Tile;
+                    Tile aboveTile = tf[x, y - 1] as Tile;
+                    if (currentTile != null && aboveTile != null &&
+                        currentTile.TileType == TileType.Wall && aboveTile.TileType == TileType.Floor)
                     {
-                        for (int y2 = -1; y2 <= 1; y2++)
-                        {
-                            Tile t2 = tf[x + x2, y + y2] as Tile;
-                            if (t2 != null && t2.TileType == TileType.Floor)
-                                isWall = true;
-                        }
-                    }
-
-                    if (isWall)
-                    {
-                        Tile t2 = LoadWallTile(x, y);
-                        t2.AddDebugTags(t.DebugTags);
-                        tf.Add(t2, x, y);
+                        Tile newTile = LoadWallTile(x, y, "*test-wall-sprite2@10x5");
+                        newTile.AddDebugTags(currentTile.DebugTags);
+                        tf.Add(newTile, x, y);
                     }
                 }
             }
-
+            
             tf.Add(LoadStartTile(), rooms[0].Location.ToRoundedPoint().X + 1, rooms[0].Location.ToRoundedPoint().Y + 1);
 
             //Must be last statement, executed after the Tilefield is done.
             tf.InitSpriteSheetIndexation();
-            tf.InitTileAlpha();
+            //tf.InitTileAlpha();
             return tf;
         }
 

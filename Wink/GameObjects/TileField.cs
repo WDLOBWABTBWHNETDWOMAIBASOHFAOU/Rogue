@@ -66,7 +66,7 @@ namespace Wink
                         if (abovetile != null && abovetile.TileType == TileType.Floor)
                         {
                             Color c = currentTile.DrawColor;
-                            currentTile.DrawColor = c * 0.25f;
+                            //currentTile.DrawColor = c * 0.4f;
                         }
                     }
                 }

@@ -41,6 +41,7 @@ namespace Wink
         public Level(int levelIndex) : base(0, "Level")
         {
             LoadTiles("Content/Levels/" + levelIndex + ".txt");
+
             this.levelIndex = levelIndex;
         }
 
@@ -93,7 +94,9 @@ namespace Wink
             // END ENEMY CODE (test)
 
             testItem.Position = new Vector2(GameEnvironment.Random.Next(0, tf.Columns - 1) * Tile.TileWidth, GameEnvironment.Random.Next(0, tf.Rows - 1) * Tile.TileHeight);
-            Add(testItem); 
+            Add(testItem);
+
+            tf.InitSpriteSheetIndexation();
         }
 
         private Tile LoadTile(char tileType, int x, int y)

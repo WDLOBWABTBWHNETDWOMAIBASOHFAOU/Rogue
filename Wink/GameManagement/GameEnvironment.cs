@@ -32,7 +32,6 @@ public class GameEnvironment : Game
         gameStateManager = new GameStateManager();
         spriteScale = Matrix.CreateScale(1, 1, 1);
         random = new Random();
-        assetManager = new AssetManager(Content, graphics.GraphicsDevice);
         gameSettingsManager = new GameSettingsManager();
 
         DefaultCamera = new Camera();
@@ -127,7 +126,7 @@ public class GameEnvironment : Game
     {
         DrawingHelper.Initialize(GraphicsDevice);
         spriteBatch = new SpriteBatch(GraphicsDevice);
-        //assetManager.spreiteN
+        assetManager = new AssetManager(Content, graphics.GraphicsDevice, spriteBatch);
     }
 
     protected void HandleInput()

@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
 using System.Collections.Generic;
+using System.IO;
 
 public class AssetManager
 {
@@ -15,18 +16,13 @@ public class AssetManager
     protected Dictionary<string, Texture2D> textures;
     protected Dictionary<string, SpriteFont> fonts;
 
-    protected RenderTarget2D maskRenderTarget;
-
-    public AssetManager(ContentManager content, GraphicsDevice graphics)
+    public AssetManager(ContentManager content, GraphicsDevice graphics, SpriteBatch spriteBatch)
     {
         contentManager = content;
         graphicsDevice = graphics;
-        //this.spriteBatch = spriteBatch;
+        this.spriteBatch = spriteBatch;
         textures = new Dictionary<string, Texture2D>();
         fonts = new Dictionary<string, SpriteFont>();
-
-        PresentationParameters pp = graphicsDevice.PresentationParameters;
-        maskRenderTarget = new RenderTarget2D(graphicsDevice, pp.BackBufferWidth, pp.BackBufferHeight, false, SurfaceFormat.Single, pp.DepthStencilFormat);
     }
 
     /// <summary>
@@ -67,6 +63,12 @@ public class AssetManager
         {
             return GetEmptySprite(assetName);
         }
+        else if (assetName.StartsWith("*"))
+        {
+            string name = assetName.Substring(1);
+            textures.Add(assetName, GetTransparentTallSprite(name, GetSprite(name)));
+            return textures[assetName];
+        }
         else
         {
             textures.Add(assetName, contentManager.Load<Texture2D>(assetName));
@@ -75,24 +77,48 @@ public class AssetManager
     }
 
     /// <summary>
-    /// This method is used to add trans
+    /// This method is used to add transparency to textures that are taller than one tile, e.g. Walls.
+    /// It works by rendering the texture to a rendertarget and then applying a mask.
     /// </summary>
     /// <returns></returns>
-    public Texture2D GetTransparentTallSprite(Texture2D asset)
+    public Texture2D GetTransparentTallSprite(string assetName, Texture2D asset)
     {
+        int columns = 1;
+        int rows = 1;
+
+        if (assetName.Contains("@"))
+        {
+            string[] parts = assetName.Split('@')[1].Split('x');
+            rows = int.Parse(parts[1]);
+            columns = int.Parse(parts[0]);
+        }
+
+        PresentationParameters pp = graphicsDevice.PresentationParameters;
+        RenderTarget2D maskRenderTarget = new RenderTarget2D(graphicsDevice, asset.Width, asset.Height, false, SurfaceFormat.Color, pp.DepthStencilFormat);
+
         graphicsDevice.SetRenderTarget(maskRenderTarget);
-        //graphicsDevice.BlendState.AlphaBlendFunction = BlendFunction.Add;
-        graphicsDevice.BlendState.AlphaDestinationBlend = Blend.Zero;
-        graphicsDevice.BlendState.AlphaSourceBlend = Blend.One;
+        graphicsDevice.Clear(Color.Transparent);
 
-        graphicsDevice.BlendState.ColorWriteChannels = ColorWriteChannels.Red | ColorWriteChannels.Green | ColorWriteChannels.Blue;
+        spriteBatch.Begin();
         spriteBatch.Draw(asset, new Vector2(0, 0), Color.White);
+        spriteBatch.End();
 
-        graphicsDevice.BlendState.ColorWriteChannels = ColorWriteChannels.Alpha;
-        spriteBatch.Draw(GetSingleColorPixel(Color.White), new Rectangle(0, 0, asset.Width, asset.Height - Wink.Tile.TileHeight), Color.White);
+        BlendState bs = new BlendState();
+        bs.AlphaBlendFunction = BlendFunction.Add;
+        bs.AlphaDestinationBlend = Blend.Zero;
+        bs.AlphaSourceBlend = Blend.One;
+        bs.ColorWriteChannels = ColorWriteChannels.Alpha;
 
-        graphicsDevice.BlendState.ColorWriteChannels = ColorWriteChannels.All;
+        spriteBatch.Begin(SpriteSortMode.Immediate, bs);
+        int rowHeight = asset.Height / rows;
+        for (int i = 0; i < rows; i++)
+        {
+            spriteBatch.Draw(GetSingleColorPixel(new Color(128, 128, 128, 128)), new Rectangle(0, i * rowHeight, asset.Width, rowHeight - Wink.Tile.TileHeight - 4), Color.White);
+        }
+        spriteBatch.End();
+        
         graphicsDevice.SetRenderTarget(null);
+        //maskRenderTarget.SaveAsPng(File.Create("transparent_texture.png"), asset.Width, asset.Height);
         return maskRenderTarget;
     }
 
