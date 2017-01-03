@@ -88,8 +88,12 @@ namespace Wink
             for(int i = 0; i < 2; i++)
             {
                 Enemy testEnemy = new Enemy(layer + 1);
-                Add(testEnemy);
-                testEnemy.InitPosition();
+
+                //First find all passable tiles then select one at random.
+                List<GameObject> tileCandidates = tf.FindAll(obj => obj is Tile && (obj as Tile).Passable);
+                Tile startTile = tileCandidates[GameEnvironment.Random.Next(tileCandidates.Count)] as Tile;
+
+                testEnemy.MoveTo(startTile);
             }
             // END ENEMY CODE (test)
 
@@ -143,6 +147,7 @@ namespace Wink
             t.Passable = true;
             return t;
         }
+
         private Tile LoadDoorTile(int x, int y, string assetName = "empty:64:64:10:DarkGreen")
         {
             Tile t = new Tile(assetName, TileType.Floor);
@@ -152,6 +157,7 @@ namespace Wink
             t.Passable = false;
             return t;
         }
+
         private Tile LoadChestTile(int x, int y, string assetName = "empty:64:64:10:DarkGreen")
         {
             Tile t = new Tile(assetName, TileType.Floor);
@@ -164,7 +170,7 @@ namespace Wink
 
         private Tile LoadWTFTile()
         {
-            Tile t = new Tile("empty:64:64:10:Black", TileType.Wall);
+            Tile t = new Tile("empty:64:64:10:Black", TileType.Background);
             t.Passable = false;
             return t;
         }
@@ -178,7 +184,5 @@ namespace Wink
             t.Passable = false;
             return t;
         }
-
-
     }
 }

@@ -49,6 +49,7 @@
     <Compile Include="Events\PlayerMoveEvent.cs" />
     <Compile Include="GameObjects\Door.cs" />
     <Compile Include="GameObjects\End.cs" />
+    <Compile Include="GameManagement\IGameObjectContainer.cs" />
     <Compile Include="GameObjects\IGUIGameObject.cs" />
     <Compile Include="GameObjects\InventorySystem\Container.cs" />
     <Compile Include="GUI\TrackingTextGameObject.cs" />

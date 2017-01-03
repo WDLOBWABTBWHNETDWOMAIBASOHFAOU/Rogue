@@ -40,7 +40,7 @@
         {
             //What happens on death. Drop equipment/loot, remove itself from world, etc
             //level.Remove(this);
-            visible = false;
+            //visible = false;
         }
 
         private void DeathFeedback(string idA, string idS)

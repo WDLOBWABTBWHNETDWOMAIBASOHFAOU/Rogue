@@ -13,10 +13,17 @@ namespace Wink
 
         protected string idleAnimation, moveAnimation, dieAnimation;
         private string dieSound;
-        
+
+        private Tile tile;
+
+        public Tile Tile
+        {
+            get { return tile; }
+        }
+
         public virtual Point PointInTile
         {
-            get { return Point.Zero; }
+            get { return new Point(Tile.TileWidth / 2, Tile.TileHeight); }
         }
 
         public Living(int layer = 0, string id = "", float scale = 1.0f) : base(layer, id, scale)
@@ -97,9 +104,15 @@ namespace Wink
             }
         }
         
-        public void MoveTo(Tile tile)
+        public void MoveTo(Tile t)
         {
-            position = tile.Position + PointInTile.ToVector2();
+            if (t.PutOnTile(this))
+            {
+                if (tile != null)
+                    tile.EmptyTile();
+
+                tile = t;
+            }
         }
     }
 }

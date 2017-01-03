@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Runtime.Serialization;
+using System.Collections.Generic;
 
 namespace Wink
 {
@@ -14,13 +15,15 @@ namespace Wink
     }
 
     [Serializable]
-    public class Tile : SpriteGameObject
+    public class Tile : SpriteGameObject, IGameObjectContainer
     {
         public const int TileWidth = 64;
         public const int TileHeight = 64;
 
         protected TileType type;
         protected bool passable;
+
+        protected GameObject onTile;
 
         public Point TilePosition {
             get
@@ -52,17 +55,48 @@ namespace Wink
             base.GetObjectData(info, context);
         }
 
+        public void EmptyTile()
+        {
+            onTile = null;
+        }
+
+        public bool IsEmpty()
+        {
+            return onTile == null;
+        }
+
+        public bool PutOnTile(Living living)
+        {
+            if (onTile == null)
+            {
+                onTile = living;
+                onTile.Parent = this;
+                onTile.Position = living.PointInTile.ToVector2();
+                return true;
+            }
+            return false;
+        }
+
+        public override void Update(GameTime gameTime)
+        {
+            base.Update(gameTime);
+
+            if (onTile != null)
+                onTile.Update(gameTime);
+        }
+
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
         {
-            if (type == TileType.Background)
-            {
-                return;
-            }
-            base.Draw(gameTime, spriteBatch, camera);
+            if (type != TileType.Background)
+                base.Draw(gameTime, spriteBatch, camera);
+
+            if (onTile != null)
+                onTile.Draw(gameTime, spriteBatch, camera);
         }
 
         public override void DrawDebug(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
         {
+            if (onTile != null) onTile.DrawDebug(gameTime, spriteBatch, camera);
             if (debugTags.ContainsKey("ExitConnectionPoint"))
             {
                 string[] coord = debugTags["ExitConnectionPoint"].Split(':')[1].Split(',');
@@ -79,7 +113,8 @@ namespace Wink
 
         public override void HandleInput(InputHelper inputHelper)
         {
-            base.HandleInput(inputHelper);
+            if (onTile != null)
+                onTile.HandleInput(inputHelper);
 
             if (TileType == TileType.Floor)
             {
@@ -91,6 +126,29 @@ namespace Wink
                 };
 
                 inputHelper.IfMouseLeftButtonPressedOn(this, onClick);
+            }
+
+            base.HandleInput(inputHelper);
+        }
+
+        public List<GameObject> FindAll(Func<GameObject, bool> del)
+        {
+            List<GameObject> result = new List<GameObject>();
+            GameObject single = Find(del);
+            if (single != null)
+                result.Add(single);
+            return result;
+        }
+
+        public GameObject Find(Func<GameObject, bool> del)
+        {
+            if (onTile != null && del.Invoke(onTile))
+            {
+                return onTile;
+            }
+            else
+            {
+                return null;
             }
         }
 

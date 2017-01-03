@@ -5,7 +5,7 @@ using System;
 using System.Runtime.Serialization;
 
 [Serializable]
-public class GameObjectList : GameObject
+public class GameObjectList : GameObject, IGameObjectContainer
 {
     protected List<GameObject> children;
 
@@ -60,19 +60,17 @@ public class GameObjectList : GameObject
 
         foreach (GameObject obj in children)
         {
-            if (del.Invoke(obj))
+            if (obj != null)
             {
-                result.Add(obj);
-            }
-            if (obj is GameObjectList)
-            {
-                GameObjectList objList = obj as GameObjectList;
-                result.AddRange(objList.FindAll(del));
-            }
-            if (obj is GameObjectGrid)
-            {
-                GameObjectGrid objGrid = obj as GameObjectGrid;
-                result.AddRange(objGrid.FindAll(del));
+                if (del.Invoke(obj))
+                {
+                    result.Add(obj);
+                }
+                if (obj is IGameObjectContainer)
+                {
+                    IGameObjectContainer objContainer = obj as IGameObjectContainer;
+                    result.AddRange(objContainer.FindAll(del));
+                }
             }
         }
         return result;
@@ -82,35 +80,24 @@ public class GameObjectList : GameObject
     {
         foreach (GameObject obj in children)
         {
-            if (del.Invoke(obj))
+            if (obj != null)
             {
-                return obj;
-            }
-            if (obj is GameObjectList)
-            {
-                GameObjectList objList = obj as GameObjectList;
-                GameObject subObj = objList.Find(del);
-                if (subObj != null)
+                if (del.Invoke(obj))
                 {
-                    return subObj;
+                    return obj;
                 }
-            }
-            if (obj is GameObjectGrid)
-            {
-                GameObjectGrid objGrid = obj as GameObjectGrid;
-                GameObject subObj = objGrid.Find(del);
-                if (subObj != null)
+                else if (obj is IGameObjectContainer)
                 {
-                    return subObj;
+                    IGameObjectContainer objContainer = obj as IGameObjectContainer;
+                    GameObject subObj = objContainer.Find(del);
+                    if (subObj != null)
+                    {
+                        return subObj;
+                    }
                 }
             }
         }
         return null;
-    }
-
-    public GameObject Find(string id)
-    {
-        return Find((gobj) => gobj.Id == id);
     }
 
     public override void HandleInput(InputHelper inputHelper)

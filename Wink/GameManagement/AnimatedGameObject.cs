@@ -44,7 +44,7 @@ public class AnimatedGameObject : SpriteGameObject
         }
         animations[id].Play();
         sprite = animations[id];
-        origin = new Vector2(sprite.Width / 2, sprite.Height);        
+        origin = new Vector2(sprite.Width / 2, sprite.Height);
     }
 
     public void PlaySound(string id)

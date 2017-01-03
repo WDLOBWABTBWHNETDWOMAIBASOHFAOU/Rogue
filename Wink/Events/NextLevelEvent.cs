@@ -20,7 +20,7 @@ namespace Wink
             foreach (GameObject obj in playerlist)
             {
                 level.Add(obj);
-                (obj as Player).InitPosition();
+                (obj as Player).MoveTo(level.Find("startTile") as Tile);
             }
             server.Level = level;
             server.LevelChanged();

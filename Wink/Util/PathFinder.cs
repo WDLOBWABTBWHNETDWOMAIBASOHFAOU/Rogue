@@ -129,7 +129,7 @@ namespace Wink
             return totalCost;
         }
 
-        public List<Tile> ShortestPath(Point start, Point end)
+        public List<Tile> ShortestPath(Tile start, Tile end)
         {
             return ShortestPath(start, end, tile => tile.Passable);
         }
@@ -140,19 +140,16 @@ namespace Wink
         /// <param name="end">Position of end tile in the tilefield.</param>
         /// <param name="validTile">A Func that returns true for valid tiles and false for invalid tiles.</param>
         /// <returns></returns>
-        public List<Tile> ShortestPath(Point start, Point end, Func<Tile, bool> validTile)
+        public List<Tile> ShortestPath(Tile start, Tile end, Func<Tile, bool> validTile)
         {
             List<Node> openNodes = new List<Node>();
             List<Node> closedNodes = new List<Node>();
             List<Tile> path = new List<Tile>();
 
             // Need grid positions
-            startingNode = GetNode(tileField[start.X, start.Y] as Tile);
-            endingNode = GetNode(tileField[end.X, end.Y] as Tile);
+            startingNode = GetNode(start);
+            endingNode = GetNode(end);
             openNodes.Add(startingNode);
-
-            if (startingNode.tile == null || endingNode.tile == null)
-                throw new NullReferenceException();
 
             while (openNodes.Count > 0)
             {

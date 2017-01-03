@@ -77,7 +77,7 @@ namespace Wink
                 AddTab(t);
             }
 
-            ((Find("TabTitles") as GameObjectList).Children[0] as TabButton).Action.Invoke();
+            ((this.Find("TabTitles") as GameObjectList).Children[0] as TabButton).Action.Invoke();
         }
 
         private void AddTab(Tab tab)
@@ -94,7 +94,7 @@ namespace Wink
 
                 b.tab.Active = true;
 
-                GameObjectList content = Find("Content") as GameObjectList;
+                GameObjectList content = this.Find("Content") as GameObjectList;
                 Remove(content);
 
                 GameObjectList newContent = new GameObjectList(0, "Content");
@@ -104,7 +104,7 @@ namespace Wink
             };
             b.Position = new Vector2(width / tabs.Count * index + 2, 2);
 
-            (Find("TabTitles") as GameObjectList).Add(b);
+            (this.Find("TabTitles") as GameObjectList).Add(b);
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)

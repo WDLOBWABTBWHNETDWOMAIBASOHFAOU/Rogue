@@ -42,8 +42,7 @@ namespace Wink
             {
                 //Player adds itself to level.
                 Player player = new Player(c.ClientName, Level.Layer);
-                Level.Add(player);
-                player.InitPosition();
+                player.MoveTo(Level.Find("startTile") as Tile);
             }
 
             livingObjects = Level.FindAll(obj => obj is Living).Cast<Living>().ToList();

@@ -31,12 +31,12 @@ namespace Wink
 
         protected override bool ValidateAction(Level level)
         {
-            int dx = (int)Math.Abs(player.Position.X - player.PointInTile.X - tile.Position.X);
-            int dy = (int)Math.Abs(player.Position.Y - player.PointInTile.Y - tile.Position.Y);
+            int dx = (int)Math.Abs(player.Tile.Position.X - tile.Position.X);
+            int dy = (int)Math.Abs(player.Tile.Position.Y - tile.Position.Y);
 
             bool theSame = dx == 0 && dy == 0;
             bool withinReach = dx <= Tile.TileWidth && dy <= Tile.TileHeight;
-            return withinReach && !theSame;
+            return withinReach && !theSame && tile.Passable && tile.IsEmpty();
         }
     }
 }

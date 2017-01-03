@@ -15,20 +15,6 @@ namespace Wink
             AddHPBar();
         }
 
-        public void InitPosition()
-        {
-            TileField grid = GameWorld.Find("TileField") as TileField;
-
-            //First find all passable tiles then select one at random.
-            List<GameObject> tileCandidates = grid.FindAll(obj => obj is Tile && (obj as Tile).Passable);
-            Tile ST = tileCandidates[GameEnvironment.Random.Next(tileCandidates.Count)] as Tile;
-
-            float tileX = (ST.TilePosition.ToVector2().X + 1) * ST.Height - ST.Height / 2;
-            float tileY = (ST.TilePosition.ToVector2().Y + 1) * ST.Width;
-            Position = new Vector2(tileX, tileY);
-
-        }
-
         protected override void InitAnimation(string idleColor = "empty:64:64:10:Magenta")
         {
             base.InitAnimation("empty:64:64:10:Purple");
@@ -38,13 +24,9 @@ namespace Wink
         public void GoTo(Player player)
         {
             TileField tf = player.GameWorld.Find("TileField") as TileField;
-            Tile tempTile = tf[0, 0] as Tile;
-            //TODO: replace tempTile with Tile.TileHeight/Tile.TileWidth?
-            Vector2 selfPos = new Vector2((Position.X + 0.5f * tempTile.Height) / tempTile.Height - 1, Position.Y / tempTile.Width - 1);
-            Vector2 playPos = new Vector2((player.Position.X + 0.5f * tempTile.Height) / tempTile.Height - 1, player.Position.Y / tempTile.Width - 1);
 
             PathFinder pf = new PathFinder(tf);
-            List<Tile> path = pf.ShortestPath(selfPos.ToPoint(), playPos.ToPoint());
+            List<Tile> path = pf.ShortestPath(Tile, player.Tile);
             if (path.Count > 1)
             {
                 MoveTo(path[0]);

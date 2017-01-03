@@ -47,13 +47,6 @@ namespace Wink
             info.AddValue("mouseSlot", mouseSlot);
         }
 
-        public void InitPosition()
-        {
-            //Put player on start tile.
-            Tile startTile = GameWorld.Find("startTile") as Tile;
-            MoveTo(startTile);
-        }
-
         protected override void InitAnimation(string idleColor = "player")
         {            
             base.InitAnimation(idleColor);

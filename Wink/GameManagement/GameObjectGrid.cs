@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 [Serializable]
-public class GameObjectGrid : GameObject
+public class GameObjectGrid : GameObject, IGameObjectContainer
 {
     protected GameObject[,] grid;
     protected int cellWidth, cellHeight;
@@ -140,11 +140,15 @@ public class GameObjectGrid : GameObject
 
     public override void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
     {
-        foreach (GameObject obj in grid)
+        for (int y = 0; y < Rows; y++) 
         {
-            if (obj != null)
+            for (int x = 0; x < Columns; x++)
             {
-                obj.Draw(gameTime, spriteBatch, camera);
+                GameObject obj = this[x, y];
+                if (obj != null)
+                {
+                    obj.Draw(gameTime, spriteBatch, camera);
+                }
             }
         }
     }
@@ -173,11 +177,20 @@ public class GameObjectGrid : GameObject
     {
         foreach (GameObject obj in grid)
         {
-            if(obj != null)
+            if (obj != null)
             {
                 if (del.Invoke(obj))
                 {
                     return obj;
+                }
+                else if (obj is IGameObjectContainer)
+                {
+                    IGameObjectContainer objContainer = obj as IGameObjectContainer;
+                    GameObject subObj = objContainer.Find(del);
+                    if (subObj != null)
+                    {
+                        return subObj;
+                    }
                 }
             }
         }
@@ -189,19 +202,17 @@ public class GameObjectGrid : GameObject
         List<GameObject> result = new List<GameObject>();
         foreach (GameObject obj in grid)
         {
-            if (del.Invoke(obj))
+            if (obj != null)
             {
-                result.Add(obj);
-            }
-            if (obj is GameObjectList)
-            {
-                GameObjectList objList = obj as GameObjectList;
-                result.AddRange(objList.FindAll(del));
-            }
-            if (obj is GameObjectGrid)
-            {
-                GameObjectGrid objGrid = obj as GameObjectGrid;
-                result.AddRange(objGrid.FindAll(del));
+                if (del.Invoke(obj))
+                {
+                    result.Add(obj);
+                }
+                if (obj is IGameObjectContainer)
+                {
+                    IGameObjectContainer objContainer = obj as IGameObjectContainer;
+                    result.AddRange(objContainer.FindAll(del));
+                }
             }
         }
         return result;

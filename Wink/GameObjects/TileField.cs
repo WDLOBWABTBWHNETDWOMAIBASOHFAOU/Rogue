@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using P = Wink.TileField.Permission;
@@ -52,26 +51,6 @@ namespace Wink
         }
 
         private static readonly HashSet<TileType> blobTextures = new HashSet<TileType> { TileType.Wall };
-
-        public void InitTileAlpha()
-        {
-            for (int tfX = 0; tfX < Columns; tfX++)
-            {
-                for (int tfY = 0; tfY < Rows; tfY++)
-                {
-                    Tile currentTile = this[tfX, tfY] as Tile;
-                    if (currentTile.TileType == TileType.Wall)
-                    {
-                        Tile abovetile = this[tfX, tfY - 1] as Tile;
-                        if (abovetile != null && abovetile.TileType == TileType.Floor)
-                        {
-                            Color c = currentTile.DrawColor;
-                            //currentTile.DrawColor = c * 0.4f;
-                        }
-                    }
-                }
-            }
-        }
 
         public void InitSpriteSheetIndexation()
         {

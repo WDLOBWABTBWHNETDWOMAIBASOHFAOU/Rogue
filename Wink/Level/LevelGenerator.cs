@@ -352,7 +352,7 @@ namespace Wink
             {
                 PathFinder pf = new PathFinder(tf);
                 pf.EnableStraightLines();
-                List<Tile> path = pf.ShortestPath(pair.Item1, pair.Item2, tile => /*tile.TilePosition == pair.Item1 || tile.TilePosition == pair.Item2 || tile.TileType != TileType.Wall*/ true);
+                List<Tile> path = pf.ShortestPath(tf[pair.Item1.X, pair.Item1.Y] as Tile, tf[pair.Item2.X, pair.Item2.Y] as Tile, tile => true);
 
                 Tile t = tf[pair.Item1.X, pair.Item1.Y] as Tile;
                 t.AddDebugTag("ExitConnectionPoint", ":" + pair.Item2.X + "," + pair.Item2.Y);
