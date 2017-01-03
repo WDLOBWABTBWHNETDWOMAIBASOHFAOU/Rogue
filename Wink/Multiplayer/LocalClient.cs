@@ -8,6 +8,8 @@ namespace Wink
 {
     public class LocalClient : Client, IGameLoopObject
     {
+        private FrameCounter frameCounter;
+
         private GameObjectList gameObjects;
         private Camera newCamera;
 
@@ -34,6 +36,8 @@ namespace Wink
 
         public LocalClient(Server server) : base(server)
         {
+            frameCounter = new FrameCounter();
+
             ClientName = System.Environment.MachineName;
 
             newCamera = new Camera();
@@ -64,17 +68,25 @@ namespace Wink
             gameObjects.Draw(gameTime, spriteBatch, newCamera);
         }
 
+        public void DrawDebug(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
+        {
+            gameObjects.DrawDebug(gameTime, spriteBatch, newCamera);
+
+            float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            frameCounter.Update(deltaTime);
+
+            float frameRate = (float)Math.Round(frameCounter.AverageFramesPerSecond * 10) / 10;
+            string fps = string.Format("FPS: {0}", frameRate);
+            SpriteFont sf = GameEnvironment.AssetManager.GetFont("Arial26");
+            spriteBatch.DrawString(sf, fps, new Vector2(1, 100), Color.Red);
+        }
+
         public override void Send(Event e)
         {
             if (e.Validate(Level))
             {
                 e.OnClientReceive(this);
             }
-        }
-
-        public void DrawDebug(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
-        {
-            gameObjects.DrawDebug(gameTime, spriteBatch, newCamera);
         }
 
         public void Reset()

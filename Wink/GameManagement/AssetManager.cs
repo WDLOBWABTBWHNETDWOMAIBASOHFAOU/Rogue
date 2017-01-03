@@ -9,17 +9,24 @@ public class AssetManager
 {
     protected ContentManager contentManager;
     protected GraphicsDevice graphicsDevice;
+    protected SpriteBatch spriteBatch;
     protected SpriteFont defaultFont;
 
     protected Dictionary<string, Texture2D> textures;
     protected Dictionary<string, SpriteFont> fonts;
 
+    protected RenderTarget2D maskRenderTarget;
+
     public AssetManager(ContentManager content, GraphicsDevice graphics)
     {
         contentManager = content;
         graphicsDevice = graphics;
+        //this.spriteBatch = spriteBatch;
         textures = new Dictionary<string, Texture2D>();
         fonts = new Dictionary<string, SpriteFont>();
+
+        PresentationParameters pp = graphicsDevice.PresentationParameters;
+        maskRenderTarget = new RenderTarget2D(graphicsDevice, pp.BackBufferWidth, pp.BackBufferHeight, false, SurfaceFormat.Single, pp.DepthStencilFormat);
     }
 
     /// <summary>
@@ -65,6 +72,28 @@ public class AssetManager
             textures.Add(assetName, contentManager.Load<Texture2D>(assetName));
             return textures[assetName];
         }
+    }
+
+    /// <summary>
+    /// This method is used to add trans
+    /// </summary>
+    /// <returns></returns>
+    public Texture2D GetTransparentTallSprite(Texture2D asset)
+    {
+        graphicsDevice.SetRenderTarget(maskRenderTarget);
+        //graphicsDevice.BlendState.AlphaBlendFunction = BlendFunction.Add;
+        graphicsDevice.BlendState.AlphaDestinationBlend = Blend.Zero;
+        graphicsDevice.BlendState.AlphaSourceBlend = Blend.One;
+
+        graphicsDevice.BlendState.ColorWriteChannels = ColorWriteChannels.Red | ColorWriteChannels.Green | ColorWriteChannels.Blue;
+        spriteBatch.Draw(asset, new Vector2(0, 0), Color.White);
+
+        graphicsDevice.BlendState.ColorWriteChannels = ColorWriteChannels.Alpha;
+        spriteBatch.Draw(GetSingleColorPixel(Color.White), new Rectangle(0, 0, asset.Width, asset.Height - Wink.Tile.TileHeight), Color.White);
+
+        graphicsDevice.BlendState.ColorWriteChannels = ColorWriteChannels.All;
+        graphicsDevice.SetRenderTarget(null);
+        return maskRenderTarget;
     }
 
     public Texture2D GetEmptySprite(string emptyString)

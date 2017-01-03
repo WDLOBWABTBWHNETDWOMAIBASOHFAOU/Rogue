@@ -21,6 +21,7 @@ public class SpriteSheet
         if (sprite == null)
             return;
 
+        /*
         // construct the collision mask
         Color[] colorData = new Color[sprite.Width * sprite.Height];
         collisionMask = new bool[sprite.Width * sprite.Height];
@@ -29,7 +30,7 @@ public class SpriteSheet
         {
             collisionMask[i] = colorData[i].A != 0;
         }
-
+        */
         this.sheetIndex = sheetIndex;
         sheetColumns = 1;
         sheetRows = 1;

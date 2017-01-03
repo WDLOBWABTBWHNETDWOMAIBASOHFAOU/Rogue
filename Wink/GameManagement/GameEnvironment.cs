@@ -83,9 +83,7 @@ public class GameEnvironment : Game
             ApplyResolutionSettings(value);
         }
     }
-
-
-
+    
     public void ApplyResolutionSettings(bool fullScreen = false)
     {
         if (!fullScreen)
@@ -129,6 +127,7 @@ public class GameEnvironment : Game
     {
         DrawingHelper.Initialize(GraphicsDevice);
         spriteBatch = new SpriteBatch(GraphicsDevice);
+        //assetManager.spreiteN
     }
 
     protected void HandleInput()
