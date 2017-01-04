@@ -2,17 +2,26 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace Wink
 {
     [Serializable]
-    public class Enemy : Living
+    public class Enemy : Living, IGUIGameObject
     {
         private Bar<Enemy> hpBar;
 
         public Enemy(int layer, string id = "Enemy") : base(layer, id)
         {
-            AddHPBar();
+        }
+
+        public Enemy(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+        }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            base.GetObjectData(info, context);
         }
 
         public override bool BlocksTile
@@ -61,16 +70,6 @@ namespace Wink
             actionPoints--;
         }
 
-        private void AddHPBar()
-        {
-            SpriteFont textfieldFont = GameEnvironment.AssetManager.GetFont("Arial26");
-
-            //Healthbar
-            hpBar = new Bar<Enemy>(this, e => e.Health, MaxHealth, textfieldFont, Color.Red, 2, "HealthBar", 1.0f, 1f, false);
-            hpBar.Parent = this;
-            hpBar.Position = new Vector2((Width - hpBar.Width - origin.X) / 2, -Height);
-        }
-
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
@@ -109,6 +108,36 @@ namespace Wink
 
                 base.HandleInput(inputHelper);
             }
+        }
+
+        public override void MoveTo(Tile t)
+        {
+            base.MoveTo(t);
+            PositionHPBar();
+        }
+
+        private void PositionHPBar()
+        {
+            if (hpBar != null)
+                hpBar.Position = Tile.GlobalPosition - new Vector2(Math.Abs(Tile.Width - hpBar.Width) / 2, 0);
+        }
+
+        public void InitGUI()
+        {
+            SpriteFont textfieldFont = GameEnvironment.AssetManager.GetFont("Arial26");
+
+            //Healthbar
+            hpBar = new Bar<Enemy>(this, e => e.Health, MaxHealth, textfieldFont, Color.Red, 2, "HealthBar", 1.0f, 1f, false);
+            PositionHPBar();
+
+            PlayingGUI gui = GameWorld.Find("PlayingGui") as PlayingGUI;
+            gui.Add(hpBar);
+        }
+
+        public void CleanupGUI()
+        {
+            PlayingGUI gui = GameWorld.Find("PlayingGui") as PlayingGUI;
+            gui.Remove(hpBar);
         }
     }
 }

@@ -38,6 +38,7 @@ namespace Wink
         {
             exp = info.GetInt32("exp");
             mouseSlot = info.GetValue("mouseSlot", typeof(MouseSlot)) as MouseSlot;
+            itemGrid = info.GetValue("itemGrid", typeof(GameObjectGrid)) as GameObjectGrid;
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
@@ -45,6 +46,7 @@ namespace Wink
             base.GetObjectData(info, context);
             info.AddValue("exp", exp);
             info.AddValue("mouseSlot", mouseSlot);
+            info.AddValue("itemGrid", itemGrid);
         }
 
         protected override void InitAnimation(string idleColor = "player")

@@ -44,16 +44,14 @@ namespace Wink
         private SpriteFont font;
         private Color color;
         private float scale;
-        private Vector2 origin;
-        public Vector2 Origin { get { return origin; } }
         private bool stringVisible;
 
         public int Width {
-            get { return (int)font.MeasureString(inner.Value.ToString()).X + outer.Width; }
+            get { return (stringVisible ? (int)font.MeasureString(inner.Value.ToString()).X : 0) + outer.Width; }
         }
 
         float cameraSensitivity;
-        public Bar(T o, Func<T, int> test, int maxValue, SpriteFont font, Color color, int layer = 0, string id = "",float cameraSensitivity = 0, float scale = 1, bool stringVisible = true) : base(layer, id)
+        public Bar(T o, Func<T, int> test, int maxValue, SpriteFont font, Color color, int layer = 0, string id = "", float cameraSensitivity = 0, float scale = 1, bool stringVisible = true) : base(layer, id)
         {
             this.cameraSensitivity = cameraSensitivity;
             this.font = font;
@@ -72,11 +70,8 @@ namespace Wink
             inner.Position = new Vector2(xdif, ydif)*scale;
             Add(inner);
 
-            this.inner.maxValue = maxValue;
-
+            inner.maxValue = maxValue;
             inner.AddValue(o, test);
-            this.origin = new Vector2(outer.Sprite.Width / 2, 0);
-
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)

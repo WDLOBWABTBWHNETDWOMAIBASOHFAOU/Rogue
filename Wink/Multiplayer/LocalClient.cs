@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
 
 namespace Wink
 {
@@ -87,7 +89,15 @@ namespace Wink
         }
 
         public override void Send(Event e)
-        {
+        {/*
+            BinaryFormatter binaryFormatter = new BinaryFormatter();
+            using (MemoryStream ms = new MemoryStream())
+            {
+                binaryFormatter.Serialize(ms, e);
+                ms.Seek(0, SeekOrigin.Begin);
+                e = binaryFormatter.Deserialize(ms) as Event;
+            }
+            */
             if (e.Validate(Level))
             {
                 e.OnClientReceive(this);

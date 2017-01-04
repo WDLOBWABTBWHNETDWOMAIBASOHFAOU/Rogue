@@ -4,9 +4,19 @@ using System.Runtime.Serialization;
 
 namespace Wink
 {
-    public abstract class Item : SpriteGameObject
+    public abstract class Item : SpriteGameObject, ITileObject
     {
         int stackSize;
+
+        public Point PointInTile
+        {
+            get { return new Point(0, 0); }
+        }
+
+        public bool BlocksTile
+        {
+            get { return false; }
+        }
 
         public Item(string assetName, int stackSize = 1, int layer = 0, string id = "") : base(assetName, layer, id)
         {

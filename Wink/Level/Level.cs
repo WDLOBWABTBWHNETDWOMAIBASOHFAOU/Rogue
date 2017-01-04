@@ -3,10 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.IO;
+using System.Linq;
 
 namespace Wink
 {
-
     [Serializable]
     public partial class Level : GameObjectList
     {
@@ -75,13 +75,13 @@ namespace Wink
                     tf.Add(t, x, y);
                 }
             }
-
-            //TODO: Necessary? -> Putting the item one layer above the inventory box
-            int itemLayer = layer + 2;
-            Item testItem = new TestItem("empty:64:64:10:Pink", 1, itemLayer); 
+            
+            Item testItem = new TestItem("empty:64:64:10:Pink", 1, 0);
+            List<Tile> floorTiles = tf.FindAll(obj => obj.GetType() == typeof(Tile) && (obj as Tile).TileType == TileType.Floor).Cast<Tile>().ToList();
+            floorTiles[Random.Next(floorTiles.Count)].PutOnTile(testItem);
 
             // ENEMY CODE (test)
-            for(int i = 0; i < 2; i++)
+            for (int i = 0; i < 2; i++)
             {
                 Enemy testEnemy = new Enemy(0);
 
@@ -92,10 +92,7 @@ namespace Wink
                 testEnemy.MoveTo(startTile);
             }
             // END ENEMY CODE (test)
-
-            testItem.Position = new Vector2(GameEnvironment.Random.Next(0, tf.Columns - 1) * Tile.TileWidth, GameEnvironment.Random.Next(0, tf.Rows - 1) * Tile.TileHeight);
-            Add(testItem);
-
+            
             tf.InitSpriteSheetIndexation();
         }
 
@@ -112,7 +109,7 @@ namespace Wink
                 case '-':
                     return LoadFloorTile();
                 case 'c':
-                    return LoadChestTile(x, y);
+                    return LoadChestTile();
                 case 'D':
                     return LoadDoorTile();
                 case 'E':
@@ -160,9 +157,10 @@ namespace Wink
             return t;
         }
 
-        private Tile LoadChestTile(int x, int y, string assetName = "empty:64:64:10:DarkGreen")
+        private Tile LoadChestTile(string assetName = "spr_floor")
         {
-            Tile t = LoadFloorTile();
+            Tile t = LoadFloorTile("", assetName);
+
             Container chest = new Container("empty:64:64:10:Brown");
             t.PutOnTile(chest);
             return t;

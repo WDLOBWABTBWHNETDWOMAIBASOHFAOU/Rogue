@@ -32,7 +32,7 @@ public abstract class GameObject : IGameLoopObject, ISerializable
         velocity = new Vector2((float)info.GetDouble("velX"), (float)info.GetDouble("velY"));
         layer = info.GetInt32("layer");
         id = info.GetString("id");
-        visible = info.GetBoolean("vis");
+        visible = info.GetBoolean("visible");
     }
 
     public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
@@ -44,7 +44,7 @@ public abstract class GameObject : IGameLoopObject, ISerializable
         info.AddValue("velY", velocity.Y);
         info.AddValue("layer", layer);
         info.AddValue("id", id);
-        info.AddValue("vis", visible);
+        info.AddValue("visible", visible);
     }
 
     public virtual void HandleInput(InputHelper inputHelper)

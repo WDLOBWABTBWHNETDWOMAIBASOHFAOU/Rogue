@@ -25,8 +25,14 @@ public class SpriteGameObject : GameObject
     protected Dictionary<string, string> debugTags;
 
     public Color DrawColor { get; set; }
-    public float CameraSensitivity { get { return cameraSensitivity; } }
-    public Dictionary<string, string> DebugTags { get { return debugTags; } }
+
+    public float CameraSensitivity {
+        get { return cameraSensitivity; }
+    }
+
+    public Dictionary<string, string> DebugTags {
+        get { return debugTags; }
+    }
 
     public SpriteGameObject(string assetName, int layer = 0, string id = "", int sheetIndex = 0, float cameraSensitivity = 1.0f, float scale = 1.0f) : base(layer, id)
     {
@@ -40,6 +46,9 @@ public class SpriteGameObject : GameObject
 
     public SpriteGameObject(SerializationInfo info, StreamingContext context) : base(info, context)
     {
+        Color color = new Color();
+        color.PackedValue = info.GetUInt32("DrawColor");
+        DrawColor = color;
         spriteAssetName = info.GetString("spriteAssetName");
         //spriteSheetIndex = info.GetInt32("spriteSheetIndex");
         origin = new Vector2((float)info.GetDouble("originX"), (float)info.GetDouble("originY"));
@@ -52,6 +61,8 @@ public class SpriteGameObject : GameObject
 
     public override void GetObjectData(SerializationInfo info, StreamingContext context)
     {
+        base.GetObjectData(info, context);
+
         info.AddValue("spriteAssetName", spriteAssetName);
         info.AddValue("spriteSheetIndex", sprite.SheetIndex);
         info.AddValue("originX", origin.X);
@@ -59,7 +70,7 @@ public class SpriteGameObject : GameObject
         info.AddValue("scale", scale);
         info.AddValue("cameraSensitivity", cameraSensitivity);
         info.AddValue("debugTags", debugTags);
-        base.GetObjectData(info, context);
+        info.AddValue("DrawColor", DrawColor.PackedValue);
     }
 
     public override void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)

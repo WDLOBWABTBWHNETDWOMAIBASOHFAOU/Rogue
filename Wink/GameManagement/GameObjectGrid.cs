@@ -140,9 +140,9 @@ public class GameObjectGrid : GameObject, IGameObjectContainer
 
     public override void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
     {
-        for (int y = 0; y < Rows; y++) 
+        for (int x = 0; x < Columns; x++)
         {
-            for (int x = 0; x < Columns; x++)
+            for (int y = 0; y < Rows; y++)
             {
                 GameObject obj = this[x, y];
                 if (obj != null)

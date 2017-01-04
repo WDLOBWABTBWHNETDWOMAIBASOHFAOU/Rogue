@@ -1,9 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using Microsoft.Xna.Framework.Graphics;
+using System.Runtime.Serialization;
 
 namespace Wink
 {
+    [Serializable]
     public class Container : SpriteGameObject, IGUIGameObject, ITileObject
     {
         private InventoryBox iBox;
@@ -19,26 +21,40 @@ namespace Wink
             get { return true; }
         }
 
-        public Container(string asset, GameObjectGrid itemGrid = null, int layer=0, string id=""):base(asset,layer,id)
+        public Container(string asset, GameObjectGrid itemGrid = null, int layer = 0, string id = "") : base(asset, layer, id)
         {
-            setInventory();
+            SetInventory();
+        }
+
+        public Container(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+            iBox = info.GetValue("iBox", typeof(InventoryBox)) as InventoryBox;
+        }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            base.GetObjectData(info, context);
+            info.AddValue("iBox", iBox);
         }
 
         public void InitGUI()
         {
-            if (iWindow == null)
-            {
-                iWindow = new Window(iBox.ItemGrid.Columns * Tile.TileWidth, iBox.ItemGrid.Rows * Tile.TileHeight);
-                iWindow.Add(iBox);
-                iWindow.Position = new Vector2(300, 300);
-                iWindow.Visible = false;
+            iWindow = new Window(iBox.ItemGrid.Columns * Tile.TileWidth, iBox.ItemGrid.Rows * Tile.TileHeight);
+            iWindow.Add(iBox);
+            iWindow.Position = new Vector2(300, 300);
+            iWindow.Visible = false;
 
-                PlayingGUI gui = GameWorld.Find("PlayingGui") as PlayingGUI;
-                gui.Add(iWindow);
-            }
+            PlayingGUI gui = GameWorld.Find("PlayingGui") as PlayingGUI;
+            gui.Add(iWindow);
         }
 
-        public void setInventory(GameObjectGrid itemGrid = null)
+        public void CleanupGUI()
+        {
+            PlayingGUI gui = GameWorld.Find("PlayingGui") as PlayingGUI;
+            gui.Remove(iWindow);
+        }
+
+        public void SetInventory(GameObjectGrid itemGrid = null)
         {
             if (itemGrid == null)
             {
@@ -69,9 +85,8 @@ namespace Wink
                 // correct player when in multiplayer?
                 Player player = GameWorld.Find(p => p is Player) as Player;
 
-                int dx = (int)Math.Abs(player.Position.X - player.Origin.X - Position.X);
-                int dy = (int)Math.Abs(player.Position.Y - player.Origin.Y - Position.Y);
-
+                int dx = (int)Math.Abs(player.Tile.Position.X - GlobalPosition.X);
+                int dy = (int)Math.Abs(player.Tile.Position.Y - GlobalPosition.Y);
                 if (dx <= Tile.TileWidth && dy <= Tile.TileHeight)
                 {
                     iWindow.Visible = !iWindow.Visible;
@@ -81,5 +96,6 @@ namespace Wink
             inputHelper.IfMouseLeftButtonPressedOn(this, onClick);
             base.HandleInput(inputHelper);
         }
+
     }
 }

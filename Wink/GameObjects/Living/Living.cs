@@ -48,6 +48,8 @@ namespace Wink
             dieAnimation = info.GetString("dieAnimation");
             dieSound = info.GetString("dieSound");
 
+            tile = info.GetValue("tile", typeof(Tile)) as Tile;
+
             manaPoints = info.GetInt32("manaPoints");
             healthPoints = info.GetInt32("healthPoints");
             actionPoints = info.GetInt32("actionPoints");
@@ -69,7 +71,9 @@ namespace Wink
             info.AddValue("moveAnimation", moveAnimation);
             info.AddValue("dieAnimation", dieAnimation);
             info.AddValue("dieSound", dieSound);
-            
+
+            info.AddValue("tile", tile);
+
             info.AddValue("manaPoints", manaPoints);
             info.AddValue("healthPoints", healthPoints);
             info.AddValue("actionPoints", actionPoints);
@@ -108,7 +112,7 @@ namespace Wink
             }
         }
         
-        public void MoveTo(Tile t)
+        public virtual void MoveTo(Tile t)
         {
             if (tile != null)
                 tile.Remove(this);

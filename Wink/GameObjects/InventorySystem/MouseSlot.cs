@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Runtime.Serialization;
 
 namespace Wink
 {
@@ -11,6 +12,17 @@ namespace Wink
 
         public MouseSlot(int layer = 0, string id = "") : base(1, 1, layer, id)
         {
+        }
+
+        public MouseSlot(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+            oldItem = info.GetValue("oldItem", typeof(Item)) as Item;
+        }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            base.GetObjectData(info, context);
+            info.AddValue("oldItem", oldItem);
         }
 
         public void AddTo(Item newItem, GameObjectGrid target)

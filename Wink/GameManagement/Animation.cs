@@ -15,13 +15,14 @@ public class Animation : SpriteSheet, ISerializable
         this.isLooping = isLooping;
     }
 
-    public Animation(SerializationInfo info, StreamingContext context) : this(info.GetString("assetname"), info.GetBoolean("isLooping"), (float)info.GetDouble("frameTime"))
+    public Animation(SerializationInfo info, StreamingContext context) : this(info.GetString("assetName"), info.GetBoolean("isLooping"), (float)info.GetDouble("frameTime"))
     {
+
     }
 
     public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
     {
-        info.AddValue("assetname", assetName);
+        info.AddValue("assetName", assetName);
         info.AddValue("isLooping", isLooping);
         info.AddValue("frameTime", frameTime);
     }

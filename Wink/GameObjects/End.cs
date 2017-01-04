@@ -4,13 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
+using System.Runtime.Serialization;
 
 namespace Wink
 {
     [Serializable]
     class End : SpriteGameObject, ITileObject
     {
-        Tile ParentTile;
+        Tile parentTile;
         int levelIndex;
         Level level;
 
@@ -24,11 +25,26 @@ namespace Wink
             get { return false; }
         }
 
-        public End(Tile ParentTile, int levelIndex, Level level2, string asset = "empty:64:64:10:Yellow", int layer = 0, string id = "") : base(asset, layer, id)
+        public End(Tile pTile, int levelIndex, Level level, string asset = "empty:64:64:10:Yellow", int layer = 0, string id = "") : base(asset, layer, id)
         {
-            this.ParentTile = ParentTile;
+            parentTile = pTile;
             this.levelIndex = levelIndex;
-            level = level2;
+            this.level = level;
+        }
+
+        public End(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+            parentTile = info.GetValue("parentTile", typeof(Tile)) as Tile;
+            levelIndex = info.GetInt32("levelIndex");
+            level = info.GetValue("level", typeof(Level)) as Level;
+        }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            base.GetObjectData(info, context);
+            info.AddValue("parentTile", parentTile);
+            info.AddValue("levelIndex", levelIndex);
+            info.AddValue("level", level);
         }
 
         public override void HandleInput(InputHelper inputHelper)

@@ -6,30 +6,28 @@ public class AnimatedGameObject : SpriteGameObject
 {
     protected Dictionary<string, Animation> animations;
 
-    public AnimatedGameObject(int layer = 0, string id = "", float scale=1.0f) : base("", layer, id, 0, 1, scale)
+    public AnimatedGameObject(int layer = 0, string id = "", float scale = 1.0f) : base("", layer, id, 0, 1, scale)
     {
         animations = new Dictionary<string, Animation>();
     }
 
     public AnimatedGameObject(SerializationInfo info, StreamingContext context) : base(info, context)
     {
-
+        animations = info.GetValue("animations", typeof(Dictionary<string, Animation>)) as Dictionary<string, Animation>;
+        sprite = info.GetValue("Current", typeof(Animation)) as Animation;
     }
 
     public override void GetObjectData(SerializationInfo info, StreamingContext context)
     {
-        foreach(KeyValuePair<string, Animation> pair in animations)
-        {
-            info.AddValue(pair.Key, pair.Value);
-        }
-        
         base.GetObjectData(info, context);
+        info.AddValue("animations", animations);
+        info.AddValue("Current", Current);
     }
 
     public void LoadAnimation(string assetName, string id, bool looping, float frameTime = 0.1f)
     {
         Animation anim = new Animation(assetName, looping, frameTime);
-        animations[id] = anim;        
+        animations[id] = anim;
     }
 
     public void PlayAnimation(string id)

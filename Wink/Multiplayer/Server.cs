@@ -1,5 +1,4 @@
-﻿
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using System.Diagnostics;
 
 namespace Wink
@@ -15,6 +14,7 @@ namespace Wink
 
         public Server()
         {
+            //TODO: Currently while using the restart buttons, PlayingState is initialized again, and thus a new Server is constructed. Find out if this is desirable/problematic.
             Debug.WriteLineIf(instance != null, "MULTIPLE SERVER INSTANCES MADE");
 
             instance = this;

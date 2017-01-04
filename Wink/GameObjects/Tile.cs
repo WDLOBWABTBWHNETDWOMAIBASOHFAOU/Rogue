@@ -70,12 +70,17 @@ namespace Wink
         public Tile(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             type = (TileType)info.GetValue("type", typeof(TileType));
+            passable = info.GetBoolean("passable");
+            onTile = info.GetValue("onTile", typeof(GameObjectList)) as GameObjectList;
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            info.AddValue("type", type);
             base.GetObjectData(info, context);
+
+            info.AddValue("type", type);
+            info.AddValue("passable", passable);
+            info.AddValue("onTile", onTile);
         }
 
         public void Remove(GameObject go)

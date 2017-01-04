@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
+using System.Runtime.Serialization;
 
 namespace Wink
 {
@@ -14,6 +15,19 @@ namespace Wink
             parentTile = pTile;
             visible = true;
             layer = 1;
+        }
+
+        public Door(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+            parentTile = info.GetValue("parentTile", typeof(Tile)) as Tile;
+            open = info.GetBoolean("open");
+        }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            base.GetObjectData(info, context);
+            info.AddValue("parentTile", parentTile);
+            info.AddValue("open", open);
         }
 
         public Point PointInTile
