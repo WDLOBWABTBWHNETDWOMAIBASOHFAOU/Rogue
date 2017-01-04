@@ -13,11 +13,17 @@ namespace Wink
         {
             parentTile = pTile;
             visible = true;
+            layer = 1;
         }
 
         public Point PointInTile
         {
             get { return new Point(0, -32 - 18); }
+        }
+
+        public bool BlocksTile
+        {
+            get { return !open; }
         }
 
         public override void HandleInput(InputHelper inputHelper)
@@ -26,7 +32,7 @@ namespace Wink
             {
                 Action onClick = () =>
                 {
-                    // correct player when in multiplayer?
+                    //TODO: Replace this with Event.
                     Player player = GameWorld.Find(p => p is Player) as Player;
 
                     int dx = (int)Math.Abs(player.Tile.Position.X - parentTile.Position.X);

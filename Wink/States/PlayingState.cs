@@ -44,7 +44,7 @@ namespace Wink
                 lc.Update(gameTime);
             }
 
-            if(server != null)
+            if (server != null)
             {
                 //Then update server so it can process events and send back the new level state.
                 server.Update(gameTime);

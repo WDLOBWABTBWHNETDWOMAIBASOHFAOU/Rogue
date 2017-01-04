@@ -6,11 +6,30 @@
 
         protected int manaPoints, healthPoints, actionPoints, baseAttack, strength, dexterity, intelligence, creatureLevel;
 
-        public int Dexterity { get { return dexterity; } }
-        public int ActionPoints { get { return actionPoints; } set { actionPoints = value; } }
+        #region Properties
+        public int Dexterity
+        {
+            get { return dexterity; }
+        }
 
-        public int Health { get { return healthPoints; } set { healthPoints = value; } }
-        public int Mana { get { return manaPoints; } }
+        public int ActionPoints
+        {
+            get { return actionPoints; }
+            set { actionPoints = value; }
+        }
+
+        public int Health
+        {
+            get { return healthPoints; }
+            set { healthPoints = value; }
+        }
+
+        public int Mana
+        {
+            get { return manaPoints; }
+        }
+        #endregion
+
         //protected IList<Equipment> EquipedItems;
 
         /// <summary>

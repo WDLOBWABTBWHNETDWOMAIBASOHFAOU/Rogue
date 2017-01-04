@@ -51,7 +51,9 @@ public class GameObjectList : GameObject, IGameObjectContainer
     public void Remove(GameObject obj)
     {
         toRemove.Add(obj);
-        obj.Parent = null;
+
+        if (obj.Parent == this)
+            obj.Parent = null;
     }
 
     public List<GameObject> FindAll(Func<GameObject, bool> del)

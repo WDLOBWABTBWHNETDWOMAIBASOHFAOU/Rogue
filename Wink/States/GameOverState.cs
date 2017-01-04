@@ -10,10 +10,8 @@ namespace Wink
 {
     class GameOverState : GameObjectList
     {
-        // ToDo:
+        //TODO: (see below)
         //GameOver overlay
-        //MainMenu button
-        //restart button
         //show score / acievements / unlocked content
 
         Button mainMenuButton;

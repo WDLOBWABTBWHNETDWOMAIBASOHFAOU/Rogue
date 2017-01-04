@@ -41,7 +41,7 @@ namespace Wink
             Vector2 MPBarPosition = new Vector2(barX, HPBarPosition.Y + 32);
 
             //Healthbar
-            Bar<Player> hpBar = new Bar<Player>(player, p => p.Health, player.MaxHealth, textfieldFont, Color.Red, 2, "HealthBar",0 ,2.5f);
+            Bar<Player> hpBar = new Bar<Player>(player, p => p.Health, player.MaxHealth, textfieldFont, Color.Red, 2, "HealthBar", 0, 2.5f);
             hpBar.Position = new Vector2(HPBarPosition.X, HPBarPosition.Y);
             Add(hpBar);
 

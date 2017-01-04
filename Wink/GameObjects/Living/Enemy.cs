@@ -24,19 +24,23 @@ namespace Wink
         public void GoTo(Player player)
         {
             TileField tf = player.GameWorld.Find("TileField") as TileField;
-
-            PathFinder pf = new PathFinder(tf);
-            List<Tile> path = pf.ShortestPath(Tile, player.Tile);
-            if (path.Count > 1)
+            
+            int dx = (int)Math.Abs(player.Tile.Position.X - Tile.Position.X);
+            int dy = (int)Math.Abs(player.Tile.Position.Y - Tile.Position.Y);
+            bool withinReach = dx <= Tile.TileWidth && dy <= Tile.TileHeight;
+            
+            if (withinReach)
             {
-                MoveTo(path[0]);
+                Attack(player);
                 actionPoints--;
             }
-            else if (player.Position.X - Position.X <= Tile.TileWidth && player.Position.X - Position.X >= -Tile.TileWidth * 2)
+            else
             {
-                if (player.Position.Y - Position.Y <= Tile.TileHeight && player.Position.Y - Position.Y >= -Tile.TileHeight)
+                PathFinder pf = new PathFinder(tf);
+                List<Tile> path = pf.ShortestPath(Tile, player.Tile);
+                if (path.Count > 0)
                 {
-                    Attack(player);
+                    MoveTo(path[0]);
                     actionPoints--;
                 }
             }

@@ -97,7 +97,7 @@ namespace Wink
                         float dStart = (adjacent.tile.TilePosition - startingNode.tile.TilePosition).ToVector2().Length();
                         float dEnd = (endingNode.tile.TilePosition - adjacent.tile.TilePosition).ToVector2().Length();
                         float totalLength = dStart + dEnd;
-                        //TODO: find out why this only works when effectively rewarding a bend in the middle, and not when evening out.
+                        //TODO: Figure out why this only works when effectively rewarding a bend in the middle, and not when evening out.
                         //Maybe because A* only visits opennodes with the lowest cost?
                         return (int)(50 - (1 - Math.Abs(dStart / totalLength - dEnd / totalLength)) * 60);
                     }
@@ -131,7 +131,7 @@ namespace Wink
 
         public List<Tile> ShortestPath(Tile start, Tile end)
         {
-            return ShortestPath(start, end, tile => tile.Passable);
+            return ShortestPath(start, end, tile => tile.Passable && (!tile.Blocked || tile == start || tile == end));
         }
 
         /// <summary>

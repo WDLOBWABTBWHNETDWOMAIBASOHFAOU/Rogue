@@ -23,7 +23,7 @@ namespace Wink
         protected TileType type;
         protected bool passable;
 
-        protected GameObject onTile;
+        protected GameObjectList onTile;
 
         public Point TilePosition {
             get
@@ -35,9 +35,32 @@ namespace Wink
             }
         }
 
+        public bool Blocked
+        {
+            get
+            {
+                foreach (GameObject go in onTile.Children)
+                {
+                    if ((go as ITileObject).BlocksTile)
+                        return true;
+                }
+                return false;
+            }
+        }
+
+        public bool Passable
+        {
+            get { return passable; }
+            set { passable = value; }
+        }
+
         public Tile(string assetname = "", TileType tp = TileType.Background, int layer = 0, string id = "", float cameraSensitivity = 1) : base(assetname, layer, id, 0, cameraSensitivity)
         {
+            onTile = new GameObjectList();
+            onTile.Parent = this;
+
             type = tp;
+
             if (sprite != null)
             {
                 origin = new Vector2(0, sprite.Height - TileHeight);
@@ -55,23 +78,22 @@ namespace Wink
             base.GetObjectData(info, context);
         }
 
-        public void EmptyTile()
+        public void Remove(GameObject go)
         {
-            onTile = null;
+            onTile.Remove(go);
         }
 
         public bool IsEmpty()
         {
-            return onTile == null;
+            return onTile.Children.Count == 0;
         }
 
         public bool PutOnTile<T>(T tileObject) where T : GameObject, ITileObject
         {
-            if (onTile == null)
+            if (Passable && !Blocked)
             {
-                tileObject.Parent = this;
                 tileObject.Position = tileObject.PointInTile.ToVector2();
-                onTile = tileObject;
+                onTile.Add(tileObject);
                 return true;
             }
             return false;
@@ -80,23 +102,21 @@ namespace Wink
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
-
-            if (onTile != null)
-                onTile.Update(gameTime);
+            onTile.Update(gameTime);
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
         {
             if (type != TileType.Background)
                 base.Draw(gameTime, spriteBatch, camera);
-
-            if (onTile != null)
-                onTile.Draw(gameTime, spriteBatch, camera);
+            
+            onTile.Draw(gameTime, spriteBatch, camera);
         }
 
         public override void DrawDebug(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
         {
-            if (onTile != null) onTile.DrawDebug(gameTime, spriteBatch, camera);
+            onTile.DrawDebug(gameTime, spriteBatch, camera);
+
             if (debugTags.ContainsKey("ExitConnectionPoint"))
             {
                 string[] coord = debugTags["ExitConnectionPoint"].Split(':')[1].Split(',');
@@ -108,13 +128,13 @@ namespace Wink
                 }
 
             }
+
             base.DrawDebug(gameTime, spriteBatch, camera);
         }
 
         public override void HandleInput(InputHelper inputHelper)
         {
-            if (onTile != null)
-                onTile.HandleInput(inputHelper);
+            onTile.HandleInput(inputHelper);
 
             if (TileType == TileType.Floor)
             {
@@ -133,34 +153,17 @@ namespace Wink
 
         public List<GameObject> FindAll(Func<GameObject, bool> del)
         {
-            List<GameObject> result = new List<GameObject>();
-            GameObject single = Find(del);
-            if (single != null)
-                result.Add(single);
-            return result;
+            return onTile.FindAll(del);
         }
 
         public GameObject Find(Func<GameObject, bool> del)
         {
-            if (onTile != null && del.Invoke(onTile))
-            {
-                return onTile;
-            }
-            else
-            {
-                return null;
-            }
+            return onTile.Find(del);
         }
 
         public TileType TileType
         {
             get { return type; }
-        }
-
-        public bool Passable
-        {
-            get { return passable; }
-            set { passable = value; }
         }
     }
 }

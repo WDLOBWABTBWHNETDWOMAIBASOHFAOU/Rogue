@@ -5,5 +5,6 @@ namespace Wink
     public interface ITileObject
     {
         Point PointInTile { get; }
+        bool BlocksTile { get; }
     }
 }

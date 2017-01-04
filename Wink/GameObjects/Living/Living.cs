@@ -15,7 +15,6 @@ namespace Wink
         private string dieSound;
 
         private Tile tile;
-
         public Tile Tile
         {
             get { return tile; }
@@ -24,6 +23,11 @@ namespace Wink
         public virtual Point PointInTile
         {
             get { return new Point(Tile.TileWidth / 2, Tile.TileHeight); }
+        }
+
+        public virtual bool BlocksTile
+        {
+            get { return true; }
         }
 
         public Living(int layer = 0, string id = "", float scale = 1.0f) : base(layer, id, scale)
@@ -106,13 +110,12 @@ namespace Wink
         
         public void MoveTo(Tile t)
         {
-            if (t.PutOnTile(this))
-            {
-                if (tile != null)
-                    tile.EmptyTile();
+            if (tile != null)
+                tile.Remove(this);
 
+            if (t.PutOnTile(this))
                 tile = t;
-            }
+            
         }
     }
 }

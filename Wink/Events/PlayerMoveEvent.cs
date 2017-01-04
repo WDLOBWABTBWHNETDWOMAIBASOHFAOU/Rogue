@@ -36,7 +36,7 @@ namespace Wink
 
             bool theSame = dx == 0 && dy == 0;
             bool withinReach = dx <= Tile.TileWidth && dy <= Tile.TileHeight;
-            return withinReach && !theSame && tile.Passable && tile.IsEmpty();
+            return withinReach && !theSame && !tile.Blocked;
         }
     }
 }
