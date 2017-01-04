@@ -76,16 +76,14 @@ namespace Wink
                 }
             }
 
-            //Putting the item one layer above the inventory box
-            int inventoryLayer = layer + 1;
+            //TODO: Necessary? -> Putting the item one layer above the inventory box
             int itemLayer = layer + 2;
-
             Item testItem = new TestItem("empty:64:64:10:Pink", 1, itemLayer); 
 
             // ENEMY CODE (test)
             for(int i = 0; i < 2; i++)
             {
-                Enemy testEnemy = new Enemy(layer + 1);
+                Enemy testEnemy = new Enemy(0);
 
                 //First find all passable tiles then select one at random.
                 List<GameObject> tileCandidates = tf.FindAll(obj => obj is Tile && (obj as Tile).Passable);
@@ -110,15 +108,15 @@ namespace Wink
                 case '1':
                     return LoadStartTile();
                 case '#':
-                    return LoadWallTile(x, y/*, "spr_wall"*/);
+                    return LoadWallTile(x, y);
                 case '-':
-                    return LoadFloorTile(/*"spr_floor"*/);
+                    return LoadFloorTile();
                 case 'c':
-                    return LoadChestTile(x, y/*, "spr_ChestTile"*/);
+                    return LoadChestTile(x, y);
                 case 'D':
                     return LoadDoorTile();
                 case 'E':
-                    return LoadEndTile(x, y/*, "spr_end"*/);
+                    return LoadEndTile();
                 default:
                     return LoadWTFTile();
             }
@@ -164,11 +162,9 @@ namespace Wink
 
         private Tile LoadChestTile(int x, int y, string assetName = "empty:64:64:10:DarkGreen")
         {
-            Tile t = new Tile(assetName, TileType.Floor);
+            Tile t = LoadFloorTile();
             Container chest = new Container("empty:64:64:10:Brown");
-            chest.Position = new Vector2(x * Tile.TileWidth, y * Tile.TileHeight);
-            Add(chest);
-            t.Passable = false;
+            t.PutOnTile(chest);
             return t;
         }
 
@@ -179,13 +175,11 @@ namespace Wink
             return t;
         }
 
-        private Tile LoadEndTile(int x, int y, string assetName = "empty:64:64:10:DarkGreen")
+        private Tile LoadEndTile()
         {
-            Tile t = new Tile(assetName, TileType.Floor);
+            Tile t = LoadFloorTile();
             End end = new End(t, levelIndex, this);
-            end.Position = new Vector2(x * Tile.TileWidth, y * Tile.TileHeight);
-            Add(end);
-            t.Passable = false;
+            t.PutOnTile(end);
             return t;
         }
     }

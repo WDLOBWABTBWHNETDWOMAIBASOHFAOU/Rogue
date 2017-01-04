@@ -3,15 +3,27 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Xna.Framework;
 
 namespace Wink
 {
     [Serializable]
-    class End : SpriteGameObject
+    class End : SpriteGameObject, ITileObject
     {
         Tile ParentTile;
         int levelIndex;
         Level level;
+
+        public Point PointInTile
+        {
+            get { return new Point(0, 0); }
+        }
+
+        public bool BlocksTile
+        {
+            get { return false; }
+        }
+
         public End(Tile ParentTile, int levelIndex, Level level2, string asset = "empty:64:64:10:Yellow", int layer = 0, string id = "") : base(asset, layer, id)
         {
             this.ParentTile = ParentTile;

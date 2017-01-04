@@ -1,17 +1,24 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Wink
 {
-    public class Container:SpriteGameObject,IGUIGameObject
+    public class Container : SpriteGameObject, IGUIGameObject, ITileObject
     {
         private InventoryBox iBox;
         private Window iWindow;
+
+        public Point PointInTile
+        {
+            get { return new Point(0, 0); }
+        }
+
+        public bool BlocksTile
+        {
+            get { return true; }
+        }
+
         public Container(string asset, GameObjectGrid itemGrid = null, int layer=0, string id=""):base(asset,layer,id)
         {
             setInventory();
@@ -28,7 +35,6 @@ namespace Wink
 
                 PlayingGUI gui = GameWorld.Find("PlayingGui") as PlayingGUI;
                 gui.Add(iWindow);
-
             }
         }
 

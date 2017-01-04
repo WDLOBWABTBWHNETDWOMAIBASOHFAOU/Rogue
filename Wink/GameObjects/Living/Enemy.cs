@@ -8,11 +8,16 @@ namespace Wink
     [Serializable]
     public class Enemy : Living
     {
-        Bar<Enemy> hpBar;
+        private Bar<Enemy> hpBar;
 
         public Enemy(int layer, string id = "Enemy") : base(layer, id)
         {
             AddHPBar();
+        }
+
+        public override bool BlocksTile
+        {
+            get { return Health > 0; }
         }
 
         protected override void InitAnimation(string idleColor = "empty:64:64:10:Magenta")
@@ -43,7 +48,17 @@ namespace Wink
                     MoveTo(path[0]);
                     actionPoints--;
                 }
+                else
+                {
+                    Idle();
+                }
             }
+        }
+
+        private void Idle()
+        {
+            //TODO: implement idle behaviour (right now for if there is no path to the player, later for if it can't see the player.)
+            actionPoints--;
         }
 
         private void AddHPBar()

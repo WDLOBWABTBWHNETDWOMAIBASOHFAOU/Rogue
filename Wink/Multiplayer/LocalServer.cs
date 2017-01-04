@@ -20,7 +20,11 @@ namespace Wink
         public Level Level
         {
             get { return level; }
-            set { level = value; }
+            set
+            {
+                level = value;
+                InitLivingObjects();
+            }
         }
 
         public int LevelIndex
@@ -40,16 +44,19 @@ namespace Wink
             this.clients = clients;
             foreach (Client c in clients)
             {
-                //Player adds itself to level.
                 Player player = new Player(c.ClientName, Level.Layer);
                 player.MoveTo(Level.Find("startTile") as Tile);
             }
 
+            InitLivingObjects();
+            SendOutUpdatedLevel(true);
+        }
+
+        public void InitLivingObjects()
+        {
             livingObjects = Level.FindAll(obj => obj is Living).Cast<Living>().ToList();
             livingObjects.Sort((obj1, obj2) => obj1.Dexterity - obj2.Dexterity);
             livingObjects.ElementAt(turnIndex).isTurn = true;
-
-            SendOutUpdatedLevel(true);
         }
 
         protected override void ReallySend(Event e)

@@ -15,12 +15,9 @@ namespace Wink
         public override void OnClientReceive(LocalClient client)
         {
             client.Level = updatedLevel;
-            foreach (GameObject obj in updatedLevel.Children) 
+            foreach (GameObject obj in updatedLevel.FindAll(obj => obj is IGUIGameObject)) 
             {
-                if(obj is IGUIGameObject)
-                {
-                    (obj as IGUIGameObject).InitGUI();
-                }
+                (obj as IGUIGameObject).InitGUI();
             }
         }
 
