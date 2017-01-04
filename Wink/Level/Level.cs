@@ -49,9 +49,7 @@ namespace Wink
         {
             List<Room> rooms = GenerateRooms();
             List<Tuple<Room, Room>> hallwayPairs = GenerateHallwayPairs(rooms);
-            TileField tf = GenerateTiles(rooms, hallwayPairs);
-            Add(tf);
-            System.Diagnostics.Debug.Write(tf.ToString());
+            GenerateTiles(rooms, hallwayPairs);
         }
 
         public void LoadTiles(string path)
@@ -67,11 +65,11 @@ namespace Wink
             }
             //timelimit = int.Parse(textLines[textLines.Count - 1]);
             TileField tf = new TileField(textLines.Count, width, 0, "TileField");
-            
             Add(tf);
-            for (int x = 0; x < width; ++x)
+
+            for (int y = 0; y < textLines.Count; ++y) 
             {
-                for (int y = 0; y < textLines.Count; ++y)
+                for (int x = 0; x < width; ++x)
                 {
                     Tile t = LoadTile(textLines[y][x], x, y);
                     tf.Add(t, x, y);
@@ -118,7 +116,7 @@ namespace Wink
                 case 'c':
                     return LoadChestTile(x, y/*, "spr_ChestTile"*/);
                 case 'D':
-                    return LoadDoorTile(x, y/*, "spr_door"*/);
+                    return LoadDoorTile();
                 case 'E':
                     return LoadEndTile(x, y/*, "spr_end"*/);
                 default:
@@ -128,13 +126,22 @@ namespace Wink
 
         private Tile LoadWallTile(int x, int y, string assetName = "test-wall-sprite2@10x5", string id = "")
         {
-            Tile t = new Tile(assetName, TileType.Wall, 0, id);
-            t.Passable = false;
-            t.Layer = y;
-            return t;
+            TileField tf = this.Find("TileField") as TileField;
+            Tile aboveTile = tf[x, y - 1] as Tile;
+
+            Tile newTile;
+            if (aboveTile != null && aboveTile.TileType == TileType.Floor)
+            {
+                newTile = new Tile("*" + assetName, TileType.Wall, 0, id);
+            }
+            else
+            {
+                newTile = new Tile(assetName, TileType.Wall, 0, id);
+            }
+            return newTile;
         }
 
-        private Tile LoadFloorTile(string id = "", string assetName = "teal_tile")
+        private Tile LoadFloorTile(string id = "", string assetName = "spr_floor")
         {
             Tile t = new Tile(assetName, TileType.Floor, 0, id);
             t.Passable = true;
@@ -143,18 +150,15 @@ namespace Wink
 
         private Tile LoadStartTile(string assetName = "empty:64:64:10:Red")
         {
-            Tile t = new Tile(assetName, TileType.Floor, 0, "startTile");
-            t.Passable = true;
-            return t;
+            return LoadFloorTile("startTile", assetName);
         }
 
-        private Tile LoadDoorTile(int x, int y, string assetName = "empty:64:64:10:DarkGreen")
+        private Tile LoadDoorTile(string assetName = "spr_floor")
         {
-            Tile t = new Tile(assetName, TileType.Floor);
+            Tile t = LoadFloorTile("", assetName);
+
             Door door = new Door(t);
-            door.Position = new Vector2(x * Tile.TileWidth, y * Tile.TileHeight);
-            Add(door);
-            t.Passable = false;
+            t.PutOnTile(door);
             return t;
         }
 

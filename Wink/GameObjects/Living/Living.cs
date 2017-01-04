@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 namespace Wink
 {
     [Serializable]
-    public abstract partial class Living : AnimatedGameObject
+    public abstract partial class Living : AnimatedGameObject, ITileObject
     {
         private int timeleft;
         private bool startTimer;

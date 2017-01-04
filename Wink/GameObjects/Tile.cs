@@ -65,13 +65,13 @@ namespace Wink
             return onTile == null;
         }
 
-        public bool PutOnTile(Living living)
+        public bool PutOnTile<T>(T tileObject) where T : GameObject, ITileObject
         {
             if (onTile == null)
             {
-                onTile = living;
-                onTile.Parent = this;
-                onTile.Position = living.PointInTile.ToVector2();
+                tileObject.Parent = this;
+                tileObject.Position = tileObject.PointInTile.ToVector2();
+                onTile = tileObject;
                 return true;
             }
             return false;

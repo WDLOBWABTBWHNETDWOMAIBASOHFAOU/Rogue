@@ -1,44 +1,48 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.Xna.Framework;
 
 namespace Wink
 {
     [Serializable]
-    class Door:SpriteGameObject
+    class Door : SpriteGameObject, ITileObject
     {
-        Tile ParentTile;
-        public Door(Tile ParentTile,string asset = "empty:64:64:10:DarkGray", int layer = 0, string id = "") : base(asset, layer, id)
+        private Tile parentTile;
+        private bool open;
+
+        public Door(Tile pTile, string assetName = "spr_door@2x1", int layer = 0, string id = "") : base(assetName, layer, id)
         {
-            this.ParentTile = ParentTile;
+            parentTile = pTile;
+            visible = true;
+        }
+
+        public Point PointInTile
+        {
+            get { return new Point(0, -32 - 18); }
         }
 
         public override void HandleInput(InputHelper inputHelper)
         {
-            if (visible)
+            if (!open)
             {
                 Action onClick = () =>
                 {
                     // correct player when in multiplayer?
                     Player player = GameWorld.Find(p => p is Player) as Player;
 
-                    int dx = (int)Math.Abs(player.Position.X - player.Origin.X - Position.X);
-                    int dy = (int)Math.Abs(player.Position.Y - player.Origin.Y - Position.Y);
+                    int dx = (int)Math.Abs(player.Tile.Position.X - parentTile.Position.X);
+                    int dy = (int)Math.Abs(player.Tile.Position.Y - parentTile.Position.Y);
 
                     if (dx <= Tile.TileWidth && dy <= Tile.TileHeight)
                     {
-                        this.Visible = false;
-                        ParentTile.Passable = true;
+                        SpriteSheetIndex = 1;
+                        open = true;
                     }
-
                 };
-                inputHelper.IfMouseLeftButtonPressedOn(this, onClick);
-                base.HandleInput(inputHelper);
 
+                inputHelper.IfMouseLeftButtonPressedOn(this, onClick);
+
+                base.HandleInput(inputHelper);
             }
         }
-
     }
 }

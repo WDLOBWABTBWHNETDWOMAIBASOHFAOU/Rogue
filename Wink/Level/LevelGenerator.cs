@@ -283,12 +283,12 @@ namespace Wink
             
             //Make the tilefield and fill with default Tiles.
             TileField tf = new TileField(highestY + 1, highestX + 1, 0, "TileField");
+            Add(tf);
             for (int x = 0; x < tf.Columns; x++)
             {
                 for (int y = 0; y < tf.Rows; y++)
                 {
-                    //tf.Add(new Tile(), x, y);
-                    tf.Add(LoadWallTile(x, y), x, y);
+                    tf.Add(new Tile(), x, y);
                 }
             }
 
@@ -365,28 +365,26 @@ namespace Wink
                     tf.Add(newTile, tile.TilePosition.X, tile.TilePosition.Y);
                 }
             }
-            
+
             for (int x = 0; x < tf.Columns; x++)
             {
                 for (int y = 0; y < tf.Rows; y++)
                 {
                     Tile currentTile = tf[x, y] as Tile;
                     Tile aboveTile = tf[x, y - 1] as Tile;
-                    if (currentTile != null && aboveTile != null &&
-                        currentTile.TileType == TileType.Wall && aboveTile.TileType == TileType.Floor)
+                    if (currentTile != null && aboveTile != null && currentTile.TileType == TileType.Background)
                     {
-                        Tile newTile = LoadWallTile(x, y, "*test-wall-sprite2@10x5");
+                        Tile newTile = LoadWallTile(x, y);
                         newTile.AddDebugTags(currentTile.DebugTags);
                         tf.Add(newTile, x, y);
                     }
                 }
             }
-            
+
             tf.Add(LoadStartTile(), rooms[0].Location.ToRoundedPoint().X + 1, rooms[0].Location.ToRoundedPoint().Y + 1);
 
             //Must be last statement, executed after the Tilefield is done.
             tf.InitSpriteSheetIndexation();
-            //tf.InitTileAlpha();
             return tf;
         }
 

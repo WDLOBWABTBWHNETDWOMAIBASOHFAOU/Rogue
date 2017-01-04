@@ -111,14 +111,18 @@ public class AssetManager
 
         spriteBatch.Begin(SpriteSortMode.Immediate, bs);
         int rowHeight = asset.Height / rows;
-        for (int i = 0; i < rows; i++)
+        int columnWidth = asset.Width / columns;
+        for (int r = 0; r < rows; r++)
         {
-            spriteBatch.Draw(GetSingleColorPixel(new Color(128, 128, 128, 128)), new Rectangle(0, i * rowHeight, asset.Width, rowHeight - Wink.Tile.TileHeight - 4), Color.White);
+            for (int c = 0; c < columns; c++)
+            {
+                spriteBatch.Draw(GetSingleColorPixel(new Color(0, 0, 0, 160)), new Rectangle(c * columnWidth, r * rowHeight + 4, columnWidth - 4, rowHeight - 4 - Wink.Tile.TileHeight), Color.White);
+            }
         }
         spriteBatch.End();
         
         graphicsDevice.SetRenderTarget(null);
-        //maskRenderTarget.SaveAsPng(File.Create("transparent_texture.png"), asset.Width, asset.Height);
+        maskRenderTarget.SaveAsPng(File.Create("transparent_texture.png"), asset.Width, asset.Height);
         return maskRenderTarget;
     }
 
