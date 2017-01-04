@@ -34,6 +34,11 @@ namespace Wink
             get { return gameObjects.Find("player_" + ClientName) as Player; }
         }
 
+        public Camera Camera
+        {
+            get { return newCamera; }
+        }
+
         public LocalClient(Server server) : base(server)
         {
             frameCounter = new FrameCounter();

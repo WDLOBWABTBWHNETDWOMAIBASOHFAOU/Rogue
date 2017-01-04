@@ -37,7 +37,6 @@ namespace Wink
 
                     int dx = (int)Math.Abs(player.Tile.Position.X - parentTile.Position.X);
                     int dy = (int)Math.Abs(player.Tile.Position.Y - parentTile.Position.Y);
-
                     if (dx <= Tile.TileWidth && dy <= Tile.TileHeight)
                     {
                         SpriteSheetIndex = 1;

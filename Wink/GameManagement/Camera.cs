@@ -3,9 +3,8 @@ using Microsoft.Xna.Framework.Input;
 
 public class Camera : GameObject
 {
-    public Camera()
+    public Camera() : base(0, "camera")
     {
-        id = "camera";
     }
     
     private const int cameraMoveSpeed = 6;
@@ -24,6 +23,11 @@ public class Camera : GameObject
 
         if (inputHelper.IsKeyDown(Keys.D))
             Position += new Vector2(realSpeed, 0);
+    }
+
+    public void CenterOn(GameObject go)
+    {
+        Position = go.GlobalPosition - BoundingBox.Size.ToVector2() / 2;
     }
 
     public Vector2 CalculateScreenPosition(SpriteGameObject go)
