@@ -11,11 +11,26 @@ namespace Wink
     public class ItemSlot : SpriteGameObject
     {
         Item slotItem;
-        public Item SlotItem { get { return slotItem; } set { slotItem = value; } }
+        int stacksize;
 
         public ItemSlot(string assetName = "empty:65:65:10:Gray", int layer = 0, string id = "", int sheetIndex = 0, float cameraSensitivity = 0, float scale = 1) : base(assetName, layer, id, sheetIndex, cameraSensitivity, scale)
         {
             slotItem = null;
+        }
+
+        public void ChangeItem(Item newItem)
+        {
+            if(newItem != null)
+            {
+                slotItem = newItem;
+                //slotItem.Parent = this;
+                stacksize = slotItem.getStackSize;
+            }
+            else
+            {
+                slotItem = null;
+                stacksize = 0;
+            }            
         }
 
         public override void Update(GameTime gameTime)

@@ -16,24 +16,30 @@ namespace Wink
 
         public void AddTo(Item newItem, ItemSlot target)
         {
-            target.SlotItem = oldItem;
-            oldItem = newItem;
-
-            //    if (target != null)
-            //    {
-            //        Vector2 targetPosition = newItem.Position / target.CellHeight;
-            //        if (oldItem == null)
-            //        {
-            //            target.Remove((int)targetPosition.X, (int)targetPosition.Y);
-            //        }
-            //        else
-            //        {
-            //            target.Add(oldItem, (int)targetPosition.X, (int)targetPosition.Y);
-            //        }
-            //    }
-
-            //    Add(newItem, 0, 0);
-            //    oldItem = newItem;
+            // check if 2 actual items are being swapt, else pick up or drop item.
+            if(oldItem!=null && newItem != null)
+            {
+                //check if the 2 items are the same and if stacksize is big enough to stack, else swap items.
+                if(oldItem.Id == newItem.Id && oldItem.getStackSize >= oldItem.stackCount + newItem.stackCount)
+                {
+                    // expand code so 2 partial filled stacks which combined are larger than the allowed stack size
+                    // to create 1 fully filled stack and 1 "leftover stack" 
+                    oldItem.stackCount += newItem.stackCount;
+                    target.ChangeItem(oldItem);
+                    oldItem = null;
+                    return;
+                }
+                else
+                {
+                    target.ChangeItem(oldItem);
+                    oldItem = newItem;
+                }
+            }
+            else
+            {
+                target.ChangeItem(oldItem);
+                oldItem = newItem;
+            }
         }
 
         public override void Update(GameTime gameTime)
@@ -42,16 +48,8 @@ namespace Wink
             if (oldItem != null)
             {
                 oldItem.Update(gameTime);
-                oldItem.Position = GlobalPosition;
-            }
-            //// if (Get(0, 0) is EmptyItem)
-            //if (Get(0, 0) is EmptyItem)
-            //// it's not shorter but it is more consistent.
-            //{
-            //    grid[0, 0] = null;
-            //    oldItem = null;
-            //}
-            
+                oldItem.Position = this.GlobalPosition;
+            }            
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)

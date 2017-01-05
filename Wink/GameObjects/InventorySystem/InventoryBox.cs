@@ -33,7 +33,12 @@ namespace Wink
                 }
             }
             ItemSlot testItem = itemGrid.Get(0, 0) as ItemSlot;
-            testItem.SlotItem = new TestItem();
+            testItem.ChangeItem( new TestItem());
+            ItemSlot testItem2 = itemGrid.Get(0, 1) as ItemSlot;
+            testItem2.ChangeItem(new TestItem());
+
+            ItemSlot testItem3 = itemGrid.Get(1, 1) as ItemSlot;
+            testItem3.ChangeItem(new TestItem("empty:65:65:10:Blue"));
 
             Add(itemGrid);
             
