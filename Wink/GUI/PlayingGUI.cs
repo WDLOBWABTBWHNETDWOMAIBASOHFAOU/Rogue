@@ -58,9 +58,9 @@ namespace Wink
             Add(apBar);
 
             GameObjectGrid items = player.ItemGrid;
+            GameObjectList equipment = player.EquipmentSlots;
             //GameObjectGrid items = new GameObjectGrid(3,6);
-            inventory = new Window(items.Columns * Tile.TileWidth, items.Rows * Tile.TileHeight);
-            inventory.Add(new InventoryBox(items, 0, ""));
+            inventory = new PlayerInventoryAndEquipment(items,equipment);
             inventory.Position = new Vector2(screenWidth-inventory.Width,300);
             inventory.Visible = false;
             Add(inventory);

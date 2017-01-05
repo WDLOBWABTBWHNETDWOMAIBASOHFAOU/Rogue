@@ -16,7 +16,7 @@ namespace Wink
             // item id is needed to chech if they are the same, for now assetname to test.
             // if item are proceduraly generated, there should be an algoritim that generates a id that is the same if stats (and sprite) are the same.
             this.id = assetName;
-
+            stackCount = 1;
             this.stackSize = stackSize;
             cameraSensitivity = 0;    
         }

@@ -18,11 +18,20 @@ namespace Wink
             get { return itemGrid; }
         }
 
+        private readonly GameObjectList equipmentSlots;
+        public GameObjectList EquipmentSlots
+        {
+            get { return equipmentSlots; }
+        }
+
         public Player(string clientName, int layer) : base(layer, "player_" + clientName)
         {
             //Inventory
             mouseSlot = new MouseSlot(layer + 11, "mouseSlot");
             itemGrid = new GameObjectGrid(3, 6, 0, "");
+            EquipmentSlot weapon = new EquipmentSlot();
+            equipmentSlots = new GameObjectList();
+            equipmentSlots.Add(weapon);
 
             SetStats(5, 5, 5, 5, 55);
 

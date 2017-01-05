@@ -19,26 +19,46 @@ namespace Wink
             // check if 2 actual items are being swapt, else pick up or drop item.
             if(oldItem!=null && newItem != null)
             {
-                //check if the 2 items are the same and if stacksize is big enough to stack, else swap items.
-                if(oldItem.Id == newItem.Id && oldItem.getStackSize >= oldItem.stackCount + newItem.stackCount)
+                //check if the 2 items are the same else swap items.
+                if(oldItem.Id == newItem.Id )
                 {
-                    // expand code so 2 partial filled stacks which combined are larger than the allowed stack size
-                    // to create 1 fully filled stack and 1 "leftover stack" 
-                    oldItem.stackCount += newItem.stackCount;
-                    target.ChangeItem(oldItem);
-                    oldItem = null;
-                    return;
+                    // handle item stacking. if total is greater than stacksize creates 1 full stack and 1 "leftover stack" in MouseSlot
+                    if (oldItem.getStackSize >= oldItem.stackCount + newItem.stackCount)
+                    {
+                        oldItem.stackCount += newItem.stackCount;
+                        target.ChangeItem(oldItem);
+                        oldItem = null;
+                        return;
+                    }
+                    else if (newItem.stackCount == newItem.getStackSize || oldItem.stackCount == oldItem.getStackSize)
+                    {
+                        target.ChangeItem(oldItem);
+                        oldItem = newItem;
+                        return;
+                    }
+                    else
+                    {
+                        int dif = (oldItem.stackCount + newItem.stackCount) - oldItem.getStackSize;
+                        oldItem.stackCount = oldItem.getStackSize; // full stack
+                        newItem.stackCount = dif; // leftover stack
+
+                        target.ChangeItem(oldItem);
+                        oldItem = newItem;
+                        return;
+                    }
                 }
                 else
                 {
                     target.ChangeItem(oldItem);
                     oldItem = newItem;
+                    return;
                 }
             }
             else
             {
                 target.ChangeItem(oldItem);
                 oldItem = newItem;
+                return;
             }
         }
 

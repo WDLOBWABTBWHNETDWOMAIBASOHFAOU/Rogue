@@ -32,13 +32,16 @@ namespace Wink
                     itemGrid.Add(new ItemSlot(), x, y);
                 }
             }
+
+            // test items REMOVE BEFORE RELEASE!!!
             ItemSlot testItem = itemGrid.Get(0, 0) as ItemSlot;
             testItem.ChangeItem( new TestItem());
             ItemSlot testItem2 = itemGrid.Get(0, 1) as ItemSlot;
             testItem2.ChangeItem(new TestItem());
 
             ItemSlot testItem3 = itemGrid.Get(1, 1) as ItemSlot;
-            testItem3.ChangeItem(new TestItem("empty:65:65:10:Blue"));
+            testItem3.ChangeItem(new Equipment("empty:65:65:10:Blue"));
+            // end test items
 
             Add(itemGrid);
             
