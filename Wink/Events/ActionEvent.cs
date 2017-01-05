@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Runtime.Serialization;
 
 namespace Wink
 {
@@ -17,6 +14,17 @@ namespace Wink
         public ActionEvent(Player player) : base()
         {
             this.player = player;
+        }
+
+        public ActionEvent(SerializationInfo info, StreamingContext context)
+        {
+            player = Server.GetGameObjectByGUID(Guid.Parse(info.GetString("playerGUID"))) as Player;
+        }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            //This event can only be sent from client to server, therefore GUID based serialization is used.
+            info.AddValue("playerGUID", player.GUID.ToString());
         }
 
         public sealed override void OnServerReceive(LocalServer server)

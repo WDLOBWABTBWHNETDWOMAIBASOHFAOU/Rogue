@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
+using System.Runtime.Serialization;
 
 namespace Wink
 {
@@ -11,6 +12,18 @@ namespace Wink
         public PlayerMoveEvent(Player player, Tile tile) : base(player)
         {
             this.tile = tile;
+        }
+
+        public PlayerMoveEvent(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+            tile = Server.GetGameObjectByGUID(Guid.Parse(info.GetString("tileGUID"))) as Tile;
+        }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            //This event can only be sent from client to server, therefore ID based serialization is used.
+            info.AddValue("tileGUID", tile.GUID.ToString());
+            base.GetObjectData(info, context);
         }
 
         protected override int Cost

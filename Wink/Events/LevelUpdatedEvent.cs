@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Serialization;
 
 namespace Wink
 {
@@ -10,6 +11,17 @@ namespace Wink
         public LevelUpdatedEvent(Level level) : base()
         {
             updatedLevel = level;
+        }
+
+        public LevelUpdatedEvent(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+            updatedLevel = info.GetValue("updatedLevel", typeof(Level)) as Level;
+        }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("updatedLevel", updatedLevel);
+            base.GetObjectData(info, context);
         }
 
         public override void OnClientReceive(LocalClient client)

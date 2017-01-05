@@ -14,6 +14,22 @@ namespace Wink
         {
         }
 
+        public PickupEvent(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+            item = Server.GetGameObjectByGUID(Guid.Parse(info.GetString("itemGUID"))) as Item;
+            player = Server.GetGameObjectByGUID(Guid.Parse(info.GetString("playerGUID"))) as Player;
+            target = Server.GetGameObjectByGUID(Guid.Parse(info.GetString("targetGUID"))) as GameObjectGrid;
+        }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            //This event can only be sent from client to server, therefore ID based serialization is used.
+            info.AddValue("itemGUID", item.GUID.ToString());
+            info.AddValue("playerGUID", player.GUID.ToString());
+            info.AddValue("targetGUID", target.GUID.ToString());
+            base.GetObjectData(info, context);
+        }
+
         public override void OnClientReceive(LocalClient client)
         {
             throw new NotImplementedException();

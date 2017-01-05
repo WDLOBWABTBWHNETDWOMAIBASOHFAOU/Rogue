@@ -1,10 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using System.Collections.Generic;
-using System.Net;
-using System.Net.Sockets;
-using System.Linq;
-using System;
 using System.IO;
+using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Wink
@@ -62,7 +59,7 @@ namespace Wink
         }
 
         protected override void ReallySend(Event e)
-        {/*
+        {
             BinaryFormatter binaryFormatter = new BinaryFormatter();
             using (MemoryStream ms = new MemoryStream())
             {
@@ -70,7 +67,7 @@ namespace Wink
                 ms.Seek(0, SeekOrigin.Begin);
                 e = binaryFormatter.Deserialize(ms) as Event;
             }
-            */
+            
             if (e.Validate(Level))
             {
                 e.OnServerReceive(this);

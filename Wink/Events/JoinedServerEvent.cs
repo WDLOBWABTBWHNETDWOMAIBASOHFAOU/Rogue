@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Serialization;
 
 namespace Wink
 {
@@ -6,6 +7,10 @@ namespace Wink
     class JoinedServerEvent : LevelUpdatedEvent
     {
         public JoinedServerEvent(Level level) : base(level)
+        {
+        }
+
+        public JoinedServerEvent(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
 

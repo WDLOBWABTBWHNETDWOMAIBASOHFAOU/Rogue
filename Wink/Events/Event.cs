@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Runtime.Serialization;
 
 namespace Wink
 {
     [Serializable]
-    public abstract class Event
+    public abstract class Event : ISerializable
     {
         public class InvalidEventException : Exception { }
 
@@ -12,6 +13,19 @@ namespace Wink
 
         public Event()
         {
+        }
+
+        public Event(SerializationInfo info, StreamingContext context)
+        {/*
+            string sender = info.GetString("Sender");
+            if (sender == "server")
+            {
+                //Sender =     
+            }
+            else
+            {
+                //Sender = 
+            }*/
         }
 
         public abstract void OnClientReceive(LocalClient client);
@@ -25,5 +39,13 @@ namespace Wink
         /// <param name="level"></param>
         /// <returns>A bool indicating whether or not this event is valid.</returns>
         public abstract bool Validate(Level level);
+
+        public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            if (Sender is Server)
+                info.AddValue("Sender", "server");
+            else if (Sender is Client)
+                info.AddValue("Sender", (Sender as Client).ClientName);
+        }
     }
 }

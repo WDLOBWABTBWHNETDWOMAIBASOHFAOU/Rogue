@@ -1,17 +1,32 @@
 ﻿using System;
+using System.Runtime.Serialization;
 
 namespace Wink
 {
     [Serializable]
     public class AttackEvent : ActionEvent
     {
-        public Player Attacker { get; set; }
+        public Living Attacker
+        {
+            get { return player; }
+        }
         public Living Defender { get; set; }
 
         public AttackEvent(Player attacker, Living defender) : base(attacker)
         {
-            Attacker = attacker;
             Defender = defender;
+        }
+
+        public AttackEvent(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+            Defender = Server.GetGameObjectByGUID(Guid.Parse(info.GetString("DefenderGUID"))) as Living;
+        }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            //This event can only be sent from client to server, therefore ID based serialization is used.
+            info.AddValue("DefenderGUID", Defender.GUID.ToString());
+            base.GetObjectData(info, context);
         }
 
         protected override int Cost
@@ -38,5 +53,7 @@ namespace Wink
             bool withinReach = dx <= Tile.TileWidth && dy <= Tile.TileHeight;
             return withinReach;
         }
+
+
     }
 }

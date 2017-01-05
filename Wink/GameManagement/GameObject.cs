@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 [Serializable]
@@ -13,6 +12,13 @@ public abstract class GameObject : IGameLoopObject, ISerializable
     protected string id;
     protected bool visible;
 
+    protected Guid guid;
+
+    public Guid GUID
+    {
+        get { return guid; }
+    }
+
     public GameObject(int layer = 0, string id = "")
     {
         this.layer = layer;
@@ -20,6 +26,8 @@ public abstract class GameObject : IGameLoopObject, ISerializable
         position = Vector2.Zero;
         velocity = Vector2.Zero; 
         visible = true;
+
+        guid = Guid.NewGuid();
     }
 
     /// <summary>
@@ -33,6 +41,7 @@ public abstract class GameObject : IGameLoopObject, ISerializable
         layer = info.GetInt32("layer");
         id = info.GetString("id");
         visible = info.GetBoolean("visible");
+        guid = (Guid)info.GetValue("guid", typeof(Guid));
     }
 
     public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
@@ -45,6 +54,7 @@ public abstract class GameObject : IGameLoopObject, ISerializable
         info.AddValue("layer", layer);
         info.AddValue("id", id);
         info.AddValue("visible", visible);
+        info.AddValue("guid", guid);
     }
 
     public virtual void HandleInput(InputHelper inputHelper)

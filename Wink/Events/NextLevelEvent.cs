@@ -1,9 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
+
 namespace Wink
 {
+    [Serializable]
     class NextLevelEvent : Event
     {
+        public NextLevelEvent()
+        {
+        }
+
+        public NextLevelEvent(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+        }
+
         public override void OnClientReceive(LocalClient client)
         {
             throw new NotImplementedException();
