@@ -10,9 +10,12 @@ namespace Wink
     {
         int armorValue;
         public int ArmorValue { get { return armorValue; } }
-        public BodyEquipment(int armorValue, string assetName, int stackSize = 1, int layer = 0, string id = "") : base(assetName, stackSize, layer, id)
+        int strRequirement;
+        public int StrRequirement { get { return strRequirement; } }
+        public BodyEquipment(int armorValue, int strRequirement, string assetName, int stackSize = 1, int layer = 0, string id = "") : base(assetName, stackSize, layer, id)
         {
             this.armorValue = armorValue;
+            this.strRequirement = strRequirement;
         }
     }
 }
