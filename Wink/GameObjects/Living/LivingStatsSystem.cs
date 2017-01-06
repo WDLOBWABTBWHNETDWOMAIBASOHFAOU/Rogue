@@ -14,7 +14,6 @@
 
         public int Health { get { return healthPoints; } set { healthPoints = value; } }
         public int Mana { get { return manaPoints; } }
-        //protected IList<Equipment> EquipedItems;
 
 
         protected int Ringbonus(RingType ringType, int baseValue)
@@ -56,7 +55,6 @@
             this.strength = strength;
             this.dexterity = dexterity;
             this.intelligence = intelligence;
-            //EquipedItems = new List<Equipment>();
             this.baseAttack = baseAttack;
             actionPoints = MaxActionPoints;
 
@@ -135,8 +133,18 @@
             if (weapon.SlotItem !=null)
             {
                 WeaponEquipment weaponItem = weapon.SlotItem as WeaponEquipment;
-                attack = weaponItem.BaseDamage;
-                mod = weaponItem.ScalingFactor;
+
+                if(weaponItem.StrRequirement > strength)
+                {
+                    int dif = weaponItem.StrRequirement - strength;
+                    double penaltyMod = 0.4; // needs balancing, possibly dependent on weapon
+                    attack = (int)(weaponItem.BaseDamage - weaponItem.BaseDamage*(dif * penaltyMod));
+                }
+                else
+                {
+                    attack = weaponItem.BaseDamage;
+                    mod = weaponItem.ScalingFactor;
+                }
             }            
             int attackValue = (int)CalculateValue(attack, strength,mod);     
 
@@ -149,13 +157,26 @@
         /// <returns></returns>
         protected int ArmorValue()
         {
-            int armorValue=0;
+            int armorValue=1;
             if (body.SlotItem != null)
             {
                 BodyEquipment ArmorItem = body.SlotItem as BodyEquipment;
-                armorValue = ArmorItem.ArmorValue;
+                if(ArmorItem.StrRequirement > strength)
+                {
+                    int dif = ArmorItem.StrRequirement - strength;
+                    double penaltyMod = 0.2;// needs balancing, possibly dependent on armor
+                    armorValue = (int)(ArmorItem.ArmorValue - ArmorItem.ArmorValue*(dif * penaltyMod));
+                }
+                else
+                {
+                    armorValue = ArmorItem.ArmorValue;
+                }
             }
 
+            if(armorValue <= 0)
+            {
+                armorValue = 1;
+            }
             return armorValue;
         }
     }
