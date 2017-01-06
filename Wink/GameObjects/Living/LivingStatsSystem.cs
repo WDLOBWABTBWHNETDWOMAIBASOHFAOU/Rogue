@@ -4,7 +4,7 @@
     {
         public const int MaxActionPoints = 4;
 
-        protected int manaPoints, healthPoints, actionPoints, baseAttack, strength, dexterity, intelligence, creatureLevel, reach;
+        protected int manaPoints, healthPoints, actionPoints, baseAttack, baseArmor, strength, dexterity, intelligence, creatureLevel, reach;
 
         public int Dexterity { get { return dexterity; } }
         public int ActionPoints { get { return actionPoints; } set { actionPoints = value; } }
@@ -30,13 +30,14 @@
         /// <param name="dexterity"></param>
         /// <param name="intelligence"></param>
         /// <param name="baseAttack">unarmed attackValue</param>
-        protected void SetStats(int creatureLevel = 1, int strength = 2, int dexterity = 2, int intelligence = 2, int baseAttack = 40)
+        protected void SetStats(int creatureLevel = 1, int strength = 2, int dexterity = 2, int intelligence = 2, int baseAttack = 40, int baseArmor = 5)
         {
             this.creatureLevel = creatureLevel;
             this.strength = strength;
             this.dexterity = dexterity;
             this.intelligence = intelligence;
             this.baseAttack = baseAttack;
+            this.baseArmor = baseArmor;
             actionPoints = MaxActionPoints;
             reach = 1;
             healthPoints = MaxHP();
@@ -151,7 +152,7 @@
         /// <returns></returns>
         protected int ArmorValue()
         {
-            int armorValue=1;
+            int armorValue=baseArmor;
             if (body.SlotItem != null)
             {
                 BodyEquipment ArmorItem = body.SlotItem as BodyEquipment;
@@ -159,11 +160,11 @@
                 {
                     int dif = ArmorItem.StrRequirement - strength;
                     double penaltyMod = 0.2;// needs balancing, possibly dependent on armor
-                    armorValue = (int)(ArmorItem.ArmorValue - ArmorItem.ArmorValue*(dif * penaltyMod));
+                    armorValue = baseArmor + (int)(ArmorItem.ArmorValue - ArmorItem.ArmorValue*(dif * penaltyMod));
                 }
                 else
                 {
-                    armorValue = ArmorItem.ArmorValue;
+                    armorValue = baseArmor + ArmorItem.ArmorValue;
                 }
             }
 

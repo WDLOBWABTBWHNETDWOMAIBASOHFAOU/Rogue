@@ -40,7 +40,7 @@ namespace Wink
             testItem2.ChangeItem(new TestItem());
 
             ItemSlot testItem3 = itemGrid.Get(1, 1) as ItemSlot;
-            testItem3.ChangeItem(new WeaponEquipment(80,1.3,4,2,"empty:65:65:10:Aqua"));
+            testItem3.ChangeItem(new WeaponEquipment(80,1.3,2,2,"empty:65:65:10:Aqua"));
 
             ItemSlot testItem4 = itemGrid.Get(2, 1) as ItemSlot;
             testItem4.ChangeItem(new BodyEquipment(20,2, "empty:65:65:10:Brown"));
