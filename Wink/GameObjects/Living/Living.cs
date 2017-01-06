@@ -27,6 +27,8 @@ namespace Wink
         }
         EquipmentSlot weapon;
         EquipmentSlot body;
+        EquipmentSlot ring1;
+        EquipmentSlot ring2;
 
         public Living(int layer = 0, string id = "", float scale = 1.0f) : base(layer, id, scale)
         {
@@ -35,11 +37,15 @@ namespace Wink
             timeleft = 1000;
 
             itemGrid = new GameObjectGrid(3, 6, 0, "");
+            ring1 = new EquipmentSlot(typeof(RingEquipment), id: "ringSlot");
+            ring2 = new EquipmentSlot(typeof(RingEquipment), id: "ringSlot");
             weapon = new EquipmentSlot(typeof(WeaponEquipment), id: "weaponSlot");
             body = new EquipmentSlot(typeof(BodyEquipment), id: "bodySlot");
             equipmentSlots = new GameObjectList();
             equipmentSlots.Add(weapon);
             equipmentSlots.Add(body);
+            equipmentSlots.Add(ring1);
+            equipmentSlots.Add(ring2);
         }
 
         public Living(SerializationInfo info, StreamingContext context) : base(info, context)
