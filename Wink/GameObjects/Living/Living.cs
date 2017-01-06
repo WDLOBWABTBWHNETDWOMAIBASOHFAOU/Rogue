@@ -37,8 +37,8 @@ namespace Wink
             timeleft = 1000;
 
             itemGrid = new GameObjectGrid(3, 6, 0, "");
-            ring1 = new EquipmentSlot(typeof(RingEquipment), id: "ringSlot");
-            ring2 = new EquipmentSlot(typeof(RingEquipment), id: "ringSlot");
+            ring1 = new EquipmentSlot(typeof(RingEquipment), id: "ringSlot1");
+            ring2 = new EquipmentSlot(typeof(RingEquipment), id: "ringSlot2");
             weapon = new EquipmentSlot(typeof(WeaponEquipment), id: "weaponSlot");
             body = new EquipmentSlot(typeof(BodyEquipment), id: "bodySlot");
             equipmentSlots = new GameObjectList();

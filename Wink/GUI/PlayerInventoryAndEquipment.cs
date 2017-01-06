@@ -17,7 +17,11 @@ namespace Wink
             Add(inventory);
 
             // set position of individual equipment slots
+            equipmentslots.Find("weaponSlot").Position = Vector2.Zero;
             equipmentslots.Find("bodySlot").Position = new Vector2(itemGrid.CellWidth, 0);
+            equipmentslots.Find("ringSlot1").Position = new Vector2(itemGrid.CellWidth*3, 0);
+            equipmentslots.Find("ringSlot2").Position = new Vector2(itemGrid.CellWidth*4, 0);
+
             Add(equipmentslots);
         }
     }

@@ -11,7 +11,6 @@
 
         public int Health { get { return healthPoints; } set { healthPoints = value; } }
         public int Mana { get { return manaPoints; } }
-        //protected IList<Equipment> EquipedItems;
 
 
         public int Intelligence
@@ -37,7 +36,6 @@
             this.strength = strength;
             this.dexterity = dexterity;
             this.intelligence = intelligence;
-            //EquipedItems = new List<Equipment>();
             this.baseAttack = baseAttack;
             actionPoints = MaxActionPoints;
 
