@@ -35,20 +35,10 @@ namespace Wink
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
-           //position = parent.Position;
         }
 
         public override void HandleInput(InputHelper inputHelper)
         {
-            //Action onClick = () =>
-            //{
-            //    PickupEvent PuE = new PickupEvent();
-            //    PuE.player = (Root as GameObjectList).Find("player_" + Environment.MachineName) as Player;
-            //    PuE.item = this;
-            //    PuE.target = PuE.item.Parent as GameObjectGrid;
-            //    Server.Send(PuE);
-            //};
-            //inputHelper.IfMouseLeftButtonPressedOn(this, onClick);
 
             base.HandleInput(inputHelper);
         }

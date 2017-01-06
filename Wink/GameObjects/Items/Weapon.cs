@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Wink
 {
-    class Equipment:Item
+    public class Weapon:Item
     {
-        public Equipment(string assetName, int stackSize = 1, int layer = 0, string id = "") : base(assetName, stackSize, layer, id)
+        public Weapon(string assetName) : base(assetName)
         {
 
         }

@@ -13,12 +13,31 @@ namespace Wink
 
         protected string idleAnimation, moveAnimation, dieAnimation;
         private string dieSound;
-        
+
+        private readonly GameObjectGrid itemGrid;
+        public GameObjectGrid ItemGrid
+        {
+            get { return itemGrid; }
+        }
+
+        private readonly GameObjectList equipmentSlots;
+        public GameObjectList EquipmentSlots
+        {
+            get { return equipmentSlots; }
+        }
+
         public Living(int layer = 0, string id = "", float scale = 1.0f) : base(layer, id, scale)
         {
             SetStats();
             InitAnimation();
             timeleft = 1000;
+
+            itemGrid = new GameObjectGrid(3, 6, 0, "");
+            EquipmentSlot weapon = new EquipmentSlot(typeof(WeaponEquipment), id: "weaponSlot");
+            EquipmentSlot body = new EquipmentSlot(typeof(BodyEquipment), id: "bodySlot");
+            equipmentSlots = new GameObjectList();
+            equipmentSlots.Add(weapon);
+            equipmentSlots.Add(body);
         }
 
         public Living(SerializationInfo info, StreamingContext context) : base(info, context)
