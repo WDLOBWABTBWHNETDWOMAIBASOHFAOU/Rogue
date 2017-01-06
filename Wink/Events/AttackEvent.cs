@@ -35,7 +35,7 @@ namespace Wink
             int dx = (int)Math.Abs(Attacker.Position.X - Defender.Position.X);
             int dy = (int)Math.Abs(Attacker.Position.Y -  Defender.Position.Y);
             
-            bool withinReach = dx <= Tile.TileWidth && dy <= Tile.TileHeight;
+            bool withinReach = dx <= Tile.TileWidth*Attacker.Reach && dy <= Tile.TileHeight * Attacker.Reach;
             return withinReach;
         }
     }

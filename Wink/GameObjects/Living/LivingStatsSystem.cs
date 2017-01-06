@@ -4,7 +4,7 @@
     {
         public const int MaxActionPoints = 4;
 
-        protected int manaPoints, healthPoints, actionPoints, baseAttack, strength, dexterity, intelligence, creatureLevel;
+        protected int manaPoints, healthPoints, actionPoints, baseAttack, strength, dexterity, intelligence, creatureLevel, reach;
 
         public int Dexterity { get { return Ringbonus(RingType.dexterity, dexterity); } }
         public int Intelligence { get { return Ringbonus(RingType.intelligence, intelligence); } }
@@ -70,7 +70,7 @@
             this.intelligence = intelligence;
             this.baseAttack = baseAttack;
             actionPoints = MaxActionPoints;
-
+            reach = 1;
             healthPoints = MaxHP();
             manaPoints = MaxManaPoints();
         }
@@ -129,6 +129,19 @@
         {
             double dodgeChance = CalculateValue(0.3, Dexterity, 0.01);
             return dodgeChance;
+        }
+
+        public int Reach
+        {
+            get
+            {
+                if (weapon.SlotItem != null)
+                {
+                    WeaponEquipment weaponItem = weapon.SlotItem as WeaponEquipment;
+                    reach = weaponItem.Reach;
+                }
+                return reach;
+            }
         }
 
         /// <summary>
