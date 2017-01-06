@@ -99,8 +99,17 @@
         {
             // get the baseattack value of the equiped weapon, if non equiped use baseattack of living
             // min max base attack value for each weapon and random inbetween or random between 0.8 and 1.2 of base (for example)
-            int attack = baseAttack;            
-            int attackValue = (int)CalculateValue(attack, strength);     
+
+            int attack = baseAttack;
+            double mod = 1;
+
+            if (weapon.SlotItem !=null)
+            {
+                WeaponEquipment weaponItem = weapon.SlotItem as WeaponEquipment;
+                attack = weaponItem.BaseDamage;
+                mod = weaponItem.ScalingFactor;
+            }            
+            int attackValue = (int)CalculateValue(attack, strength,mod);     
 
             return attackValue;
         }
@@ -112,13 +121,12 @@
         protected int ArmorValue()
         {
             int armorValue=0;
-            
-            //foreach(Armor a in EquipedItems)
-            //{
-                
-            //    armorValue +=a.armorbase
-            //}
-            
+            if (body.SlotItem != null)
+            {
+                BodyEquipment ArmorItem = body.SlotItem as BodyEquipment;
+                armorValue = ArmorItem.ArmorValue;
+            }
+
             return armorValue;
         }
     }

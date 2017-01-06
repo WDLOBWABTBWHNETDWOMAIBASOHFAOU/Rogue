@@ -25,6 +25,8 @@ namespace Wink
         {
             get { return equipmentSlots; }
         }
+        EquipmentSlot weapon;
+        EquipmentSlot body;
 
         public Living(int layer = 0, string id = "", float scale = 1.0f) : base(layer, id, scale)
         {
@@ -33,8 +35,8 @@ namespace Wink
             timeleft = 1000;
 
             itemGrid = new GameObjectGrid(3, 6, 0, "");
-            EquipmentSlot weapon = new EquipmentSlot(typeof(WeaponEquipment), id: "weaponSlot");
-            EquipmentSlot body = new EquipmentSlot(typeof(BodyEquipment), id: "bodySlot");
+            weapon = new EquipmentSlot(typeof(WeaponEquipment), id: "weaponSlot");
+            body = new EquipmentSlot(typeof(BodyEquipment), id: "bodySlot");
             equipmentSlots = new GameObjectList();
             equipmentSlots.Add(weapon);
             equipmentSlots.Add(body);
