@@ -32,10 +32,13 @@ namespace Wink
 
         protected override bool ValidateAction(Level level)
         {
-            int dx = (int)Math.Abs(Attacker.Position.X - Defender.Position.X);
-            int dy = (int)Math.Abs(Attacker.Position.Y -  Defender.Position.Y);
-            
-            bool withinReach = dx+dy <= Tile.TileWidth*Attacker.Reach;
+            int dx = (int)Math.Abs(Attacker.Position.X - Defender.Position.X ) - Tile.TileWidth/2;
+            int dy = (int)Math.Abs(Attacker.Position.Y -  Defender.Position.Y) - Tile.TileHeight/2;
+
+            double distance = Math.Abs(Math.Sqrt(Math.Pow(dx, 2) + Math.Pow(dy, 2)));
+            double reach = Tile.TileWidth*Attacker.Reach;
+
+            bool withinReach = distance <= reach;
             return withinReach;
         }
     }
