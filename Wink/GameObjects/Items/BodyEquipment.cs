@@ -8,7 +8,7 @@ namespace Wink
 {
     class BodyEquipment : Equipment
     {
-        public BodyEquipment(string assetName) : base(assetName)
+        public BodyEquipment(string assetName, int stackSize = 1, int layer = 0, string id = "") : base(assetName, stackSize, layer, id)
         {
 
         }
