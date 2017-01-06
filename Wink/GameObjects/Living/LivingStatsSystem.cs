@@ -23,7 +23,7 @@
             if (EquipmentSlots != null)
             foreach (ItemSlot slot in EquipmentSlots.Children)
             {
-                if (slot.SlotItem != null && slot.Id == "ringSlot")
+                if (slot.SlotItem != null && slot.Id.Contains("ringSlot"))
                 {
                     RingEquipment ring = slot.SlotItem as RingEquipment;
                     if (ring.RingType == ringType)
