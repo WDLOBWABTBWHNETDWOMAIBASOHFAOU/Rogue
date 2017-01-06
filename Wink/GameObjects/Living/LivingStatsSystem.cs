@@ -6,7 +6,10 @@
 
         protected int manaPoints, healthPoints, actionPoints, baseAttack, strength, dexterity, intelligence, creatureLevel;
 
-        public int Dexterity { get { return dexterity; } }
+        public int Dexterity { get { return Ringbonus(RingType.dexterity, dexterity); } }
+        public int Intelligence { get { return Ringbonus(RingType.intelligence, intelligence); } }
+        public int Strength { get { return Ringbonus(RingType.strength, strength); } }
+
         public int ActionPoints { get { return actionPoints; } set { actionPoints = value; } }
 
         public int Health { get { return healthPoints; } set { healthPoints = value; } }
@@ -14,13 +17,29 @@
         //protected IList<Equipment> EquipedItems;
 
 
-        public int Intelligence
+        protected int Ringbonus(RingType ringType, int baseValue)
         {
-            get
+            int i = 0;
+            float p = 1;
+            if (ring1.SlotItem != null)
             {
-
-                return intelligence;
+                RingEquipment ring = ring1.SlotItem as RingEquipment;
+                if (ring.RingType == ringType)
+                {
+                    if (ring.Multiplier) { p *= ring.RingValue; }
+                    else { i += ring.RingValue; }
+                }
             }
+            if (ring2.SlotItem != null)
+            {
+                RingEquipment ring = ring2.SlotItem as RingEquipment;
+                if (ring.RingType == ringType)
+                {
+                    if (ring.Multiplier) { p *= ring.RingValue; }
+                    else { i += ring.RingValue; }
+                }
+            }
+            return (int)(baseValue * p + i);
         }
 
         /// <summary>
@@ -68,7 +87,7 @@
             int maxHP = (int)CalculateValue(40, creatureLevel - 1, 4);
             return maxHP;
         }
-        public int MaxHealth { get {return MaxHP(); } }
+        public int MaxHealth { get {return Ringbonus(RingType.health, MaxHP()); } }
 
         /// <summary>
         /// returns the maximum of manapoints the living object can have
