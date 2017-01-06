@@ -62,7 +62,7 @@ namespace Wink
             SpriteFont textfieldFont = GameEnvironment.AssetManager.GetFont("Arial26");
 
             //Healthbar
-            hpBar = new Bar<Enemy>(this, e => e.Health, MaxHealth, textfieldFont, Color.Red, 2, "HealthBar", 1.0f, 1f, false);
+            hpBar = new Bar<Enemy>(this, e => e.Health, e => e.MaxHealth, textfieldFont, Color.Red, 2, "HealthBar", 1.0f, 1f, false);
             hpBar.Parent = this;
             hpBar.Position = new Vector2((Width - hpBar.Width - origin.X) / 2, -Height);
         }

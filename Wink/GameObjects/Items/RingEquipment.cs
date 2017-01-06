@@ -18,16 +18,17 @@ namespace Wink
     class RingEquipment : Equipment
     {
         protected bool multiplier;
-        protected int ringValue;
+        protected double ringValue;
         protected RingType ringType;
 
-        public RingEquipment(string assetName, int stackSize = 1, int layer = 0, string id = "", RingType ringType = RingType.none, bool multiplier = false) : base(assetName, stackSize, layer, id)
+        public RingEquipment(double ringValue, RingType ringType, string assetName, bool multiplier = false, int stackSize = 1, int layer = 0, string id = "") : base(assetName, stackSize, layer, id)
         {
             this.ringType = ringType;
+            this.ringValue = ringValue;
             this.multiplier = multiplier;
         }
 
-        public int RingValue
+        public double RingValue
         {
             get { return ringValue; }
             set { ringValue = value; }
