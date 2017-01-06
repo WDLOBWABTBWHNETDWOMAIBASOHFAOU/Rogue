@@ -29,7 +29,7 @@ namespace Wink
             //Inventory
             mouseSlot = new MouseSlot(layer + 11, "mouseSlot");
             itemGrid = new GameObjectGrid(3, 6, 0, "");
-            EquipmentSlot weapon = new EquipmentSlot();
+            EquipmentSlot weapon = new EquipmentSlot(typeof(Equipment));
             equipmentSlots = new GameObjectList();
             equipmentSlots.Add(weapon);
 
