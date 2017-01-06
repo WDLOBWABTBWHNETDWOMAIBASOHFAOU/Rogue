@@ -41,17 +41,17 @@ namespace Wink
             Vector2 MPBarPosition = new Vector2(barX, HPBarPosition.Y + 32);
 
             //Healthbar
-            Bar<Player> hpBar = new Bar<Player>(player, p => p.Health, player.MaxHealth, textfieldFont, Color.Red, 2, "HealthBar",0 ,2.5f);
+            Bar<Player> hpBar = new Bar<Player>(player, p => p.Health, p => p.MaxHealth, textfieldFont, Color.Red, 2, "HealthBar",0 ,2.5f);
             hpBar.Position = new Vector2(HPBarPosition.X, HPBarPosition.Y);
             Add(hpBar);
 
             //Manabar
-            Bar<Player> mpBar = new Bar<Player>(player, p => p.Mana, player.MaxMana, textfieldFont, Color.Blue, 2, "ManaBar", 0,2.5f);
+            Bar<Player> mpBar = new Bar<Player>(player, p => p.Mana, p => p.MaxMana, textfieldFont, Color.Blue, 2, "ManaBar", 0,2.5f);
             mpBar.Position = new Vector2(MPBarPosition.X, MPBarPosition.Y);
             Add(mpBar);
 
             //Action Points
-            Bar<Player> apBar = new Bar<Player>(player, p => p.ActionPoints, Living.MaxActionPoints, textfieldFont, Color.Yellow, 2, "ActionBar",0, 2.5f);
+            Bar<Player> apBar = new Bar<Player>(player, p => p.ActionPoints, p => Living.MaxActionPoints, textfieldFont, Color.Yellow, 2, "ActionBar",0, 2.5f);
             int screenWidth = GameEnvironment.Screen.X;
             Vector2 APBarPosition = new Vector2(screenWidth - barX - apBar.Width, HPBarPosition.Y);
             apBar.Position = new Vector2(APBarPosition.X, APBarPosition.Y);

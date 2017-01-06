@@ -6,20 +6,52 @@
 
         protected int manaPoints, healthPoints, actionPoints, baseAttack, baseArmor, strength, dexterity, intelligence, creatureLevel, reach;
 
-        public int Dexterity { get { return dexterity; } }
+        public int Dexterity { get { return Ringbonus(RingType.dexterity, dexterity); } }
+        public int Intelligence { get { return Ringbonus(RingType.intelligence, intelligence); } }
+        public int Strength { get { return Ringbonus(RingType.strength, strength); } }
+
         public int ActionPoints { get { return actionPoints; } set { actionPoints = value; } }
 
         public int Health { get { return healthPoints; } set { healthPoints = value; } }
         public int Mana { get { return manaPoints; } }
 
 
-        public int Intelligence
+        protected int Ringbonus(RingType ringType, int baseValue)
         {
-            get
+            int i = 0;
+            double p = 1;
+            if (EquipmentSlots != null)
+            foreach (ItemSlot slot in EquipmentSlots.Children)
             {
-
-                return intelligence;
+                if (slot.SlotItem != null && slot.Id == "ringSlot")
+                {
+                    RingEquipment ring = slot.SlotItem as RingEquipment;
+                    if (ring.RingType == ringType)
+                    {
+                        if (ring.Multiplier) { p *= ring.RingValue; }
+                        else { i += (int)ring.RingValue; }
+                    }
+                }
             }
+                /*if (ring1.SlotItem != null)
+                {
+                    RingEquipment ring = ring1.SlotItem as RingEquipment;
+                    if (ring.RingType == ringType)
+                    {
+                        if (ring.Multiplier) { p *= ring.RingValue; }
+                        else { i += (int)ring.RingValue; }
+                    }
+                }
+                if (ring2.SlotItem != null)
+                {
+                    RingEquipment ring = ring2.SlotItem as RingEquipment;
+                    if (ring.RingType == ringType)
+                    {
+                        if (ring.Multiplier) { p *= ring.RingValue; }
+                        else { i += (int)ring.RingValue; }
+                    }
+                }*/
+                return (int)(baseValue * p + i);
         }
 
         /// <summary>
@@ -67,7 +99,7 @@
             int maxHP = (int)CalculateValue(40, creatureLevel - 1, 4);
             return maxHP;
         }
-        public int MaxHealth { get {return MaxHP(); } }
+        public int MaxHealth { get { return Ringbonus(RingType.health, MaxHP()); } }
 
         /// <summary>
         /// returns the maximum of manapoints the living object can have
@@ -75,7 +107,7 @@
         /// <returns></returns>
         protected int MaxManaPoints()
         {
-            int maxManaPoints = (int)CalculateValue(50, intelligence, 15);
+            int maxManaPoints = (int)CalculateValue(50, Intelligence, 15);
             return maxManaPoints;
         }
         public int MaxMana { get { return MaxManaPoints(); } }
@@ -86,7 +118,7 @@
         /// <returns></returns>
         protected double HitChance()
         {
-            double hitChance = CalculateValue(0.7, dexterity, 0.01);
+            double hitChance = CalculateValue(0.7, Dexterity, 0.01);
             return hitChance;
         }
 
@@ -96,7 +128,7 @@
         /// <returns></returns>
         protected double DodgeChance()
         {
-            double dodgeChance = CalculateValue(0.3, dexterity, 0.01);
+            double dodgeChance = CalculateValue(0.3, Dexterity, 0.01);
             return dodgeChance;
         }
 
@@ -129,9 +161,9 @@
             {
                 WeaponEquipment weaponItem = weapon.SlotItem as WeaponEquipment;
 
-                if(weaponItem.StrRequirement > strength)
+                if(weaponItem.StrRequirement > Strength)
                 {
-                    int dif = weaponItem.StrRequirement - strength;
+                    int dif = weaponItem.StrRequirement - Strength;
                     double penaltyMod = 0.4; // needs balancing, possibly dependent on weapon
                     attack = (int)(weaponItem.BaseDamage - weaponItem.BaseDamage*(dif * penaltyMod));
                 }
@@ -141,7 +173,7 @@
                     mod = weaponItem.ScalingFactor;
                 }
             }            
-            int attackValue = (int)CalculateValue(attack, strength,mod);     
+            int attackValue = (int)CalculateValue(attack, Strength, mod);     
 
             return attackValue;
         }
@@ -156,9 +188,9 @@
             if (body.SlotItem != null)
             {
                 BodyEquipment ArmorItem = body.SlotItem as BodyEquipment;
-                if(ArmorItem.StrRequirement > strength)
+                if(ArmorItem.StrRequirement > Strength)
                 {
-                    int dif = ArmorItem.StrRequirement - strength;
+                    int dif = ArmorItem.StrRequirement - Strength;
                     double penaltyMod = 0.2;// needs balancing, possibly dependent on armor
                     armorValue = baseArmor + (int)(ArmorItem.ArmorValue - ArmorItem.ArmorValue*(dif * penaltyMod));
                 }

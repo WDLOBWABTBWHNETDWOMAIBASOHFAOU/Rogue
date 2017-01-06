@@ -117,6 +117,9 @@ namespace Wink
                         timeleft -= gameTime.TotalGameTime.Seconds;
                 }
             }
+            // Stijn zegt voer hier een ring bonus methode uit
+            // met de manier waarop ik ring heb gemaakt valt er niks te bonussen
+            // alles moet bij stat calculation worden afgehandeld
         }
         
         public void MoveTo(Tile tile)

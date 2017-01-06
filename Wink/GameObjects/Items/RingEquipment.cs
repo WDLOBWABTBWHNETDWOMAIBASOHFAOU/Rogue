@@ -6,37 +6,40 @@ using System.Threading.Tasks;
 
 namespace Wink
 {
+    public enum RingType
+    {
+        intelligence,
+        dexterity,
+        strength,
+        health,
+        none
+    }
+
     class RingEquipment : Equipment
     {
-        public enum Rings
-        {
-            intelligence,
-            dexterity,
-            strength,
-            health,
-            none
-        }
-
         protected bool multiplier;
-        protected int ringValue;
-        protected Rings ringType;
+        protected double ringValue;
+        protected RingType ringType;
 
-        public RingEquipment(string assetName, int stackSize = 1, int layer = 0, string id = "", Rings ringType = Rings.none, bool multiplier = false) : base(assetName, stackSize, layer, id)
+        public RingEquipment(double ringValue, RingType ringType, string assetName, bool multiplier = false, int stackSize = 1, int layer = 0, string id = "") : base(assetName, stackSize, layer, id)
         {
             this.ringType = ringType;
+            this.ringValue = ringValue;
             this.multiplier = multiplier;
         }
 
-        public int RingValue
+        public double RingValue
         {
             get { return ringValue; }
             set { ringValue = value; }
         }
 
-        public Rings RingType
+        public RingType RingType
         {
             get { return ringType; }
             set { ringType = value; }
         }
+
+        public bool Multiplier { get { return multiplier; } }
     }
 }
