@@ -11,6 +11,7 @@ namespace Wink
     public class ItemSlot : SpriteGameObject
     {
         Item slotItem;
+        public Item SlotItem { get { return slotItem; } }
         int stacksize;
 
         public ItemSlot(string assetName = "empty:65:65:10:Gray", int layer = 0, string id = "", int sheetIndex = 0, float cameraSensitivity = 0, float scale = 1) : base(assetName, layer, id, sheetIndex, cameraSensitivity, scale)

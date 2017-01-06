@@ -40,7 +40,10 @@ namespace Wink
             testItem2.ChangeItem(new TestItem());
 
             ItemSlot testItem3 = itemGrid.Get(1, 1) as ItemSlot;
-            testItem3.ChangeItem(new WeaponEquipment("empty:65:65:10:Aqua"));
+            testItem3.ChangeItem(new WeaponEquipment(80,1.3,1,2,"empty:65:65:10:Aqua"));
+
+            ItemSlot testItem4 = itemGrid.Get(2, 1) as ItemSlot;
+            testItem4.ChangeItem(new BodyEquipment(20, "empty:65:65:10:Brown"));
             // end test items
 
             Add(itemGrid);
@@ -57,20 +60,6 @@ namespace Wink
             base.GetObjectData(info, context);
             info.AddValue("itemGrid", itemGrid);
         }   
-
-        //private void CheckGrid(GameObjectGrid itemGrid)
-        //{
-        //    for (int x = 0; x < itemGrid.Columns; x++)
-        //    {
-        //        for (int y = 0; y < itemGrid.Rows; y++)
-        //        {
-        //            if ( itemGrid.Get(x,y) == null)
-        //            {
-        //                itemGrid.Add(new EmptyItem("empty:65:65:10:Gray"),x,y);
-        //            }
-        //        }
-        //    }
-        //}
 
         public override void Update(GameTime gameTime)
         {
