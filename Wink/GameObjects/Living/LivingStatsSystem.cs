@@ -13,18 +13,28 @@
         public int Mana { get { return manaPoints; } }
         //protected IList<Equipment> EquipedItems;
 
+
+        public int Intelligence
+        {
+            get
+            {
+
+                return intelligence;
+            }
+        }
+
         /// <summary>
         /// Sets starting stats when the living object is created
         /// </summary>
         /// <param name="creatureLevel"></param>
-        /// <param name="strenght"></param>
+        /// <param name="strength"></param>
         /// <param name="dexterity"></param>
         /// <param name="intelligence"></param>
         /// <param name="baseAttack">unarmed attackValue</param>
-        protected void SetStats(int creatureLevel = 1, int strenght = 2, int dexterity = 2, int intelligence = 2, int baseAttack = 40)
+        protected void SetStats(int creatureLevel = 1, int strength = 2, int dexterity = 2, int intelligence = 2, int baseAttack = 40)
         {
             this.creatureLevel = creatureLevel;
-            this.strength = strenght;
+            this.strength = strength;
             this.dexterity = dexterity;
             this.intelligence = intelligence;
             //EquipedItems = new List<Equipment>();

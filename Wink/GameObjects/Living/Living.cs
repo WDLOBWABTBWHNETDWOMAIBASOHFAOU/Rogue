@@ -35,9 +35,13 @@ namespace Wink
             itemGrid = new GameObjectGrid(3, 6, 0, "");
             EquipmentSlot weapon = new EquipmentSlot(typeof(WeaponEquipment), id: "weaponSlot");
             EquipmentSlot body = new EquipmentSlot(typeof(BodyEquipment), id: "bodySlot");
+            EquipmentSlot ring1 = new EquipmentSlot(typeof(RingEquipment), id: "ringSlot");
+            EquipmentSlot ring2 = new EquipmentSlot(typeof(RingEquipment), id: "ringSlot");
             equipmentSlots = new GameObjectList();
             equipmentSlots.Add(weapon);
             equipmentSlots.Add(body);
+            equipmentSlots.Add(ring1);
+            equipmentSlots.Add(ring2);
         }
 
         public Living(SerializationInfo info, StreamingContext context) : base(info, context)
