@@ -17,7 +17,6 @@ namespace Wink
             Add(inventory);
 
             // set position of individual equipment slots
-
             Add(equipmentslots);
         }
     }

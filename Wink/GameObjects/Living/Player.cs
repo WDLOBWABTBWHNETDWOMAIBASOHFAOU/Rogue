@@ -8,30 +8,15 @@ namespace Wink
     public class Player : Living
     {
         protected int exp;
-        private MouseSlot mouseSlot;
 
+        private MouseSlot mouseSlot;
         public MouseSlot MouseSlot { get { return mouseSlot; } }
 
-        private readonly GameObjectGrid itemGrid;
-        public GameObjectGrid ItemGrid
-        {
-            get { return itemGrid; }
-        }
-
-        private readonly GameObjectList equipmentSlots;
-        public GameObjectList EquipmentSlots
-        {
-            get { return equipmentSlots; }
-        }
 
         public Player(string clientName, int layer) : base(layer, "player_" + clientName)
         {
             //Inventory
             mouseSlot = new MouseSlot(layer + 11, "mouseSlot");
-            itemGrid = new GameObjectGrid(3, 6, 0, "");
-            EquipmentSlot weapon = new EquipmentSlot(typeof(Equipment));
-            equipmentSlots = new GameObjectList();
-            equipmentSlots.Add(weapon);
 
             SetStats(5, 5, 5, 5, 55);
 
