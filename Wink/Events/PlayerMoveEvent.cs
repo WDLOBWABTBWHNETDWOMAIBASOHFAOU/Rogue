@@ -16,7 +16,7 @@ namespace Wink
 
         public PlayerMoveEvent(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            tile = Server.GetGameObjectByGUID(Guid.Parse(info.GetString("tileGUID"))) as Tile;
+            tile = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("tileGUID"))) as Tile;
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
@@ -38,8 +38,10 @@ namespace Wink
 
         protected override void DoAction(LocalServer server)
         {
+            server.ChangedObjects.Add(player);
+            server.ChangedObjects.Add(player.Tile);
+            server.ChangedObjects.Add(tile);
             player.MoveTo(tile);
-            server.LevelChanged();
         }
 
         protected override bool ValidateAction(Level level)

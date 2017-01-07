@@ -14,15 +14,39 @@ namespace Wink
         {
         }
 
+        #region Serialization
         public MouseSlot(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            oldItem = info.GetValue("oldItem", typeof(Item)) as Item;
+            if (context.GetVars().DownwardSerialization)
+            {
+                oldItem = info.GetValue("oldItem", typeof(Item)) as Item;
+            }
+            else
+            {
+                oldItem = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("oldItemGUID"))) as Item;
+            }
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
+            if (context.GetVars().DownwardSerialization)
+            {
+                info.AddValue("oldItem", oldItem);
+            }
+            else
+            {
+                info.AddValue("oldItemGUID", oldItem.GUID.ToString());
+            }
             base.GetObjectData(info, context);
-            info.AddValue("oldItem", oldItem);
+        }
+        #endregion
+
+        public override void Replace(GameObject replacement)
+        {
+            if (oldItem != null && oldItem.GUID == replacement.GUID)
+                oldItem = replacement as Item;
+
+            base.Replace(replacement);
         }
 
         public void AddTo(Item newItem, GameObjectGrid target)

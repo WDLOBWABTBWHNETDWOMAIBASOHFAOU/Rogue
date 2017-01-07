@@ -15,11 +15,15 @@ namespace Wink
 
         public LevelUpdatedEvent(SerializationInfo info, StreamingContext context) : base(info, context)
         {
+            context.GetVars().DownwardSerialization = true;
+            context.GetVars().UpwardSerialization = true;
             updatedLevel = info.GetValue("updatedLevel", typeof(Level)) as Level;
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
+            context.GetVars().DownwardSerialization = true;
+            context.GetVars().UpwardSerialization = true;
             info.AddValue("updatedLevel", updatedLevel);
             base.GetObjectData(info, context);
         }

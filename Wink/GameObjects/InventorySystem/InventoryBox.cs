@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Runtime.Serialization;
 
@@ -8,38 +7,30 @@ namespace Wink
     [Serializable]
     public class InventoryBox : GameObjectList
     {
-        /// <summary>
-        /// The grid that contains the actual items
-        /// </summary>
-        private GameObjectGrid itemGrid;
-
         public GameObjectGrid ItemGrid
         {
-            get { return itemGrid; }
+            get { return Find(obj => obj is GameObjectGrid) as GameObjectGrid; }
         }
         
         public InventoryBox(GameObjectGrid itemGrid, int layer = 0, string id = "", float cameraSensitivity = 0) : base(layer, id)
         {
-            this.itemGrid = itemGrid;
-
             itemGrid.CellHeight = Tile.TileHeight;
             itemGrid.CellWidth = Tile.TileWidth;
             CheckGrid(itemGrid);
             itemGrid.Add(new TestItem(), 0, 0);
             Add(itemGrid);
-            
         }
-        
+
+        #region Serialization
         public InventoryBox(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            itemGrid = info.GetValue("itemGrid", typeof(GameObjectGrid)) as GameObjectGrid;
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             base.GetObjectData(info, context);
-            info.AddValue("itemGrid", itemGrid);
-        }   
+        }
+        #endregion
 
         private void CheckGrid(GameObjectGrid itemGrid)
         {

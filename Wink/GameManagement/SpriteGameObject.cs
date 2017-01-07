@@ -49,8 +49,8 @@ public class SpriteGameObject : GameObject
         Color color = new Color();
         color.PackedValue = info.GetUInt32("DrawColor");
         DrawColor = color;
+
         spriteAssetName = info.GetString("spriteAssetName");
-        //spriteSheetIndex = info.GetInt32("spriteSheetIndex");
         origin = new Vector2((float)info.GetDouble("originX"), (float)info.GetDouble("originY"));
         scale = (float)info.GetDouble("scale");
         cameraSensitivity = (float)info.GetDouble("cameraSensitivity");
@@ -64,7 +64,7 @@ public class SpriteGameObject : GameObject
         base.GetObjectData(info, context);
 
         info.AddValue("spriteAssetName", spriteAssetName);
-        info.AddValue("spriteSheetIndex", sprite.SheetIndex);
+        info.AddValue("spriteSheetIndex", sprite != null ? sprite.SheetIndex : 0);
         info.AddValue("originX", origin.X);
         info.AddValue("originY", origin.Y);
         info.AddValue("scale", scale);
@@ -76,15 +76,15 @@ public class SpriteGameObject : GameObject
     public override void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
     {
         if (!visible || sprite == null)
-        {
             return;
-        }
+
         //Draw every SpriteGameObject in its position relative to the camera but only to the extent specified by the CameraSensitivity property.
         sprite.Draw(spriteBatch, GlobalPosition - (cameraSensitivity * camera.GlobalPosition), origin, scale, DrawColor);
     }
 
     public override void DrawDebug(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
     {
+        //TODO: draw multiple tags underneath eachother?
         Dictionary<string, string>.Enumerator enumerator = debugTags.GetEnumerator();
         while (enumerator.MoveNext())
         {

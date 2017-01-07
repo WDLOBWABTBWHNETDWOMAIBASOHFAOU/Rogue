@@ -1,14 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
-using System.Collections.Generic;
-using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.IO;
 
 namespace Wink
 {
-    public class LocalClient : Client, IGameLoopObject
+    public class LocalClient : Client, IGameLoopObject, ILocal
     {
         private FrameCounter frameCounter;
 
@@ -30,15 +26,31 @@ namespace Wink
                 gameObjects.Add(value);
             }
         }
-        
+        public PlayingGUI GUI {
+            get { return gameObjects.Find("PlayingGui") as PlayingGUI; }
+        }
         public Player Player
         {
             get { return gameObjects.Find("player_" + ClientName) as Player; }
         }
 
+        public bool IsMyTurn { set; get; }
+
         public Camera Camera
         {
             get { return newCamera; }
+        }
+
+        /// <summary>
+        /// Method is used to deserialize based on GUID.
+        /// </summary>
+        /// <param name="guid"></param>
+        /// <returns></returns>
+        public GameObject GetGameObjectByGUID(Guid guid)
+        {
+            //TODO: Should probably just pass an object along with the StreamingContext rather than making this statically available.
+            GameObject obj = Level.Find(o => o.GUID == guid);
+            return obj;
         }
 
         public LocalClient(Server server) : base(server)
@@ -60,8 +72,14 @@ namespace Wink
             pgui.AddPlayerGUI(Player);
         }
 
+        public void Replace(GameObject go)
+        {
+            gameObjects.Replace(go);
+        }
+
         public void Update(GameTime gameTime)
         {
+            GUI.Update(gameTime);
         }
 
         public void HandleInput(InputHelper inputHelper) 
@@ -90,17 +108,10 @@ namespace Wink
 
         public override void Send(Event e)
         {
-            BinaryFormatter binaryFormatter = new BinaryFormatter();
-            using (MemoryStream ms = new MemoryStream())
-            {
-                binaryFormatter.Serialize(ms, e);
-                ms.Seek(0, SeekOrigin.Begin);
-                e = binaryFormatter.Deserialize(ms) as Event;
-            }
+            e = SerializationHelper.Clone(e, this);
+
             if (e.Validate(Level))
-            {
                 e.OnClientReceive(this);
-            }
         }
 
         public void Reset()

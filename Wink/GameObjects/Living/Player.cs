@@ -1,6 +1,8 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using System.Runtime.Serialization;
+using System.Diagnostics;
+using System.Collections.Generic;
 
 namespace Wink
 {
@@ -12,7 +14,7 @@ namespace Wink
 
         public MouseSlot MouseSlot { get { return mouseSlot; } }
 
-        private readonly GameObjectGrid itemGrid;
+        private GameObjectGrid itemGrid;
         public GameObjectGrid ItemGrid
         {
             get { return itemGrid; }
@@ -34,19 +36,52 @@ namespace Wink
             InitAnimation(); //not sure if overriden version gets played right without restating
         }
 
+        protected override void DoBehaviour(List<GameObject> changedObjects)
+        {
+            Debug.WriteLine("Called Player.DoBehaviour, but players don't have automated behaviour.");
+        }
+
+        #region Serialization
         public Player(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             exp = info.GetInt32("exp");
-            mouseSlot = info.GetValue("mouseSlot", typeof(MouseSlot)) as MouseSlot;
-            itemGrid = info.GetValue("itemGrid", typeof(GameObjectGrid)) as GameObjectGrid;
+            if (context.GetVars().DownwardSerialization)
+            {
+                mouseSlot = info.GetValue("mouseSlot", typeof(MouseSlot)) as MouseSlot;
+                itemGrid = info.GetValue("itemGrid", typeof(GameObjectGrid)) as GameObjectGrid;
+            }
+            else
+            {
+                mouseSlot = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("mouseSlotGUID"))) as MouseSlot;
+                itemGrid = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("itemGridGUID"))) as GameObjectGrid;
+            }
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            base.GetObjectData(info, context);
+            if (context.GetVars().DownwardSerialization)
+            {
+                info.AddValue("mouseSlot", mouseSlot);
+                info.AddValue("itemGrid", itemGrid);
+            }
+            else
+            {
+                info.AddValue("mouseSlotGUID", mouseSlot.GUID.ToString());
+                info.AddValue("itemGridGUID", itemGrid.GUID.ToString());
+            }
             info.AddValue("exp", exp);
-            info.AddValue("mouseSlot", mouseSlot);
-            info.AddValue("itemGrid", itemGrid);
+            base.GetObjectData(info, context);
+        }
+        #endregion
+
+        public override void Replace(GameObject replacement)
+        {
+            if (mouseSlot != null && mouseSlot.GUID == replacement.GUID)
+                mouseSlot = replacement as MouseSlot;
+            if (itemGrid != null && itemGrid.GUID == replacement.GUID)
+                itemGrid = replacement as GameObjectGrid;
+
+            base.Replace(replacement);
         }
 
         protected override void InitAnimation(string idleColor = "player")
@@ -84,6 +119,7 @@ namespace Wink
             creatureLevel++;
 
             // + some amount of neutral stat points, distriputed by user discresion or increase stats based on picked hero
-        } 
+        }
+
     }
 }

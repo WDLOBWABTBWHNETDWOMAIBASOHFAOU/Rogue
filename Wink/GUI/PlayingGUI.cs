@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Wink
 {
-    class PlayingGUI : GameObjectList
+    public class PlayingGUI : GameObjectList
     {
         private PlayingMenu playingMenu;
         private Window inventory;

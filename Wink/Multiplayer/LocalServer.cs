@@ -1,20 +1,23 @@
 ﻿using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Wink
 {
-    public class LocalServer : Server
+    class NotLocalException : Exception { }
+
+    public class LocalServer : Server, ILocal
     {
         private List<Client> clients;
         private List<Living> livingObjects;
         private Level level;
         private int levelIndex;
-
-        bool levelChanged;
+        
         private int turnIndex;
+
+        private List<GameObject> changedObjects;
+        public List<GameObject> ChangedObjects { get { return changedObjects; } }
 
         public Level Level
         {
@@ -33,6 +36,18 @@ namespace Wink
 
         public LocalServer ()
         {
+            changedObjects = new List<GameObject>();
+        }
+
+        /// <summary>
+        /// Method is used to deserialize based on GUID.
+        /// </summary>
+        /// <param name="guid"></param>
+        /// <returns></returns>
+        public GameObject GetGameObjectByGUID(Guid guid)
+        {
+            GameObject obj = Level.Find(o => o.GUID == guid);
+            return obj;
         }
 
         public void SetupLevel(int levelIndex, List<Client> clients)
@@ -55,58 +70,53 @@ namespace Wink
         {
             livingObjects = Level.FindAll(obj => obj is Living).Cast<Living>().ToList();
             livingObjects.Sort((obj1, obj2) => obj1.Dexterity - obj2.Dexterity);
-            livingObjects.ElementAt(turnIndex).isTurn = true;
+            //livingObjects.ElementAt(turnIndex).isTurn = true;
         }
 
         protected override void ReallySend(Event e)
         {
-            BinaryFormatter binaryFormatter = new BinaryFormatter();
-            using (MemoryStream ms = new MemoryStream())
-            {
-                binaryFormatter.Serialize(ms, e);
-                ms.Seek(0, SeekOrigin.Begin);
-                e = binaryFormatter.Deserialize(ms) as Event;
-            }
+            e = SerializationHelper.Clone(e, this);
             
             if (e.Validate(Level))
-            {
                 e.OnServerReceive(this);
-            }
         }
 
         private void SendOutUpdatedLevel(bool first = false)
         {
-            foreach(Client c in clients)
+            LevelUpdatedEvent e = first ? new JoinedServerEvent(Level) : new LevelUpdatedEvent(Level);
+            foreach (Client c in clients)
             {
-                //Passing null because whenever a client receives an event it'll always be from the server.
-                LevelUpdatedEvent e = first ? new JoinedServerEvent(Level) : new LevelUpdatedEvent(Level);
                 c.Send(e);
             }
         }
 
         public override void Update(GameTime gameTime)
         {
-            Level.Root.Update(gameTime);
-            UpdateTurn();
-            if (levelChanged)
+            Level.Update(gameTime);
+            while (!(livingObjects[turnIndex] is Player))
             {
-                SendOutUpdatedLevel();
-                levelChanged = false;
+                changedObjects.AddRange(livingObjects[turnIndex].DoAllBehaviour());
+                UpdateTurn();
             }
-        }
-        
-        public void LevelChanged()
-        {
-            levelChanged = true;
+            UpdateTurn();
+            if (changedObjects.Count > 0)
+            {
+                LevelChangedEvent e = new LevelChangedEvent(changedObjects);
+                foreach (Client c in clients)
+                {
+                    c.Send(e);
+                }
+                changedObjects.Clear();
+            }
         }
 
         private void UpdateTurn()
         {
             if (livingObjects.ElementAt(turnIndex).ActionPoints <= 0)
             {
-                livingObjects.ElementAt(turnIndex).isTurn = false;
+                //livingObjects.ElementAt(turnIndex).isTurn = false;
                 turnIndex = (turnIndex + 1) % livingObjects.Count;
-                livingObjects.ElementAt(turnIndex).isTurn = true;
+                //livingObjects.ElementAt(turnIndex).isTurn = true;
                 livingObjects.ElementAt(turnIndex).ActionPoints = 4;
             }
         }

@@ -11,37 +11,10 @@ namespace Wink
     public partial class Level : GameObjectList
     {
         private int levelIndex;
-        
-        public Level(SerializationInfo info, StreamingContext context)
-        {
-            children = (List<GameObject>)info.GetValue("children", typeof(List<GameObject>));
-
-            position = new Vector2((float)info.GetDouble("posX"), (float)info.GetDouble("posY"));
-            velocity = new Vector2((float)info.GetDouble("velX"), (float)info.GetDouble("velY"));
-            layer = info.GetInt32("layer");
-            id = info.GetString("id");
-            visible = info.GetBoolean("vis");
-        }
-        
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            info.AddValue("children", children);
-
-            //Reimplemented this her specifically to not have parent included, since this causes the GUI to be serialized as well.
-            //info.AddValue("parent", parent);
-            info.AddValue("posX", position.X);
-            info.AddValue("posY", position.Y);
-            info.AddValue("velX", velocity.X);
-            info.AddValue("velY", velocity.Y);
-            info.AddValue("layer", layer);
-            info.AddValue("id", id);
-            info.AddValue("vis", visible);
-        }
 
         public Level(int levelIndex) : base(0, "Level")
         {
             LoadTiles("Content/Levels/" + levelIndex + ".txt");
-
             this.levelIndex = levelIndex;
         }
 
@@ -50,6 +23,15 @@ namespace Wink
             List<Room> rooms = GenerateRooms();
             List<Tuple<Room, Room>> hallwayPairs = GenerateHallwayPairs(rooms);
             GenerateTiles(rooms, hallwayPairs);
+        }
+
+        public Level(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+        }
+        
+        public override void Update(GameTime gameTime)
+        {
+            base.Update(gameTime);
         }
 
         public void LoadTiles(string path)

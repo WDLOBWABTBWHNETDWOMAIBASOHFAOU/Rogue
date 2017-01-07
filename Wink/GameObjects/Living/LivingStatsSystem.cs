@@ -77,7 +77,7 @@
             int maxHP = (int)CalculateValue(40, creatureLevel - 1, 4);
             return maxHP;
         }
-        public int MaxHealth { get {return MaxHP(); } }
+        public int MaxHealth { get { return MaxHP(); } }
 
         /// <summary>
         /// returns the maximum of manapoints the living object can have

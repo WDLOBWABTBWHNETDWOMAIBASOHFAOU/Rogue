@@ -43,6 +43,7 @@
     <Compile Include="Events\Event.cs" />
     <Compile Include="Events\JoinedServerEvent.cs" />
     <Compile Include="Events\JoinServerEvent.cs" />
+    <Compile Include="Events\LevelChangedEvent.cs" />
     <Compile Include="Events\LevelUpdatedEvent.cs" />
     <Compile Include="Events\NextLevelEvent.cs" />
     <Compile Include="Events\PickupEvent.cs" />
@@ -56,12 +57,14 @@
     <Compile Include="GUI\TrackingTextGameObject.cs" />
     <Compile Include="GUI\Window.cs" />
     <Compile Include="Level\LevelGenerator.cs" />
+    <Compile Include="Multiplayer\ILocal.cs" />
     <Compile Include="Multiplayer\Sender.cs" />
     <Compile Include="GameManagement\AnimatedGameObject.cs" />
     <Compile Include="GameManagement\Animation.cs" />
     <Compile Include="GameManagement\AssetManager.cs" />
     <Compile Include="GameManagement\Camera.cs" />
     <Compile Include="Util\FrameCounter.cs" />
+    <Compile Include="Util\MultiArray.cs" />
     <Compile Include="Util\PathFinder.cs" />
     <Compile Include="GameObjects\Items\EmptyItem.cs" />
     <Compile Include="GameObjects\InventorySystem\InventoryBox.cs" />
@@ -115,6 +118,7 @@
     <Compile Include="States\OptionsMenu.cs" />
     <Compile Include="States\PlayingState.cs" />
     <Compile Include="Util\Line.cs" />
+    <Compile Include="Util\SerializationHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">

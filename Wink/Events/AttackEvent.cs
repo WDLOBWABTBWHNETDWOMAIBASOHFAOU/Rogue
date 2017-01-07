@@ -19,7 +19,7 @@ namespace Wink
 
         public AttackEvent(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            Defender = Server.GetGameObjectByGUID(Guid.Parse(info.GetString("DefenderGUID"))) as Living;
+            Defender = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("DefenderGUID"))) as Living;
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
@@ -42,7 +42,6 @@ namespace Wink
         protected override void DoAction(LocalServer server)
         {
             Attacker.Attack(Defender);
-            server.LevelChanged();
         }
 
         protected override bool ValidateAction(Level level)
@@ -53,7 +52,5 @@ namespace Wink
             bool withinReach = dx <= Tile.TileWidth && dy <= Tile.TileHeight;
             return withinReach;
         }
-
-
     }
 }

@@ -18,7 +18,7 @@ namespace Wink
 
         public ActionEvent(SerializationInfo info, StreamingContext context)
         {
-            player = Server.GetGameObjectByGUID(Guid.Parse(info.GetString("playerGUID"))) as Player;
+            player = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("playerGUID"))) as Player;
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
@@ -36,7 +36,7 @@ namespace Wink
 
         public sealed override bool Validate(Level level)
         {
-            return ValidateAction(level) && player.isTurn && player.ActionPoints >= Cost;
+            return ValidateAction(level) && /*player.isTurn &&*/ player.ActionPoints >= Cost;
         }
 
         protected abstract bool ValidateAction(Level level);

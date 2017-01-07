@@ -67,6 +67,7 @@ namespace Wink
             }
         }
 
+        #region Serialization
         public Tile(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             type = (TileType)info.GetValue("type", typeof(TileType));
@@ -76,11 +77,19 @@ namespace Wink
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            base.GetObjectData(info, context);
-
             info.AddValue("type", type);
             info.AddValue("passable", passable);
             info.AddValue("onTile", onTile);
+            base.GetObjectData(info, context);
+        }
+        #endregion
+
+        public override void Replace(GameObject replacement)
+        {
+            if (onTile != null && onTile.GUID == replacement.GUID)
+                onTile = replacement as GameObjectList;
+
+            base.Replace(replacement);
         }
 
         public void Remove(GameObject go)

@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Runtime.Serialization;
+using Wink;
 
 [Serializable]
 public abstract class GameObject : IGameLoopObject, ISerializable
@@ -35,7 +36,14 @@ public abstract class GameObject : IGameLoopObject, ISerializable
     /// </summary>
     protected GameObject(SerializationInfo info, StreamingContext context)
     {
-        parent = (GameObject)info.GetValue("parent", typeof(GameObject));
+        if (context.GetVars().UpwardSerialization)
+        {
+            parent = (GameObject)info.GetValue("parent", typeof(GameObject));
+        }
+        else
+        {
+            parent = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("parentGUID")));
+        }
         position = new Vector2((float)info.GetDouble("posX"), (float)info.GetDouble("posY"));
         velocity = new Vector2((float)info.GetDouble("velX"), (float)info.GetDouble("velY"));
         layer = info.GetInt32("layer");
@@ -46,7 +54,14 @@ public abstract class GameObject : IGameLoopObject, ISerializable
 
     public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
     {
-        info.AddValue("parent", parent);
+        if (context.GetVars().UpwardSerialization)
+        {
+            info.AddValue("parent", parent);
+        }
+        else
+        {
+            info.AddValue("parentGUID", parent.GUID.ToString());
+        }
         info.AddValue("posX", position.X);
         info.AddValue("posY", position.Y);
         info.AddValue("velX", velocity.X);
@@ -72,6 +87,14 @@ public abstract class GameObject : IGameLoopObject, ISerializable
 
     public virtual void DrawDebug(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
     {
+    }
+
+    public virtual void Replace(GameObject go)
+    {
+        if (parent != null && parent.GUID == go.GUID)
+        {
+            parent = go;
+        }
     }
 
     public virtual void Reset()

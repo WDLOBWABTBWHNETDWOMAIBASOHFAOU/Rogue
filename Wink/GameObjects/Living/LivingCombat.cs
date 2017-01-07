@@ -14,6 +14,8 @@
                 double attackValue = AttackValue();
                 target.TakeDamage(attackValue);
             }
+
+            actionPoints--;
             // Display attack missed (feedback on fail)
         }
 

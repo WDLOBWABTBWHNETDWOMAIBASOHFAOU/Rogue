@@ -104,9 +104,9 @@ namespace Wink
         private Dictionary<Permission[,], int> table = new Dictionary<Permission[,], int>()
         {
             { new Permission[3, 3] {
-                { P.Either,   P.NotEqual, P.Either },
-                { P.NotEqual, P.Either,   P.Equal  },
-                { P.Either,   P.NotEqual,    P.Either }
+                { P.Either,   P.NotEqual,   P.Either },
+                { P.NotEqual, P.Either,     P.Equal  },
+                { P.Either,   P.NotEqual,   P.Either }
             }, 0 },
 
             { new Permission[3, 3] {

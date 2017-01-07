@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace Wink
@@ -9,15 +10,20 @@ namespace Wink
     {
         private int timeleft;
         private bool startTimer;
-        public bool isTurn;
+        //public bool isTurn;
 
         protected string idleAnimation, moveAnimation, dieAnimation;
         private string dieSound;
-
-        private Tile tile;
+        
         public Tile Tile
         {
-            get { return tile; }
+            get
+            {
+                if (parent != null)
+                    return parent.Parent as Tile;
+                else
+                    return null;
+            }
         }
 
         public virtual Point PointInTile
@@ -37,18 +43,19 @@ namespace Wink
             timeleft = 1000;
         }
 
+        #region Serialization
         public Living(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             timeleft = info.GetInt32("timeleft");
             startTimer = info.GetBoolean("startTimer");
-            isTurn = info.GetBoolean("isTurn");
+            //isTurn = info.GetBoolean("isTurn");
 
             idleAnimation = info.GetString("idleAnimation");
             moveAnimation = info.GetString("moveAnimation");
             dieAnimation = info.GetString("dieAnimation");
             dieSound = info.GetString("dieSound");
 
-            tile = info.GetValue("tile", typeof(Tile)) as Tile;
+            //tile = info.GetValue("tile", typeof(Tile)) as Tile;
 
             manaPoints = info.GetInt32("manaPoints");
             healthPoints = info.GetInt32("healthPoints");
@@ -65,14 +72,14 @@ namespace Wink
             base.GetObjectData(info, context);
             info.AddValue("timeleft", timeleft);
             info.AddValue("startTimer", startTimer);
-            info.AddValue("isTurn", isTurn);
+            //info.AddValue("isTurn", isTurn);
 
             info.AddValue("idleAnimation", idleAnimation);
             info.AddValue("moveAnimation", moveAnimation);
             info.AddValue("dieAnimation", dieAnimation);
             info.AddValue("dieSound", dieSound);
 
-            info.AddValue("tile", tile);
+            //info.AddValue("tile", tile);
 
             info.AddValue("manaPoints", manaPoints);
             info.AddValue("healthPoints", healthPoints);
@@ -83,6 +90,23 @@ namespace Wink
             info.AddValue("intelligence", intelligence);
             info.AddValue("creatureLevel", creatureLevel);
         }
+        #endregion
+
+        public List<GameObject> DoAllBehaviour()
+        {
+            List<GameObject> changedObjects = new List<GameObject>();
+            if (Health > 0)
+            {
+                int previousActionPoints = int.MinValue;
+                while (actionPoints > 0 && actionPoints != previousActionPoints)
+                {
+                    DoBehaviour(changedObjects);
+                }
+            }
+            return changedObjects;
+        }
+
+        protected abstract void DoBehaviour(List<GameObject> changedObjects);
 
         protected virtual void InitAnimation(string idleColor = "empty:64:64:10:Magenta")
         {
@@ -114,12 +138,14 @@ namespace Wink
         
         public virtual void MoveTo(Tile t)
         {
-            if (tile != null)
-                tile.Remove(this);
+            if (actionPoints < 1)
+                throw new Exception();//TODO: make exception
 
-            if (t.PutOnTile(this))
-                tile = t;
-            
+            if (Tile != null)
+                Tile.Remove(this);
+
+            t.PutOnTile(this);
+            actionPoints--;
         }
     }
 }

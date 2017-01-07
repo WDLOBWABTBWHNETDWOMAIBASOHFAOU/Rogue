@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using Wink;
 using System.Runtime.Serialization;
 
 [Serializable]
@@ -12,22 +13,40 @@ public class GameObjectList : GameObject, IGameObjectContainer
     [NonSerialized]
     protected List<GameObject> toRemove;
 
-    public GameObjectList(SerializationInfo info, StreamingContext context) : base(info, context)
-    {
-        children = (List<GameObject>)info.GetValue("children", typeof(List<GameObject>));
-    }
-
     public GameObjectList(int layer = 0, string id = "") : base(layer, id)
     {
         children = new List<GameObject>();
         toRemove = new List<GameObject>();
     }
 
+    #region Serialization
+    public GameObjectList(SerializationInfo info, StreamingContext context) : base(info, context)
+    {
+        SerializationHelper.Variables vars = context.Context as SerializationHelper.Variables;
+        if (vars.DownwardSerialization)
+        {
+            children = (List<GameObject>)info.GetValue("children", typeof(List<GameObject>));
+        }
+        else
+        {
+            children = (info.GetValue("childrenGUIDs", typeof(List<string>)) as List<string>).ConvertAll(s => vars.Local.GetGameObjectByGUID(Guid.Parse(s)));
+        }
+        toRemove = new List<GameObject>();
+    }
+
     public override void GetObjectData(SerializationInfo info, StreamingContext context)
     {
-        info.AddValue("children", children);
+        if (context.GetVars().DownwardSerialization)
+        {
+            info.AddValue("children", children);
+        }
+        else
+        {
+            info.AddValue("childrenGUIDs", children.ConvertAll(go => go.GUID.ToString()));
+        }
         base.GetObjectData(info, context);
     }
+    #endregion
 
     public List<GameObject> Children
     {
@@ -54,6 +73,18 @@ public class GameObjectList : GameObject, IGameObjectContainer
 
         if (obj.Parent == this)
             obj.Parent = null;
+    }
+
+    public override void Replace(GameObject replacement)
+    {
+        for (int i = 0; i < children.Count; i++)
+        {
+            GameObject go = children[i];
+            go.Replace(replacement);
+            if (go != null && go.GUID == replacement.GUID) 
+                children[i] = replacement; 
+        }
+        base.Replace(replacement);
     }
 
     public List<GameObject> FindAll(Func<GameObject, bool> del)

@@ -10,11 +10,17 @@ namespace Wink
     public class Enemy : Living, IGUIGameObject
     {
         private Bar<Enemy> hpBar;
+        
+        public override bool BlocksTile
+        {
+            get { return Health > 0; }
+        }
 
         public Enemy(int layer, string id = "Enemy") : base(layer, id)
         {
         }
 
+        #region Serialization
         public Enemy(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
@@ -23,11 +29,7 @@ namespace Wink
         {
             base.GetObjectData(info, context);
         }
-
-        public override bool BlocksTile
-        {
-            get { return Health > 0; }
-        }
+        #endregion
 
         protected override void InitAnimation(string idleColor = "empty:64:64:10:Magenta")
         {
@@ -35,7 +37,12 @@ namespace Wink
             PlayAnimation("idle");
         }
 
-        public void GoTo(Player player)
+        protected override void DoBehaviour(List<GameObject> changedObjects)
+        {
+            GoTo(changedObjects, GameWorld.Find(p => p is Player) as Player);
+        }
+
+        public void GoTo(List<GameObject> changedObjects, Player player)
         {
             TileField tf = player.GameWorld.Find("TileField") as TileField;
             
@@ -46,7 +53,6 @@ namespace Wink
             if (withinReach)
             {
                 Attack(player);
-                actionPoints--;
             }
             else
             {
@@ -54,8 +60,9 @@ namespace Wink
                 List<Tile> path = pf.ShortestPath(Tile, player.Tile);
                 if (path.Count > 0)
                 {
+                    changedObjects.Add(Tile);
+                    changedObjects.Add(path[0]);
                     MoveTo(path[0]);
-                    actionPoints--;
                 }
                 else
                 {
@@ -73,14 +80,6 @@ namespace Wink
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
-            if (isTurn && Health > 0)
-            {
-                GoTo(GameWorld.Find(p => p is Player) as Player);
-            }
-            else
-            {
-                ActionPoints = 0;
-            }
         }
         
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
@@ -113,7 +112,7 @@ namespace Wink
         public override void MoveTo(Tile t)
         {
             base.MoveTo(t);
-            PositionHPBar();
+            PositionHPBar();//TODO: replace with other method to position HPBar because this doesn't work client side.
         }
 
         private void PositionHPBar()
@@ -139,5 +138,6 @@ namespace Wink
             PlayingGUI gui = GameWorld.Find("PlayingGui") as PlayingGUI;
             gui.Remove(hpBar);
         }
+
     }
 }

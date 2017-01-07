@@ -30,7 +30,6 @@ namespace Wink
                 (obj as Player).MoveTo(level.Find("startTile") as Tile);
             }
             server.Level = level;
-            server.LevelChanged();
         }
 
         public override bool Validate(Level level)

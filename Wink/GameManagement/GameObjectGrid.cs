@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using Wink;
 
 [Serializable]
 public class GameObjectGrid : GameObject, IGameObjectContainer
@@ -17,24 +18,61 @@ public class GameObjectGrid : GameObject, IGameObjectContainer
         {
             for (int y = 0; y < rows; y++)
             {
-                grid[x, y] = null;
+                grid[x, y] = null; //TODO: does this do anything????
             }
         }
     }
 
+    #region Serialization
     public GameObjectGrid(SerializationInfo info, StreamingContext context) : base(info, context)
     {
-        grid = (GameObject[,])info.GetValue("grid", typeof(GameObject[,]));
+        SerializationHelper.Variables vars = context.Context as SerializationHelper.Variables;
+        if (vars.DownwardSerialization)
+        {
+            grid = (GameObject[,])info.GetValue("grid", typeof(GameObject[,]));
+        }
+        else
+        {
+            grid = (info.GetValue("gridGUIDs", typeof(string[,])) as string[,]).ConvertAll(s => vars.Local.GetGameObjectByGUID(Guid.Parse(s)));
+        }
+        
         cellWidth = info.GetInt32("cellWidth");
         cellHeight = info.GetInt32("cellHeight");
     }
 
     public override void GetObjectData(SerializationInfo info, StreamingContext context)
     {
-        info.AddValue("grid", grid);
+        if (context.GetVars().DownwardSerialization)
+        {
+            info.AddValue("grid", grid);
+        }
+        else
+        {
+            info.AddValue("gridGUIDs", grid.ConvertAll(go => go.GUID.ToString()));
+        }
+        
         info.AddValue("cellWidth", cellWidth);
         info.AddValue("cellHeight", cellHeight);
         base.GetObjectData(info, context);
+    }
+    #endregion
+
+    public override void Replace(GameObject replacement)
+    {
+        for (int x = 0; x < Columns; x++)
+        {
+            for (int y = 0; y < Rows; y++)
+            {
+                GameObject go = grid[x, y];
+                if (go != null)
+                {
+                    go.Replace(replacement);
+                    if (go.GUID == replacement.GUID)
+                        grid[x, y] = replacement;
+                }
+            }
+        }
+        base.Replace(replacement);
     }
 
     public virtual void Add(GameObject obj, int x, int y)

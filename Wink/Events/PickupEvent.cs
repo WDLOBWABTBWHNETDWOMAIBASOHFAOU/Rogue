@@ -16,9 +16,9 @@ namespace Wink
 
         public PickupEvent(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            item = Server.GetGameObjectByGUID(Guid.Parse(info.GetString("itemGUID"))) as Item;
-            player = Server.GetGameObjectByGUID(Guid.Parse(info.GetString("playerGUID"))) as Player;
-            target = Server.GetGameObjectByGUID(Guid.Parse(info.GetString("targetGUID"))) as GameObjectGrid;
+            item = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("itemGUID"))) as Item;
+            player = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("playerGUID"))) as Player;
+            target = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("targetGUID"))) as GameObjectGrid;
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
@@ -38,14 +38,12 @@ namespace Wink
         public override void OnServerReceive(LocalServer server)
         {
             player.MouseSlot.AddTo(item, target);
-            server.LevelChanged();
         }
 
         public override bool Validate(Level level)
         {
             //TODO: Implement Validation.
             //Within Reach
-            //
             return true;
         }
     }

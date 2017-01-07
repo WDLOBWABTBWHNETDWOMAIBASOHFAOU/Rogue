@@ -26,15 +26,39 @@ namespace Wink
             SetInventory();
         }
 
+        #region Serialization
         public Container(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            iBox = info.GetValue("iBox", typeof(InventoryBox)) as InventoryBox;
+            if (context.GetVars().DownwardSerialization)
+            {
+                iBox = info.GetValue("iBox", typeof(InventoryBox)) as InventoryBox;
+            }
+            else
+            {
+                iBox = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("iBoxGUID"))) as InventoryBox;
+            }
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
+            if (context.GetVars().DownwardSerialization)
+            {
+                info.AddValue("iBox", iBox);
+            }
+            else
+            {
+                info.AddValue("iBoxGUID", iBox.GUID.ToString());
+            }
             base.GetObjectData(info, context);
-            info.AddValue("iBox", iBox);
+        }
+        #endregion
+
+        public override void Replace(GameObject replacement)
+        {
+            if (iBox != null && iBox.GUID == replacement.GUID)
+                iBox = replacement as InventoryBox;
+
+            base.Replace(replacement);
         }
 
         public void InitGUI()
@@ -58,11 +82,11 @@ namespace Wink
         {
             if (itemGrid == null)
             {
-                iBox = new InventoryBox(new GameObjectGrid(2, 4),layer+1,"",cameraSensitivity);
+                iBox = new InventoryBox(new GameObjectGrid(2, 4), layer + 1, "", cameraSensitivity);
             }
             else
             {
-                iBox = new InventoryBox(itemGrid,layer+1, "", cameraSensitivity);
+                iBox = new InventoryBox(itemGrid, layer + 1, "", cameraSensitivity);
             }
         }
 
@@ -75,7 +99,6 @@ namespace Wink
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
         {
             base.Draw(gameTime, spriteBatch, camera);
-            
         }
 
         public override void HandleInput(InputHelper inputHelper)
@@ -96,6 +119,5 @@ namespace Wink
             inputHelper.IfMouseLeftButtonPressedOn(this, onClick);
             base.HandleInput(inputHelper);
         }
-
     }
 }

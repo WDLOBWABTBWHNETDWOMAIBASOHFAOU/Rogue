@@ -11,9 +11,9 @@ namespace Wink
     [Serializable]
     class End : SpriteGameObject, ITileObject
     {
-        Tile parentTile;
-        int levelIndex;
-        Level level;
+        private Tile parentTile;
+        private int levelIndex;
+        private Level level;
 
         public Point PointInTile
         {
@@ -32,19 +32,43 @@ namespace Wink
             this.level = level;
         }
 
+        #region Serialization
         public End(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            parentTile = info.GetValue("parentTile", typeof(Tile)) as Tile;
+            if (context.GetVars().UpwardSerialization)
+            {
+                parentTile = info.GetValue("parentTile", typeof(Tile)) as Tile;
+            }
+            else
+            {
+                parentTile = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("parentTileGUID"))) as Tile;
+            }
             levelIndex = info.GetInt32("levelIndex");
             level = info.GetValue("level", typeof(Level)) as Level;
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            base.GetObjectData(info, context);
-            info.AddValue("parentTile", parentTile);
+            if (context.GetVars().UpwardSerialization)
+            {
+                info.AddValue("parentTile", parentTile);
+            }
+            else
+            {
+                info.AddValue("parentTileGUID", parentTile.GUID.ToString());
+            }
             info.AddValue("levelIndex", levelIndex);
             info.AddValue("level", level);
+            base.GetObjectData(info, context);
+        }
+        #endregion Serialization
+
+        public override void Replace(GameObject replacement)
+        {
+            if (parentTile != null && parentTile.GUID == replacement.GUID)
+                parentTile = replacement as Tile;
+
+            base.Replace(replacement);
         }
 
         public override void HandleInput(InputHelper inputHelper)

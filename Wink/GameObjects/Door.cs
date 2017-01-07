@@ -17,17 +17,41 @@ namespace Wink
             layer = 1;
         }
 
+        #region Serialization
         public Door(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            parentTile = info.GetValue("parentTile", typeof(Tile)) as Tile;
+            if (context.GetVars().UpwardSerialization)
+            {
+                parentTile = info.GetValue("parentTile", typeof(Tile)) as Tile;
+            }
+            else
+            {
+                parentTile = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("parentTileGUID"))) as Tile;
+            }
             open = info.GetBoolean("open");
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            base.GetObjectData(info, context);
-            info.AddValue("parentTile", parentTile);
+            if (context.GetVars().UpwardSerialization)
+            {
+                info.AddValue("parentTile", parentTile);
+            }
+            else
+            {
+                info.AddValue("parentTileGUID", parentTile.GUID.ToString());
+            }
             info.AddValue("open", open);
+            base.GetObjectData(info, context);
+        }
+        #endregion
+
+        public override void Replace(GameObject replacement)
+        {
+            if (parentTile != null && parentTile.GUID == replacement.GUID)
+                parentTile = replacement as Tile;
+
+            base.Replace(replacement);
         }
 
         public Point PointInTile
