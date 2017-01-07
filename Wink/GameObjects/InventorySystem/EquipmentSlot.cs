@@ -23,16 +23,11 @@ namespace Wink
         {
             Player player = (Root as GameObjectList).Find("player_" + Environment.MachineName) as Player;
             Item mouseItem = player.MouseSlot.oldItem;
-            if(mouseItem == null)
+            if(mouseItem == null || mouseItem.GetType() == equipmentRestriction)
             {
                 base.HandleInput(inputHelper);
                 return;
-            }
-            else if (mouseItem.GetType() == equipmentRestriction)
-            {
-                base.HandleInput(inputHelper);
-                return;
-            }            
+            }         
         }
     }        
 }

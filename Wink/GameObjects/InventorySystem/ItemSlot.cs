@@ -12,7 +12,6 @@ namespace Wink
     {
         Item slotItem;
         public Item SlotItem { get { return slotItem; } }
-        int stacksize;
 
         public ItemSlot(string assetName = "empty:65:65:10:Gray", int layer = 0, string id = "", int sheetIndex = 0, float cameraSensitivity = 0, float scale = 1) : base(assetName, layer, id, sheetIndex, cameraSensitivity, scale)
         {
@@ -21,17 +20,7 @@ namespace Wink
 
         public void ChangeItem(Item newItem)
         {
-            if(newItem != null)
-            {
-                slotItem = newItem;
-                //slotItem.Parent = this;
-                stacksize = slotItem.getStackSize;
-            }
-            else
-            {
-                slotItem = null;
-                stacksize = 0;
-            }            
+            slotItem = newItem;
         }
 
         public override void Update(GameTime gameTime)
@@ -39,7 +28,6 @@ namespace Wink
             base.Update(gameTime);
             if(slotItem != null)
             {
-                //slotItem.Update(gameTime);
                 slotItem.Position = GlobalPosition;
             }
         }

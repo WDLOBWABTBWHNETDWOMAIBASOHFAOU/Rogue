@@ -26,40 +26,18 @@ namespace Wink
                     if (oldItem.getStackSize >= oldItem.stackCount + newItem.stackCount)
                     {
                         oldItem.stackCount += newItem.stackCount;
-                        target.ChangeItem(oldItem);
-                        oldItem = null;
-                        return;
+                        newItem = null;
                     }
-                    else if (newItem.stackCount == newItem.getStackSize || oldItem.stackCount == oldItem.getStackSize)
-                    {
-                        target.ChangeItem(oldItem);
-                        oldItem = newItem;
-                        return;
-                    }
-                    else
+                    else if (!(newItem.stackCount == newItem.getStackSize || oldItem.stackCount == oldItem.getStackSize))
                     {
                         int dif = (oldItem.stackCount + newItem.stackCount) - oldItem.getStackSize;
                         oldItem.stackCount = oldItem.getStackSize; // full stack
                         newItem.stackCount = dif; // leftover stack
-
-                        target.ChangeItem(oldItem);
-                        oldItem = newItem;
-                        return;
                     }
                 }
-                else
-                {
-                    target.ChangeItem(oldItem);
-                    oldItem = newItem;
-                    return;
-                }
             }
-            else
-            {
-                target.ChangeItem(oldItem);
-                oldItem = newItem;
-                return;
-            }
+            target.ChangeItem(oldItem);
+            oldItem = newItem;
         }
 
         public override void Update(GameTime gameTime)
