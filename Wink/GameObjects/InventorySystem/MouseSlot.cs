@@ -19,8 +19,8 @@ namespace Wink
             // check if 2 actual items are being swapt, else pick up or drop item.
             if(oldItem!=null && newItem != null)
             {
-                //check if the 2 items are the same else swap items.
-                if(oldItem.Id == newItem.Id )
+                //check if the 2 items are the same, else swap items. (same if identical Id and type)
+                if(oldItem.Id == newItem.Id && oldItem.GetType()==newItem.GetType())
                 {
                     // handle item stacking. if total is greater than stacksize creates 1 full stack and 1 "leftover stack" in MouseSlot
                     if (oldItem.getStackSize >= oldItem.stackCount + newItem.stackCount)

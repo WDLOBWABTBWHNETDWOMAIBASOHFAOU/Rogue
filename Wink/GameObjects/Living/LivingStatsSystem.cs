@@ -62,7 +62,9 @@
         /// <param name="dexterity"></param>
         /// <param name="intelligence"></param>
         /// <param name="baseAttack">unarmed attackValue</param>
-        protected void SetStats(int creatureLevel = 1, int strength = 2, int dexterity = 2, int intelligence = 2, int baseAttack = 40, int baseArmor = 5)
+        /// <param name="baseArmor">natural armorValue</param>
+        /// <param name="baseReach">natural attackReach</param>
+        public void SetStats(int creatureLevel = 1, int strength = 2, int dexterity = 2, int intelligence = 2, int baseAttack = 40, int baseArmor = 5, int baseReach = 1)
         {
             this.creatureLevel = creatureLevel;
             this.strength = strength;
@@ -71,7 +73,7 @@
             this.baseAttack = baseAttack;
             this.baseArmor = baseArmor;
             actionPoints = MaxActionPoints;
-            reach = 1;
+            reach = baseReach;
             healthPoints = MaxHP();
             manaPoints = MaxManaPoints();
         }
