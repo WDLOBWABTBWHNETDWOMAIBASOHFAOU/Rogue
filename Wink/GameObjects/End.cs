@@ -35,13 +35,13 @@ namespace Wink
         #region Serialization
         public End(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            if (context.GetVars().UpwardSerialization)
+            if (context.GetVars().GUIDSerialization)
             {
-                parentTile = info.GetValue("parentTile", typeof(Tile)) as Tile;
+                parentTile = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("parentTileGUID"))) as Tile; 
             }
             else
             {
-                parentTile = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("parentTileGUID"))) as Tile;
+                parentTile = info.GetValue("parentTile", typeof(Tile)) as Tile;
             }
             levelIndex = info.GetInt32("levelIndex");
             level = info.GetValue("level", typeof(Level)) as Level;
@@ -49,13 +49,13 @@ namespace Wink
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            if (context.GetVars().UpwardSerialization)
+            if (context.GetVars().GUIDSerialization)
             {
-                info.AddValue("parentTile", parentTile);
+                info.AddValue("parentTileGUID", parentTile.GUID.ToString());
             }
             else
             {
-                info.AddValue("parentTileGUID", parentTile.GUID.ToString());
+                info.AddValue("parentTile", parentTile); 
             }
             info.AddValue("levelIndex", levelIndex);
             info.AddValue("level", level);

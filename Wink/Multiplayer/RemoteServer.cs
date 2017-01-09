@@ -13,9 +13,14 @@ namespace Wink
 
         TcpClient tcp;
         BinaryFormatter binaryFormatter;
-        List<Event> pendingEvents; //For the server
+        List<Event> pendingEvents; //From the server
 
         Thread receivingThread;
+
+        public Level Level
+        {
+            get { return client.Level; }
+        }
 
         public RemoteServer(LocalClient client)
         {

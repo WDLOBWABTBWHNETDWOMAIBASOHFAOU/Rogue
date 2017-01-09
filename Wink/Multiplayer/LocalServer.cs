@@ -46,6 +46,9 @@ namespace Wink
         /// <returns></returns>
         public GameObject GetGameObjectByGUID(Guid guid)
         {
+            if (guid == Guid.Empty)
+                return null;
+
             GameObject obj = Level.Find(o => o.GUID == guid);
             return obj;
         }
@@ -75,7 +78,7 @@ namespace Wink
 
         protected override void ReallySend(Event e)
         {
-            e = SerializationHelper.Clone(e, this);
+            e = SerializationHelper.Clone(e, this, e.GUIDSerialization);
             
             if (e.Validate(Level))
                 e.OnServerReceive(this);
@@ -90,15 +93,8 @@ namespace Wink
             }
         }
 
-        public override void Update(GameTime gameTime)
+        public void SendOutLevelChanges()
         {
-            Level.Update(gameTime);
-            while (!(livingObjects[turnIndex] is Player))
-            {
-                changedObjects.AddRange(livingObjects[turnIndex].DoAllBehaviour());
-                UpdateTurn();
-            }
-            UpdateTurn();
             if (changedObjects.Count > 0)
             {
                 LevelChangedEvent e = new LevelChangedEvent(changedObjects);
@@ -110,14 +106,41 @@ namespace Wink
             }
         }
 
+        public override void Update(GameTime gameTime)
+        {
+            Level.Update(gameTime);
+            while (!(livingObjects[turnIndex] is Player))
+            {
+                changedObjects.AddRange(livingObjects[turnIndex].DoAllBehaviour());
+                UpdateTurn();
+            }
+            UpdateTurn();
+            if (changedObjects.Count > 0)
+            {
+                SendOutUpdatedLevel();
+                changedObjects.Clear();
+            }
+            //SendOutLevelChanges();
+        }
+
         private void UpdateTurn()
         {
-            if (livingObjects.ElementAt(turnIndex).ActionPoints <= 0)
+            if (livingObjects[turnIndex].ActionPoints <= 0)
             {
                 //livingObjects.ElementAt(turnIndex).isTurn = false;
                 turnIndex = (turnIndex + 1) % livingObjects.Count;
                 //livingObjects.ElementAt(turnIndex).isTurn = true;
-                livingObjects.ElementAt(turnIndex).ActionPoints = 4;
+                livingObjects[turnIndex].ActionPoints = 4;
+                //changedObjects.Add(livingObjects[turnIndex]);
+                SendOutUpdatedLevel();
+            }
+        }
+
+        public void EndTurn(Player player)
+        {
+            if (livingObjects[turnIndex] == player)
+            {
+                turnIndex++;
             }
         }
     }

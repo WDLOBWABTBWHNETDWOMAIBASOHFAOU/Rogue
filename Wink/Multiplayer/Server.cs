@@ -1,5 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace Wink
@@ -7,7 +7,7 @@ namespace Wink
     public abstract class Server : Sender
     {
         protected static Server instance;
-
+        
         public static void Send(Event e)
         {
             instance.ReallySend(e);
@@ -20,7 +20,7 @@ namespace Wink
 
             instance = this;
         }
-
+        
         protected abstract void ReallySend(Event e);
 
         public abstract void Update(GameTime gameTime);

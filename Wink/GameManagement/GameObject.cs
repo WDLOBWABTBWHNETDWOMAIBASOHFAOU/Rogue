@@ -36,13 +36,13 @@ public abstract class GameObject : IGameLoopObject, ISerializable
     /// </summary>
     protected GameObject(SerializationInfo info, StreamingContext context)
     {
-        if (context.GetVars().UpwardSerialization)
+        if (context.GetVars().GUIDSerialization)
         {
-            parent = (GameObject)info.GetValue("parent", typeof(GameObject));
+            parent = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("parentGUID"))); 
         }
         else
         {
-            parent = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("parentGUID")));
+            parent = (GameObject)info.GetValue("parent", typeof(GameObject));
         }
         position = new Vector2((float)info.GetDouble("posX"), (float)info.GetDouble("posY"));
         velocity = new Vector2((float)info.GetDouble("velX"), (float)info.GetDouble("velY"));
@@ -54,13 +54,13 @@ public abstract class GameObject : IGameLoopObject, ISerializable
 
     public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
     {
-        if (context.GetVars().UpwardSerialization)
+        if (context.GetVars().GUIDSerialization)
         {
-            info.AddValue("parent", parent);
+            info.AddValue("parentGUID", parent != null ? parent.GUID.ToString() : Guid.Empty.ToString()); 
         }
         else
         {
-            info.AddValue("parentGUID", parent.GUID.ToString());
+            info.AddValue("parent", parent);
         }
         info.AddValue("posX", position.X);
         info.AddValue("posY", position.Y);

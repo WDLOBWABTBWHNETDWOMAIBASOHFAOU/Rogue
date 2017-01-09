@@ -17,25 +17,25 @@ namespace Wink
         #region Serialization
         public MouseSlot(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            if (context.GetVars().DownwardSerialization)
+            if (context.GetVars().GUIDSerialization)
             {
-                oldItem = info.GetValue("oldItem", typeof(Item)) as Item;
+                oldItem = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("oldItemGUID"))) as Item; 
             }
             else
             {
-                oldItem = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("oldItemGUID"))) as Item;
+                oldItem = info.GetValue("oldItem", typeof(Item)) as Item;
             }
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            if (context.GetVars().DownwardSerialization)
+            if (context.GetVars().GUIDSerialization)
             {
-                info.AddValue("oldItem", oldItem);
+                info.AddValue("oldItemGUID", oldItem.GUID.ToString()); 
             }
             else
             {
-                info.AddValue("oldItemGUID", oldItem.GUID.ToString());
+                info.AddValue("oldItem", oldItem);
             }
             base.GetObjectData(info, context);
         }

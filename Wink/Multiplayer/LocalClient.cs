@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using System;
 
 namespace Wink
@@ -48,7 +49,9 @@ namespace Wink
         /// <returns></returns>
         public GameObject GetGameObjectByGUID(Guid guid)
         {
-            //TODO: Should probably just pass an object along with the StreamingContext rather than making this statically available.
+            if (guid == Guid.Empty)
+                return null;
+
             GameObject obj = Level.Find(o => o.GUID == guid);
             return obj;
         }
@@ -69,7 +72,7 @@ namespace Wink
         public void LoadPlayerGUI()
         {
             PlayingGUI pgui = gameObjects.Find(obj => obj is PlayingGUI) as PlayingGUI;
-            pgui.AddPlayerGUI(Player);
+            pgui.AddPlayerGUI(this);
         }
 
         public void Replace(GameObject go)
@@ -108,7 +111,7 @@ namespace Wink
 
         public override void Send(Event e)
         {
-            e = SerializationHelper.Clone(e, this);
+            e = SerializationHelper.Clone(e, this, e.GUIDSerialization);
 
             if (e.Validate(Level))
                 e.OnClientReceive(this);

@@ -9,6 +9,8 @@ namespace Wink
         private PlayingMenu playingMenu;
         private Window inventory;
 
+        private Bar<LocalClient> hpBar, mpBar, apBar;
+
         public PlayingGUI()
         {
             Layer = 1;
@@ -32,7 +34,7 @@ namespace Wink
             Add(floor);
         }
 
-        public void AddPlayerGUI(Player player)
+        public void AddPlayerGUI(LocalClient lc)
         {
             SpriteFont textfieldFont = GameEnvironment.AssetManager.GetFont("Arial26");
 
@@ -41,23 +43,23 @@ namespace Wink
             Vector2 MPBarPosition = new Vector2(barX, HPBarPosition.Y + 32);
 
             //Healthbar
-            Bar<Player> hpBar = new Bar<Player>(player, p => p.Health, player.MaxHealth, textfieldFont, Color.Red, 2, "HealthBar", 0, 2.5f);
+            hpBar = new Bar<LocalClient>(lc, p => lc.Player.Health, lc.Player.MaxHealth, textfieldFont, Color.Red, 2, "HealthBar", 0, 2.5f);
             hpBar.Position = new Vector2(HPBarPosition.X, HPBarPosition.Y);
             Add(hpBar);
 
             //Manabar
-            Bar<Player> mpBar = new Bar<Player>(player, p => p.Mana, player.MaxMana, textfieldFont, Color.Blue, 2, "ManaBar", 0,2.5f);
+            mpBar = new Bar<LocalClient>(lc, p => lc.Player.Mana, lc.Player.MaxMana, textfieldFont, Color.Blue, 2, "ManaBar", 0,2.5f);
             mpBar.Position = new Vector2(MPBarPosition.X, MPBarPosition.Y);
             Add(mpBar);
 
             //Action Points
-            Bar<Player> apBar = new Bar<Player>(player, p => p.ActionPoints, Living.MaxActionPoints, textfieldFont, Color.Yellow, 2, "ActionBar",0, 2.5f);
+            apBar = new Bar<LocalClient>(lc, p => lc.Player.ActionPoints, Living.MaxActionPoints, textfieldFont, Color.Yellow, 2, "ActionBar",0, 2.5f);
             int screenWidth = GameEnvironment.Screen.X;
             Vector2 APBarPosition = new Vector2(screenWidth - barX - apBar.Width, HPBarPosition.Y);
             apBar.Position = new Vector2(APBarPosition.X, APBarPosition.Y);
             Add(apBar);
 
-            GameObjectGrid items = player.ItemGrid;
+            GameObjectGrid items = lc.Player.ItemGrid;
             //GameObjectGrid items = new GameObjectGrid(3,6);
             inventory = new Window(items.Columns * Tile.TileWidth, items.Rows * Tile.TileHeight);
             inventory.Add(new InventoryBox(items, 0, ""));
@@ -65,11 +67,7 @@ namespace Wink
             inventory.Visible = false;
             Add(inventory);
 
-            Add(player.MouseSlot);
-        }
-        public override void Update(GameTime gameTime)
-        {
-            base.Update(gameTime);
+            Add(lc.Player.MouseSlot);
         }
 
         public override void HandleInput(InputHelper inputHelper)

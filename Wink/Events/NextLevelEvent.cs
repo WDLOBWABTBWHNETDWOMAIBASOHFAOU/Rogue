@@ -15,6 +15,11 @@ namespace Wink
         {
         }
 
+        public override bool GUIDSerialization
+        {
+            get { return false; }
+        }
+
         public override void OnClientReceive(LocalClient client)
         {
             throw new NotImplementedException();

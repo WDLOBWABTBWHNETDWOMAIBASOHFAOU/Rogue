@@ -45,29 +45,29 @@ namespace Wink
         public Player(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             exp = info.GetInt32("exp");
-            if (context.GetVars().DownwardSerialization)
+            if (context.GetVars().GUIDSerialization)
             {
-                mouseSlot = info.GetValue("mouseSlot", typeof(MouseSlot)) as MouseSlot;
-                itemGrid = info.GetValue("itemGrid", typeof(GameObjectGrid)) as GameObjectGrid;
+                mouseSlot = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("mouseSlotGUID"))) as MouseSlot;
+                itemGrid = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("itemGridGUID"))) as GameObjectGrid; 
             }
             else
             {
-                mouseSlot = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("mouseSlotGUID"))) as MouseSlot;
-                itemGrid = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("itemGridGUID"))) as GameObjectGrid;
+                mouseSlot = info.GetValue("mouseSlot", typeof(MouseSlot)) as MouseSlot;
+                itemGrid = info.GetValue("itemGrid", typeof(GameObjectGrid)) as GameObjectGrid;
             }
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            if (context.GetVars().DownwardSerialization)
+            if (context.GetVars().GUIDSerialization)
             {
-                info.AddValue("mouseSlot", mouseSlot);
-                info.AddValue("itemGrid", itemGrid);
+                info.AddValue("mouseSlotGUID", mouseSlot.GUID.ToString());
+                info.AddValue("itemGridGUID", itemGrid.GUID.ToString()); 
             }
             else
             {
-                info.AddValue("mouseSlotGUID", mouseSlot.GUID.ToString());
-                info.AddValue("itemGridGUID", itemGrid.GUID.ToString());
+                info.AddValue("mouseSlot", mouseSlot);
+                info.AddValue("itemGrid", itemGrid);
             }
             info.AddValue("exp", exp);
             base.GetObjectData(info, context);
@@ -120,6 +120,5 @@ namespace Wink
 
             // + some amount of neutral stat points, distriputed by user discresion or increase stats based on picked hero
         }
-
     }
 }

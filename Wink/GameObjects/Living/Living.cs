@@ -100,9 +100,12 @@ namespace Wink
                 int previousActionPoints = int.MinValue;
                 while (actionPoints > 0 && actionPoints != previousActionPoints)
                 {
+                    previousActionPoints = actionPoints;
                     DoBehaviour(changedObjects);
                 }
             }
+            else
+                actionPoints = 0;
             return changedObjects;
         }
 
@@ -145,7 +148,6 @@ namespace Wink
                 Tile.Remove(this);
 
             t.PutOnTile(this);
-            actionPoints--;
         }
     }
 }

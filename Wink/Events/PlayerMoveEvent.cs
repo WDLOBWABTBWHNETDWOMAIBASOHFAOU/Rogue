@@ -26,6 +26,11 @@ namespace Wink
             base.GetObjectData(info, context);
         }
 
+        public override bool GUIDSerialization
+        {
+            get { return true; }
+        }
+
         protected override int Cost
         {
             get { return 1; }
@@ -36,9 +41,8 @@ namespace Wink
             throw new NotImplementedException();
         }
 
-        protected override void DoAction(LocalServer server)
+        public override void DoAction(LocalServer server)
         {
-            server.ChangedObjects.Add(player);
             server.ChangedObjects.Add(player.Tile);
             server.ChangedObjects.Add(tile);
             player.MoveTo(tile);

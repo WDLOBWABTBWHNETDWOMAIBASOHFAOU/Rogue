@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Wink
 {
@@ -28,10 +25,21 @@ namespace Wink
             base.GetObjectData(info, context);
         }
 
+        public override bool GUIDSerialization
+        {
+            get { return true; }
+        }
+
         public override void OnClientReceive(LocalClient client)
         {
             foreach (GameObject go in changedObjects)
+            {
                 client.Replace(go);
+
+                if (go is IGUIGameObject)
+                    (go as IGUIGameObject).InitGUI();
+            }
+                
         }
 
         public override void OnServerReceive(LocalServer server)

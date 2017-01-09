@@ -23,26 +23,26 @@ public class GameObjectList : GameObject, IGameObjectContainer
     public GameObjectList(SerializationInfo info, StreamingContext context) : base(info, context)
     {
         SerializationHelper.Variables vars = context.Context as SerializationHelper.Variables;
-        if (vars.DownwardSerialization)
+        if (vars.GUIDSerialization)
         {
-            children = (List<GameObject>)info.GetValue("children", typeof(List<GameObject>));
+            children = (info.GetValue("childrenGUIDs", typeof(List<string>)) as List<string>).ConvertAll(s => vars.Local.GetGameObjectByGUID(Guid.Parse(s)));
         }
         else
         {
-            children = (info.GetValue("childrenGUIDs", typeof(List<string>)) as List<string>).ConvertAll(s => vars.Local.GetGameObjectByGUID(Guid.Parse(s)));
+            children = (List<GameObject>)info.GetValue("children", typeof(List<GameObject>));
         }
         toRemove = new List<GameObject>();
     }
 
     public override void GetObjectData(SerializationInfo info, StreamingContext context)
     {
-        if (context.GetVars().DownwardSerialization)
+        if (context.GetVars().GUIDSerialization)
         {
-            info.AddValue("children", children);
+            info.AddValue("childrenGUIDs", children.ConvertAll(go => go.GUID.ToString()));
         }
         else
         {
-            info.AddValue("childrenGUIDs", children.ConvertAll(go => go.GUID.ToString()));
+            info.AddValue("children", children);
         }
         base.GetObjectData(info, context);
     }
@@ -80,9 +80,12 @@ public class GameObjectList : GameObject, IGameObjectContainer
         for (int i = 0; i < children.Count; i++)
         {
             GameObject go = children[i];
-            go.Replace(replacement);
-            if (go != null && go.GUID == replacement.GUID) 
-                children[i] = replacement; 
+            if (go != null)
+            {
+                go.Replace(replacement);
+                if (go.GUID == replacement.GUID)
+                    children[i] = replacement;
+            }
         }
         base.Replace(replacement);
     }

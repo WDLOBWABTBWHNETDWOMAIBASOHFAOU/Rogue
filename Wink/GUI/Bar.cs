@@ -8,17 +8,18 @@ namespace Wink
     {
         private class InnerBar : SpriteGameObject 
         {
-            private Tuple<T, Func<T, int>> value;
+            private Tuple<T, Func<T, int>> valueTuple;
             public int maxValue;
 
             public int Value
             {
-                get { return value.Item2.Invoke(value.Item1); }
+                get { return valueTuple.Item2.Invoke(valueTuple.Item1); }
             }
 
-            public void AddValue(T o, Func<T, int> test) 
+            public Tuple<T, Func<T, int>> ValueTuple
             {
-                value = new Tuple<T, Func<T, int>>(o , test);
+                set { valueTuple = value; }
+                get { return valueTuple; }
             }
 
             public InnerBar(int maxValue, int layer = 0, string id = "", float cameraSensitivity = 0, float scale = 1) : base("HUD/innerbar", layer, id, 0, 0, scale)
@@ -67,7 +68,12 @@ namespace Wink
             Add(inner);
 
             inner.maxValue = maxValue;
-            inner.AddValue(o, test);
+            inner.ValueTuple = new Tuple<T, Func<T, int>>(o, test);
+        }
+
+        public void SetValueObject(T obj)
+        {
+            inner.ValueTuple = new Tuple<T, Func<T, int>>(obj, inner.ValueTuple.Item2);
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)

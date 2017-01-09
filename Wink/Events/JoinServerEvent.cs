@@ -12,6 +12,11 @@ namespace Wink
             this.clientName = clientName;
         }
 
+        public override bool GUIDSerialization
+        {
+            get { return false; }
+        }
+
         public override void OnClientReceive(LocalClient client)
         {
         }

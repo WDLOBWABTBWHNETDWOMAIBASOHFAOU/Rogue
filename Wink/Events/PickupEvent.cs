@@ -26,8 +26,13 @@ namespace Wink
             //This event can only be sent from client to server, therefore ID based serialization is used.
             info.AddValue("itemGUID", item.GUID.ToString());
             info.AddValue("playerGUID", player.GUID.ToString());
-            info.AddValue("targetGUID", target.GUID.ToString());
+            info.AddValue("targetGUID", target != null ? target.GUID.ToString() : Guid.Empty.ToString());
             base.GetObjectData(info, context);
+        }
+
+        public override bool GUIDSerialization
+        {
+            get { return false; }
         }
 
         public override void OnClientReceive(LocalClient client)

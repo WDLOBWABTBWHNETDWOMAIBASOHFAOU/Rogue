@@ -2,7 +2,7 @@
 
 namespace Wink
 {
-    interface ILocal
+    public interface ILocal
     {
         GameObject GetGameObjectByGUID(Guid guid);
     }

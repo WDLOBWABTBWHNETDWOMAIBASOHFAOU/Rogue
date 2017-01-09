@@ -29,25 +29,25 @@ namespace Wink
         #region Serialization
         public Container(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            if (context.GetVars().DownwardSerialization)
+            if (context.GetVars().GUIDSerialization)
             {
-                iBox = info.GetValue("iBox", typeof(InventoryBox)) as InventoryBox;
+                iBox = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("iBoxGUID"))) as InventoryBox; 
             }
             else
             {
-                iBox = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("iBoxGUID"))) as InventoryBox;
+                iBox = info.GetValue("iBox", typeof(InventoryBox)) as InventoryBox;
             }
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            if (context.GetVars().DownwardSerialization)
+            if (context.GetVars().GUIDSerialization)
             {
-                info.AddValue("iBox", iBox);
+                info.AddValue("iBoxGUID", iBox.GUID.ToString());
             }
             else
             {
-                info.AddValue("iBoxGUID", iBox.GUID.ToString());
+                info.AddValue("iBox", iBox); 
             }
             base.GetObjectData(info, context);
         }

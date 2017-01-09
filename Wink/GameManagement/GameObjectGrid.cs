@@ -27,13 +27,13 @@ public class GameObjectGrid : GameObject, IGameObjectContainer
     public GameObjectGrid(SerializationInfo info, StreamingContext context) : base(info, context)
     {
         SerializationHelper.Variables vars = context.Context as SerializationHelper.Variables;
-        if (vars.DownwardSerialization)
+        if (vars.GUIDSerialization)
         {
-            grid = (GameObject[,])info.GetValue("grid", typeof(GameObject[,]));
+            grid = (info.GetValue("gridGUIDs", typeof(string[,])) as string[,]).ConvertAll(s => vars.Local.GetGameObjectByGUID(Guid.Parse(s))); 
         }
         else
         {
-            grid = (info.GetValue("gridGUIDs", typeof(string[,])) as string[,]).ConvertAll(s => vars.Local.GetGameObjectByGUID(Guid.Parse(s)));
+            grid = (GameObject[,])info.GetValue("grid", typeof(GameObject[,]));
         }
         
         cellWidth = info.GetInt32("cellWidth");
@@ -42,13 +42,13 @@ public class GameObjectGrid : GameObject, IGameObjectContainer
 
     public override void GetObjectData(SerializationInfo info, StreamingContext context)
     {
-        if (context.GetVars().DownwardSerialization)
+        if (context.GetVars().GUIDSerialization)
         {
-            info.AddValue("grid", grid);
+            info.AddValue("gridGUIDs", grid.ConvertAll(go => go.GUID.ToString())); 
         }
         else
         {
-            info.AddValue("gridGUIDs", grid.ConvertAll(go => go.GUID.ToString()));
+            info.AddValue("grid", grid);
         }
         
         info.AddValue("cellWidth", cellWidth);

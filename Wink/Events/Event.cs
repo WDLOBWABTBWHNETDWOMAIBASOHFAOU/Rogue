@@ -28,6 +28,8 @@ namespace Wink
             }*/
         }
 
+        public abstract bool GUIDSerialization { get; }
+
         public abstract void OnClientReceive(LocalClient client);
         public abstract void OnServerReceive(LocalServer server);
 

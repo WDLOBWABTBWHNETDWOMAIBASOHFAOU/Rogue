@@ -34,14 +34,20 @@ namespace Wink
             get { return 1; }
         }
 
+        public override bool GUIDSerialization
+        {
+            get { return false; }
+        }
+
         public override void OnClientReceive(LocalClient client)
         {
             throw new NotImplementedException();
         }
 
-        protected override void DoAction(LocalServer server)
+        public override void DoAction(LocalServer server)
         {
             Attacker.Attack(Defender);
+            server.ChangedObjects.Add(Defender);
         }
 
         protected override bool ValidateAction(Level level)

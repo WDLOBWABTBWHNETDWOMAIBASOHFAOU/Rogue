@@ -53,6 +53,8 @@ namespace Wink
             if (withinReach)
             {
                 Attack(player);
+                actionPoints--;
+                changedObjects.Add(player);
             }
             else
             {
@@ -60,9 +62,12 @@ namespace Wink
                 List<Tile> path = pf.ShortestPath(Tile, player.Tile);
                 if (path.Count > 0)
                 {
+                    changedObjects.Add(this);
                     changedObjects.Add(Tile);
                     changedObjects.Add(path[0]);
+
                     MoveTo(path[0]);
+                    actionPoints--;
                 }
                 else
                 {
@@ -87,7 +92,7 @@ namespace Wink
             base.Draw(gameTime, spriteBatch, camera);
             if (Health < MaxHealth && visible)
             {
-                hpBar.Draw(gameTime, spriteBatch, camera);
+                //hpBar.Draw(gameTime, spriteBatch, camera);
             }
         }
 
@@ -112,32 +117,37 @@ namespace Wink
         public override void MoveTo(Tile t)
         {
             base.MoveTo(t);
-            PositionHPBar();//TODO: replace with other method to position HPBar because this doesn't work client side.
+            //PositionHPBar();//TODO: replace with other method to position HPBar because this doesn't work client side.
         }
 
         private void PositionHPBar()
         {
-            if (hpBar != null)
-                hpBar.Position = Tile.GlobalPosition - new Vector2(Math.Abs(Tile.Width - hpBar.Width) / 2, 0);
+            //if (hpBar != null && Tile != null)
+            hpBar.Position = Tile.GlobalPosition - new Vector2(Math.Abs(Tile.Width - hpBar.Width) / 2, 0);
         }
 
         public void InitGUI()
         {
-            SpriteFont textfieldFont = GameEnvironment.AssetManager.GetFont("Arial26");
-
-            //Healthbar
-            hpBar = new Bar<Enemy>(this, e => e.Health, MaxHealth, textfieldFont, Color.Red, 2, "HealthBar", 1.0f, 1f, false);
-            PositionHPBar();
-
-            PlayingGUI gui = GameWorld.Find("PlayingGui") as PlayingGUI;
-            gui.Add(hpBar);
+            if (GameWorld != null)
+            {
+                //Healthbar
+                if (GameWorld.Find("HealthBar" + guid.ToString()) == null)
+                {
+                    SpriteFont textfieldFont = GameEnvironment.AssetManager.GetFont("Arial26");
+                    hpBar = new Bar<Enemy>(this, e => e.Health, MaxHealth, textfieldFont, Color.Red, 2, "HealthBar" + guid.ToString(), 1.0f, 1f, false);
+                    (GameWorld.Find("PlayingGui") as PlayingGUI).Add(hpBar);
+                }
+                else
+                {
+                    hpBar = GameWorld.Find("HealthBar" + guid.ToString()) as Bar<Enemy>;
+                    hpBar.SetValueObject(this);
+                }
+                PositionHPBar();
+            }
         }
 
         public void CleanupGUI()
         {
-            PlayingGUI gui = GameWorld.Find("PlayingGui") as PlayingGUI;
-            gui.Remove(hpBar);
         }
-
     }
 }

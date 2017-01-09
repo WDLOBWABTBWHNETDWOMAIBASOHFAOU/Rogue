@@ -29,9 +29,10 @@ namespace Wink
 
         public sealed override void OnServerReceive(LocalServer server)
         {
-            player.ActionPoints -= Cost;
-
+            server.ChangedObjects.Add(player);
             DoAction(server);
+            player.ActionPoints -= Cost;
+            //server.SendOutLevelChanges();
         }
 
         public sealed override bool Validate(Level level)
@@ -40,6 +41,6 @@ namespace Wink
         }
 
         protected abstract bool ValidateAction(Level level);
-        protected abstract void DoAction(LocalServer server);
+        public abstract void DoAction(LocalServer server);
     }
 }
