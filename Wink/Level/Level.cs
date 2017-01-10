@@ -44,7 +44,7 @@ namespace Wink
             this.levelIndex = levelIndex;
         }
 
-        public Level()
+        public Level() : base(0, "Level")
         {
             List<Room> rooms = GenerateRooms();
             List<Tuple<Room, Room>> hallwayPairs = GenerateHallwayPairs(rooms);
