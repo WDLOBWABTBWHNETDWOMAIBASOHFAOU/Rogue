@@ -24,6 +24,8 @@ namespace Wink
 
         protected TileType type;
         protected bool passable;
+        string assetname;
+        public string AssetName { get { return assetname; } }
 
         public Point TilePosition { get { return new Point((int)Position.X / TileWidth, (int)Position.Y / TileHeight); } }
 
@@ -43,6 +45,7 @@ namespace Wink
         public Tile(string assetname = "", TileType tp = TileType.Background, int layer = 0, string id = "", float cameraSensitivity = 1) : base(assetname, layer, id, 0, cameraSensitivity)
         {
             type = tp;
+            this.assetname = assetname;
         }
 
         public Tile(SerializationInfo info, StreamingContext context) : base(info, context)

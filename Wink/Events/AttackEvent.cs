@@ -66,38 +66,50 @@ namespace Wink
             Tile checkToTile; 
             
             Vector2 aVec = (enemyTile.TilePosition - playerTile.TilePosition).ToVector2();
-            int steps = 1, longSideX,longSideY;
+            int steps = 1, longSideX,longSideY,shortSideX=0,shortSideY=0;
             float longSide,shortSide;           
 
             if(Math.Abs(aVec.X) == Math.Abs(aVec.Y))//check diagonal
             {
-                for(int x = currentTile.TilePosition.X; x != enemyTile.TilePosition.X; x+= (int)(aVec.X / (Math.Abs(aVec.X))))
+                for (int i=0;i<= Math.Abs(aVec.Y); i++)
                 {
-                    for(int y = currentTile.TilePosition.X;y!=enemyTile.TilePosition.Y; y+= (int)(aVec.Y / (Math.Abs(aVec.Y))))
+                    int x = currentTile.TilePosition.X + (int)(aVec.X / (Math.Abs(aVec.X))) * i;
+                    int y = currentTile.TilePosition.Y + (int)(aVec.Y / (Math.Abs(aVec.Y))) * i;
+
+                    Tile check = grid[x, y] as Tile;
+                    if (!check.Passable)
                     {
-                        Tile check = grid[x, y] as Tile;
-                        if (check.Passable)
-                        {
-                            return false;
-                        }
+                        return true;
                     }
                 }
             }
             else 
             {
+                int currentLong;
+                int checkToLong;
+
                 if (Math.Abs(aVec.X) > Math.Abs(aVec.Y))
                 {
                     longSide = aVec.X;
                     shortSide = aVec.Y;
-                    longSideX = 1;
-                    longSideY = 0;
+                    longSideX = 0;
+                    longSideY = 1;
                 }
                 else
                 {
                     longSide = aVec.Y;
                     shortSide = aVec.X;
-                    longSideX = 0;
-                    longSideY = 1;
+                    longSideX = 1;
+                    longSideY = 0;
+                }
+
+                if(aVec.X < 0)
+                {
+                    shortSideX = 1;
+                }
+                if (aVec.Y < 0)
+                {
+                    shortSideY = 1;
                 }
 
                 if (shortSide != 0)
@@ -110,21 +122,37 @@ namespace Wink
                     float nextX = (playerTile.TilePosition.X + nextPointVec.X * steps);
                     float nextY = (playerTile.TilePosition.Y + nextPointVec.Y * steps);
 
-                    nextLineTile = grid[(int)nextX, (int)nextY] as Tile;
-                    checkToTile = grid[(int)(nextX - (nextPointVec.X*longSideX)), (int)(nextY - nextPointVec.Y*longSideY)] as Tile;
+                    nextLineTile = grid[(int)(nextX + (nextPointVec.X *longSideX)), (int)(nextY + (nextPointVec.Y*longSideY))] as Tile;
+                    checkToTile = grid[(int)(nextX - (nextPointVec.X * shortSideX*longSideX)), (int)(nextY - (nextPointVec.Y * shortSideY*longSideY))] as Tile;
+
+
+                    if (Math.Abs(aVec.X) > Math.Abs(aVec.Y))
+                    {
+                        currentLong = currentTile.TilePosition.X;
+                        checkToLong = checkToTile.TilePosition.X;
+                    }
+                    else
+                    {
+                        currentLong = currentTile.TilePosition.Y;
+                        checkToLong = checkToTile.TilePosition.Y;
+                    }
 
                     if (!checkToTile.Passable)
                     { return true; }
 
-                    for (int i = (currentTile.TilePosition.X); i != (checkToTile.TilePosition.X); i += (int)(longSide / (Math.Abs(longSide))))
+                    for (int i = (currentLong); i != (checkToLong); i += (int)(longSide / (Math.Abs(longSide))))
                     {
-                        Tile check = grid[i, currentTile.TilePosition.Y] as Tile;
+                        Tile check = grid[i*longSideY + currentTile.TilePosition.X*longSideX, i*longSideX + currentTile.TilePosition.Y*longSideY] as Tile;
                         if( check == enemyTile)
                         { return false; }
 
                         if (!check.Passable)
-                        { return true; }                    
+                        { return true; }
                     }
+
+                    if (checkToTile == enemyTile)
+                    { return false; }
+
                     currentTile = nextLineTile;
                     steps++;
                 }
