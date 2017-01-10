@@ -8,11 +8,18 @@
         /// <param name="target"></param>
         public void Attack(Living target)
         {
+            DamageType damageType = DamageType.physical;
+            if (weapon.SlotItem != null)
+            {
+                WeaponEquipment weaponItem = weapon.SlotItem as WeaponEquipment;
+                damageType = weaponItem.DamageType;
+            }
+
             double hitNumber = GameEnvironment.Random.NextDouble();
             if (hitNumber < HitChance())
             {
                 double attackValue = AttackValue();
-                target.TakeDamage(attackValue);
+                target.TakeDamage(attackValue, damageType);
             }
             // Display attack missed (feedback on fail)
         }
@@ -21,12 +28,12 @@
         /// Checks if the defending side dodges the attack, if dodge is unsuccesfull HP decreases. Also displays proper feedback on screen
         /// </summary>
         /// <param name="">Attackvalue of the attacking side</param>
-        public void TakeDamage(double attackValue)
+        public void TakeDamage(double attackValue,DamageType damageType)
         {
             double dodgeNumber = GameEnvironment.Random.NextDouble();
             if (dodgeNumber > DodgeChance())
             {
-                double defenceValue = ArmorValue();
+                double defenceValue = ArmorValue(damageType);
                 
                 healthPoints -= (int)(attackValue / defenceValue);
                 //Display damage taken

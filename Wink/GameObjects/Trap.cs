@@ -33,7 +33,7 @@ namespace Wink
 
                 if (dx <= 0 && dy <= 0 && !triggerd)
                 {
-                    p.TakeDamage(trapStrenght);
+                    p.TakeDamage(trapStrenght, DamageType.physical);
                     triggerd = true;
                     Visible = false;
                 }

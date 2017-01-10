@@ -64,13 +64,13 @@
         /// Calculetes a stat based value for living objects
         /// </summary>
         /// <param name="baseValue"></param>
-        /// <param name="stat"></param>
+        /// <param name="stat1"></param>
         /// <param name="extra">Sum of extra effects</param>
-        /// <param name="modifier"></param>
+        /// <param name="modifier1"></param>
         /// <returns></returns>
-        protected double CalculateValue(double baseValue, int stat = 0, double modifier = 1, double extra = 0)
+        public double CalculateValue(double baseValue, int stat1 = 0, double modifier1 = 1, double extra = 0, int stat2 = 0, double modifier2 = 0, int stat3 = 0, double modifier3 = 0)
         {
-            double value = baseValue + modifier * stat + extra;
+            double value = baseValue + baseValue*modifier1 * stat1 + extra + baseValue * modifier2 * stat2 + baseValue * modifier3 * stat3;
             return value;
         }
 
@@ -145,25 +145,16 @@
 
             int attack = baseAttack;
             double mod = 1;
-
+            int attackValue;
             if (weapon.SlotItem !=null)
             {
                 WeaponEquipment weaponItem = weapon.SlotItem as WeaponEquipment;
-
-                if(weaponItem.StrRequirement > Strength)
-                {
-                    int dif = weaponItem.StrRequirement - Strength;
-                    double penaltyMod = 0.4; // needs balancing, possibly dependent on weapon
-                    attack = (int)(weaponItem.BaseDamage - weaponItem.BaseDamage*(dif * penaltyMod));
-                }
-                else
-                {
-                    attack = weaponItem.BaseDamage;
-                    mod = weaponItem.ScalingFactor;
-                }
+                attackValue = weaponItem.Value(this);
             }
-                        
-            int attackValue = (int)CalculateValue(attack, Strength, mod);     
+            else
+            {
+                attackValue = (int)CalculateValue(attack, Strength, mod); 
+            }   
 
             return attackValue;
         }
@@ -172,22 +163,13 @@
         /// returns armorvalue based on the summ the equiped armoritems
         /// </summary>
         /// <returns></returns>
-        protected int ArmorValue()
+        protected int ArmorValue(DamageType damageType)
         {
             int armorValue=baseArmor;
             if (body.SlotItem != null)
             {
                 BodyEquipment ArmorItem = body.SlotItem as BodyEquipment;
-                if(ArmorItem.StrRequirement > Strength)
-                {
-                    int dif = ArmorItem.StrRequirement - Strength;
-                    double penaltyMod = 0.2;// needs balancing, possibly dependent on armor
-                    armorValue = baseArmor + (int)(ArmorItem.ArmorValue - ArmorItem.ArmorValue*(dif * penaltyMod));
-                }
-                else
-                {
-                    armorValue = baseArmor + ArmorItem.ArmorValue;
-                }
+                armorValue = ArmorItem.Value(this, damageType);
             }
 
             if(armorValue <= 0)

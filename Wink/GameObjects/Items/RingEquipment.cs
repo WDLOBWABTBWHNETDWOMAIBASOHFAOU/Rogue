@@ -21,7 +21,7 @@ namespace Wink
         protected double ringValue;
         protected RingType ringType;
 
-        public RingEquipment(double ringValue, RingType ringType, string assetName, bool multiplier = false, int stackSize = 1, int layer = 0, string id = "") : base(assetName, stackSize, layer, id)
+        public RingEquipment(double ringValue, RingType ringType, string assetName, bool multiplier = false, int stackSize = 1, int layer = 0, string id = "") : base(assetName, id, stackSize, layer)
         {
             this.ringType = ringType;
             this.ringValue = ringValue;

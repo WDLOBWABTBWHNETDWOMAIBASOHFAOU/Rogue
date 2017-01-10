@@ -87,6 +87,8 @@ namespace Wink
             {
                 Enemy testEnemy = new Enemy(layer + 1);
                 testEnemy.SetStats();
+                EquipmentSlot armorSlot = testEnemy.EquipmentSlots.Find("bodySlot") as EquipmentSlot;
+                armorSlot.ChangeItem(new BodyEquipment("empty:65:65:10:Brown", "testArmor", 40, 5));
                 Add(testEnemy);
                 testEnemy.InitPosition();
             }
