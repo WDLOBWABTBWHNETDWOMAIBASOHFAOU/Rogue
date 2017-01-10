@@ -381,7 +381,8 @@ namespace Wink
                 }
             }
 
-            tf.Add(LoadStartTile(), rooms[0].Location.ToRoundedPoint().X + 1, rooms[0].Location.ToRoundedPoint().Y + 1);
+            for (int p = 1; p <= 4; p++)
+                tf.Add(LoadStartTile(p), rooms[0].Location.ToRoundedPoint().X + p % 2, rooms[0].Location.ToRoundedPoint().Y + (p-1) % 2);
 
             //Must be last statement, executed after the Tilefield is done.
             tf.InitSpriteSheetIndexation();

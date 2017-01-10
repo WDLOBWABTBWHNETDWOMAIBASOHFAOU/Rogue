@@ -38,6 +38,7 @@ namespace Wink
             {
                 pendingEvents[0].Sender = this;
                 pendingEvents[0].OnServerReceive(server as LocalServer);
+                pendingEvents.Clear();
             }
         }
 
@@ -51,6 +52,7 @@ namespace Wink
                     e.OnServerReceive((LocalServer)server);
                 }
             }
+            pendingEvents.Clear();
         }
 
         private void StartReceiving()

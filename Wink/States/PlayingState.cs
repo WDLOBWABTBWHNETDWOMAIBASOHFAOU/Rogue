@@ -9,7 +9,10 @@ namespace Wink
         private Client client;
 
         GameSetupState.GameMode currentGameMode;
-        public GameSetupState.GameMode CurrentGameMode { get { return currentGameMode; } set { currentGameMode = value; } }
+        public GameSetupState.GameMode CurrentGameMode {
+            get { return currentGameMode; }
+            set { currentGameMode = value; }
+        }
 
         public void SetClientAndServer(Client client, Server server)
         {

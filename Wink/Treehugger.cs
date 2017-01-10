@@ -38,7 +38,7 @@ namespace Wink
         {
             base.LoadContent();
             screen = new Point(1920, 1080);
-            windowSize = new Point(1024, 576);
+            windowSize = new Point(960, 540);
             FullScreen = false;
 
             gameStateManager.AddGameState("gameSetupState", new GameSetupState());

@@ -62,7 +62,7 @@ namespace Wink
             List<Tile> floorTiles = tf.FindAll(obj => obj.GetType() == typeof(Tile) && (obj as Tile).TileType == TileType.Floor).Cast<Tile>().ToList();
             floorTiles[Random.Next(floorTiles.Count)].PutOnTile(testItem);
 
-            // ENEMY CODE (test)
+            #region ENEMY CODE (test)
             for (int i = 0; i < 2; i++)
             {
                 Enemy testEnemy = new Enemy(0);
@@ -73,8 +73,8 @@ namespace Wink
 
                 testEnemy.MoveTo(startTile);
             }
-            // END ENEMY CODE (test)
-            
+            #endregion
+
             tf.InitSpriteSheetIndexation();
         }
 
@@ -85,7 +85,10 @@ namespace Wink
                 case '.':
                     return new Tile();
                 case '1':
-                    return LoadStartTile();
+                case '2':
+                case '3':
+                case '4':
+                    return LoadStartTile(tileType - 48);
                 case '#':
                     return LoadWallTile(x, y);
                 case '-':
@@ -125,9 +128,9 @@ namespace Wink
             return t;
         }
 
-        private Tile LoadStartTile(string assetName = "empty:64:64:10:Red")
+        private Tile LoadStartTile(int number, string assetName = "empty:64:64:10:Red")
         {
-            return LoadFloorTile("startTile", assetName);
+            return LoadFloorTile("StartTile" + number, assetName);
         }
 
         private Tile LoadDoorTile(string assetName = "spr_floor")

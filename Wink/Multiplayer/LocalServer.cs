@@ -66,10 +66,7 @@ namespace Wink
             {
                 Client c = clients[i];
                 Player player = new Player(c.ClientName, Level.Layer);
-                if (i == 0)
-                    player.MoveTo(Level.Find("startTile") as Tile);
-                else
-                    level.Add(player);
+                player.MoveTo(Level.Find("StartTile" + (i + 1)) as Tile);
             }
 
             InitLivingObjects();
