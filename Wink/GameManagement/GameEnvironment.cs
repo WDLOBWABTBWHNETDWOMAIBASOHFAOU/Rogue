@@ -126,7 +126,7 @@ public class GameEnvironment : Game
     {
         DrawingHelper.Initialize(GraphicsDevice);
         spriteBatch = new SpriteBatch(GraphicsDevice);
-        assetManager = new AssetManager(Content, graphics.GraphicsDevice, spriteBatch);
+        assetManager = new AssetManager(Content, graphics.GraphicsDevice, new SpriteBatch(GraphicsDevice));
     }
 
     protected void HandleInput()
