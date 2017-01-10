@@ -46,7 +46,7 @@
         /// <param name="baseAttack">unarmed attackValue</param>
         /// <param name="baseArmor">natural armorValue</param>
         /// <param name="baseReach">natural attackReach</param>
-        public void SetStats(int creatureLevel = 1, int strength = 2, int dexterity = 2, int intelligence = 2, int baseAttack = 40, int baseArmor = 5, int baseReach = 1)
+        public void SetStats(int creatureLevel = 1, int vitality = 2, int strength = 2, int dexterity = 2, int intelligence = 2, int wisdom = 2, int luck = 2, int baseAttack = 40, int baseArmor = 5, int baseReach = 1)
         {
             this.creatureLevel = creatureLevel;
             this.strength = strength;

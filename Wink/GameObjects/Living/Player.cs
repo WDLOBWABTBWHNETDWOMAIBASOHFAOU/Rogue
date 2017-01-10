@@ -19,7 +19,7 @@ namespace Wink
             mouseSlot = new MouseSlot(layer + 11, "mouseSlot");
 
             
-            SetStats(5, 5, 5, 5, 55,11,22);
+            SetStats();
 
             //InitAnimation(); not sure if overriden version gets played right without restating
         }

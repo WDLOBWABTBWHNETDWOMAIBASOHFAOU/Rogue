@@ -78,7 +78,7 @@ namespace Wink
             for(int i = 0; i < 2; i++)
             {
                 Enemy testEnemy = new Enemy(layer + 1);
-                testEnemy.SetStats(1, 2, 2, 2, 40, 5, 2);
+                testEnemy.SetStats();
                 Add(testEnemy);
                 testEnemy.InitPosition();
             }
