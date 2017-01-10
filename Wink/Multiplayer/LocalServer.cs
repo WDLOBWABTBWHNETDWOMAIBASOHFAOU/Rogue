@@ -65,13 +65,13 @@ namespace Wink
             UpdateTurn();
             if (levelChanged)
             {
-                //Player player = Level.Find(p => p is Player) as Player;
-                //TileField tf = Level.Find("TileField") as TileField;
-                //if(player!=null && tf != null)
-                //{
-                //    hitable(player, tf);
-                //}
-            SendOutUpdatedLevel();
+                Player player = Level.Find(p => p is Player) as Player;
+                TileField tf = Level.Find("TileField") as TileField;
+                if (player != null && tf != null)
+                {
+                    hitable(player, tf);
+                }
+                SendOutUpdatedLevel();
             levelChanged = false;
             }
         }

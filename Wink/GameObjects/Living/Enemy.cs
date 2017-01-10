@@ -62,6 +62,11 @@ namespace Wink
                     Attack(player);
                     actionPoints--;
                 }
+                else
+                {
+                    MoveTo(path[0]);
+                    actionPoints--;
+                }
             }
             else 
             {

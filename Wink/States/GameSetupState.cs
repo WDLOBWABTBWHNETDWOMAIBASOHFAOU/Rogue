@@ -55,7 +55,7 @@ namespace Wink
             startButton.Action = () =>
             {
                 LocalServer ls = (LocalServer)server;
-                ls.SetupLevel(1, clients);
+                ls.SetupLevel(2, clients);
                 GameEnvironment.GameStateManager.SwitchTo("playingState");
             };
             startButton.Position = new Vector2(screen.X - startButton.Width - 50, screen.Y  - startButton.Height - 50);

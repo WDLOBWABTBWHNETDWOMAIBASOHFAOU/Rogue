@@ -4,7 +4,7 @@
     {
         public const int MaxActionPoints = 4;
 
-        protected int manaPoints, healthPoints, actionPoints, baseAttack, baseArmor, strength, dexterity, intelligence, creatureLevel, reach;
+        protected int manaPoints, healthPoints, actionPoints, baseAttack, baseArmor, strength, dexterity, intelligence, creatureLevel, baseReach;
 
         public int Dexterity { get { return Ringbonus(RingType.dexterity, dexterity); } }
         public int Intelligence { get { return Ringbonus(RingType.intelligence, intelligence); } }
@@ -33,24 +33,6 @@
                     }
                 }
             }
-                /*if (ring1.SlotItem != null)
-                {
-                    RingEquipment ring = ring1.SlotItem as RingEquipment;
-                    if (ring.RingType == ringType)
-                    {
-                        if (ring.Multiplier) { p *= ring.RingValue; }
-                        else { i += (int)ring.RingValue; }
-                    }
-                }
-                if (ring2.SlotItem != null)
-                {
-                    RingEquipment ring = ring2.SlotItem as RingEquipment;
-                    if (ring.RingType == ringType)
-                    {
-                        if (ring.Multiplier) { p *= ring.RingValue; }
-                        else { i += (int)ring.RingValue; }
-                    }
-                }*/
                 return (int)(baseValue * p + i);
         }
 
@@ -73,7 +55,7 @@
             this.baseAttack = baseAttack;
             this.baseArmor = baseArmor;
             actionPoints = MaxActionPoints;
-            reach = baseReach;
+            this.baseReach = baseReach;
             healthPoints = MaxHP();
             manaPoints = MaxManaPoints();
         }
@@ -138,10 +120,15 @@
         {
             get
             {
+                int reach;
                 if (weapon.SlotItem != null)
                 {
                     WeaponEquipment weaponItem = weapon.SlotItem as WeaponEquipment;
                     reach = weaponItem.Reach;
+                }
+                else
+                {
+                    reach = baseReach;
                 }
                 return reach;
             }
@@ -174,7 +161,8 @@
                     attack = weaponItem.BaseDamage;
                     mod = weaponItem.ScalingFactor;
                 }
-            }            
+            }
+                        
             int attackValue = (int)CalculateValue(attack, Strength, mod);     
 
             return attackValue;
