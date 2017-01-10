@@ -80,20 +80,18 @@ namespace Wink
             //Putting the item one layer above the inventory box
             int inventoryLayer = layer + 1;
             int itemLayer = layer + 2;
-
-            Item testItem = new TestItem("empty:65:65:10:Pink", 1, itemLayer); 
+            
 
             // ENEMY CODE (test)
             for(int i = 0; i < 2; i++)
             {
                 Enemy testEnemy = new Enemy(layer + 1);
+                testEnemy.SetStats();
                 Add(testEnemy);
                 testEnemy.InitPosition();
             }
             // END ENEMY CODE (test)
-
-            testItem.Position = new Vector2(GameEnvironment.Random.Next(0, tf.Columns - 1) * Tile.TileWidth, GameEnvironment.Random.Next(0, tf.Rows - 1) * Tile.TileHeight);
-            Add(testItem); 
+            
         }
 
         private Tile LoadTile(char tileType, int x, int y)
@@ -109,11 +107,11 @@ namespace Wink
                 case '-':
                     return LoadFloorTile("spr_floor");
                 case 'c':
-                    return LoadChestTile("spr_ChestTile", x, y);
+                    return LoadChestTile("spr_ChestTile", TileType.Normal, x, y);
                 case 'D':
-                    return LoadDoorTile("spr_door", x, y);
-                case 'E':
-                    return LoadEndTile("spr_end", x, y);
+                    return LoadDoorTile("spr_door", TileType.Normal, x, y);
+                case 't':
+                    return LoadTrapTile("spr_trap", TileType.Normal, x, y);
                 default:
                     return LoadWTFTile();
             }
@@ -141,16 +139,28 @@ namespace Wink
         }
         private Tile LoadDoorTile(string assetName, int x, int y)
         {
-            Tile t = new Tile("empty:65:65:10:DarkGreen", TileType.Normal);
+            Tile t = new Tile("empty:65:65:10:DarkGreen", tileType);
             Door door = new Door(t);
             door.Position = new Vector2(x * Tile.TileWidth, y * Tile.TileHeight);
             Add(door);
             t.Passable = false;
             return t;
         }
-        private Tile LoadChestTile(string assetName, int x, int y)
+
+        private Tile LoadTrapTile(string name, TileType tileType, int x, int y)
         {
-            Tile t = new Tile("empty:65:65:10:DarkGreen", TileType.Normal);
+            Tile t = new Tile("empty:65:65:10:DarkGreen", tileType);
+            //DarkRed for development testing, should have same or simular sprite as the tile in final version
+            Trap trap = new Trap("empty:65:65:10:DarkRed");
+            trap.Position = new Vector2(x * Tile.TileWidth, y * Tile.TileHeight);
+            Add(trap);
+            t.Passable = true;
+            return t;
+        }
+
+        private Tile LoadChestTile(string name, TileType tileType,int x, int y)
+        {
+            Tile t = new Tile("empty:65:65:10:DarkGreen", tileType);
             Container chest = new Container("empty:65:65:10:Brown");
             chest.Position = new Vector2(x * Tile.TileWidth, y * Tile.TileHeight);
             Add(chest);

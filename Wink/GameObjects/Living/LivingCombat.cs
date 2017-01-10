@@ -26,10 +26,8 @@
             double dodgeNumber = GameEnvironment.Random.NextDouble();
             if (dodgeNumber > DodgeChance())
             {
-                double defenceValue =ArmorValue();
-
-                if (defenceValue < 1) defenceValue = 5;
-
+                double defenceValue = ArmorValue();
+                
                 healthPoints -= (int)(attackValue / defenceValue);
                 //Display damage taken
             }

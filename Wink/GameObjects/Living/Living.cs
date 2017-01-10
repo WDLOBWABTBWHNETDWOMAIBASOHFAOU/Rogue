@@ -13,12 +13,39 @@ namespace Wink
 
         protected string idleAnimation, moveAnimation, dieAnimation;
         private string dieSound;
-        
+
+        private readonly GameObjectGrid itemGrid;
+        public GameObjectGrid ItemGrid
+        {
+            get { return itemGrid; }
+        }
+
+        private readonly GameObjectList equipmentSlots;
+        public GameObjectList EquipmentSlots
+        {
+            get { return equipmentSlots; }
+        }
+        EquipmentSlot weapon;
+        EquipmentSlot body;
+        EquipmentSlot ring1;
+        EquipmentSlot ring2;
+
         public Living(int layer = 0, string id = "", float scale = 1.0f) : base(layer, id, scale)
         {
             SetStats();
             InitAnimation();
             timeleft = 1000;
+
+            itemGrid = new GameObjectGrid(3, 6, 0, "");
+            ring1 = new EquipmentSlot(typeof(RingEquipment), id: "ringSlot1");
+            ring2 = new EquipmentSlot(typeof(RingEquipment), id: "ringSlot2");
+            weapon = new EquipmentSlot(typeof(WeaponEquipment), id: "weaponSlot");
+            body = new EquipmentSlot(typeof(BodyEquipment), id: "bodySlot");
+            equipmentSlots = new GameObjectList();
+            equipmentSlots.Add(weapon);
+            equipmentSlots.Add(body);
+            equipmentSlots.Add(ring1);
+            equipmentSlots.Add(ring2);
         }
 
         public Living(SerializationInfo info, StreamingContext context) : base(info, context)
@@ -90,6 +117,9 @@ namespace Wink
                         timeleft -= gameTime.TotalGameTime.Seconds;
                 }
             }
+            // Stijn zegt voer hier een ring bonus methode uit
+            // met de manier waarop ik ring heb gemaakt valt er niks te bonussen
+            // alles moet bij stat calculation worden afgehandeld
         }
         
         public void MoveTo(Tile tile)

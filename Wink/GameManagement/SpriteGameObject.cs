@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 public class SpriteGameObject : GameObject
 {
     protected SpriteSheet sprite;
-    protected string spriteAssetName;
+    public string spriteAssetName;
     protected int spriteSheetIndex;
 
     protected Vector2 origin;
