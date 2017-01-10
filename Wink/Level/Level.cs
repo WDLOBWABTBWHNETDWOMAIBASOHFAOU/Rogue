@@ -137,7 +137,7 @@ namespace Wink
             t.Passable = true;
             return t;
         }
-        private Tile LoadDoorTile(string assetName, int x, int y)
+        private Tile LoadDoorTile(string assetName, TileType tileType, int x, int y)
         {
             Tile t = new Tile("empty:65:65:10:DarkGreen", tileType);
             Door door = new Door(t);
