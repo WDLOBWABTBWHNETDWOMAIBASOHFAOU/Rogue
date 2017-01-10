@@ -111,28 +111,20 @@ namespace Wink
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
-            /*
-            switch (gameMode)
-            {
-                case GameMode.MultiplayerClient:
-                    throw new NotImplementedException();
-                    break;
-                case GameMode.MultiplayerHost:
-                    throw new NotImplementedException();
-                    break;
-                case GameMode.Singleplayer:
-                    GameEnvironment.GameStateManager.SwitchTo("playingState");
-                    break;
-                case GameMode.MultiplayerServer:
-                    throw new NotImplementedException();
-                    break;
-            }
-            */
             if (tcpListener != null && tcpListener.Pending())
             {
                 TcpClient tcpClient = tcpListener.AcceptTcpClient();
                 Client newClient = new RemoteClient((LocalServer)server, tcpClient);
                 AddClient(newClient);
+            }
+
+            if (server is RemoteServer)
+                server.Update(gameTime);
+
+            foreach (Client c in clients)
+            {
+                if (c is RemoteClient)
+                    (c as RemoteClient).ProcessInitialEvent();
             }
         }
 

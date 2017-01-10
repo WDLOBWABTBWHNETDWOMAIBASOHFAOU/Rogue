@@ -1,4 +1,6 @@
 ﻿
+using System.IO;
+
 namespace Wink
 {
     public abstract class Client : Sender
@@ -13,6 +15,7 @@ namespace Wink
         }
 
         public abstract void Send(Event e);
-
+        public abstract void SendPreSerialized(MemoryStream ms);
+        public abstract Player Player { get; }
     }
 }

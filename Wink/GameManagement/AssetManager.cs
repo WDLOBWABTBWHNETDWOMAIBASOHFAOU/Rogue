@@ -122,7 +122,7 @@ public class AssetManager
         spriteBatch.End();
         
         graphicsDevice.SetRenderTarget(null);
-        maskRenderTarget.SaveAsPng(File.Create("transparent_texture.png"), asset.Width, asset.Height);
+        //maskRenderTarget.SaveAsPng(File.Create("transparent_texture.png"), asset.Width, asset.Height);
         return maskRenderTarget;
     }
 

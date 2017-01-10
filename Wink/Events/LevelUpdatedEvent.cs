@@ -39,6 +39,9 @@ namespace Wink
 
             foreach (GameObject obj in updatedLevel.FindAll(obj => obj is IGUIGameObject)) 
                 (obj as IGUIGameObject).InitGUI();
+
+            if (!(GameEnvironment.GameStateManager.CurrentGameState is PlayingState))
+                GameEnvironment.GameStateManager.SwitchTo("playingState");
         }
 
         public override void OnServerReceive(LocalServer server)

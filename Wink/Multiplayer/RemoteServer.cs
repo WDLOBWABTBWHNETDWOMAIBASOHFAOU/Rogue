@@ -4,6 +4,7 @@ using System.Net.Sockets;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
 using Microsoft.Xna.Framework;
+using System.Runtime.Serialization;
 
 namespace Wink
 {
@@ -11,11 +12,11 @@ namespace Wink
     {
         private LocalClient client;
 
-        TcpClient tcp;
-        BinaryFormatter binaryFormatter;
-        List<Event> pendingEvents; //From the server
+        private TcpClient tcp;
+        private BinaryFormatter binaryFormatter;
+        private List<Event> pendingEvents; //From the server
 
-        Thread receivingThread;
+        private Thread receivingThread;
 
         public Level Level
         {
@@ -32,6 +33,9 @@ namespace Wink
             receivingThread = new Thread(new ThreadStart(Receive));
             binaryFormatter = new BinaryFormatter();
             pendingEvents = new List<Event>();
+
+            StartReceiving();
+            ReallySend(new JoinServerEvent(client.ClientName));
         }
 
         public override void Update(GameTime gameTime)
@@ -48,11 +52,12 @@ namespace Wink
                     e.OnClientReceive(client);
                 }
             }
+            pendingEvents.Clear();
         }
 
         private void StartReceiving()
         {
-            
+            receivingThread.Start();
         }
 
         public void StopReceiving()
@@ -68,8 +73,13 @@ namespace Wink
                 if (s.DataAvailable)
                 {
                     System.Diagnostics.Debug.WriteLine("data is available");
-                    Event e = (Event)binaryFormatter.Deserialize(s);
+                    Event e = SerializationHelper.Deserialize(s, client, false) as Event; 
+                    //Event e = (Event)binaryFormatter.Deserialize(s);
                     pendingEvents.Add(e);
+                }
+                else
+                {
+                    Thread.Sleep(10);
                 }
             }
         }
@@ -79,6 +89,8 @@ namespace Wink
             if (e.Validate(client.Level))
             {
                 //Serialize and send the event over TCP connection.
+                StreamingContext c = new StreamingContext(StreamingContextStates.All, new SerializationHelper.Variables(client, e.GUIDSerialization));
+                binaryFormatter.Context = c;
                 binaryFormatter.Serialize(tcp.GetStream(), e);
             }
         }

@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.IO;
 
 namespace Wink
 {
@@ -30,7 +31,7 @@ namespace Wink
         public PlayingGUI GUI {
             get { return gameObjects.Find("PlayingGui") as PlayingGUI; }
         }
-        public Player Player
+        public override Player Player
         {
             get { return gameObjects.Find("player_" + ClientName) as Player; }
         }
@@ -113,6 +114,14 @@ namespace Wink
         {
             e = SerializationHelper.Clone(e, this, e.GUIDSerialization);
 
+            if (e.Validate(Level))
+                e.OnClientReceive(this);
+        }
+
+        public override void SendPreSerialized(MemoryStream ms)
+        {
+            ms.Seek(0, SeekOrigin.Begin);
+            Event e = SerializationHelper.Deserialize(ms, this, false) as Event;
             if (e.Validate(Level))
                 e.OnClientReceive(this);
         }

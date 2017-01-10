@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace Wink
@@ -17,7 +18,9 @@ namespace Wink
         private int turnIndex;
 
         private List<GameObject> changedObjects;
-        public List<GameObject> ChangedObjects { get { return changedObjects; } }
+        public List<GameObject> ChangedObjects {
+            get { return changedObjects; }
+        }
 
         public Level Level
         {
@@ -59,10 +62,14 @@ namespace Wink
             //level = new Level();
 
             this.clients = clients;
-            foreach (Client c in clients)
+            for (int i = 0; i < clients.Count; i++)
             {
+                Client c = clients[i];
                 Player player = new Player(c.ClientName, Level.Layer);
-                player.MoveTo(Level.Find("startTile") as Tile);
+                if (i == 0)
+                    player.MoveTo(Level.Find("startTile") as Tile);
+                else
+                    level.Add(player);
             }
 
             InitLivingObjects();
@@ -87,9 +94,14 @@ namespace Wink
         private void SendOutUpdatedLevel(bool first = false)
         {
             LevelUpdatedEvent e = first ? new JoinedServerEvent(Level) : new LevelUpdatedEvent(Level);
-            foreach (Client c in clients)
+            using (MemoryStream ms = new MemoryStream())
             {
-                c.Send(e);
+                SerializationHelper.Serialize(ms, e, this, e.GUIDSerialization);
+                ms.Seek(0, SeekOrigin.Begin);
+                foreach (Client c in clients)
+                {
+                    c.SendPreSerialized(ms);
+                }
             }
         }
 
@@ -114,6 +126,11 @@ namespace Wink
                 changedObjects.AddRange(livingObjects[turnIndex].DoAllBehaviour());
                 UpdateTurn();
             }
+
+            Client currentClient = clients.Find(client => client.Player == livingObjects[turnIndex]);
+            if (currentClient is RemoteClient)
+                (currentClient as RemoteClient).ProcessEvents();
+
             UpdateTurn();
             if (changedObjects.Count > 0)
             {
