@@ -157,5 +157,10 @@ namespace Wink
                 turnIndex++;
             }
         }
+
+        public override void Reset()
+        {
+            //TODO: implement.
+        }
     }
 }

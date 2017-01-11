@@ -83,4 +83,12 @@ public class GameStateManager : IGameLoopObject
             currentGameState.Reset();
         }
     }
+
+    public void ResetAll()
+    {
+        foreach (IGameLoopObject iglo in gameStates.Values)
+        {
+            iglo.Reset();
+        }
+    }
 }

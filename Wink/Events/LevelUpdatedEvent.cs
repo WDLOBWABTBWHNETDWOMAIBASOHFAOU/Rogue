@@ -41,7 +41,10 @@ namespace Wink
                 (obj as IGUIGameObject).InitGUI();
 
             if (!(GameEnvironment.GameStateManager.CurrentGameState is PlayingState))
+            {
                 GameEnvironment.GameStateManager.SwitchTo("playingState");
+            }
+                
         }
 
         public override void OnServerReceive(LocalServer server)

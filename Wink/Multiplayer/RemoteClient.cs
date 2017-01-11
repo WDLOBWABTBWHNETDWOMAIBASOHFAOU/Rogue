@@ -16,6 +16,7 @@ namespace Wink
         List<Event> pendingEvents; //For the server
 
         Thread receivingThread;
+        bool receiving;
 
         public override Player Player
         {
@@ -27,7 +28,6 @@ namespace Wink
             this.tcp = tcp;
             binaryFormatter = new BinaryFormatter();
             pendingEvents = new List<Event>();
-            receivingThread = new Thread(new ThreadStart(Receive));
 
             StartReceiving();
         }
@@ -57,17 +57,19 @@ namespace Wink
 
         private void StartReceiving()
         {
+            receivingThread = new Thread(new ThreadStart(Receive));
             receivingThread.Start();
+            receiving = true;
         }
 
         public void StopReceiving()
         {
-            receivingThread.Abort();
+            receiving = false;
         }
 
         private void Receive()
         {
-            while (true)
+            while (receiving)
             {
                 NetworkStream s = tcp.GetStream();
                 if (s.DataAvailable)
@@ -98,6 +100,11 @@ namespace Wink
         {
             ms.Seek(0, SeekOrigin.Begin);
             ms.CopyTo(tcp.GetStream());
+        }
+
+        public override void Reset()
+        {
+            StopReceiving();
         }
     }
 }

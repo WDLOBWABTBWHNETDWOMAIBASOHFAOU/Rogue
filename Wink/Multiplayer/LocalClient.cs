@@ -125,9 +125,8 @@ namespace Wink
                 e.OnClientReceive(this);
         }
 
-        public void Reset()
+        public override void Reset()
         {
-            throw new NotImplementedException();
         }
     }
 }
