@@ -10,7 +10,7 @@ namespace Wink
     {
         Bar<Enemy> hpBar;
 
-        public Enemy(int layer, string id = "Enemy") : base(layer, id)
+        public Enemy(int layer, string id = "Enemy", float FOVlength = 8.5f) : base(layer, id,FOVlength)
         {
             AddHPBar();
         }

@@ -57,6 +57,8 @@
     <Compile Include="GameObjects\Items\Equipment.cs" />
     <Compile Include="GameObjects\Items\RingEquipment.cs" />
     <Compile Include="GameObjects\Items\WeaponEquipment.cs" />
+    <Compile Include="GUI\ShadowCasting\ICellGrid.cs" />
+    <Compile Include="GUI\ShadowCasting\ShadowCasting.cs" />
     <Compile Include="GameObjects\Trap.cs" />
     <Compile Include="GUI\PlayerInventoryAndEquipment.cs" />
     <Compile Include="GUI\TrackingTextGameObject.cs" />

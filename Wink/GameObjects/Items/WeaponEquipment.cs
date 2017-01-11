@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Runtime.Serialization;
 
 namespace Wink
 {
@@ -25,6 +26,27 @@ namespace Wink
             this.strScalingFactor = strScalingFactor;
             this.dexScalingFactor = dexScalingFactor;
             this.intScalingFactor = intScalingFactor;
+        }
+
+        public WeaponEquipment(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+            reach = info.GetInt32("reach");
+            baseValue = info.GetInt32("baseValue");
+            damageType = (DamageType)info.GetValue("damageType",typeof(DamageType));
+            strScalingFactor = info.GetDouble("strScalingFactor");
+            dexScalingFactor = info.GetDouble("dexScalingFactor");
+            intScalingFactor = info.GetDouble("intScalingFactor");
+        }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            base.GetObjectData(info, context);
+            info.AddValue("reach", reach);
+            info.AddValue("baseValue", baseValue);
+            info.AddValue("damageType", damageType);
+            info.AddValue("strScalingFactor", strScalingFactor);
+            info.AddValue("dexScalingFactor", dexScalingFactor);
+            info.AddValue("intScalingFactor", intScalingFactor);
         }
 
         public int Value(Living l)

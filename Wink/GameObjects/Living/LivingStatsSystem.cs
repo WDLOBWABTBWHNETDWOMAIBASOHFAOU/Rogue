@@ -4,7 +4,7 @@
     {
         public const int MaxActionPoints = 4;
 
-        protected int manaPoints, healthPoints, actionPoints, baseAttack, baseArmor, strength, dexterity, intelligence, creatureLevel, baseReach;
+        protected int manaPoints, healthPoints, actionPoints, baseAttack, baseArmor, vitality, strength, dexterity, wisdom, luck, intelligence, creatureLevel, baseReach;
 
         public int Dexterity { get { return Ringbonus(RingType.dexterity, dexterity); } }
         public int Intelligence { get { return Ringbonus(RingType.intelligence, intelligence); } }
@@ -49,9 +49,12 @@
         public void SetStats(int creatureLevel = 1, int vitality = 2, int strength = 2, int dexterity = 2, int intelligence = 2, int wisdom = 2, int luck = 2, int baseAttack = 40, int baseArmor = 5, int baseReach = 1)
         {
             this.creatureLevel = creatureLevel;
+            this.vitality = vitality;
             this.strength = strength;
             this.dexterity = dexterity;
             this.intelligence = intelligence;
+            this.wisdom = wisdom;
+            this.luck = luck;
             this.baseAttack = baseAttack;
             this.baseArmor = baseArmor;
             actionPoints = MaxActionPoints;
@@ -80,7 +83,7 @@
         /// <returns></returns>
         protected int MaxHP()
         {
-            int maxHP = (int)CalculateValue(40, creatureLevel - 1, 4);
+            int maxHP = (int)CalculateValue(40, vitality - 1, 4);
             return maxHP;
         }
         public int MaxHealth { get { return Ringbonus(RingType.health, MaxHP()); } }
@@ -91,7 +94,7 @@
         /// <returns></returns>
         protected int MaxManaPoints()
         {
-            int maxManaPoints = (int)CalculateValue(50, Intelligence, 15);
+            int maxManaPoints = (int)CalculateValue(50, wisdom, 15);
             return maxManaPoints;
         }
         public int MaxMana { get { return MaxManaPoints(); } }
@@ -102,7 +105,7 @@
         /// <returns></returns>
         protected double HitChance()
         {
-            double hitChance = CalculateValue(0.7, Dexterity, 0.01);
+            double hitChance = CalculateValue(0.7, luck, 0.01);
             return hitChance;
         }
 
@@ -112,7 +115,7 @@
         /// <returns></returns>
         protected double DodgeChance()
         {
-            double dodgeChance = CalculateValue(0.3, Dexterity, 0.01);
+            double dodgeChance = CalculateValue(0.3, luck, 0.01);
             return dodgeChance;
         }
 

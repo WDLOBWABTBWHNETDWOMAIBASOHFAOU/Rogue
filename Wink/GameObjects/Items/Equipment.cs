@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using System.Runtime.Serialization;
+
 namespace Wink
 {
     public enum DamageType
@@ -12,6 +14,8 @@ namespace Wink
         magic,
         nondamage
     }
+
+
     public class Equipment:Item
     {
         protected int strRequirement;
@@ -23,6 +27,21 @@ namespace Wink
             this.strRequirement = strRequirement;
             this.dexRequirement = dexRequirement;
             this.intRequirement = intRequirement;
+        }
+
+        public Equipment(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+            strRequirement = info.GetInt32("strRequirement");
+            dexRequirement = info.GetInt32("dexRequirement");
+            intRequirement = info.GetInt32("intRequirement");
+        }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            base.GetObjectData(info, context);
+            info.AddValue("strRequirement", strRequirement);
+            info.AddValue("dexRequirement", dexRequirement);
+            info.AddValue("intRequirement", intRequirement);
         }
 
         protected bool MeetsRequirements(Living l)

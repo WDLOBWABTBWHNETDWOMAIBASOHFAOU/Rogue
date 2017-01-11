@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Runtime.Serialization;
 
 namespace Wink
 {
@@ -17,6 +18,18 @@ namespace Wink
         public EquipmentSlot(Type equipmentRestriction, string assetName = "empty:65:65:10:Green", int layer = 0, string id = "", int sheetIndex = 0, float cameraSensitivity = 0, float scale = 1) : base(assetName, layer, id, sheetIndex, cameraSensitivity, scale)
         {
             this.equipmentRestriction = equipmentRestriction;
+        }
+
+
+        public EquipmentSlot(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+            equipmentRestriction = info.GetValue("equipmentRestriction", typeof(Type)) as Type;
+        }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            base.GetObjectData(info, context);
+            info.AddValue("equipmentRestriction", equipmentRestriction);
         }
 
         public override void HandleInput(InputHelper inputHelper)

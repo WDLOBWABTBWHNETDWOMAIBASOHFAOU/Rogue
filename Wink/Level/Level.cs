@@ -42,6 +42,7 @@ namespace Wink
         {
             LoadTiles("Content/Levels/" + levelIndex + ".txt");
             this.levelIndex = levelIndex;
+            
         }
 
         public Level() : base(0, "Level")
@@ -83,7 +84,7 @@ namespace Wink
             
 
             // ENEMY CODE (test)
-            for(int i = 0; i < 2; i++)
+            for(int i = 0; i < 0; i++)
             {
                 Enemy testEnemy = new Enemy(layer + 1);
                 testEnemy.SetStats();
@@ -93,7 +94,12 @@ namespace Wink
                 testEnemy.InitPosition();
             }
             // END ENEMY CODE (test)
-            
+
+            foreach (Tile t in tf.Objects)
+            {
+                t.Visible = false;
+            }
+
         }
 
         private Tile LoadTile(char tileType, int x, int y)
