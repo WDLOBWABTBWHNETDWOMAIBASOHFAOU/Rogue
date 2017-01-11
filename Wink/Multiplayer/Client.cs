@@ -17,5 +17,7 @@ namespace Wink
         public abstract void Send(Event e);
         public abstract void SendPreSerialized(MemoryStream ms);
         public abstract Player Player { get; }
+
+        public abstract void Reset();
     }
 }

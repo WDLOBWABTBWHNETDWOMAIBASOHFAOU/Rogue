@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using System;
 using System.IO;
 
@@ -126,9 +125,8 @@ namespace Wink
                 e.OnClientReceive(this);
         }
 
-        public void Reset()
+        public override void Reset()
         {
-            throw new NotImplementedException();
         }
     }
 }

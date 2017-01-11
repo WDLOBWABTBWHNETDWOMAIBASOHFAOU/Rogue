@@ -31,6 +31,7 @@ namespace Wink
 
         public static void QuitGame()
         {
+
             Instance.Exit();
         }
 
@@ -54,6 +55,7 @@ namespace Wink
 
         protected override void UnloadContent()
         {
+            gameStateManager.ResetAll();
         }
     }
 }
