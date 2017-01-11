@@ -13,6 +13,11 @@ namespace Wink
 {
     public static class LevelExtensions
     {
+        /// <summary>
+        /// </summary>
+        /// <param name="rect"></param>
+        /// <param name="side"></param>
+        /// <returns>The middle of the side of the rectangle specified.</returns>
         public static Vector2 GetMiddleOfSide(this Rectangle rect, Collision.Side side)
         {
             switch (side)
@@ -30,6 +35,11 @@ namespace Wink
             }
         }
 
+        /// <summary>
+        /// Use this to convert a Vector2 to a Point by rounding the component floating point values rather than casting.
+        /// </summary>
+        /// <param name="vector"></param>
+        /// <returns></returns>
         public static XNAPoint ToRoundedPoint(this Vector2 vector)
         {
             return new XNAPoint((int)Math.Round(vector.X), (int)Math.Round(vector.Y));
@@ -38,6 +48,9 @@ namespace Wink
 
     public partial class Level
     {
+        /// <summary>
+        /// Class to represent Rooms before the TileField is generated.
+        /// </summary>
         private class Room : ICloneable
         {
             public Room(Vector2 location, XNAPoint size)
@@ -63,26 +76,31 @@ namespace Wink
                 return new Room(Location, Size);
             }
         }
-
-        private Random random = new Random();
-        Random Random { get { return random; } }
+        
+        Random Random { get { return Treehugger.Random; } }
 
         //These are the minimum and maximum width and height of any room
         const int minDim = 5;
         const int maxDim = 13;
 
-        //Values for the Normal Distribution
+        //Values for the Guassian Distribution
         int gaussMean = (minDim + maxDim) / 2;
         const double gaussVariance = 5d;
 
         const double TargetSurfaceArea = 750;
 
+        //Radius of the circle in which the rooms are placed.
         const double circleRadius = 7;
         double CircleArea
         {
             get { return Math.PI * Math.Pow(circleRadius, 2); }
         }
 
+        /// <summary>
+        /// Gaussian/Normal Distribution Function
+        /// </summary>
+        /// <param name="x"></param>
+        /// <returns></returns>
         double GaussianDistribution(double x)
         {
             double a = 1 / (Math.Sqrt(2 * gaussVariance * Math.PI));
@@ -90,11 +108,21 @@ namespace Wink
             return a * Math.Pow(Math.E, b);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="v"></param>
+        /// <returns></returns>
         double GaussianDistribution(Vector2 v)
         {
             return (GaussianDistribution(v.X) + GaussianDistribution(v.Y)) / 2;
         }
 
+        /// <summary>
+        /// Method to get a random point in a circle.
+        /// Source: http://www.gamasutra.com/blogs/AAdonaac/20150903/252889/Procedural_Dungeon_Generation_Algorithm.php
+        /// </summary>
+        /// <returns></returns>
         Vector2 GetRandomPointInCircle()
         {
             double t = 2 * Math.PI * Random.NextDouble();
@@ -108,9 +136,13 @@ namespace Wink
             return new Vector2((float)(circleRadius * r * Math.Cos(t)), (float)(circleRadius * r * Math.Sin(t)));
         }
 
+        /// <summary>
+        /// Generates a List of randomly sized and placed Rooms that do not overlap.
+        /// </summary>
+        /// <returns></returns>
         private List<Room> GenerateRooms()
         {
-            //This double will have the average total area of a random room.
+            //For every possible room size multiply the area by the likelihood of their inclusion and add it to the total.
             double averageTotalArea = 0;
             for (int x = minDim; x <= maxDim; x++)
             {
@@ -122,6 +154,7 @@ namespace Wink
             
             double multiplier = 100 * CircleArea / averageTotalArea;
 
+            //Make a list in which the possible room sizes occur as often as specified by the Gaussian distribution.
             List<Room> allRooms = new List<Room>();
             for (int x = minDim; x <= maxDim; x++)
             {
@@ -137,7 +170,7 @@ namespace Wink
                 }
             }
 
-            //Select the rooms that are actually going to be used.
+            //Select the rooms that are going to be used, by randomly selecting from the list until the target surface area is reached.
             List<Room> roomSelection = new List<Room>();
             int totalRoomArea = 0;
             while (totalRoomArea < TargetSurfaceArea)
@@ -176,28 +209,27 @@ namespace Wink
                 }
             }
 
-            //Get the lowest coodinates so we can adjust and bring everything into the positive.
+            //Get the lowest coordinates so we can adjust and bring everything into the positive.
             float lowestX = float.MaxValue;
             float lowestY = float.MaxValue;
             foreach (Room r in roomSelection)
             {
                 if (r.Location.X < lowestX)
                     lowestX = r.Location.X;
-
                 if (r.Location.Y < lowestY)
                     lowestY = r.Location.Y;
             }
-
             foreach (Room r in roomSelection)
             {
-                r.Location -= new Vector2(lowestX - 1, lowestY - 1);
+                r.Location -= new Vector2(lowestX - 1, lowestY - 2);
             }
 
-             return roomSelection;
+            return roomSelection;
         }
 
         private List<Tuple<Room, Room>> GenerateHallwayPairs(List<Room> rooms)
         {
+            //Add the center of each room to an InputGeometry, in order to use the data in the TriangleNet library.
             InputGeometry ig = new InputGeometry();
             foreach (Room r in rooms)
             {
@@ -213,17 +245,14 @@ namespace Wink
             //List of vertices.
             List<Vertex> vertices = mesh.Vertices.ToList();
 
-            //Add all the vertices and edges to a QuickGraph graph.
+            //Add all the vertices and edges to a QuickGraph(library) graph.
             UndirectedGraph<int, TaggedUndirectedEdge<int, string>> graph = new UndirectedGraph<int, TaggedUndirectedEdge<int, string>>();
             for (int i = 0; i < vertices.Count; i++)
-            {
                 graph.AddVertex(i);
-            }
-            foreach (Edge e in mesh.Edges)
-            {
-                graph.AddEdge(new TaggedUndirectedEdge<int, string>(e.P0, e.P1, ""));
-            }
 
+            foreach (Edge e in mesh.Edges)
+                graph.AddEdge(new TaggedUndirectedEdge<int, string>(e.P0, e.P1, ""));
+            
             //Use QuickGraph to find the Minimum Spanning Tree using the distance as the weight.
             var mst = graph.MinimumSpanningTreePrim(edge =>
             {
@@ -244,7 +273,7 @@ namespace Wink
                 }
             }
 
-            //Convert the MST + 10% to a list of Room pairs.
+            //Convert mst to a list of Room pairs.
             List<Tuple<Room, Room>> roomPairs = new List<Tuple<Room, Room>>();
             foreach (TaggedUndirectedEdge<int, string> edge in mst)
             {
@@ -274,11 +303,10 @@ namespace Wink
             int highestY = int.MinValue;
             foreach (Room r in rooms)
             {
-                if (r.BoundingBox.Right + 1 > highestX)
-                    highestX = r.BoundingBox.Right + 1;
-
-                if (r.BoundingBox.Bottom + 1 > highestY)
-                    highestY = r.BoundingBox.Bottom + 1;
+                if (r.BoundingBox.Right > highestX)
+                    highestX = r.BoundingBox.Right;
+                if (r.BoundingBox.Bottom > highestY)
+                    highestY = r.BoundingBox.Bottom;
             }
             
             //Make the tilefield and fill with default Tiles.
@@ -318,7 +346,7 @@ namespace Wink
                 hallways.Add(new Tuple<XNAPoint, XNAPoint>(absExit1, absExit2));
             }
             
-            #region for each room, add floor and wall tiles to the tilefield.
+            //for each room, add floor tiles to the tilefield.
             for (int i = 0; i < rooms.Count; i++)
             {
                 Room r = rooms[i];
@@ -331,25 +359,20 @@ namespace Wink
                 {
                     for (int y = 0; y < height; y++)
                     {
-                        Tile tile = null;
+                        Tile tile = LoadFloorTile();
                         if (x == relCenter.X && y == relCenter.Y)
                         {
-                            tile = LoadFloorTile();
                             tile.AddDebugTag("Room", ""+i);
-                        }
-                        else
-                        {
-                            tile = LoadFloorTile();
                         }
                         tf.Add(tile, x + r.BoundingBox.X, y + r.BoundingBox.Y);
                     }
                 }
             }
-            #endregion
 
             //Generate hallways
             foreach (Tuple<XNAPoint, XNAPoint> pair in hallways)
             {
+                //Use the pathfinder to get a path from exitpoint to exitpoint.
                 PathFinder pf = new PathFinder(tf);
                 pf.EnableStraightLines();
                 List<Tile> path = pf.ShortestPath(tf[pair.Item1.X, pair.Item1.Y] as Tile, tf[pair.Item2.X, pair.Item2.Y] as Tile, tile => true);
@@ -357,15 +380,17 @@ namespace Wink
                 Tile t = tf[pair.Item1.X, pair.Item1.Y] as Tile;
                 t.AddDebugTag("ExitConnectionPoint", ":" + pair.Item2.X + "," + pair.Item2.Y);
                 path.Add(t);
+
+                //Add a floor tile for every tile in the path.
                 foreach (Tile tile in path)
                 {
                     Tile newTile = LoadFloorTile();
                     newTile.AddDebugTags(tile.DebugTags);
-                    
                     tf.Add(newTile, tile.TilePosition.X, tile.TilePosition.Y);
                 }
             }
 
+            //Exchange all remaining background tiles for Wall tiles.
             for (int x = 0; x < tf.Columns; x++)
             {
                 for (int y = 0; y < tf.Rows; y++)
@@ -381,9 +406,10 @@ namespace Wink
                 }
             }
 
-            for (int p = 1; p <= 4; p++)
-                tf.Add(LoadStartTile(p), rooms[0].Location.ToRoundedPoint().X + p % 2, rooms[0].Location.ToRoundedPoint().Y + (p-1) % 2);
-
+            //Add starttiles
+            for (int p = 0; p < 4; p++)
+                tf.Add(LoadStartTile(p+1), rooms[0].Location.ToRoundedPoint().X + p % 2, rooms[0].Location.ToRoundedPoint().Y + p / 2);
+            
             //Must be last statement, executed after the Tilefield is done.
             tf.InitSpriteSheetIndexation();
             return tf;

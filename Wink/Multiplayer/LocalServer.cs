@@ -58,8 +58,8 @@ namespace Wink
 
         public void SetupLevel(int levelIndex, List<Client> clients)
         {
-            level = new Level(levelIndex);
-            //level = new Level();
+            //level = new Level(levelIndex);
+            level = new Level();
 
             this.clients = clients;
             for (int i = 0; i < clients.Count; i++)

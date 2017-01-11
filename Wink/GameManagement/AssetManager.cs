@@ -4,7 +4,6 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
 using System.Collections.Generic;
-using System.IO;
 
 public class AssetManager
 {
@@ -34,7 +33,7 @@ public class AssetManager
         if (!textures.ContainsKey(key))
         {
             Texture2D texture = new Texture2D(graphicsDevice, 1, 1);
-            texture.SetData<Color>(new Color[] { color });
+            texture.SetData(new Color[] { color });
             textures.Add(key, texture);
         }
         return textures[key];
@@ -97,26 +96,37 @@ public class AssetManager
         RenderTarget2D maskRenderTarget = new RenderTarget2D(graphicsDevice, asset.Width, asset.Height, false, SurfaceFormat.Color, pp.DepthStencilFormat);
 
         graphicsDevice.SetRenderTarget(maskRenderTarget);
-        graphicsDevice.Clear(Color.Transparent);
+        graphicsDevice.Clear(Color.TransparentBlack);
 
+        //Draw texture to rendertarget.
         spriteBatch.Begin();
         spriteBatch.Draw(asset, new Vector2(0, 0), Color.White);
         spriteBatch.End();
 
+        //Create a blendstate that makes it so any draw call only writes alpha channel
+        //By setting the alphaDestinationBlend to zero the assets own alpha values are completely overwritten.
         BlendState bs = new BlendState();
         bs.AlphaBlendFunction = BlendFunction.Add;
         bs.AlphaDestinationBlend = Blend.Zero;
         bs.AlphaSourceBlend = Blend.One;
         bs.ColorWriteChannels = ColorWriteChannels.Alpha;
 
+        //Applying the alpha mask here.
+        //TODO: make more variable, so multiple kinds of alphamasks can be applied (perhaps from file as well).
         spriteBatch.Begin(SpriteSortMode.Immediate, bs);
         int rowHeight = asset.Height / rows;
         int columnWidth = asset.Width / columns;
+        int amtTLvls = 16; //The amount of transparency levels.
         for (int r = 0; r < rows; r++)
         {
             for (int c = 0; c < columns; c++)
             {
-                spriteBatch.Draw(GetSingleColorPixel(new Color(0, 0, 0, 160)), new Rectangle(c * columnWidth, r * rowHeight + 4, columnWidth - 4, rowHeight - 4 - Wink.Tile.TileHeight), Color.White);
+                for (int tl = 0; tl < amtTLvls; tl++)
+                {
+                    int tLvlHeight = (rowHeight - Wink.Tile.TileHeight) / amtTLvls;
+                    int y = (r * rowHeight + 4) + tl * tLvlHeight;
+                    spriteBatch.Draw(GetSingleColorPixel(new Color(0, 0, 0, tl * 255 / (amtTLvls-1))), new Rectangle(c * columnWidth, y, columnWidth, tLvlHeight), Color.White);
+                }
             }
         }
         spriteBatch.End();
@@ -152,7 +162,7 @@ public class AssetManager
                 pixels[y1 * width + x1] = pink ? color : Color.Black;
             }
         }
-        emptyTexture.SetData<Color>(pixels);
+        emptyTexture.SetData(pixels);
 
         textures.Add(emptyString, emptyTexture);
         return emptyTexture;
