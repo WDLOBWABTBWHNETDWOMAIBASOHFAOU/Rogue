@@ -154,7 +154,7 @@ namespace Wink
             {
                 Action onClick = () =>
                 {
-                    Player player = GameWorld.Find(p => p is Player) as Player;
+                    Player player = GameWorld.Find("player_" + Environment.MachineName) as Player;
                     PlayerMoveEvent pme = new PlayerMoveEvent(player, this);
                     Server.Send(pme);
                 };
