@@ -1,4 +1,6 @@
-﻿namespace Wink
+﻿using System.Collections.Generic;
+
+namespace Wink
 {
     public abstract partial class Living : AnimatedGameObject
     {
@@ -26,14 +28,17 @@
                 if (slot.SlotItem != null && slot.Id.Contains("ringSlot"))
                 {
                     RingEquipment ring = slot.SlotItem as RingEquipment;
-                    if (ring.RingType == ringType)
+                    foreach (Dictionary<string, object> effect in ring.RingEffects)
                     {
-                        if (ring.Multiplier) { p *= ring.RingValue; }
-                        else { i += (int)ring.RingValue; }
+                        if ((RingType)effect["type"] == ringType)
+                        {
+                            if ((bool)effect["multiplier"]) { p *= (double)effect["value"]; }
+                            else { i += (int)(double)effect["value"]; }
+                        }
                     }
                 }
             }
-                return (int)(baseValue * p + i);
+            return (int)(baseValue * p + i);
         }
 
         /// <summary>
@@ -86,7 +91,7 @@
             int maxHP = (int)CalculateValue(40, vitality - 1, 4);
             return maxHP;
         }
-        public int MaxHealth { get { return Ringbonus(RingType.health, MaxHP()); } }
+        public int MaxHealth { get { return Ringbonus(RingType.vitality, MaxHP()); } }
 
         /// <summary>
         /// returns the maximum of manapoints the living object can have
