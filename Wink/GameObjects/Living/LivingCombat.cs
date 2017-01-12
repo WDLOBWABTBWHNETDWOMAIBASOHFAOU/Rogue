@@ -42,7 +42,7 @@ namespace Wink
                             if ((RingType)effect["type"] == RingType.reflection)
                             {
                                 double randomNumber = GameEnvironment.Random.NextDouble();
-                                double reflectChance = 0.8 - 5 / source.Intelligence;
+                                double reflectChance = 0.6 - 1 / source.luck;
                                 if (randomNumber <= reflectChance)
                                 {
                                     TakeReflectionDamage(source, damage, (double)effect["power"]);
@@ -79,7 +79,7 @@ namespace Wink
 
         protected void TakeReflectionDamage(Living source, int baseDamage, double power = 1)
         {
-            double reflectAmount = 0.6 - 10 / source.Intelligence;
+            double reflectAmount = 0.8 - 2 / source.Intelligence;
             if (reflectAmount < 0) reflectAmount = 0;
             int damageTaken = (int)(baseDamage * reflectAmount * power);
             
