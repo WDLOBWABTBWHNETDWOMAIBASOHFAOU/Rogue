@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Runtime.Serialization;
 
 namespace Wink
 {
@@ -19,20 +20,27 @@ namespace Wink
             this.equipmentRestriction = equipmentRestriction;
         }
 
+
+        public EquipmentSlot(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+            equipmentRestriction = info.GetValue("equipmentRestriction", typeof(Type)) as Type;
+        }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            base.GetObjectData(info, context);
+            info.AddValue("equipmentRestriction", equipmentRestriction);
+        }
+
         public override void HandleInput(InputHelper inputHelper)
         {
             Player player = (Root as GameObjectList).Find("player_" + Environment.MachineName) as Player;
             Item mouseItem = player.MouseSlot.oldItem;
-            if(mouseItem == null)
+            if(mouseItem == null || mouseItem.GetType() == equipmentRestriction)
             {
                 base.HandleInput(inputHelper);
                 return;
-            }
-            else if (mouseItem.GetType() == equipmentRestriction)
-            {
-                base.HandleInput(inputHelper);
-                return;
-            }            
+            }         
         }
     }        
 }

@@ -19,7 +19,7 @@ public class Animation : SpriteSheet, ISerializable
     {
     }
 
-    public void GetObjectData(SerializationInfo info, StreamingContext context)
+    public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
     {
         info.AddValue("assetname", assetName);
         info.AddValue("isLooping", isLooping);

@@ -11,19 +11,31 @@ namespace Wink
     {
         private List<Client> clients;
         private List<Living> livingObjects;
+        private Level level;
+        private int levelIndex;
 
         bool levelChanged;
         private int turnIndex;
 
-        public Level Level { get; private set; }
-        
+        public Level Level
+        {
+            get { return level; }
+            set { level = value; }
+        }
+
+        public int LevelIndex
+        {
+            get { return levelIndex; }
+        }
+
         public LocalServer ()
         {
         }
 
-        public void SetupLevel(int level, List<Client> clients)
+        public void SetupLevel(int levelIndex, List<Client> clients)
         {
-            Level = new Level(level);
+            level = new Level(levelIndex);
+            //level = new Level();
 
             this.clients = clients;
             foreach (Client c in clients)
@@ -65,8 +77,47 @@ namespace Wink
             UpdateTurn();
             if (levelChanged)
             {
+                //    Player player = Level.Find(p => p is Player) as Player;
+                //    TileField tf = Level.Find("TileField") as TileField;
+                //    if (player != null && tf != null)
+                //    {
+                //        hitable(player, tf);
+                //    }
                 SendOutUpdatedLevel();
-                levelChanged = false;
+            levelChanged = false;
+            }
+        }
+
+        // very laggy, but does show you what can be hit
+        void hitable(Player player, TileField tf)
+        {
+            Enemy dummy = new Enemy(1);
+            for(int x = 0; x < tf.Columns; x++)
+            {
+                for(int y = 0; y < tf.Rows; y++)
+                {
+                    Tile t = tf[x, y] as Tile;
+                    dummy.Position = t.TilePosition.ToVector2() * tf.CellHeight + dummy.Origin;
+
+                    int dx = (int)Math.Abs(player.Position.X - dummy.Position.X) - Tile.TileWidth / 2;
+                    int dy = (int)Math.Abs(player.Position.Y - dummy.Position.Y) - Tile.TileHeight / 2;
+
+                    double distance = Math.Abs(Math.Sqrt(Math.Pow(dx, 2) + Math.Pow(dy, 2)));
+                    double reach = Tile.TileWidth * player.Reach;
+
+                    bool withinReach = distance <= reach;
+
+                    if (withinReach && !AttackEvent.Blocked(player, dummy) && t.TileType == TileType.Normal)
+                    {
+                        t.spriteAssetName = "empty:65:65:10:DarkRed";
+                        t.LoadSprite();
+                    }
+                    else
+                    {
+                        t.spriteAssetName = t.AssetName;
+                        t.LoadSprite();
+                    }
+                }
             }
         }
         

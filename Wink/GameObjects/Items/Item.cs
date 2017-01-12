@@ -24,12 +24,14 @@ namespace Wink
         public Item(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             stackSize = info.GetInt32("stackSize");
+            stackCount = info.GetInt32("stackCount");
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             base.GetObjectData(info, context);
             info.AddValue("stackSize", stackSize);
+            info.AddValue("stackCount", stackCount);
         }
 
         public override void Update(GameTime gameTime)

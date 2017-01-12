@@ -1,8 +1,28 @@
 ﻿using Microsoft.Xna.Framework;
 
+public static class SideExtensions
+{
+    public static Collision.Side Opposite(this Collision.Side side)
+    {
+        switch (side)
+        {
+            case Collision.Side.Bottom:
+                return Collision.Side.Top;
+            case Collision.Side.Top:
+                return Collision.Side.Bottom;
+            case Collision.Side.Left:
+                return Collision.Side.Right;
+            case Collision.Side.Right:
+                return Collision.Side.Left;
+            default:
+                return default(Collision.Side);
+        }
+    }
+}
+
 public class Collision
 {
-    public enum CollisionSide { Top, Right, Bottom, Left }
+    public enum Side { Top, Right, Bottom, Left }
 
     /// <summary>
     /// Gives the side on rectA that was collided with.
@@ -10,7 +30,7 @@ public class Collision
     /// <param name="rectA"></param>
     /// <param name="rectB"></param>
     /// <returns></returns>
-    public static CollisionSide CalculateCollisionSide(Rectangle rectA, Rectangle rectB)
+    public static Side CalculateCollisionSide(Rectangle rectA, Rectangle rectB)
     {
         Rectangle intersection = Rectangle.Intersect(rectA, rectB);
 
@@ -22,21 +42,21 @@ public class Collision
         float wy = w * dy;
         float hx = h * dx;
 
-        CollisionSide? s = null;
+        Side? s = null;
 
         if (wy > hx)
         {
             if (wy > -hx)
-                s = CollisionSide.Top;
+                s = Side.Top;
             else
-                s = CollisionSide.Right;
+                s = Side.Right;
         }
         else
         {
             if (wy > -hx)
-                s = CollisionSide.Left;
+                s = Side.Left;
             else
-                s = CollisionSide.Bottom;
+                s = Side.Bottom;
         }
 
         return s.Value;

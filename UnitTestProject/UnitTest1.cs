@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Diagnostics;
 using Wink;
 
 namespace UnitTestProject
@@ -10,7 +11,7 @@ namespace UnitTestProject
         public void TestMethod1()
         {
             Level level = new Level();
-            
+            Debug.Write(level.ToString());
         }
     }
 }

@@ -10,7 +10,7 @@ namespace Wink
     {
         Bar<Enemy> hpBar;
 
-        public Enemy(int layer, string id = "Enemy") : base(layer, id)
+        public Enemy(int layer, string id = "Enemy", float FOVlength = 8.5f) : base(layer, id,FOVlength)
         {
             AddHPBar();
         }
@@ -35,6 +35,19 @@ namespace Wink
             PlayAnimation("idle");
         }
 
+        bool WithinReach(Player player)
+        {
+
+            int dx = (int)Math.Abs(this.Position.X - player.Position.X) - Tile.TileWidth / 2;
+            int dy = (int)Math.Abs(this.Position.Y - player.Position.Y) - Tile.TileHeight / 2;
+
+            double distance = Math.Abs(Math.Sqrt(Math.Pow(dx, 2) + Math.Pow(dy, 2)));
+            double reach = Tile.TileWidth * this.Reach;
+
+            bool withinReach = distance <= reach;
+            return withinReach;
+        }
+
         public void GoTo(Player player)
         {
             TileField grid = player.GameWorld.Find("TileField") as TileField;
@@ -42,18 +55,23 @@ namespace Wink
             Vector2 selfPos = new Vector2((Position.X + 0.5f * tempTile.Height) / tempTile.Height - 1, Position.Y / tempTile.Width - 1);
             Vector2 playPos = new Vector2((player.Position.X + 0.5f * tempTile.Height) / tempTile.Height - 1, player.Position.Y / tempTile.Width - 1);
             List<Tile> path = Pathfinding.ShortestPath(selfPos, playPos, grid);
-            if (path.Count > 1)
+            if (WithinReach(player))
             {
-                MoveTo(path[0]);
-                actionPoints--;
-            }
-            else if (player.Position.X - Position.X <= Tile.TileWidth && player.Position.X - Position.X >= -Tile.TileWidth * 2)
-            {
-                if (player.Position.Y - Position.Y <= Tile.TileHeight && player.Position.Y - Position.Y >= -Tile.TileHeight)
+                if (!AttackEvent.Blocked(this, player))
                 {
                     Attack(player);
                     actionPoints--;
                 }
+                else
+                {
+                    MoveTo(path[0]);
+                    actionPoints--;
+                }
+            }
+            else 
+            {
+                MoveTo(path[0]);
+                actionPoints--;
             }
         }
 

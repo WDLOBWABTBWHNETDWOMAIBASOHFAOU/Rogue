@@ -13,13 +13,11 @@ namespace Wink
         public MouseSlot MouseSlot { get { return mouseSlot; } }
 
 
-        public Player(string clientName, int layer) : base(layer, "player_" + clientName)
+        public Player(string clientName, int layer,float FOVlength=8.5f) : base(layer, "player_" + clientName, FOVlength)
         {
             //Inventory
-            mouseSlot = new MouseSlot(layer + 11, "mouseSlot");
-
-            
-            SetStats(5, 5, 5, 5, 55);
+            mouseSlot = new MouseSlot(layer + 11, "mouseSlot");            
+            SetStats();
 
             //InitAnimation(); not sure if overriden version gets played right without restating
         }
@@ -59,6 +57,15 @@ namespace Wink
             {
                 LevelUp();
             }
+            TileField tf = GameWorld.Find("TileField") as TileField;
+            FOVpos = Position - Origin;
+            foreach (Tile t in tf.Objects) // darken the tiles out of range
+            {
+                t.Visible = false;
+            }
+            ShadowCast.ComputeVisibility(tf, (int)(FOVpos.X) / tf.CellWidth, (int)(FOVpos.Y) / tf.CellHeight, FOVlength);
+            //skill idea: peek corner, allows the player to move its FOV position 1 tile in N,S,E or W direction,
+            //allowing the player to peek around a corner into a halway whithout actualy stepping out
         }
 
         /// <summary>

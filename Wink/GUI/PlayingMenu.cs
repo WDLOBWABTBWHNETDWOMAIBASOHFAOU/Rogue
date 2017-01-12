@@ -45,7 +45,7 @@ namespace Wink
             quitButton.Position = optionsButton.Position + buttonDistance;
             quitButton.Action = () =>
             {
-                Game1.QuitGame();
+                Treehugger.QuitGame();
             };
             Add(quitButton);
         }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Runtime.Serialization;
 
 namespace Wink
 {
@@ -14,52 +15,41 @@ namespace Wink
             oldItem = null;
         }
 
+        public MouseSlot(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+            oldItem = info.GetValue("oldItem",typeof(Item))as Item;
+        }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            base.GetObjectData(info, context);
+            info.AddValue("oldItem", oldItem);
+        }
+
         public void AddTo(Item newItem, ItemSlot target)
         {
             // check if 2 actual items are being swapt, else pick up or drop item.
             if(oldItem!=null && newItem != null)
             {
-                //check if the 2 items are the same else swap items.
-                if(oldItem.Id == newItem.Id )
+                //check if the 2 items are the same, else swap items. (same if identical Id and type)
+                if(oldItem.Id == newItem.Id && oldItem.GetType()==newItem.GetType())
                 {
                     // handle item stacking. if total is greater than stacksize creates 1 full stack and 1 "leftover stack" in MouseSlot
                     if (oldItem.getStackSize >= oldItem.stackCount + newItem.stackCount)
                     {
                         oldItem.stackCount += newItem.stackCount;
-                        target.ChangeItem(oldItem);
-                        oldItem = null;
-                        return;
+                        newItem = null;
                     }
-                    else if (newItem.stackCount == newItem.getStackSize || oldItem.stackCount == oldItem.getStackSize)
-                    {
-                        target.ChangeItem(oldItem);
-                        oldItem = newItem;
-                        return;
-                    }
-                    else
+                    else if (!(newItem.stackCount == newItem.getStackSize || oldItem.stackCount == oldItem.getStackSize))
                     {
                         int dif = (oldItem.stackCount + newItem.stackCount) - oldItem.getStackSize;
                         oldItem.stackCount = oldItem.getStackSize; // full stack
                         newItem.stackCount = dif; // leftover stack
-
-                        target.ChangeItem(oldItem);
-                        oldItem = newItem;
-                        return;
                     }
                 }
-                else
-                {
-                    target.ChangeItem(oldItem);
-                    oldItem = newItem;
-                    return;
-                }
             }
-            else
-            {
-                target.ChangeItem(oldItem);
-                oldItem = newItem;
-                return;
-            }
+            target.ChangeItem(oldItem);
+            oldItem = newItem;
         }
 
         public override void Update(GameTime gameTime)
