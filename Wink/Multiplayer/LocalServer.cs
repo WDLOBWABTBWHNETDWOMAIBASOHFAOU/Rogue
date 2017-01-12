@@ -8,15 +8,20 @@ namespace Wink
 {
     public class LocalServer : Server, ILocal
     {
-        private List<Client> clients;
+        private Dictionary<Client, List<Event>> clientEvents;
+        public List<Client> Clients
+        {
+            get { return new List<Client>(clientEvents.Keys); }
+        }
+
         private List<Living> livingObjects;
         private Level level;
-        private int levelIndex;
         
         private int turnIndex;
 
         private List<GameObject> changedObjects;
-        public List<GameObject> ChangedObjects {
+        public List<GameObject> ChangedObjects
+        {
             get { return changedObjects; }
         }
 
@@ -27,17 +32,19 @@ namespace Wink
             {
                 level = value;
                 InitLivingObjects();
+                SendOutUpdatedLevel();
             }
         }
 
         public int LevelIndex
         {
-            get { return levelIndex; }
+            get { return level.Index; }
         }
 
         public LocalServer ()
         {
             changedObjects = new List<GameObject>();
+            clientEvents = new Dictionary<Client, List<Event>>();
         }
 
         /// <summary>
@@ -54,15 +61,18 @@ namespace Wink
             return obj;
         }
 
-        public void SetupLevel(int levelIndex, List<Client> clients)
+        public void AddClient(Client client)
         {
-            //level = new Level(levelIndex);
-            level = new Level();
+            clientEvents.Add(client, new List<Event>());
+        }
 
-            this.clients = clients;
-            for (int i = 0; i < clients.Count; i++)
+        public void SetupLevel(int levelIndex)
+        {
+            level = new Level(levelIndex);
+            
+            for (int i = 0; i < Clients.Count; i++)
             {
-                Client c = clients[i];
+                Client c = Clients[i];
                 Player player = new Player(c.ClientName, Level.Layer);
                 player.MoveTo(Level.Find("StartTile" + (i + 1)) as Tile);
             }
@@ -70,20 +80,39 @@ namespace Wink
             InitLivingObjects();
             SendOutUpdatedLevel(true);
         }
+        
+        public void ProcessEvents(Client c)
+        {
+            foreach (Event e in clientEvents[c])
+            {
+                if (e.Validate(Level))
+                {
+                    e.Sender = c;
+                    e.OnServerReceive(this);
+                }
+            }
+            clientEvents[c].Clear();
+        }
+
+        public void IncomingEvent(Client c, Event e)
+        {
+            clientEvents[c].Add(e);
+        }
 
         public void InitLivingObjects()
         {
             livingObjects = Level.FindAll(obj => obj is Living).Cast<Living>().ToList();
             livingObjects.Sort((obj1, obj2) => obj1.Dexterity - obj2.Dexterity);
-            //livingObjects.ElementAt(turnIndex).isTurn = true;
+            turnIndex = livingObjects.Count - 1;
         }
 
         protected override void ReallySend(Event e)
         {
-            e = SerializationHelper.Clone(e, this, e.GUIDSerialization);
-            
             if (e.Validate(Level))
-                e.OnServerReceive(this);
+            {
+                e = SerializationHelper.Clone(e, this, e.GUIDSerialization);
+                IncomingEvent(Clients.Find(c => c is LocalClient), e);
+            }
         }
 
         private void SendOutUpdatedLevel(bool first = false)
@@ -93,7 +122,7 @@ namespace Wink
             {
                 SerializationHelper.Serialize(ms, e, this, e.GUIDSerialization);
                 ms.Seek(0, SeekOrigin.Begin);
-                foreach (Client c in clients)
+                foreach (Client c in Clients)
                 {
                     c.SendPreSerialized(ms);
                 }
@@ -105,7 +134,7 @@ namespace Wink
             if (changedObjects.Count > 0)
             {
                 LevelChangedEvent e = new LevelChangedEvent(changedObjects);
-                foreach (Client c in clients)
+                foreach (Client c in Clients)
                 {
                     c.Send(e);
                 }
@@ -122,9 +151,8 @@ namespace Wink
                 UpdateTurn();
             }
 
-            Client currentClient = clients.Find(client => client.Player == livingObjects[turnIndex]);
-            if (currentClient is RemoteClient)
-                (currentClient as RemoteClient).ProcessEvents();
+            Client currentClient = Clients.Find(client => client.Player.GUID == livingObjects[turnIndex].GUID);
+            ProcessEvents(currentClient);
 
             UpdateTurn();
             if (changedObjects.Count > 0)
@@ -139,9 +167,7 @@ namespace Wink
         {
             if (livingObjects[turnIndex].ActionPoints <= 0)
             {
-                //livingObjects.ElementAt(turnIndex).isTurn = false;
                 turnIndex = (turnIndex + 1) % livingObjects.Count;
-                //livingObjects.ElementAt(turnIndex).isTurn = true;
                 livingObjects[turnIndex].ActionPoints = 4;
                 //changedObjects.Add(livingObjects[turnIndex]);
                 SendOutUpdatedLevel();
@@ -158,7 +184,7 @@ namespace Wink
 
         public override void Reset()
         {
-            foreach (Client client in clients)
+            foreach (Client client in Clients)
             {
                 client.Reset();
             }

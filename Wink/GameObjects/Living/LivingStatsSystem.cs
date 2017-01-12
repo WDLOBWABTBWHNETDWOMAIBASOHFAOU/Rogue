@@ -48,7 +48,7 @@
             this.intelligence = intelligence;
             //EquipedItems = new List<Equipment>();
             this.baseAttack = baseAttack;
-            actionPoints = MaxActionPoints;
+            //actionPoints = MaxActionPoints;
 
             healthPoints = MaxHP();
             manaPoints = MaxManaPoints();

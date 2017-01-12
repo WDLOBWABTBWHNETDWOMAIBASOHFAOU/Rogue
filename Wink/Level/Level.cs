@@ -11,28 +11,30 @@ namespace Wink
     public partial class Level : GameObjectList
     {
         private int levelIndex;
+        public int Index
+        {
+            get { return levelIndex; }
+        }
 
         public Level(int levelIndex) : base(0, "Level")
         {
-            LoadTiles("Content/Levels/" + levelIndex + ".txt");
+            string path = "Content/Levels/" + levelIndex + ".txt";
+            if (File.Exists(path))
+            {
+                LoadTiles(path);
+            }
+            else
+            {
+                List<Room> rooms = GenerateRooms();
+                List<Tuple<Room, Room>> hallwayPairs = GenerateHallwayPairs(rooms);
+                GenerateTiles(rooms, hallwayPairs);
+            }
+
             this.levelIndex = levelIndex;
         }
 
-        public Level() : base(0, "Level")
-        {
-            List<Room> rooms = GenerateRooms();
-            List<Tuple<Room, Room>> hallwayPairs = GenerateHallwayPairs(rooms);
-            GenerateTiles(rooms, hallwayPairs);
-        }
-
         public Level(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
-        }
-        
-        public override void Update(GameTime gameTime)
-        {
-            base.Update(gameTime);
-        }
+        { }
 
         public void LoadTiles(string path)
         {

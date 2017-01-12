@@ -48,6 +48,7 @@ namespace Wink
             catch (SerializationException se)
             {
                 c.GetVars().GUIDSerialization = !c.GetVars().GUIDSerialization;
+                s.Seek(0, SeekOrigin.Begin);
                 result = binaryFormatter.Deserialize(s);
             }
 

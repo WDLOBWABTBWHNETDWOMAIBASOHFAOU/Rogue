@@ -12,48 +12,28 @@ namespace Wink
 {
     public class RemoteClient : Client
     {
-        private TcpClient tcp;
+        private LocalServer Server
+        {
+            get { return server as LocalServer; }
+        }
+
+        private TcpClient tcpClient;
         private BinaryFormatter binaryFormatter;
-        private List<Event> pendingEvents; //For the server
 
         private Thread receivingThread;
         private bool receiving;
 
         public override Player Player
         {
-            get { return (server as LocalServer).Level.Find(Player.LocalPlayerName) as Player; }
+            get { return Server.Level.Find("player_" + ClientName) as Player; }
         }
 
         public RemoteClient(LocalServer server, TcpClient tcp) : base(server)
         {
-            this.tcp = tcp;
+            tcpClient = tcp;
             binaryFormatter = new BinaryFormatter();
-            pendingEvents = new List<Event>();
 
             StartReceiving();
-        }
-
-        public void ProcessInitialEvent()
-        {
-            if (pendingEvents.Count > 0 && pendingEvents[0] is JoinServerEvent)
-            {
-                pendingEvents[0].Sender = this;
-                pendingEvents[0].OnServerReceive(server as LocalServer);
-                pendingEvents.Clear();
-            }
-        }
-
-        public void ProcessEvents()
-        {
-            foreach(Event e in pendingEvents)
-            {
-                if (e.Validate((server as LocalServer).Level))
-                {
-                    e.Sender = this;
-                    e.OnServerReceive((LocalServer)server);
-                }
-            }
-            pendingEvents.Clear();
         }
 
         private void StartReceiving()
@@ -72,12 +52,12 @@ namespace Wink
         {
             while (receiving)
             {
-                NetworkStream s = tcp.GetStream();
+                NetworkStream s = tcpClient.GetStream();
                 if (s.DataAvailable)
                 {
                     //Event e = (Event)binaryFormatter.Deserialize(s);
-                    Event e = SerializationHelper.Deserialize(s, server as LocalServer, false) as Event;
-                    pendingEvents.Add(e);
+                    Event e = Deserialize(s, Server, false) as Event;
+                    Server.IncomingEvent(this, e);
                 }
                 else
                 {
@@ -91,16 +71,16 @@ namespace Wink
             if (e.Validate((server as LocalServer).Level))
             {
                 //Serialize and send event over TCP connection.
-                StreamingContext c = new StreamingContext(StreamingContextStates.All, new Variables((server as LocalServer), e.GUIDSerialization));
+                StreamingContext c = new StreamingContext(StreamingContextStates.All, new Variables(Server, e.GUIDSerialization));
                 binaryFormatter.Context = c;
-                binaryFormatter.Serialize(tcp.GetStream(), e);
+                binaryFormatter.Serialize(tcpClient.GetStream(), e);
             }
         }
 
         public override void SendPreSerialized(MemoryStream ms)
         {
             ms.Seek(0, SeekOrigin.Begin);
-            ms.CopyTo(tcp.GetStream());
+            ms.CopyTo(tcpClient.GetStream());
         }
 
         public override void Reset()

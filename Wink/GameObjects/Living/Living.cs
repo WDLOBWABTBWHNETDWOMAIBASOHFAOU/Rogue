@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.Serialization;
 
 namespace Wink
@@ -141,9 +142,6 @@ namespace Wink
         
         public virtual void MoveTo(Tile t)
         {
-            if (actionPoints < 1)
-                throw new Exception();//TODO: make exception
-
             if (Tile != null)
                 Tile.Remove(this);
 
