@@ -15,15 +15,10 @@ namespace Wink
         }
 
         protected int exp;
-        private MouseSlot mouseSlot;
 
+        private MouseSlot mouseSlot;
         public MouseSlot MouseSlot { get { return mouseSlot; } }
 
-        private GameObjectGrid itemGrid;
-        public GameObjectGrid ItemGrid
-        {
-            get { return itemGrid; }
-        }
 
         public override Point PointInTile
         {
@@ -34,9 +29,9 @@ namespace Wink
         {
             //Inventory
             mouseSlot = new MouseSlot(layer + 11, "mouseSlot");
-            itemGrid = new GameObjectGrid(3, 6, 0, "");
 
-            SetStats(5, 5, 5, 5, 55);
+            
+            SetStats();
 
             InitAnimation(); //not sure if overriden version gets played right without restating
         }

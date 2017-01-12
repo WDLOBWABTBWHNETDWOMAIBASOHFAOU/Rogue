@@ -48,8 +48,13 @@ namespace Wink
             
             int dx = (int)Math.Abs(player.Tile.Position.X - Tile.Position.X);
             int dy = (int)Math.Abs(player.Tile.Position.Y - Tile.Position.Y);
-            bool withinReach = dx <= Tile.TileWidth && dy <= Tile.TileHeight;
-            
+
+            double distance = Math.Abs(Math.Sqrt(Math.Pow(dx, 2) + Math.Pow(dy, 2)));
+            double reach = Tile.TileWidth * this.Reach;
+
+            bool withinReach = distance <= reach;
+            return withinReach;
+
             if (withinReach)
             {
                 Attack(player);
@@ -100,7 +105,7 @@ namespace Wink
         {
             if (Health > 0)
             {
-                Action onClick = () => 
+                Action onClick = () =>
                 {
                     Player player = GameWorld.Find(Player.LocalPlayerName) as Player;
                     AttackEvent aE = new AttackEvent(player, this);

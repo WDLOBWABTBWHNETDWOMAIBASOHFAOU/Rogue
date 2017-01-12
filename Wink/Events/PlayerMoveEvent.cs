@@ -8,10 +8,12 @@ namespace Wink
     public class PlayerMoveEvent : ActionEvent
     {
         private Tile tile;
+        private int cost;
 
         public PlayerMoveEvent(Player player, Tile tile) : base(player)
         {
             this.tile = tile;
+            cost = 1;
         }
 
         public PlayerMoveEvent(SerializationInfo info, StreamingContext context) : base(info, context)
@@ -33,7 +35,7 @@ namespace Wink
 
         protected override int Cost
         {
-            get { return 1; }
+            get { return cost; }
         }
 
         public override void OnClientReceive(LocalClient client)
@@ -55,7 +57,12 @@ namespace Wink
 
             bool theSame = dx == 0 && dy == 0;
             bool withinReach = dx <= Tile.TileWidth && dy <= Tile.TileHeight;
-            return withinReach && !theSame && !tile.Blocked;
+            if (theSame)
+            {
+                cost = player.ActionPoints;
+                // other things that happen on skip turn (?)          
+            }
+            return withinReach;
         }
     }
 }

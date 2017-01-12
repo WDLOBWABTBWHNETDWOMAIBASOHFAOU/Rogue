@@ -4,6 +4,7 @@ using System.Runtime.Serialization;
 
 namespace Wink
 {
+    //Could be obsoleet in final version. delete?
     [Serializable]
     class EmptyItem : Item
     {

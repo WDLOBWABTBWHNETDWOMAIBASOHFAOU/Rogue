@@ -10,8 +10,7 @@ namespace Wink
     {
         Background,
         Floor,
-        Wall,
-        End
+        Wall
     }
 
     [Serializable]

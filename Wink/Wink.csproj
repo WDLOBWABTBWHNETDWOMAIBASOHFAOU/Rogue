@@ -55,6 +55,14 @@
     <Compile Include="GameManagement\IGameObjectContainer.cs" />
     <Compile Include="GameObjects\IGUIGameObject.cs" />
     <Compile Include="GameObjects\InventorySystem\Container.cs" />
+    <Compile Include="GameObjects\InventorySystem\EquipmentSlot.cs" />
+    <Compile Include="GameObjects\InventorySystem\ItemSlot.cs" />
+    <Compile Include="GameObjects\Items\BodyEquipment.cs" />
+    <Compile Include="GameObjects\Items\Equipment.cs" />
+    <Compile Include="GameObjects\Items\RingEquipment.cs" />
+    <Compile Include="GameObjects\Items\WeaponEquipment.cs" />
+    <Compile Include="GameObjects\Trap.cs" />
+    <Compile Include="GUI\PlayerInventoryAndEquipment.cs" />
     <Compile Include="GameObjects\ITileObject.cs" />
     <Compile Include="GUI\TrackingTextGameObject.cs" />
     <Compile Include="GUI\Window.cs" />

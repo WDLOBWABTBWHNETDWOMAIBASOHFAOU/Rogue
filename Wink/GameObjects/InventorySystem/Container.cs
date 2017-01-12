@@ -94,6 +94,21 @@ namespace Wink
         {
             base.Update(gameTime);
             iBox.Update(gameTime);
+
+            if (Visible)
+            {
+                //Not sure if it works with multiplayer
+                string ClientName = Environment.MachineName;
+                Player player = GameWorld.Find(Player.LocalPlayerName) as Player;
+
+                int dx = (int)Math.Abs(player.Position.X - player.Origin.X - Position.X);
+                int dy = (int)Math.Abs(player.Position.Y - player.Origin.Y - Position.Y);
+
+                if (!(dx <= Tile.TileWidth && dy <= Tile.TileHeight))
+                {
+                    iWindow.Visible = false;
+                }
+            }
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)

@@ -59,16 +59,16 @@ namespace Wink
                     tf.Add(t, x, y);
                 }
             }
-            
-            Item testItem = new TestItem("empty:64:64:10:Pink", 1, 0);
-            List<Tile> floorTiles = tf.FindAll(obj => obj.GetType() == typeof(Tile) && (obj as Tile).TileType == TileType.Floor).Cast<Tile>().ToList();
-            floorTiles[Random.Next(floorTiles.Count)].PutOnTile(testItem);
+            //Putting the item one layer above the inventory box
+            int inventoryLayer = layer + 1;
+            int itemLayer = layer + 2;
+
 
             #region ENEMY CODE (test)
             for (int i = 0; i < 2; i++)
             {
                 Enemy testEnemy = new Enemy(0);
-
+                testEnemy.SetStats();
                 //First find all passable tiles then select one at random.
                 List<GameObject> tileCandidates = tf.FindAll(obj => obj is Tile && (obj as Tile).Passable);
                 Tile startTile = tileCandidates[GameEnvironment.Random.Next(tileCandidates.Count)] as Tile;
@@ -101,6 +101,8 @@ namespace Wink
                     return LoadDoorTile();
                 case 'E':
                     return LoadEndTile();
+                case 't':
+                    return LoadTrapTile("spr_trap", TileType.Normal, x, y);
                 default:
                     return LoadWTFTile();
             }
@@ -144,6 +146,17 @@ namespace Wink
             return t;
         }
 
+        private Tile LoadTrapTile(string name, TileType tileType, int x, int y)
+        {
+            Tile t = new Tile("empty:65:65:10:DarkGreen", tileType);
+            //DarkRed for development testing, should have same or simular sprite as the tile in final version
+            Trap trap = new Trap("empty:65:65:10:DarkRed");
+            trap.Position = new Vector2(x * Tile.TileWidth, y * Tile.TileHeight);
+            Add(trap);
+            t.Passable = true;
+            return t;
+        }
+        
         private Tile LoadChestTile(string assetName = "spr_floor")
         {
             Tile t = LoadFloorTile("", assetName);

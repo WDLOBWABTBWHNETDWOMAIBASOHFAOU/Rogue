@@ -8,7 +8,7 @@ namespace Wink
     {
         public Item item { get; set; }
         public Player player { get; set; }
-        public GameObjectGrid target { get; set; }
+        public ItemSlot target { get; set; }
 
         public PickupEvent() : base()
         {

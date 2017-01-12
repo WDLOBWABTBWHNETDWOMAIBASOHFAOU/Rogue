@@ -1,12 +1,15 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using System.Runtime.Serialization;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Wink
 {
     public abstract class Item : SpriteGameObject, ITileObject
     {
         int stackSize;
+        public int stackCount;
+        public int getStackSize { get { return stackSize; } }
 
         public Point PointInTile
         {
@@ -20,7 +23,12 @@ namespace Wink
 
         public Item(string assetName, int stackSize = 1, int layer = 0, string id = "") : base(assetName, layer, id)
         {
-            this.stackSize = stackSize;    
+            // item id is needed to chech if they are the same, for now assetname to test.
+            // if item are proceduraly generated, there should be an algoritim that generates a id that is the same if stats (and sprite) are the same.
+            this.id = assetName;
+            stackCount = 1;
+            this.stackSize = stackSize;
+            cameraSensitivity = 0;    
         }
 
         public Item(SerializationInfo info, StreamingContext context) : base(info, context)
@@ -37,33 +45,23 @@ namespace Wink
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
-            if (Parent is MouseSlot)
-            {
-                cameraSensitivity = 0;
-            }
-            else if (Parent is GameObjectGrid)
-            {
-                cameraSensitivity = 0;
-            }
-            else
-            {
-                cameraSensitivity = 1;
-            }
         }
 
         public override void HandleInput(InputHelper inputHelper)
         {
-            Action onClick = () =>
-            {
-                PickupEvent PuE = new PickupEvent();
-                PuE.player = GameWorld.Find(Player.LocalPlayerName) as Player;
-                PuE.item = this;
-                PuE.target = PuE.item.Parent as GameObjectGrid;
-                Server.Send(PuE);
-            };
-            inputHelper.IfMouseLeftButtonPressedOn(this, onClick);
 
             base.HandleInput(inputHelper);
+        }
+
+        public override void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
+        {
+            base.Draw(gameTime, spriteBatch, camera);
+
+            if (stackCount > 1)
+            {
+                // Position and color subject to change
+                spriteBatch.DrawString(GameEnvironment.AssetManager.GetFont("Arial26"), stackCount.ToString(), GlobalPosition, Color.WhiteSmoke);
+            }
         }
     }   
 }
