@@ -36,6 +36,7 @@ namespace Wink
             pendingEvents = new List<Event>();
 
             StartReceiving();
+
             ReallySend(new JoinServerEvent(client.ClientName));
         }
 
@@ -101,6 +102,7 @@ namespace Wink
         public override void Reset()
         {
             StopReceiving();
+            receivingThread.Join();
         }
     }
 }

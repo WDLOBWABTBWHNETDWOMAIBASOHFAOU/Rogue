@@ -78,8 +78,6 @@ namespace Wink
 
         public void Reset()
         {
-            if (client != null)
-                client.Reset();
             if (server != null)
                 server.Reset();
         }

@@ -97,7 +97,6 @@ public class AssetManager
         RenderTarget2D maskRenderTarget = new RenderTarget2D(graphicsDevice, asset.Width, asset.Height, false, SurfaceFormat.Color, pp.DepthStencilFormat);
 
         graphicsDevice.SetRenderTarget(maskRenderTarget);
-        graphicsDevice.Clear(Color.Black);
         graphicsDevice.Clear(Color.TransparentBlack);
 
         //Draw texture to rendertarget.
@@ -134,7 +133,7 @@ public class AssetManager
         spriteBatch.End();
         
         graphicsDevice.SetRenderTarget(null);
-        maskRenderTarget.SaveAsPng(File.Create("transparent_texture.png"), asset.Width, asset.Height);
+        //maskRenderTarget.SaveAsPng(File.Create("transparent_texture.png"), asset.Width, asset.Height);
         return maskRenderTarget;
     }
 

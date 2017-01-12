@@ -124,7 +124,7 @@ namespace Wink
             foreach (Client c in clients)
             {
                 if (c is RemoteClient)
-                    (c as RemoteClient).ProcessInitialEvent();
+                    (c as RemoteClient).ProcessEvents();
             }
         }
 

@@ -1,4 +1,5 @@
 ﻿
+using Microsoft.Xna.Framework;
 using System.IO;
 
 namespace Wink
@@ -17,7 +18,7 @@ namespace Wink
         public abstract void Send(Event e);
         public abstract void SendPreSerialized(MemoryStream ms);
         public abstract Player Player { get; }
-
+        public abstract void Update(GameTime gameTime);
         public abstract void Reset();
     }
 }

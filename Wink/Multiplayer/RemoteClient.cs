@@ -5,22 +5,23 @@ using System.Net.Sockets;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
+using Microsoft.Xna.Framework;
 using static Wink.SerializationHelper;
 
 namespace Wink
 {
     public class RemoteClient : Client
     {
-        TcpClient tcp;
-        BinaryFormatter binaryFormatter;
-        List<Event> pendingEvents; //For the server
+        private TcpClient tcp;
+        private BinaryFormatter binaryFormatter;
+        private List<Event> pendingEvents; //For the server
 
-        Thread receivingThread;
-        bool receiving;
+        private Thread receivingThread;
+        private bool receiving;
 
         public override Player Player
         {
-            get { return (server as LocalServer).Level.Find("player_" + ClientName) as Player; }
+            get { return (server as LocalServer).Level.Find(Player.LocalPlayerName) as Player; }
         }
 
         public RemoteClient(LocalServer server, TcpClient tcp) : base(server)
@@ -105,6 +106,11 @@ namespace Wink
         public override void Reset()
         {
             StopReceiving();
+            receivingThread.Join();
+        }
+
+        public override void Update(GameTime gameTime)
+        {
         }
     }
 }

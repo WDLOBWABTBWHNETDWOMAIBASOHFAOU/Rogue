@@ -6,8 +6,6 @@ using System.Linq;
 
 namespace Wink
 {
-    class NotLocalException : Exception { }
-
     public class LocalServer : Server, ILocal
     {
         private List<Client> clients;
@@ -160,7 +158,10 @@ namespace Wink
 
         public override void Reset()
         {
-            //TODO: implement.
+            foreach (Client client in clients)
+            {
+                client.Reset();
+            }
         }
     }
 }

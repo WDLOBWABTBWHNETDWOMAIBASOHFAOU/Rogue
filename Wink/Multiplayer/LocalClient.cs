@@ -32,7 +32,7 @@ namespace Wink
         }
         public override Player Player
         {
-            get { return gameObjects.Find("player_" + ClientName) as Player; }
+            get { return gameObjects.Find(Player.LocalPlayerName) as Player; }
         }
 
         public bool IsMyTurn { set; get; }
@@ -60,7 +60,7 @@ namespace Wink
         {
             frameCounter = new FrameCounter();
 
-            ClientName = System.Environment.MachineName;
+            ClientName =  GameEnvironment.GameSettingsManager.GetValue("user_name");
 
             newCamera = new Camera();
             GameEnvironment.InputHelper.Camera = newCamera;
@@ -80,7 +80,7 @@ namespace Wink
             gameObjects.Replace(go);
         }
 
-        public void Update(GameTime gameTime)
+        public override void Update(GameTime gameTime)
         {
             GUI.Update(gameTime);
         }
