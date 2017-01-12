@@ -366,6 +366,7 @@ namespace Wink
                 }
             }
 
+
             for (int x = 0; x < tf.Columns; x++)
             {
                 for (int y = 0; y < tf.Rows; y++)
@@ -382,6 +383,47 @@ namespace Wink
             }
 
             tf.Add(LoadStartTile(), rooms[0].Location.ToRoundedPoint().X + 1, rooms[0].Location.ToRoundedPoint().Y + 1);
+
+            //Generate EndTile
+            List<Room> forEnd = new List<Room>();
+            for (int a = 0; a < hallwayPairs.Count; a++)
+            {
+                if (!forEnd.Contains(hallwayPairs[a].Item1))
+                {
+                    forEnd.Add(hallwayPairs[a].Item1);
+                }
+                if (!forEnd.Contains(hallwayPairs[a].Item2))
+                {
+                    forEnd.Add(hallwayPairs[a].Item2);
+                }
+            }
+
+            for (int a = 0; a < hallwayPairs.Count; a++)
+            {
+                if (hallwayPairs[a].Item1 == rooms[0] || hallwayPairs[a].Item2 == rooms[0])
+                {
+                    if (forEnd.Contains(hallwayPairs[a].Item1))
+                    {
+                        forEnd.Remove(hallwayPairs[a].Item1);
+                    }
+                    if (forEnd.Contains(hallwayPairs[a].Item2))
+                    {
+                        forEnd.Remove(hallwayPairs[a].Item2);
+                    }
+                }
+            }
+            tf.Add(LoadEndTile(), forEnd[0].Location.ToRoundedPoint().X + 1, forEnd[0].Location.ToRoundedPoint().Y + 1);
+
+            //Test enemy spawn
+            int numberOfEnemys = 8;
+            for (int n = 0; n<numberOfEnemys; n++)
+            {
+                Enemy enemy = new Enemy(0);
+                List<GameObject> spawnLocations = tf.FindAll(obj => obj is Tile && (obj as Tile).Passable);
+                Tile spawnLocation = spawnLocations[GameEnvironment.Random.Next(spawnLocations.Count)] as Tile;
+                enemy.MoveTo(spawnLocation);
+            }
+            //End test
 
             //Must be last statement, executed after the Tilefield is done.
             tf.InitSpriteSheetIndexation();
