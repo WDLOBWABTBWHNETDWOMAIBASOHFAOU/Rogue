@@ -39,7 +39,7 @@ namespace Wink
 
         protected override void DoBehaviour(List<GameObject> changedObjects)
         {
-            GoTo(changedObjects, GameWorld.Find(p => p is Player) as Player);
+            GoTo(changedObjects, GameWorld.Find(Player.LocalPlayerName) as Player);
         }
 
         public void GoTo(List<GameObject> changedObjects, Player player)
@@ -102,8 +102,7 @@ namespace Wink
             {
                 Action onClick = () => 
                 {
-                    // correct player when in multiplayer?
-                    Player player = GameWorld.Find(p => p is Player) as Player;
+                    Player player = GameWorld.Find(Player.LocalPlayerName) as Player;
                     AttackEvent aE = new AttackEvent(player, this);
                     Server.Send(aE);
                 };

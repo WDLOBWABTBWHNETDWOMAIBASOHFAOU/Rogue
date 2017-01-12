@@ -56,7 +56,7 @@ namespace Wink
             Action onClick = () =>
             {
                 PickupEvent PuE = new PickupEvent();
-                PuE.player = (Root as GameObjectList).Find("player_" + Environment.MachineName) as Player;
+                PuE.player = GameWorld.Find(Player.LocalPlayerName) as Player;
                 PuE.item = this;
                 PuE.target = PuE.item.Parent as GameObjectGrid;
                 Server.Send(PuE);

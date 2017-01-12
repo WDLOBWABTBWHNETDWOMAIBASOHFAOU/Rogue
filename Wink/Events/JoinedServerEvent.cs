@@ -19,6 +19,7 @@ namespace Wink
             base.OnClientReceive(client);
             client.LoadPlayerGUI();
             client.Camera.CenterOn(client.Player);
+            
             GameEnvironment.GameStateManager.SwitchTo("playingState");
         }
     }

@@ -9,6 +9,11 @@ namespace Wink
     [Serializable]
     public class Player : Living
     {
+        public static string LocalPlayerName
+        {
+            get { return "player_" + GameEnvironment.GameSettingsManager.GetValue("user_name"); }
+        }
+
         protected int exp;
         private MouseSlot mouseSlot;
 
