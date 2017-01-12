@@ -13,10 +13,13 @@ namespace Wink
     {
         Item slotItem;
         public Item SlotItem { get { return slotItem; } }
+        
+        public bool containsPrev;
 
         public ItemSlot(string assetName = "empty:65:65:10:Gray", int layer = 0, string id = "", int sheetIndex = 0, float cameraSensitivity = 0, float scale = 1) : base(assetName, layer, id, sheetIndex, cameraSensitivity, scale)
         {
-            slotItem = null;
+            slotItem = null;            
+            containsPrev = false;
         }
 
         public ItemSlot(SerializationInfo info, StreamingContext context) : base(info, context)
@@ -38,7 +41,7 @@ namespace Wink
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
-            if(slotItem != null)
+            if (slotItem != null)
             {
                 slotItem.Position = GlobalPosition;
             }
@@ -63,9 +66,25 @@ namespace Wink
                 pue.player = (Root as GameObjectList).Find("player_" + Environment.MachineName) as Player;
                 Server.Send(pue);
             };
+
+            if (slotItem != null)
+            {
+                slotItem.HandleInput(inputHelper);
+                if (ContainsMouse(inputHelper) && !containsPrev)
+                {
+                    Player player = (Root as GameObjectList).Find("player_" + Environment.MachineName) as Player; ;
+                    player.MouseSlot.InfoScreen(this);
+                    containsPrev = true;
+                }
+            }
             inputHelper.IfMouseLeftButtonPressedOn(this, onClick);
 
             base.HandleInput(inputHelper);
+        }
+
+        public bool ContainsMouse(InputHelper inputHelper)
+        {
+            return BoundingBox.Contains(inputHelper.MousePosition);
         }
     }
 }

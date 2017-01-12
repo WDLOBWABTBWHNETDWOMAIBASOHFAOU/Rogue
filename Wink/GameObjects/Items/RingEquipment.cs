@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.Serialization;
+using Microsoft.Xna.Framework;
 
 namespace Wink
 {
@@ -42,6 +43,28 @@ namespace Wink
             info.AddValue("RingType", RingType);
             info.AddValue("ringValue", ringValue);
             info.AddValue("multiplier", multiplier);
+        }
+
+        public override void ItemInfo(ItemSlot caller)
+        {
+            base.ItemInfo(caller);
+
+            if (Multiplier)
+            {
+                TextGameObject ringInfo = new TextGameObject("Arial12", 0, 0, "RingInfo." + this);
+                ringInfo.Text = "Multiplies " + RingType + " by " + RingValue;
+                ringInfo.Color = Color.Red;
+                ringInfo.Parent = infoList;
+                infoList.Children.Insert(1, ringInfo);
+            }
+            else
+            {
+                TextGameObject ringInfo = new TextGameObject("Arial12", 0, 0, "RingInfo." + this);
+                ringInfo.Text = "Adds " + RingValue + " to " + RingType;
+                ringInfo.Color = Color.Red;
+                ringInfo.Parent = infoList;
+                infoList.Children.Insert(1, ringInfo);
+            }
         }
 
         public double RingValue

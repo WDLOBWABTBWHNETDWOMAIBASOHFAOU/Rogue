@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Wink
 {
-    class Window : GameObjectList
+    public class Window : GameObjectList
     {
         private Vector2 mouseOffset;
         private bool dragging;

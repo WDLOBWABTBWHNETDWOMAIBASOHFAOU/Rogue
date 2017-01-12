@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.Serialization;
+using Microsoft.Xna.Framework;
 
 namespace Wink
 {
@@ -32,7 +33,7 @@ namespace Wink
         {
             reach = info.GetInt32("reach");
             baseValue = info.GetInt32("baseValue");
-            damageType = (DamageType)info.GetValue("damageType",typeof(DamageType));
+            damageType = (DamageType)info.GetValue("damageType", typeof(DamageType));
             strScalingFactor = info.GetDouble("strScalingFactor");
             dexScalingFactor = info.GetDouble("dexScalingFactor");
             intScalingFactor = info.GetDouble("intScalingFactor");
@@ -47,6 +48,39 @@ namespace Wink
             info.AddValue("strScalingFactor", strScalingFactor);
             info.AddValue("dexScalingFactor", dexScalingFactor);
             info.AddValue("intScalingFactor", intScalingFactor);
+        }
+
+        public override void ItemInfo(ItemSlot caller)
+        {
+            string ClientName = Environment.MachineName;
+            Player player = caller.GameWorld.Find("player_" + ClientName) as Player;
+            base.ItemInfo(caller);
+
+            TextGameObject dType = new TextGameObject("Arial12", 0, 0, "DamageTypeInfo." + this);
+            dType.Text = DamageType + " Damage: " + baseValue + " + " + (Value(player) -baseValue);
+            dType.Color = Color.Red;
+            dType.Parent = infoList;
+            infoList.Children.Insert(1, dType);
+
+            TextGameObject scalingText = new TextGameObject("Arial12", 0, 0, "scalingInfoText." + this);
+            scalingText.Text = "Statbonus:";
+            switch (damageType)
+            {
+                case DamageType.physical:
+                    {
+                        scalingText.Text += " str " + strScalingFactor*baseValue + " dex " + dexScalingFactor * baseValue;
+                        break;
+                    }
+                case DamageType.magic:
+                    {
+                        scalingText.Text += " int " + intScalingFactor * baseValue;
+                        break;
+                    }
+                default:
+                    throw new Exception("invalid damageType");
+            }
+            scalingText.Color = Color.Red;
+            infoList.Add(scalingText);
         }
 
         public int Value(Living l)

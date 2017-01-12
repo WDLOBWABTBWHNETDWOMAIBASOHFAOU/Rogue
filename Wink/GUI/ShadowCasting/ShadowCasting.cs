@@ -121,7 +121,8 @@ namespace Wink
         /// Recursively casts light into cells.  Operates on a single octant.
         /// </summary>
         /// <param name="grid">The cell grid definition.</param>
-        /// <param name="gridPosn">The player's position within the grid.</param>
+        /// <param name="gridPosnX">The player's X-position within the grid.</param>
+        /// <param name="gridPosnY">The player's Y-position within the grid.</param>
         /// <param name="viewRadius">The view radius; can be a fractional value.</param>
         /// <param name="startColumn">Current column; pass 1 as initial value.</param>
         /// <param name="leftViewSlope">Slope of the left (upper) view edge; pass 1.0 as

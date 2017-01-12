@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 using System.Runtime.Serialization;
+using Microsoft.Xna.Framework;
 
 namespace Wink
 {
@@ -51,6 +51,22 @@ namespace Wink
                 return true;
             }
             return false;
+        }
+
+        public override void ItemInfo(ItemSlot caller)
+        {
+            base.ItemInfo(caller);
+
+            TextGameObject requirementsText = new TextGameObject("Arial12", 0, 0, "reqInfoText." + this);
+            requirementsText.Text = "Requirements";
+            requirementsText.Color = Color.Red;
+            infoList.Add(requirementsText);
+
+            TextGameObject requirements = new TextGameObject("Arial12", 0, 0, "reqInfo." + this);
+            requirements.Text = "Str: "+strRequirement+ "   Dex: " + dexRequirement + "   Int: " + intRequirement ;
+            requirements.Color = Color.Red;
+            infoList.Add(requirements);
+
         }
     }
 }

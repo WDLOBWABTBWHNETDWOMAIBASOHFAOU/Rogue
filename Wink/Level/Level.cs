@@ -84,7 +84,7 @@ namespace Wink
             
 
             // ENEMY CODE (test)
-            for(int i = 0; i < 0; i++)
+            for(int i = 0; i < 2; i++)
             {
                 Enemy testEnemy = new Enemy(layer + 1);
                 testEnemy.SetStats();

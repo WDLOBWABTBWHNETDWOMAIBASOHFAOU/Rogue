@@ -36,6 +36,17 @@ namespace Wink
             info.AddValue("reqPenalty", reqPenalty);
         }
 
+        public override void ItemInfo(ItemSlot caller)
+        {
+            base.ItemInfo(caller);
+
+            TextGameObject armorinfo = new TextGameObject("Arial12", 0, 0, "ArmorValueTypeInfo." + this);
+            armorinfo.Text = "ArmorValue: " + physicalValue + " physical, " + magicValue + " magic";
+            armorinfo.Color = Color.Red;
+            armorinfo.Parent = infoList;
+            infoList.Children.Insert(1, armorinfo);
+        }
+
         public  int Value(Living l,DamageType damageType)
         {
             int value;
