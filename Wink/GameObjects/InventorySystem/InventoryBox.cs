@@ -38,10 +38,10 @@ namespace Wink
             testItem4.ChangeItem(new BodyEquipment(20, 2, "empty:65:65:10:Brown"));
 
             ItemSlot testItem5 = itemGrid[2, 0] as ItemSlot;
-            testItem5.ChangeItem(new RingEquipment(50, RingType.health, "empty:65:65:10:DarkGray"));
+            testItem5.ChangeItem(new RingEquipment(50, RingType.Health, "empty:65:65:10:DarkGray"));
 
             ItemSlot testItem6 = itemGrid[1, 0] as ItemSlot;
-            testItem6.ChangeItem(new RingEquipment(2, RingType.intelligence, "empty:65:65:10:DarkGray", true));
+            testItem6.ChangeItem(new RingEquipment(2, RingType.Intelligence, "empty:65:65:10:DarkGray", true));
             // end test items
 
             Add(itemGrid);
@@ -57,11 +57,6 @@ namespace Wink
             base.GetObjectData(info, context);
         }
         #endregion
-
-        public override void Update(GameTime gameTime)
-        {
-            base.Update(gameTime);
-            itemGrid.Update(gameTime);
-        }
+        
     } 
 }

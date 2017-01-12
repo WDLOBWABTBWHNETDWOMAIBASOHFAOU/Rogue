@@ -62,17 +62,15 @@ namespace Wink
             //Putting the item one layer above the inventory box
             int inventoryLayer = layer + 1;
             int itemLayer = layer + 2;
-
-
+            
             #region ENEMY CODE (test)
             for (int i = 0; i < 2; i++)
             {
-                Enemy testEnemy = new Enemy(0);
+                Enemy testEnemy = new Enemy(0, "Enemy" + i);
                 testEnemy.SetStats();
                 //First find all passable tiles then select one at random.
                 List<GameObject> tileCandidates = tf.FindAll(obj => obj is Tile && (obj as Tile).Passable);
                 Tile startTile = tileCandidates[GameEnvironment.Random.Next(tileCandidates.Count)] as Tile;
-
                 testEnemy.MoveTo(startTile);
             }
             #endregion
@@ -102,7 +100,7 @@ namespace Wink
                 case 'E':
                     return LoadEndTile();
                 case 't':
-                    return LoadTrapTile("spr_trap", TileType.Normal, x, y);
+                    return LoadTrapTile("spr_trap", TileType.Floor, x, y);
                 default:
                     return LoadWTFTile();
             }
@@ -149,11 +147,11 @@ namespace Wink
         private Tile LoadTrapTile(string name, TileType tileType, int x, int y)
         {
             Tile t = new Tile("empty:65:65:10:DarkGreen", tileType);
+            t.Passable = true;
+
             //DarkRed for development testing, should have same or simular sprite as the tile in final version
             Trap trap = new Trap("empty:65:65:10:DarkRed");
-            trap.Position = new Vector2(x * Tile.TileWidth, y * Tile.TileHeight);
-            Add(trap);
-            t.Passable = true;
+            t.PutOnTile(trap);
             return t;
         }
         

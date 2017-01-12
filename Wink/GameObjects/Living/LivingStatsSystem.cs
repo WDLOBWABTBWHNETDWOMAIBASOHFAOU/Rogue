@@ -6,16 +6,13 @@
 
         protected int manaPoints, healthPoints, actionPoints, baseAttack, baseArmor, strength, dexterity, intelligence, creatureLevel, baseReach;
 
-        public int Dexterity { get { return Ringbonus(RingType.dexterity, dexterity); } }
-        public int Intelligence { get { return Ringbonus(RingType.intelligence, intelligence); } }
-        public int Strength { get { return Ringbonus(RingType.strength, strength); } }
-
+        public int Dexterity { get { return Ringbonus(RingType.Dexterity, dexterity); } }
+        public int Intelligence { get { return Ringbonus(RingType.Intelligence, intelligence); } }
+        public int Strength { get { return Ringbonus(RingType.Strength, strength); } }
         public int ActionPoints { get { return actionPoints; } set { actionPoints = value; } }
-
         public int Health { get { return healthPoints; } set { healthPoints = value; } }
         public int Mana { get { return manaPoints; } }
-
-
+        
         protected int Ringbonus(RingType ringType, int baseValue)
         {
             int i = 0;
@@ -83,7 +80,7 @@
             int maxHP = (int)CalculateValue(40, creatureLevel - 1, 4);
             return maxHP;
         }
-        public int MaxHealth { get { return Ringbonus(RingType.health, MaxHP()); } }
+        public int MaxHealth { get { return Ringbonus(RingType.Health, MaxHP()); } }
 
         /// <summary>
         /// returns the maximum of manapoints the living object can have
@@ -121,9 +118,9 @@
             get
             {
                 int reach;
-                if (weapon.SlotItem != null)
+                if (Weapon.SlotItem != null)
                 {
-                    WeaponEquipment weaponItem = weapon.SlotItem as WeaponEquipment;
+                    WeaponEquipment weaponItem = Weapon.SlotItem as WeaponEquipment;
                     reach = weaponItem.Reach;
                 }
                 else
@@ -146,9 +143,9 @@
             int attack = baseAttack;
             double mod = 1;
 
-            if (weapon.SlotItem !=null)
+            if (Weapon.SlotItem !=null)
             {
-                WeaponEquipment weaponItem = weapon.SlotItem as WeaponEquipment;
+                WeaponEquipment weaponItem = Weapon.SlotItem as WeaponEquipment;
 
                 if(weaponItem.StrRequirement > Strength)
                 {
@@ -175,9 +172,9 @@
         protected int ArmorValue()
         {
             int armorValue=baseArmor;
-            if (body.SlotItem != null)
+            if (Body.SlotItem != null)
             {
-                BodyEquipment ArmorItem = body.SlotItem as BodyEquipment;
+                BodyEquipment ArmorItem = Body.SlotItem as BodyEquipment;
                 if(ArmorItem.StrRequirement > Strength)
                 {
                     int dif = ArmorItem.StrRequirement - Strength;

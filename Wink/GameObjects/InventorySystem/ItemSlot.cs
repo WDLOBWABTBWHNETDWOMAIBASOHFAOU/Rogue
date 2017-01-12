@@ -1,22 +1,50 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Runtime.Serialization;
 
 namespace Wink
 {
+    [Serializable]
     public class ItemSlot : SpriteGameObject
     {
-        Item slotItem;
-        public Item SlotItem { get { return slotItem; } }
+        private Item slotItem;
+        public Item SlotItem
+        {
+            get { return slotItem; }
+        }
 
         public ItemSlot(string assetName = "empty:65:65:10:Gray", int layer = 0, string id = "", int sheetIndex = 0, float cameraSensitivity = 0, float scale = 1) : base(assetName, layer, id, sheetIndex, cameraSensitivity, scale)
         {
             slotItem = null;
         }
+
+        #region Serialization
+        public ItemSlot(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+            if (context.GetVars().GUIDSerialization)
+            {
+                slotItem = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("slotItemGUID"))) as Item;
+            }
+            else
+            {
+                slotItem = info.GetValue("slotItem", typeof(Item)) as Item;
+            }
+        }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            if (context.GetVars().GUIDSerialization)
+            {
+                info.AddValue("slotItemGUID", slotItem.GUID.ToString());
+            }
+            else
+            {
+                info.AddValue("slotItem", slotItem);
+            }
+            base.GetObjectData(info, context);
+        }
+        #endregion
 
         public void ChangeItem(Item newItem)
         {

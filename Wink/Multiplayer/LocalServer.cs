@@ -175,7 +175,7 @@ namespace Wink
         }
 
         // very laggy, but does show you what can be hit
-        void hitable(Player player, TileField tf)
+        private void Hitable(Player player, TileField tf)
         {
             Enemy dummy = new Enemy(1);
             for(int x = 0; x < tf.Columns; x++)
@@ -193,15 +193,15 @@ namespace Wink
 
                     bool withinReach = distance <= reach;
 
-                    if (withinReach && !AttackEvent.Blocked(player, dummy) && t.TileType == TileType.Normal)
+                    if (withinReach && !AttackEvent.Blocked(player, dummy) && t.TileType == TileType.Floor)
                     {
-                        t.spriteAssetName = "empty:65:65:10:DarkRed";
-                        t.LoadSprite();
+                        //t.spriteAssetName = "empty:65:65:10:DarkRed";
+                        //t.LoadSprite();
                     }
                     else
                     {
-                        t.spriteAssetName = t.AssetName;
-                        t.LoadSprite();
+                        //t.spriteAssetName = t.AssetName;
+                        //t.LoadSprite();
                     }
                 }
             }
@@ -211,7 +211,7 @@ namespace Wink
         {
             if (livingObjects[turnIndex] == player)
             {
-                turnIndex++;
+                turnIndex = (turnIndex + 1) % livingObjects.Count;
             }
         }
 

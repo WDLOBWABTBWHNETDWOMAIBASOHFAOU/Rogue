@@ -37,7 +37,7 @@ namespace Wink
 
         public sealed override bool Validate(Level level)
         {
-            return ValidateAction(level) && /*player.isTurn &&*/ player.ActionPoints >= Cost;
+            return ValidateAction(level) && player.ActionPoints >= Cost;
         }
 
         protected abstract bool ValidateAction(Level level);

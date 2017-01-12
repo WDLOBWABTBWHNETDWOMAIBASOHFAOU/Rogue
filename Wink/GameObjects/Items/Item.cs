@@ -31,6 +31,7 @@ namespace Wink
             cameraSensitivity = 0;    
         }
 
+        #region Serialization
         public Item(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             stackSize = info.GetInt32("stackSize");
@@ -41,6 +42,7 @@ namespace Wink
             base.GetObjectData(info, context);
             info.AddValue("stackSize", stackSize);
         }
+        #endregion
 
         public override void Update(GameTime gameTime)
         {

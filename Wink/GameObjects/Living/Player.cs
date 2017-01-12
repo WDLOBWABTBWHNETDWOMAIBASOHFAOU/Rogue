@@ -18,8 +18,7 @@ namespace Wink
 
         private MouseSlot mouseSlot;
         public MouseSlot MouseSlot { get { return mouseSlot; } }
-
-
+        
         public override Point PointInTile
         {
             get { return new Point(Tile.TileWidth / 2, Tile.TileHeight / 2); }
@@ -46,29 +45,18 @@ namespace Wink
         {
             exp = info.GetInt32("exp");
             if (context.GetVars().GUIDSerialization)
-            {
                 mouseSlot = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("mouseSlotGUID"))) as MouseSlot;
-                itemGrid = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("itemGridGUID"))) as GameObjectGrid; 
-            }
             else
-            {
                 mouseSlot = info.GetValue("mouseSlot", typeof(MouseSlot)) as MouseSlot;
-                itemGrid = info.GetValue("itemGrid", typeof(GameObjectGrid)) as GameObjectGrid;
-            }
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             if (context.GetVars().GUIDSerialization)
-            {
                 info.AddValue("mouseSlotGUID", mouseSlot.GUID.ToString());
-                info.AddValue("itemGridGUID", itemGrid.GUID.ToString()); 
-            }
             else
-            {
                 info.AddValue("mouseSlot", mouseSlot);
-                info.AddValue("itemGrid", itemGrid);
-            }
+
             info.AddValue("exp", exp);
             base.GetObjectData(info, context);
         }
@@ -78,8 +66,6 @@ namespace Wink
         {
             if (mouseSlot != null && mouseSlot.GUID == replacement.GUID)
                 mouseSlot = replacement as MouseSlot;
-            if (itemGrid != null && itemGrid.GUID == replacement.GUID)
-                itemGrid = replacement as GameObjectGrid;
 
             base.Replace(replacement);
         }
@@ -119,6 +105,17 @@ namespace Wink
             creatureLevel++;
 
             // + some amount of neutral stat points, distriputed by user discresion or increase stats based on picked hero
+        }
+
+        public override void HandleInput(InputHelper inputHelper)
+        {
+            Action onClick = () =>
+            {
+                Event e = new EndTurnEvent(this);
+                Server.Send(e);
+            };
+            inputHelper.IfMouseLeftButtonPressedOn(Tile, onClick);
+            base.HandleInput(inputHelper);
         }
     }
 }

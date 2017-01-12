@@ -43,29 +43,29 @@ namespace Wink
             Vector2 MPBarPosition = new Vector2(barX, HPBarPosition.Y + 32);
 
             //Healthbar
-            hpBar = new Bar<LocalClient>(lc, p => lc.Player.Health, lc.Player.MaxHealth, textfieldFont, Color.Red, 2, "HealthBar", 0, 2.5f);
+            hpBar = new Bar<LocalClient>(lc, lc2 => lc2.Player.Health, lc2 => lc2.Player.MaxHealth, textfieldFont, Color.Red, 2, "HealthBar", 0, 2.5f);
             //Bar<Player> hpBar = new Bar<Player>(player, p => p.Health, p => p.MaxHealth, textfieldFont, Color.Red, 2, "HealthBar",0 ,2.5f);
             hpBar.Position = new Vector2(HPBarPosition.X, HPBarPosition.Y);
             Add(hpBar);
 
             //Manabar
-            mpBar = new Bar<LocalClient>(lc, p => lc.Player.Mana, lc.Player.MaxMana, textfieldFont, Color.Blue, 2, "ManaBar", 0,2.5f);
+            mpBar = new Bar<LocalClient>(lc, lc2 => lc2.Player.Mana, lc2 => lc2.Player.MaxMana, textfieldFont, Color.Blue, 2, "ManaBar", 0,2.5f);
             //Bar<Player> mpBar = new Bar<Player>(player, p => p.Mana, p => p.MaxMana, textfieldFont, Color.Blue, 2, "ManaBar", 0,2.5f);
             mpBar.Position = new Vector2(MPBarPosition.X, MPBarPosition.Y);
             Add(mpBar);
 
             //Action Points
-            apBar = new Bar<LocalClient>(lc, p => lc.Player.ActionPoints, Living.MaxActionPoints, textfieldFont, Color.Yellow, 2, "ActionBar",0, 2.5f);
+            apBar = new Bar<LocalClient>(lc, lc2 => lc2.Player.ActionPoints, lc2 => Living.MaxActionPoints, textfieldFont, Color.Yellow, 2, "ActionBar",0, 2.5f);
             //Bar<Player> apBar = new Bar<Player>(player, p => p.ActionPoints, p => Living.MaxActionPoints, textfieldFont, Color.Yellow, 2, "ActionBar",0, 2.5f);
             int screenWidth = GameEnvironment.Screen.X;
             Vector2 APBarPosition = new Vector2(screenWidth - barX - apBar.Width, HPBarPosition.Y);
             apBar.Position = new Vector2(APBarPosition.X, APBarPosition.Y);
             Add(apBar);
 
-            GameObjectGrid items = player.ItemGrid;
-            GameObjectList equipment = player.EquipmentSlots;
+            GameObjectGrid items = lc.Player.ItemGrid;
+            GameObjectList equipment = lc.Player.EquipmentSlots;
             //GameObjectGrid items = new GameObjectGrid(3,6);
-            inventory = new PlayerInventoryAndEquipment(items,equipment);
+            inventory = new PlayerInventoryAndEquipment(items, equipment);
             inventory.Position = new Vector2(screenWidth-inventory.Width,300);
             inventory.Visible = false;
             Add(inventory);

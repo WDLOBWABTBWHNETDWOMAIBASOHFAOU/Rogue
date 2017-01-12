@@ -106,7 +106,7 @@ public class SpriteGameObject : GameObject
         }
     }
 
-    public void LoadSprite(int spriteSheetIndex)
+    public void LoadSprite(int spriteSheetIndex = 0)
     {
         if (spriteAssetName != "")
         {

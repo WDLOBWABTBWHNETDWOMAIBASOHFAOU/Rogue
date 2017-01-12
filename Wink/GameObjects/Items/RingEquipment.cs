@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -8,13 +9,14 @@ namespace Wink
 {
     public enum RingType
     {
-        intelligence,
-        dexterity,
-        strength,
-        health,
-        none
+        Intelligence,
+        Dexterity,
+        Strength,
+        Health,
+        None
     }
 
+    [Serializable]
     class RingEquipment : Equipment
     {
         protected bool multiplier;
@@ -28,6 +30,23 @@ namespace Wink
             this.multiplier = multiplier;
         }
 
+        #region Serialization
+        public RingEquipment(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+            multiplier = info.GetBoolean("multiplier");
+            ringValue = info.GetDouble("ringValue");
+            ringType = (RingType)info.GetValue("ringType", typeof(RingType));
+        }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            base.GetObjectData(info, context);
+            info.AddValue("multiplier", multiplier);
+            info.AddValue("ringValue", ringValue);
+            info.AddValue("ringType", ringType);
+        }
+        #endregion
+        
         public double RingValue
         {
             get { return ringValue; }

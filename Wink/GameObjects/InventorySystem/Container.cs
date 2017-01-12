@@ -21,6 +21,11 @@ namespace Wink
             get { return true; }
         }
 
+        private Tile Tile
+        {
+            get { return parent as Tile; }
+        }
+
         public Container(string asset, GameObjectGrid itemGrid = null, int layer = 0, string id = "") : base(asset, layer, id)
         {
             SetInventory();
@@ -95,19 +100,15 @@ namespace Wink
             base.Update(gameTime);
             iBox.Update(gameTime);
 
-            if (Visible)
+            if (iWindow != null && iWindow.Visible)
             {
-                //Not sure if it works with multiplayer
-                string ClientName = Environment.MachineName;
                 Player player = GameWorld.Find(Player.LocalPlayerName) as Player;
+                int dx = (int)Math.Abs(player.Tile.Position.X - Tile.Position.X);
+                int dy = (int)Math.Abs(player.Tile.Position.Y - Tile.Position.Y);
+                bool withinReach = dx <= Tile.TileWidth && dy <= Tile.TileHeight;
 
-                int dx = (int)Math.Abs(player.Position.X - player.Origin.X - Position.X);
-                int dy = (int)Math.Abs(player.Position.Y - player.Origin.Y - Position.Y);
-
-                if (!(dx <= Tile.TileWidth && dy <= Tile.TileHeight))
-                {
+                if (!withinReach)
                     iWindow.Visible = false;
-                }
             }
         }
 
@@ -120,7 +121,6 @@ namespace Wink
         {
             Action onClick = () =>
             {
-                // correct player when in multiplayer?
                 Player player = GameWorld.Find(p => p.Id == Player.LocalPlayerName) as Player;
 
                 int dx = (int)Math.Abs(player.Tile.Position.X - GlobalPosition.X);

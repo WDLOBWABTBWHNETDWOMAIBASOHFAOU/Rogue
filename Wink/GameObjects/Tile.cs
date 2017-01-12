@@ -93,7 +93,7 @@ namespace Wink
 
         public void Remove(GameObject go)
         {
-            onTile.Remove(go);
+            onTile.Children.Remove(go);
         }
 
         public bool IsEmpty()

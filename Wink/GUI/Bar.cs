@@ -77,7 +77,7 @@ namespace Wink
             inner.Position = new Vector2(xdif, ydif)*scale;
             Add(inner);
             inner.AddMaxValue(o, maxValue);
-            this.origin = new Vector2(outer.Sprite.Width / 2, 0);
+            //this.origin = new Vector2(outer.Sprite.Width / 2, 0);
             inner.ValueTuple = new Tuple<T, Func<T, int>>(o, value);
         }
             

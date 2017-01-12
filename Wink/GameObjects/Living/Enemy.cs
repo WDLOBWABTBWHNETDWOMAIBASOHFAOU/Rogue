@@ -44,16 +44,15 @@ namespace Wink
 
         public void GoTo(List<GameObject> changedObjects, Player player)
         {
-            TileField tf = player.GameWorld.Find("TileField") as TileField;
+            TileField tf = GameWorld.Find("TileField") as TileField;
             
             int dx = (int)Math.Abs(player.Tile.Position.X - Tile.Position.X);
             int dy = (int)Math.Abs(player.Tile.Position.Y - Tile.Position.Y);
 
             double distance = Math.Abs(Math.Sqrt(Math.Pow(dx, 2) + Math.Pow(dy, 2)));
-            double reach = Tile.TileWidth * this.Reach;
+            double reach = Tile.TileWidth * Reach;
 
             bool withinReach = distance <= reach;
-            return withinReach;
 
             if (withinReach)
             {
@@ -86,21 +85,7 @@ namespace Wink
             //TODO: implement idle behaviour (right now for if there is no path to the player, later for if it can't see the player.)
             actionPoints--;
         }
-
-        public override void Update(GameTime gameTime)
-        {
-            base.Update(gameTime);
-        }
         
-        public override void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
-        {
-            base.Draw(gameTime, spriteBatch, camera);
-            if (Health < MaxHealth && visible)
-            {
-                //hpBar.Draw(gameTime, spriteBatch, camera);
-            }
-        }
-
         public override void HandleInput(InputHelper inputHelper)
         {
             if (Health > 0)
@@ -118,15 +103,8 @@ namespace Wink
             }
         }
 
-        public override void MoveTo(Tile t)
-        {
-            base.MoveTo(t);
-            //PositionHPBar();//TODO: replace with other method to position HPBar because this doesn't work client side.
-        }
-
         private void PositionHPBar()
         {
-            //if (hpBar != null && Tile != null)
             hpBar.Position = Tile.GlobalPosition - new Vector2(Math.Abs(Tile.Width - hpBar.Width) / 2, 0);
         }
 
@@ -138,7 +116,7 @@ namespace Wink
                 if (GameWorld.Find("HealthBar" + guid.ToString()) == null)
                 {
                     SpriteFont textfieldFont = GameEnvironment.AssetManager.GetFont("Arial26");
-                    hpBar = new Bar<Enemy>(this, e => e.Health, MaxHealth, textfieldFont, Color.Red, 2, "HealthBar" + guid.ToString(), 1.0f, 1f, false);
+                    hpBar = new Bar<Enemy>(this, e => e.Health, e => e.MaxHealth, textfieldFont, Color.Red, 2, "HealthBar" + guid.ToString(), 1.0f, 1f, false);
                     (GameWorld.Find("PlayingGui") as PlayingGUI).Add(hpBar);
                 }
                 else

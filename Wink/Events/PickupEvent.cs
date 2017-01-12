@@ -18,7 +18,7 @@ namespace Wink
         {
             item = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("itemGUID"))) as Item;
             player = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("playerGUID"))) as Player;
-            target = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("targetGUID"))) as GameObjectGrid;
+            target = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("targetGUID"))) as ItemSlot;
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)

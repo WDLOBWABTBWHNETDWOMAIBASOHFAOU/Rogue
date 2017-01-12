@@ -31,9 +31,7 @@ public abstract class GameObject : IGameLoopObject, ISerializable
         guid = Guid.NewGuid();
     }
 
-    /// <summary>
-    /// Used for deserialization only.
-    /// </summary>
+    #region Serialization
     protected GameObject(SerializationInfo info, StreamingContext context)
     {
         if (context.GetVars().GUIDSerialization)
@@ -71,6 +69,7 @@ public abstract class GameObject : IGameLoopObject, ISerializable
         info.AddValue("visible", visible);
         info.AddValue("guid", guid);
     }
+    #endregion
 
     public virtual void HandleInput(InputHelper inputHelper)
     {
