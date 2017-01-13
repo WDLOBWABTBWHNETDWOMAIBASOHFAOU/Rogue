@@ -44,6 +44,10 @@ namespace Wink
             if (slotItem != null)
             {
                 slotItem.Position = GlobalPosition;
+                if (slotItem.stackCount <= 0)
+                {
+                    slotItem = null;
+                }
             }
         }
 
@@ -58,7 +62,7 @@ namespace Wink
 
         public override void HandleInput(InputHelper inputHelper)
         {
-            Action onClick = () =>
+            Action onLeftClick = () =>
             {
                 PickupEvent pue = new PickupEvent();
                 pue.item = slotItem;
@@ -66,18 +70,26 @@ namespace Wink
                 pue.player = (Root as GameObjectList).Find("player_" + Environment.MachineName) as Player;
                 Server.Send(pue);
             };
+            
+            Action onRightClick = () =>
+            {
+                // rightclick action
+                Player player = (Root as GameObjectList).Find("player_" + Environment.MachineName) as Player;
+                slotItem.ItemAction(player);
+               
+            };
 
             if (slotItem != null)
             {
-                slotItem.HandleInput(inputHelper);
+                inputHelper.IfMouseRightButtonPressedOn(this, onRightClick);
                 if (ContainsMouse(inputHelper) && !containsPrev)
                 {
-                    Player player = (Root as GameObjectList).Find("player_" + Environment.MachineName) as Player; ;
+                    Player player = (Root as GameObjectList).Find("player_" + Environment.MachineName) as Player;
                     player.MouseSlot.InfoScreen(this);
                     containsPrev = true;
                 }
             }
-            inputHelper.IfMouseLeftButtonPressedOn(this, onClick);
+            inputHelper.IfMouseLeftButtonPressedOn(this, onLeftClick);
 
             base.HandleInput(inputHelper);
         }

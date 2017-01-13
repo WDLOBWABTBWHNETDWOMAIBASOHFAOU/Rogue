@@ -140,6 +140,15 @@ namespace Wink
                         timeleft -= gameTime.TotalGameTime.Seconds;
                 }
             }
+            else if(healthPoints > MaxHealth)
+            {
+                healthPoints = MaxHealth;
+            }
+
+            if(manaPoints > MaxMana)
+            {
+                manaPoints = MaxMana;
+            }
             // Stijn zegt voer hier een ring bonus methode uit
             // met de manier waarop ik ring heb gemaakt valt er niks te bonussen
             // alles moet bij stat calculation worden afgehandeld

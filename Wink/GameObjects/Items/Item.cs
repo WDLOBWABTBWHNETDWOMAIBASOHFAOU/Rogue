@@ -34,6 +34,7 @@ namespace Wink
         {
             stackSize = info.GetInt32("stackSize");
             stackCount = info.GetInt32("stackCount");
+            infoList = info.GetValue("infoList", typeof(GameObjectList)) as GameObjectList;
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
@@ -41,6 +42,7 @@ namespace Wink
             base.GetObjectData(info, context);
             info.AddValue("stackSize", stackSize);
             info.AddValue("stackCount", stackCount);
+            info.AddValue("infoList", infoList);
         }
 
         public virtual void ItemInfo(ItemSlot caller)
@@ -50,6 +52,10 @@ namespace Wink
             IDinfo.Text = Id;
             IDinfo.Color = Color.Red;
             infoList.Add(IDinfo);
+        }
+
+        public virtual void ItemAction(Living caller)
+        {
         }
 
         public override void Update(GameTime gameTime)

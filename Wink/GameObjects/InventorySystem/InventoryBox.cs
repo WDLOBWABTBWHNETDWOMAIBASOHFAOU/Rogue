@@ -50,6 +50,9 @@ namespace Wink
 
             ItemSlot testItem6 = itemGrid[1, 0] as ItemSlot;
             testItem6.ChangeItem(new RingEquipment("empty:65:65:10:Green", 0, reflectEffect: true));
+
+            ItemSlot testItem7 = itemGrid[3, 0] as ItemSlot;
+            testItem7.ChangeItem(new Potion("empty:65:65:10:Blue", "healthPotion", PotionType.health, 25));
             // end test items
 
             Add(itemGrid);

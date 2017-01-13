@@ -15,7 +15,7 @@ namespace Wink
         public int ActionPoints { get { return actionPoints; } set { actionPoints = value; } }
 
         public int Health { get { return healthPoints; } set { healthPoints = value; } }
-        public int Mana { get { return manaPoints; } }
+        public int Mana { get { return manaPoints; } set { manaPoints = value; } }
 
 
         protected int Ringbonus(RingType ringType, int baseValue)
@@ -99,7 +99,7 @@ namespace Wink
         /// <returns></returns>
         protected int MaxManaPoints()
         {
-            int maxManaPoints = (int)CalculateValue(50, wisdom, 15);
+            int maxManaPoints = (int)CalculateValue(50, wisdom, 1);
             return maxManaPoints;
         }
         public int MaxMana { get { return MaxManaPoints(); } }
