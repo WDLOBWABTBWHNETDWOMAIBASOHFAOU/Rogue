@@ -62,13 +62,15 @@ namespace Wink
 
         public RingEquipment(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            // IK SNAP SERIALIZATION NIET!
+            ringEffects = info.GetValue("ringEffects", typeof(List<RingEffect>)) as List<RingEffect>;
+            balanceMultiplier = info.GetValue("balanceMultiplier", typeof(Dictionary<RingType, double>)) as Dictionary<RingType, double>;
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             base.GetObjectData(info, context);
-            // I REPEAT, ME NO UNDERSTANDO
+            info.AddValue("ringEffects", ringEffects, typeof(List<RingEffect>));
+            info.AddValue("balanceMultiplier", balanceMultiplier, typeof(Dictionary<RingType, double>));
         }
 
         protected void AddEffect(RingType effectType, double effectValue, bool multiplier)
@@ -146,17 +148,32 @@ namespace Wink
             }
         }*/
     }
-
-    class RingEffect
+    [Serializable]
+    class RingEffect : ISerializable
     {
         protected RingType effectType;
         protected bool multiplier;
         protected double effectValue;
+
         public RingEffect(RingType effectType, bool multiplier, double effectValue)
         {
             this.effectType = effectType;
             this.multiplier = multiplier;
             this.effectValue = effectValue;
+        }
+
+        public RingEffect(SerializationInfo info, StreamingContext context)
+        {
+            effectType = (RingType)info.GetValue("effectType", typeof(RingType));
+            multiplier = info.GetBoolean("multiplier");
+            effectValue = info.GetDouble("effectValue");
+        }
+
+        public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("effectType", effectType, typeof(RingType));
+            info.AddValue("multiplier", multiplier);
+            info.AddValue("effectValue", effectValue);
         }
 
         public RingType EffectType { get { return effectType; } }
@@ -168,10 +185,24 @@ namespace Wink
     {
         protected double power;
         protected double chance;
+
         public ReflectionEffect(double power, double chance) : base(RingType.reflection, false, -1)
         {
             this.power = power;
             this.chance = chance;
+        }
+        public ReflectionEffect(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+            effectType = (RingType)info.GetValue("effectType", typeof(RingType));
+            power = info.GetDouble("power");
+            chance = info.GetDouble("chance");
+        }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            base.GetObjectData(info, context);
+            info.AddValue("power", power);
+            info.AddValue("chance", chance);
         }
 
         public double Power { get { return power; } }
