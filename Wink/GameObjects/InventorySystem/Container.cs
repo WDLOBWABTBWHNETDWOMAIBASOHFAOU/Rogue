@@ -69,7 +69,7 @@ namespace Wink
         {
             iWindow = new Window(iBox.ItemGrid.Columns * Tile.TileWidth, iBox.ItemGrid.Rows * Tile.TileHeight);
             iWindow.Add(iBox);
-            iWindow.Position = new Vector2(300, 300);
+            iWindow.Position = guiState.ContainsKey("iWindowPosition") ? (Vector2)guiState["iWindowPosition"] : new Vector2(300, 300);
             iWindow.Visible = guiState.ContainsKey("iWindowVisibility") ? (bool)guiState["iWindowVisibility"] : false;
 
             PlayingGUI gui = GameWorld.Find("PlayingGui") as PlayingGUI;
@@ -82,6 +82,7 @@ namespace Wink
             gui.Remove(iWindow);
 
             guiState.Add("iWindowVisibility", iWindow.Visible);
+            guiState.Add("iWindowPosition", iWindow.Position);
         }
 
         public override void Update(GameTime gameTime)
