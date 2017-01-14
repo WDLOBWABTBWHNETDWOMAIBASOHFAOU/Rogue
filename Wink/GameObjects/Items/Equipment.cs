@@ -1,22 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Runtime.Serialization;
 using Microsoft.Xna.Framework;
-
-using System.Runtime.Serialization;
 
 namespace Wink
 {
     public enum DamageType
     {
-        physical,
-        magic,
-        nondamage
+        Physical,
+        Magic,
+        NonDamage
     }
-
 
     public class Equipment:Item
     {
@@ -31,6 +24,7 @@ namespace Wink
             this.intRequirement = intRequirement;
         }
 
+        #region Serialization
         public Equipment(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             strRequirement = info.GetInt32("strRequirement");
@@ -41,10 +35,12 @@ namespace Wink
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             base.GetObjectData(info, context);
+
             info.AddValue("strRequirement", strRequirement);
             info.AddValue("dexRequirement", dexRequirement);
             info.AddValue("intRequirement", intRequirement);
         }
+        #endregion
 
         protected bool MeetsRequirements(Living l)
         {
@@ -65,10 +61,14 @@ namespace Wink
             infoList.Add(requirementsText);
 
             TextGameObject requirements = new TextGameObject("Arial12", 0, 0, "reqInfo." + this);
-            requirements.Text = "Str: "+strRequirement+ "   Dex: " + dexRequirement + "   Int: " + intRequirement ;
+            requirements.Text = "Str: " + strRequirement+ "   Dex: " + dexRequirement + "   Int: " + intRequirement ;
             requirements.Color = Color.Red;
             infoList.Add(requirements);
+        }
 
+        public override void ItemAction(Living caller)
+        {
+            //TODO: send event to switch this equipment with the equipment currently in the appropriate shot.
         }
     }
 }

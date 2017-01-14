@@ -30,6 +30,9 @@ namespace Wink
                 GenerateTiles(rooms, hallwayPairs);
             }
 
+            foreach (Player p in FindAll(go => go is Player))
+                p.ComputeVisibility();
+
             this.levelIndex = levelIndex;
         }
 

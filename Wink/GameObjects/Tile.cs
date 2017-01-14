@@ -128,25 +128,6 @@ namespace Wink
 
         public override void DrawDebug(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
         {
-            onTile.DrawDebug(gameTime, spriteBatch, camera);
-
-            if (debugTags.ContainsKey("ExitConnectionPoint"))
-            {
-                string[] coord = debugTags["ExitConnectionPoint"].Split(':')[1].Split(',');
-                TileField tf = parent as TileField;
-                Tile t = tf.Get(int.Parse(coord[0]), int.Parse(coord[1])) as Tile;
-                if (t != null)
-                {
-                    Line.DrawLine(spriteBatch, camera.CalculateScreenPosition(this) + Center, camera.CalculateScreenPosition(t) + Center, Color.Red);
-                }
-
-            }
-
-            base.DrawDebug(gameTime, spriteBatch, camera);
-        }
-
-        public override void DrawDebug(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
-        {
             if (debugTags.ContainsKey("ExitConnectionPoint"))
             {
                 string[] coord = debugTags["ExitConnectionPoint"].Split(',');

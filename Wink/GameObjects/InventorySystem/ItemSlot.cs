@@ -10,14 +10,15 @@ namespace Wink
     public class ItemSlot : SpriteGameObject, IGameObjectContainer
     {
         private Item slotItem;
-        public Item SlotItem
-        {
-            get { return slotItem; }
-        }
+        public bool containsPrev;
 
         public virtual Type TypeRestriction
         {
             get { return typeof(Item); }
+        }
+        public Item SlotItem
+        {
+            get { return slotItem; }
         }
 
         public ItemSlot(string assetName = "empty:65:65:10:Gray", int layer = 0, string id = "", int sheetIndex = 0, float cameraSensitivity = 0, float scale = 1) : base(assetName, layer, id, sheetIndex, cameraSensitivity, scale)
@@ -37,6 +38,8 @@ namespace Wink
             {
                 slotItem = info.GetValue("slotItem", typeof(Item)) as Item;
             }
+
+            containsPrev = info.GetBoolean("containsPrev");
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
@@ -49,6 +52,8 @@ namespace Wink
             {
                 info.AddValue("slotItem", slotItem);
             }
+
+            info.AddValue("containsPrev", containsPrev);
             base.GetObjectData(info, context);
         }
         #endregion
@@ -91,10 +96,8 @@ namespace Wink
             
             Action onRightClick = () =>
             {
-                // rightclick action
-                Player player = (Root as GameObjectList).Find("player_" + Environment.MachineName) as Player;
+                Player player = GameWorld.Find(Player.LocalPlayerName) as Player;
                 slotItem.ItemAction(player);
-               
             };
 
             if (slotItem != null)
@@ -102,7 +105,7 @@ namespace Wink
                 inputHelper.IfMouseRightButtonPressedOn(this, onRightClick);
                 if (ContainsMouse(inputHelper) && !containsPrev)
                 {
-                    Player player = (Root as GameObjectList).Find("player_" + Environment.MachineName) as Player;
+                    Player player = GameWorld.Find(Player.LocalPlayerName) as Player;
                     player.MouseSlot.InfoScreen(this);
                     containsPrev = true;
                 }

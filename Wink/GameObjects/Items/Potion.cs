@@ -1,34 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Runtime.Serialization;
 using Microsoft.Xna.Framework;
+using System;
 
 namespace Wink
 {
-    
     enum PotionType
     {
-        health,
-        mana
+        Health,
+        Mana
     }
 
-    class Potion:Item            
+    [Serializable]
+    class Potion : Item            
     {
-        PotionType potionType;
-        public PotionType GetPotionType { get { return potionType; } }
-        int potionValue;
+        private PotionType potionType;
+        private int potionValue;
+
+        public PotionType PotionType { get { return potionType; } }
         public int PotionValue { get { return potionValue; } }
 
-
-        public Potion(string assetName, string id, PotionType potionType, int potionValue, int stackSize = 10,int layer=0):base(assetName,stackSize,layer,id)
+        public Potion(string assetName, string id, PotionType potionType, int potionValue, int stackSize = 10, int layer = 0):base(assetName, stackSize, layer, id)
         {
             this.potionType = potionType;
             this.potionValue = potionValue;
         }
 
+        #region Serialization
         public Potion(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             potionType = (PotionType)info.GetValue("potionType", typeof(PotionType));
@@ -41,6 +38,7 @@ namespace Wink
             info.AddValue("potionType", potionType);
             info.AddValue("potionValue", potionValue);
         }
+        #endregion
 
         public override void ItemAction(Living caller)
         {
@@ -57,11 +55,11 @@ namespace Wink
             PotionText.Text = "Restores " + potionValue + " points of ";
             switch (potionType)
             {
-                case PotionType.health:
+                case PotionType.Health:
                     PotionText.Text += "health";
                     break;
 
-                case PotionType.mana:
+                case PotionType.Mana:
                     PotionText.Text += "mana";
                     break;
 

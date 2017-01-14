@@ -45,7 +45,7 @@ namespace Wink
             throw new NotImplementedException();
         }
 
-        public override void DoAction(LocalServer server)
+        protected override void DoAction(LocalServer server)
         {
             Attacker.Attack(Defender);
             server.ChangedObjects.Add(Defender);

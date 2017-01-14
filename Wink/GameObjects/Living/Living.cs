@@ -13,8 +13,7 @@ namespace Wink
 
         protected string idleAnimation, moveAnimation, dieAnimation;
         private string dieSound;
-
-        protected Vector2 FOVpos;
+        
         protected float FOVlength;
         
         public InventoryBox Inventory { get { return inventory; } }
@@ -53,7 +52,7 @@ namespace Wink
             get { return true; }
         }
 
-        public Living(int layer = 0, string id = "",float FOVlength=8.5f, float scale = 1.0f) : base(layer, id, scale)
+        public Living(int layer = 0, string id = "", float FOVlength = 8.5f, float scale = 1.0f) : base(layer, id, scale)
         {
             SetStats();
             InitAnimation();
@@ -152,7 +151,7 @@ namespace Wink
             info.AddValue("vitality", vitality);
             info.AddValue("wisdom", wisdom);
             info.AddValue("luck", luck);
-            
+            info.AddValue("baseReach", baseReach);
         }
         #endregion
 

@@ -41,11 +41,12 @@ namespace Wink
             throw new NotImplementedException();
         }
 
-        public override void DoAction(LocalServer server)
+        protected override void DoAction(LocalServer server)
         {
             server.ChangedObjects.Add(player.Tile);
             server.ChangedObjects.Add(tile);
             player.MoveTo(tile);
+            player.ComputeVisibility();
         }
 
         protected override bool ValidateAction(Level level)

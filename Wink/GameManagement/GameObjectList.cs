@@ -144,6 +144,11 @@ public class GameObjectList : GameObject, IGameObjectContainer
         return null;
     }
 
+    public GameObject Find(string id)
+    {
+        return Find(obj => obj.Id == id);
+    }
+
     public override void HandleInput(InputHelper inputHelper)
     {
         for (int i = children.Count - 1; i >= 0; i--)

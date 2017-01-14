@@ -11,10 +11,10 @@ namespace Wink
         public void Attack(Living target)
         {
             int damageDealt = 0;
-            DamageType damageType = DamageType.physical;
-            if (weapon.SlotItem != null)
+            DamageType damageType = DamageType.Physical;
+            if (Weapon.SlotItem != null)
             {
-                WeaponEquipment weaponItem = weapon.SlotItem as WeaponEquipment;
+                WeaponEquipment weaponItem = Weapon.SlotItem as WeaponEquipment;
                 damageType = weaponItem.DamageType;
             }
 
@@ -39,7 +39,7 @@ namespace Wink
                         RingEquipment ring = slot.SlotItem as RingEquipment;
                         foreach (RingEffect effect in ring.RingEffects)
                         {
-                            if (effect.EffectType == RingType.reflection)
+                            if (effect.EffectType == RingType.Reflection)
                             {
                                 ReflectionEffect rEffect = effect as ReflectionEffect;
                                 double randomNumber = GameEnvironment.Random.NextDouble();

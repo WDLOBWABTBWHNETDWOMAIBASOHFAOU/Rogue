@@ -41,6 +41,6 @@ namespace Wink
         }
 
         protected abstract bool ValidateAction(Level level);
-        public abstract void DoAction(LocalServer server);
+        protected abstract void DoAction(LocalServer server);
     }
 }

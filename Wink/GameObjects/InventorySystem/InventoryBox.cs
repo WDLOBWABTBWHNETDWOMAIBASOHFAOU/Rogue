@@ -32,19 +32,19 @@ namespace Wink
             testItem2.ChangeItem(new TestItem());
 
             ItemSlot testItem3 = itemGrid.Get(1, 1) as ItemSlot;
-            testItem3.ChangeItem(new WeaponEquipment("empty:65:65:10:Aqua","testWeapon",40,DamageType.magic,1,2,1,0,0,0.1,0.1,0.1));
+            testItem3.ChangeItem(new WeaponEquipment("empty:65:65:10:Aqua","testWeapon",40,DamageType.Magic,1,2,1,0,0,0.1,0.1,0.1));
 
             ItemSlot testItem4 = itemGrid.Get(2, 1) as ItemSlot;
             testItem4.ChangeItem(new BodyEquipment("empty:65:65:10:Brown","testArmor",40,40));
 
             ItemSlot testItem5 = itemGrid[2, 0] as ItemSlot;
-            testItem5.ChangeItem(new RingEquipment(200, RingType.intelligence, "empty:65:65:10:Purple"));
+            testItem5.ChangeItem(new RingEquipment(200, RingType.Intelligence, "empty:65:65:10:Purple"));
 
             ItemSlot testItem6 = itemGrid[1, 0] as ItemSlot;
             testItem6.ChangeItem(new RingEquipment("empty:65:65:10:Green", 0, reflectEffect: true));
 
             ItemSlot testItem7 = itemGrid[3, 0] as ItemSlot;
-            testItem7.ChangeItem(new Potion("empty:65:65:10:Blue", "healthPotion", PotionType.health, 25));
+            testItem7.ChangeItem(new Potion("empty:65:65:10:Blue", "healthPotion", PotionType.Health, 25));
             // end test items
 
             Add(itemGrid);

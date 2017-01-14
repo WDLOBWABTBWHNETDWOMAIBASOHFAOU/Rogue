@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 using System.Runtime.Serialization;
 using Microsoft.Xna.Framework;
 
@@ -12,14 +7,15 @@ namespace Wink
     [Serializable]
     public class WeaponEquipment : Equipment
     {
-        int reach;
-        public int Reach { get { return reach; } }
+        private int reach;
         protected int baseValue;
         protected DamageType damageType;
-        public DamageType DamageType { get { return damageType; } }
         protected double strScalingFactor;
         protected double dexScalingFactor;
         protected double intScalingFactor;
+
+        public int Reach { get { return reach; } }
+        public DamageType DamageType { get { return damageType; } }
 
         public WeaponEquipment(string assetName, string id, int baseValue, DamageType damageType, int stackSize = 1, int reach=1, int strRequirement=0, int dexRequirement = 0, int intRequirement=0, double strScalingFactor=0, double dexScalingFactor=0, double intScalingFactor=0, int layer = 0) : base(assetName,id, layer, stackSize,strRequirement,dexRequirement,intRequirement)
         {
@@ -31,6 +27,7 @@ namespace Wink
             this.intScalingFactor = intScalingFactor;
         }
 
+        #region Serialization
         public WeaponEquipment(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             reach = info.GetInt32("reach");
@@ -51,13 +48,13 @@ namespace Wink
             info.AddValue("dexScalingFactor", dexScalingFactor);
             info.AddValue("intScalingFactor", intScalingFactor);
         }
+        #endregion
 
         public override void ItemInfo(ItemSlot caller)
         {
-            string ClientName = Environment.MachineName;
-            Player player = caller.GameWorld.Find("player_" + ClientName) as Player;
             base.ItemInfo(caller);
 
+            Player player = caller.GameWorld.Find(Player.LocalPlayerName) as Player;
             TextGameObject dType = new TextGameObject("Arial12", 0, 0, "DamageTypeInfo." + this);
             dType.Text = DamageType + " Damage: " + baseValue + " + " + (Value(player) -baseValue);
             dType.Color = Color.Red;
@@ -68,16 +65,12 @@ namespace Wink
             scalingText.Text = "Statbonus:";
             switch (damageType)
             {
-                case DamageType.physical:
-                    {
-                        scalingText.Text += " str " + strScalingFactor*baseValue + " dex " + dexScalingFactor * baseValue;
-                        break;
-                    }
-                case DamageType.magic:
-                    {
-                        scalingText.Text += " int " + intScalingFactor * baseValue;
-                        break;
-                    }
+                case DamageType.Physical:
+                    scalingText.Text += " str " + strScalingFactor*baseValue + " dex " + dexScalingFactor * baseValue;
+                    break;
+                case DamageType.Magic:
+                    scalingText.Text += " int " + intScalingFactor * baseValue;
+                    break;
                 default:
                     throw new Exception("invalid damageType");
             }
@@ -90,7 +83,7 @@ namespace Wink
             int value;
             switch (damageType)
             {
-                case DamageType.physical:
+                case DamageType.Physical:
                     if (MeetsRequirements(l))
                     {
                         value = (int)l.CalculateValue(baseValue, l.Strength - strRequirement, strScalingFactor, 0, l.Dexterity - dexRequirement, dexScalingFactor);
@@ -101,7 +94,7 @@ namespace Wink
                         value = (int)l.CalculateValue(baseValue, strRequirement - l.Strength, -strScalingFactor, 0, dexRequirement - l.Dexterity, -dexScalingFactor);
                         return value;
                     }
-                case DamageType.magic:
+                case DamageType.Magic:
                     if (MeetsRequirements(l))
                     {
                         value = (int)l.CalculateValue(baseValue, l.Intelligence - intRequirement, intScalingFactor);

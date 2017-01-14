@@ -14,8 +14,7 @@ namespace Wink
         public int ActionPoints { get { return actionPoints; } set { actionPoints = value; } }
         public int Health { get { return healthPoints; } set { healthPoints = value; } }
         public int Mana { get { return manaPoints; } set { manaPoints = value; } }
-
-
+        
         protected int Ringbonus(RingType ringType, int baseValue)
         {
             int i = 0;
@@ -89,7 +88,7 @@ namespace Wink
             int maxHP = (int)CalculateValue(40, vitality - 1, 4);
             return maxHP;
         }
-        public int MaxHealth { get { return Ringbonus(RingType.vitality, MaxHP()); } }
+        public int MaxHealth { get { return Ringbonus(RingType.Vitality, MaxHP()); } }
 
         /// <summary>
         /// returns the maximum of manapoints the living object can have
@@ -152,9 +151,9 @@ namespace Wink
             int attack = baseAttack;
             double mod = 1;
             int attackValue;
-            if (weapon.SlotItem !=null)
+            if (Weapon.SlotItem !=null)
             {
-                WeaponEquipment weaponItem = weapon.SlotItem as WeaponEquipment;
+                WeaponEquipment weaponItem = Weapon.SlotItem as WeaponEquipment;
                 attackValue = weaponItem.Value(this);
             }
             else
@@ -171,17 +170,16 @@ namespace Wink
         /// <returns></returns>
         protected int ArmorValue(DamageType damageType)
         {
-            int armorValue=baseArmor;
+            int armorValue = baseArmor;
             if (Body.SlotItem != null)
             {
-                BodyEquipment ArmorItem = body.SlotItem as BodyEquipment;
+                BodyEquipment ArmorItem = Body.SlotItem as BodyEquipment;
                 armorValue = ArmorItem.Value(this, damageType);
             }
 
-            if(armorValue <= 0)
-            {
+            if (armorValue <= 0)
                 armorValue = 1;
-            }
+
             return armorValue;
         }
     }

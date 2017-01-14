@@ -1,24 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
-using System.Runtime.Serialization;
-using Microsoft.Xna.Framework;
 
 namespace Wink
 {
     public enum RingType
     {
-        vitality,
-        strength,
-        dexterity,
-        luck,
-        intelligence,
-        wisdom,
+        Vitality,
+        Strength,
+        Dexterity,
+        Luck,
+        Intelligence,
+        Wisdom,
         // Make sure types of magic effects or other types that shouldn't be randomly put on rings are at the end of the enum
-        reflection
+        Reflection
     }
 
     [Serializable]
@@ -37,12 +32,12 @@ namespace Wink
 
         private void setBalance()
         {
-            balanceMultiplier.Add(RingType.strength, 0.8);
-            balanceMultiplier.Add(RingType.vitality, 1);
-            balanceMultiplier.Add(RingType.dexterity, 0.8);
-            balanceMultiplier.Add(RingType.luck, 1);
-            balanceMultiplier.Add(RingType.intelligence, 1.2);
-            balanceMultiplier.Add(RingType.wisdom, 1);
+            balanceMultiplier.Add(RingType.Strength, 0.8);
+            balanceMultiplier.Add(RingType.Vitality, 1);
+            balanceMultiplier.Add(RingType.Dexterity, 0.8);
+            balanceMultiplier.Add(RingType.Luck, 1);
+            balanceMultiplier.Add(RingType.Intelligence, 1.2);
+            balanceMultiplier.Add(RingType.Wisdom, 1);
         }
 
         protected List<RingEffect> ringEffects = new List<RingEffect>();
@@ -164,6 +159,7 @@ namespace Wink
             this.effectValue = effectValue;
         }
 
+        #region Serialization
         public RingEffect(SerializationInfo info, StreamingContext context)
         {
             effectType = (RingType)info.GetValue("effectType", typeof(RingType));
@@ -177,22 +173,26 @@ namespace Wink
             info.AddValue("multiplier", multiplier);
             info.AddValue("effectValue", effectValue);
         }
+        #endregion
 
         public RingType EffectType { get { return effectType; } }
         public bool Multiplier { get { return multiplier; } }
         public double EffectValue { get { return effectValue; } }
     }
 
+    [Serializable]
     class ReflectionEffect : RingEffect
     {
         protected double power;
         protected double chance;
 
-        public ReflectionEffect(double power, double chance) : base(RingType.reflection, false, -1)
+        public ReflectionEffect(double power, double chance) : base(RingType.Reflection, false, -1)
         {
             this.power = power;
             this.chance = chance;
         }
+
+        #region Serialization
         public ReflectionEffect(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             effectType = (RingType)info.GetValue("effectType", typeof(RingType));
@@ -206,6 +206,7 @@ namespace Wink
             info.AddValue("power", power);
             info.AddValue("chance", chance);
         }
+        #endregion
 
         public double Power { get { return power; } }
         public double Chance { get { return chance; } }

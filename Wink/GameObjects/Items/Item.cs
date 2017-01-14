@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
 using System.Runtime.Serialization;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -7,17 +6,16 @@ namespace Wink
 {
     public abstract class Item : SpriteGameObject, ITileObject
     {
-        int stackSize;
+        private int stackSize;
         public int stackCount;
-        public int getStackSize { get { return stackSize; } }
         protected GameObjectList infoList;
-        public GameObjectList InfoList { get { return infoList; } }
 
+        public int getStackSize { get { return stackSize; } }
+        public GameObjectList InfoList { get { return infoList; } }
         public Point PointInTile
         {
             get { return new Point(0, 0); }
         }
-
         public bool BlocksTile
         {
             get { return false; }
@@ -25,16 +23,13 @@ namespace Wink
 
         public Item(string assetName, int stackSize = 1, int layer = 0, string id = "") : base(assetName, layer, id)
         {
-            // item id is needed to chech if they are the same, for now assetname to test.
-            // if item are proceduraly generated, there should be an algoritim that generates a id that is the same if stats (and sprite) are the same.
+            //item id is needed to check if they are the same, for now assetname to test.
+            //TODO: if item are proceduraly generated, there should be an algorithm that generates an id that is the same if stats (and sprite) are the same.
             if (id == "")
-            {
                 this.id = assetName;
-            }
             else
-            {
                 this.id = id;
-            }
+
             stackCount = 1;
             this.stackSize = stackSize;
             cameraSensitivity = 0;
@@ -55,6 +50,7 @@ namespace Wink
             info.AddValue("stackCount", stackCount);
             info.AddValue("infoList", infoList);
         }
+        #endregion
 
         public virtual void ItemInfo(ItemSlot caller)
         {
@@ -65,21 +61,7 @@ namespace Wink
             infoList.Add(IDinfo);
         }
 
-        public virtual void ItemAction(Living caller)
-        {
-        }
-        #endregion
-
-        public override void Update(GameTime gameTime)
-        {
-            base.Update(gameTime);
-        }
-
-        public override void HandleInput(InputHelper inputHelper)
-        {
-            base.HandleInput(inputHelper);
-        }
-        
+        public virtual void ItemAction(Living caller) { }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
         {

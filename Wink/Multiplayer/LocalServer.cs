@@ -182,12 +182,6 @@ namespace Wink
             }
         }
 
-
-        public void LevelChanged()
-        {
-            levelChanged = true;
-        }
-
         public override void Reset()
         {
             foreach (Client client in Clients)

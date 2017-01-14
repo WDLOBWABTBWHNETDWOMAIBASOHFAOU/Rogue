@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 using System.Runtime.Serialization;
 using Microsoft.Xna.Framework;
 
@@ -54,7 +49,7 @@ namespace Wink
             int value;
             switch (damageType)
             {
-                case DamageType.physical:
+                case DamageType.Physical:
                     if (MeetsRequirements(l))
                     {
                         value = physicalValue;
@@ -66,7 +61,7 @@ namespace Wink
                         value = (int)l.CalculateValue(physicalValue, penaltyDif(l), reqPenalty);
                         return value;
                     }
-                case DamageType.magic:
+                case DamageType.Magic:
                     if (MeetsRequirements(l))
                     {
                         value = magicValue;

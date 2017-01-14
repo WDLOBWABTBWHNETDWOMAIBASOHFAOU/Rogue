@@ -202,17 +202,6 @@ public class GameObjectGrid : GameObject, IGameObjectContainer
         }
     }
 
-    public override void DrawDebug(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
-    {
-        foreach (GameObject obj in grid)
-        {
-            if (obj != null)
-            {
-                obj.DrawDebug(gameTime, spriteBatch, camera);
-            }
-        }
-    }
-
     public override void Reset()
     {
         base.Reset();

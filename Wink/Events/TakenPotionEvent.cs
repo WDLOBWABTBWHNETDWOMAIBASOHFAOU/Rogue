@@ -1,28 +1,40 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Runtime.Serialization;
 
 namespace Wink
 {
-    class TakenPotionEvent:ActionEvent
+    [Serializable]
+    class TakenPotionEvent : ActionEvent
     {
-        public Player Player { get; set; }
-        public Potion Potion { get; set; }
+        private Potion potion;
 
         public TakenPotionEvent(Player player, Potion potion) : base(player)
         {
-            this.Player = player;
-            this.Potion = potion;
+            this.player = player;
+            this.potion = potion;
         }
+
+        #region Serialization
+        public TakenPotionEvent(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+            potion = info.GetValue("potion", typeof(Potion)) as Potion;
+        }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("potion", potion);
+            base.GetObjectData(info, context);
+        }
+        #endregion
 
         protected override int Cost
         {
-            get
-            {
-                return 1;
-            }
+            get { return 1; }
+        }
+
+        public override bool GUIDSerialization
+        {
+            get { return true; }
         }
 
         public override void OnClientReceive(LocalClient client)
@@ -32,14 +44,14 @@ namespace Wink
 
         protected override void DoAction(LocalServer server)
         {
-            Potion.stackCount--;
-            switch (Potion.GetPotionType)
+            potion.stackCount--;
+            switch (potion.PotionType)
             {
-                case PotionType.health:
-                    Player.Health += Potion.PotionValue;
+                case PotionType.Health:
+                    player.Health += potion.PotionValue;
                     break;
-                case PotionType.mana:
-                    Player.Mana += Potion.PotionValue;
+                case PotionType.Mana:
+                    player.Mana += potion.PotionValue;
                     break;
                 default:
                     throw new Exception("invalid potionType");
@@ -48,16 +60,16 @@ namespace Wink
 
         protected override bool ValidateAction(Level level)
         {
-            switch (Potion.GetPotionType)
+            switch (potion.PotionType)
             {
-                case PotionType.health:
+                case PotionType.Health:
                     if(!(player.Health >= player.MaxHealth))
                     {
                         return true;
                     }
                     break;
-                case PotionType.mana:
-                    Player.Mana += Potion.PotionValue;
+                case PotionType.Mana:
+                    player.Mana += potion.PotionValue;
 
                     if (!(player.Mana >= player.MaxMana))
                     {
