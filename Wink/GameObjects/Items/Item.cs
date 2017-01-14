@@ -21,7 +21,7 @@ namespace Wink
             get { return false; }
         }
 
-        public Item(string assetName, int stackSize = 1, int layer = 0, string id = "") : base(assetName, layer, id)
+        public Item(string assetName, int stackSize = 1, int layer = 0, string id = "") : base(assetName, layer, id, cameraSensitivity: 0)
         {
             //item id is needed to check if they are the same, for now assetname to test.
             //TODO: if item are proceduraly generated, there should be an algorithm that generates an id that is the same if stats (and sprite) are the same.
@@ -32,7 +32,6 @@ namespace Wink
 
             stackCount = 1;
             this.stackSize = stackSize;
-            cameraSensitivity = 0;
         }
 
         #region Serialization
@@ -55,7 +54,7 @@ namespace Wink
         public virtual void ItemInfo(ItemSlot caller)
         {
             infoList = new GameObjectList();
-            TextGameObject IDinfo = new TextGameObject("Arial26",0,0,"IDinfo."+this);
+            TextGameObject IDinfo = new TextGameObject("Arial26", 0, 0, "IDinfo." + this);
             IDinfo.Text = Id;
             IDinfo.Color = Color.Red;
             infoList.Add(IDinfo);

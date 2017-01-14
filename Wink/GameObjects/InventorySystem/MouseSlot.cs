@@ -2,17 +2,23 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Runtime.Serialization;
+using System.Collections.Generic;
 
 namespace Wink
 {
     [Serializable]
-    public class MouseSlot : GameObjectGrid
+    public class MouseSlot : GameObject, IGameObjectContainer
     {
-        public Item oldItem;
+        private Item item;
         private Window infoWindow;
-        ItemSlot caller;
+        private ItemSlot caller;
 
-        public MouseSlot(int layer = 0, string id = "") : base(1, 1, layer, id)
+        public Item Item
+        {
+            get { return item; }
+        }
+
+        public MouseSlot(int layer = 0, string id = "") : base(layer, id)
         {
         }
 
@@ -21,11 +27,11 @@ namespace Wink
         {
             if (context.GetVars().GUIDSerialization)
             {
-                oldItem = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("oldItemGUID"))) as Item; 
+                item = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("oldItemGUID"))) as Item; 
             }
             else
             {
-                oldItem = info.GetValue("oldItem", typeof(Item)) as Item;
+                item = info.GetValue("oldItem", typeof(Item)) as Item;
             }
         }
 
@@ -33,11 +39,11 @@ namespace Wink
         {
             if (context.GetVars().GUIDSerialization)
             {
-                info.AddValue("oldItemGUID", oldItem.GUID.ToString()); 
+                info.AddValue("oldItemGUID", item.GUID.ToString()); 
             }
             else
             {
-                info.AddValue("oldItem", oldItem);
+                info.AddValue("oldItem", item);
             }
             base.GetObjectData(info, context);
         }
@@ -45,14 +51,15 @@ namespace Wink
 
         public override void Replace(GameObject replacement)
         {
-            if (oldItem != null && oldItem.GUID == replacement.GUID)
-                oldItem = replacement as Item;
+            if (item != null && item.GUID == replacement.GUID)
+                item = replacement as Item;
 
             base.Replace(replacement);
         }
 
         public void AddTo(Item newItem, ItemSlot target)
         {
+            Item oldItem = item;
             //check if 2 actual items are being swapped, else pick up or drop item.
             if (oldItem != null && newItem != null)
             {
@@ -74,7 +81,9 @@ namespace Wink
                 }
             }
             target.ChangeItem(oldItem);
-            oldItem = newItem;
+            item = newItem;
+            if (item != null)
+                item.Parent = this;
         }
 
         public void InfoScreen(ItemSlot caller)
@@ -83,15 +92,14 @@ namespace Wink
             caller.SlotItem.ItemInfo(caller);
             GameObjectList infoList = caller.SlotItem.InfoList;
             int interfall = 2;
-            int y = infoTextHeigt(infoList,interfall);            
-            int x = interfall*2 + infoTextWidth(infoList);
+            int height = CalculateInfoTextHeight(infoList, interfall);
+            int width = interfall * 2 + CalculateInfoTextWidth(infoList);
 
-            infoWindow = new Window(x, y, false, false);
+            infoWindow = new Window(width, height, false, false);
             infoWindow.Add(infoList);
-            infoList.Position = infoWindow.Position;
         }
 
-        private int infoTextWidth(GameObjectList list)
+        private int CalculateInfoTextWidth(GameObjectList list)
         {
             int width = 0;
             foreach (TextGameObject t in list.Children)
@@ -105,7 +113,7 @@ namespace Wink
             return width;
         }
 
-        private int infoTextHeigt(GameObjectList list,int interfall)
+        private int CalculateInfoTextHeight(GameObjectList list, int interfall)
         {
             int height = interfall;
             Vector2 prefPos = new Vector2(interfall, interfall);
@@ -123,12 +131,8 @@ namespace Wink
         {
             base.Update(gameTime);
             
-            
-            if (oldItem != null)
-            {
-                oldItem.Update(gameTime);
-                oldItem.Position = this.GlobalPosition;
-            }
+            if (item != null)
+                item.Update(gameTime);
 
             if (infoWindow != null)
             {
@@ -148,14 +152,11 @@ namespace Wink
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
         {
             base.Draw(gameTime, spriteBatch, camera);
-            if(oldItem != null)
-            {
-                oldItem.Draw(gameTime, spriteBatch, camera);
-            }
-            if (infoWindow !=null)
-            {
+            if (item != null)
+                item.Draw(gameTime, spriteBatch, camera);
+
+            if (infoWindow != null)
                 infoWindow.Draw(gameTime, spriteBatch, camera);
-            }
         }
 
         public override void HandleInput(InputHelper inputHelper)
@@ -172,6 +173,24 @@ namespace Wink
                     caller = null;
                 }
             }
+        }
+
+        public List<GameObject> FindAll(Func<GameObject, bool> del)
+        {
+            List<GameObject> result = new List<GameObject>();
+            GameObject go = Find(del);
+            if (go != null)
+                result.Add(go);
+
+            return result;
+        }
+
+        public GameObject Find(Func<GameObject, bool> del)
+        {
+            if (item != null && del.Invoke(item))
+                return item;
+            else
+                return null;
         }
     }
 }

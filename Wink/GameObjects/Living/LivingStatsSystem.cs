@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Wink
+﻿namespace Wink
 {
     public abstract partial class Living : AnimatedGameObject
     {
@@ -75,7 +73,7 @@ namespace Wink
         /// <returns></returns>
         public double CalculateValue(double baseValue, int stat1 = 0, double modifier1 = 1, double extra = 0, int stat2 = 0, double modifier2 = 0, int stat3 = 0, double modifier3 = 0)
         {
-            double value = baseValue + baseValue*modifier1 * stat1 + extra + baseValue * modifier2 * stat2 + baseValue * modifier3 * stat3;
+            double value = baseValue + baseValue * modifier1 * stat1 + extra + baseValue * modifier2 * stat2 + baseValue * modifier3 * stat3;
             return value;
         }
 
@@ -132,9 +130,8 @@ namespace Wink
                     reach = weaponItem.Reach;
                 }
                 else
-                {
                     reach = baseReach;
-                }
+
                 return reach;
             }
         }
@@ -157,9 +154,7 @@ namespace Wink
                 attackValue = weaponItem.Value(this);
             }
             else
-            {
-                attackValue = (int)CalculateValue(attack, Strength, mod); 
-            }   
+                attackValue = (int)CalculateValue(attack, Strength, mod);
 
             return attackValue;
         }

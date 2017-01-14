@@ -61,6 +61,8 @@ namespace Wink
         public void ChangeItem(Item newItem)
         {
             slotItem = newItem;
+            if (slotItem != null)
+                slotItem.Parent = this;
         }
 
         public override void Update(GameTime gameTime)
@@ -68,11 +70,8 @@ namespace Wink
             base.Update(gameTime);
             if (slotItem != null)
             {
-                slotItem.Position = GlobalPosition;
                 if (slotItem.stackCount <= 0)
-                {
                     slotItem = null;
-                }
             }
         }
 

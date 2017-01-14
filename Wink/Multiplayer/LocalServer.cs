@@ -75,6 +75,7 @@ namespace Wink
                 Client c = Clients[i];
                 Player player = new Player(c.ClientName, Level.Layer);
                 player.MoveTo(Level.Find("StartTile" + (i + 1)) as Tile);
+                player.ComputeVisibility();
             }
 
             InitLivingObjects();

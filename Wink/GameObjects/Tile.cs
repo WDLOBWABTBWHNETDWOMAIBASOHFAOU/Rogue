@@ -123,7 +123,8 @@ namespace Wink
             if (type != TileType.Background)
                 base.Draw(gameTime, spriteBatch, camera);
             
-            onTile.Draw(gameTime, spriteBatch, camera);
+            if (Visible)
+                onTile.Draw(gameTime, spriteBatch, camera);
         }
 
         public override void DrawDebug(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)

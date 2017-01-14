@@ -7,6 +7,7 @@ namespace Wink
         //I suggest using an inventory background sprite and using its height and width in the base
         public PlayerInventoryAndEquipment(InventoryBox inventory, GameObjectList equipmentslots) : base(inventory.ItemGrid.Columns * Tile.TileHeight, (2 + inventory.ItemGrid.Rows) * Tile.TileHeight)
         {
+            inventory.Position = new Vector2(0, 2 * inventory.ItemGrid.CellHeight);
             Add(inventory);
 
             // set position of individual equipment slots

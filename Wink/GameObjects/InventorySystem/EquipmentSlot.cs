@@ -34,15 +34,5 @@ namespace Wink
             base.GetObjectData(info, context);
         }
         #endregion
-
-        public override void HandleInput(InputHelper inputHelper)
-        {
-            //Player player = GameWorld.Find(Player.LocalPlayerName) as Player;
-            //Item mouseItem = player.MouseSlot.oldItem;
-            //if (mouseItem == null || mouseItem.GetType() == equipmentRestriction)
-            //{
-                base.HandleInput(inputHelper);
-            //}         
-        }
     }        
 }

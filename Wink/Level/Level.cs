@@ -30,9 +30,6 @@ namespace Wink
                 GenerateTiles(rooms, hallwayPairs);
             }
 
-            foreach (Player p in FindAll(go => go is Player))
-                p.ComputeVisibility();
-
             this.levelIndex = levelIndex;
         }
 
@@ -79,10 +76,6 @@ namespace Wink
             #endregion
 
             tf.InitSpriteSheetIndexation();
-            foreach (Tile t in tf.Objects)
-            {
-                t.Visible = false;
-            }
     }
 
         private Tile LoadTile(char tileType, int x, int y)
@@ -115,7 +108,7 @@ namespace Wink
 
         private Tile LoadWallTile(int x, int y, string assetName = "test-wall-sprite2@10x5", string id = "")
         {
-            TileField tf = this.Find("TileField") as TileField;
+            TileField tf = Find("TileField") as TileField;
             Tile aboveTile = tf[x, y - 1] as Tile;
 
             Tile newTile;

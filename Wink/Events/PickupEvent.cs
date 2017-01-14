@@ -52,7 +52,7 @@ namespace Wink
 
         public override bool Validate(Level level)
         {
-            return item == null || target.TypeRestriction.IsInstanceOfType(item);
+            return player.MouseSlot.Item == null || target.TypeRestriction.IsInstanceOfType(player.MouseSlot.Item);
         }
     }
 }

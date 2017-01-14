@@ -17,12 +17,12 @@ namespace Wink
         #region Serialization
         public TakenPotionEvent(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            potion = info.GetValue("potion", typeof(Potion)) as Potion;
+            potion = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("potionGUID"))) as Potion;
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            info.AddValue("potion", potion);
+            info.AddValue("potionGUID", potion.GUID.ToString());
             base.GetObjectData(info, context);
         }
         #endregion
