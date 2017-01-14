@@ -6,7 +6,7 @@ using System.Runtime.Serialization;
 namespace Wink
 {
     [Serializable]
-    public abstract partial class Living : AnimatedGameObject, ITileObject
+    public abstract partial class Living : AnimatedGameObject, ITileObject, IGameObjectContainer
     {
         private int timeleft;
         private bool startTimer;
@@ -14,11 +14,13 @@ namespace Wink
         protected string idleAnimation, moveAnimation, dieAnimation;
         private string dieSound;
 
-        private GameObjectGrid itemGrid;
-        public GameObjectGrid ItemGrid
+        //private GameObjectGrid itemGrid;
+        /*public GameObjectGrid ItemGrid
         {
             get { return itemGrid; }
-        }
+        }*/
+        public InventoryBox Inventory { get { return inventory; } }
+        private InventoryBox inventory;
 
         #region EquipmentSlots
         private GameObjectList equipmentSlots;
@@ -59,7 +61,9 @@ namespace Wink
             InitAnimation();
             timeleft = 1000;
 
-            itemGrid = new GameObjectGrid(3, 6, 0, "");
+            GameObjectGrid itemGrid = new GameObjectGrid(3, 6, 0, "");
+            inventory = new InventoryBox(itemGrid);
+
             equipmentSlots = new GameObjectList();
             equipmentSlots.Add(new EquipmentSlot(typeof(WeaponEquipment), id: "weaponSlot"));
             equipmentSlots.Add(new EquipmentSlot(typeof(BodyEquipment), id: "bodySlot"));
@@ -69,8 +73,8 @@ namespace Wink
 
         public override void Replace(GameObject replacement)
         {
-            if (itemGrid != null && itemGrid.GUID == replacement.GUID)
-                itemGrid = replacement as GameObjectGrid;
+            if (inventory != null && inventory.GUID == replacement.GUID)
+                inventory = replacement as InventoryBox;
 
             base.Replace(replacement);
         }
@@ -88,12 +92,12 @@ namespace Wink
 
             if (context.GetVars().GUIDSerialization)
             {
-                itemGrid = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("itemGridGUID"))) as GameObjectGrid;
+                inventory = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("inventoryGUID"))) as InventoryBox;
                 equipmentSlots = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("equipmentSlotsGUID"))) as GameObjectList;
             }
             else
             {
-                itemGrid = info.GetValue("itemGrid", typeof(GameObjectGrid)) as GameObjectGrid;
+                inventory = info.GetValue("inventory", typeof(InventoryBox)) as InventoryBox;
                 equipmentSlots = info.GetValue("equipmentSlots", typeof(GameObjectList)) as GameObjectList;
             }
 
@@ -120,12 +124,12 @@ namespace Wink
             
             if (context.GetVars().GUIDSerialization)
             {
-                info.AddValue("itemGridGUID", itemGrid.GUID.ToString());
+                info.AddValue("inventoryGUID", inventory.GUID.ToString());
                 info.AddValue("equipmentSlotsGUID", equipmentSlots.GUID.ToString());
             }
             else
             {
-                info.AddValue("itemGrid", itemGrid);
+                info.AddValue("inventory", inventory);
                 info.AddValue("equipmentSlots", equipmentSlots);
             }
 
@@ -202,6 +206,24 @@ namespace Wink
             if (!t.PutOnTile(this))
                 if (!oldTile.PutOnTile(this))
                     throw new Exception();
+        }
+
+        public virtual List<GameObject> FindAll(Func<GameObject, bool> del)
+        {
+            List<GameObject> result = new List<GameObject>();
+            result.AddRange(inventory.FindAll(del));
+            result.AddRange(equipmentSlots.FindAll(del));
+            return result;
+        }
+
+        public virtual GameObject Find(Func<GameObject, bool> del)
+        {
+            if (del.Invoke(inventory))
+                return inventory;
+            if (del.Invoke(equipmentSlots))
+                return equipmentSlots;
+
+            return inventory.Find(del) ?? equipmentSlots.Find(del);
         }
     }
 }

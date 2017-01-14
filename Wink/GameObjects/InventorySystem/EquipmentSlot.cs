@@ -12,6 +12,11 @@ namespace Wink
     {
         private Type equipmentRestriction;
 
+        public override Type TypeRestriction
+        {
+            get { return equipmentRestriction; }
+        }
+
         /// <summary>
         /// ItemSlots specificly for items that can be equipped, items that do not match the equipment restriction won't be equipped.
         /// </summary>
@@ -36,13 +41,12 @@ namespace Wink
 
         public override void HandleInput(InputHelper inputHelper)
         {
-            Player player = GameWorld.Find(Player.LocalPlayerName) as Player;
-            Item mouseItem = player.MouseSlot.oldItem;
-            if (mouseItem == null || mouseItem.GetType() == equipmentRestriction)
-            {
+            //Player player = GameWorld.Find(Player.LocalPlayerName) as Player;
+            //Item mouseItem = player.MouseSlot.oldItem;
+            //if (mouseItem == null || mouseItem.GetType() == equipmentRestriction)
+            //{
                 base.HandleInput(inputHelper);
-                return;
-            }         
+            //}         
         }
     }        
 }

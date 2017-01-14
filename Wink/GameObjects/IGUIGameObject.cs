@@ -1,11 +1,10 @@
-﻿namespace Wink
+﻿using System.Collections.Generic;
+
+namespace Wink
 {
     interface IGUIGameObject
     {
-        /// <summary>
-        /// write check to only excute 1 time
-        /// </summary>
-        void InitGUI();
-        void CleanupGUI();
+        void InitGUI(Dictionary<string, object> guiState);
+        void CleanupGUI(Dictionary<string, object> guiState);
     }
 }

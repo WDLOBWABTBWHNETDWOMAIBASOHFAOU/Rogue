@@ -68,13 +68,13 @@ namespace Wink
             gameObjects = new GameObjectList();
             gameObjects.Add(new PlayingGUI());
         }
-
+        /*
         public void LoadPlayerGUI()
         {
             PlayingGUI pgui = gameObjects.Find(obj => obj is PlayingGUI) as PlayingGUI;
             pgui.AddPlayerGUI(this);
         }
-
+        */
         public void Replace(GameObject go)
         {
             gameObjects.Replace(go);

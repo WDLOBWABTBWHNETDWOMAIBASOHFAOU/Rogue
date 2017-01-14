@@ -108,10 +108,10 @@ namespace Wink
             hpBar.Position = Tile.GlobalPosition - new Vector2(Math.Abs(Tile.Width - hpBar.Width) / 2, 0);
         }
 
-        public void InitGUI()
+        public void InitGUI(Dictionary<string, object> guiState)
         {
-            if (GameWorld != null)
-            {
+            //if (GameWorld != null)
+            //{
                 //Healthbar
                 if (GameWorld.Find("HealthBar" + guid.ToString()) == null)
                 {
@@ -125,10 +125,10 @@ namespace Wink
                     hpBar.SetValueObject(this);
                 }
                 PositionHPBar();
-            }
+            //}
         }
 
-        public void CleanupGUI()
+        public void CleanupGUI(Dictionary<string, object> guiState)
         {
         }
     }

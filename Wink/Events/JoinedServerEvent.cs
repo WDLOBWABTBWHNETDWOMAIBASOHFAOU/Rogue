@@ -17,7 +17,7 @@ namespace Wink
         public override void OnClientReceive(LocalClient client)
         {
             base.OnClientReceive(client);
-            client.LoadPlayerGUI();
+            //client.LoadPlayerGUI();
             client.Camera.CenterOn(client.Player);
             
             GameEnvironment.GameStateManager.SwitchTo("playingState");

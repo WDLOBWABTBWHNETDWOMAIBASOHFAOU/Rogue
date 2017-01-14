@@ -3,11 +3,12 @@ using Microsoft.Xna.Framework;
 using System.Runtime.Serialization;
 using System.Diagnostics;
 using System.Collections.Generic;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Wink
 {
     [Serializable]
-    public class Player : Living
+    public class Player : Living, IGameObjectContainer, IGUIGameObject
     {
         public static string LocalPlayerName
         {
@@ -28,10 +29,8 @@ namespace Wink
         {
             //Inventory
             mouseSlot = new MouseSlot(layer + 11, "mouseSlot");
-
             
             SetStats();
-
             InitAnimation(); //not sure if overriden version gets played right without restating
         }
 
@@ -116,6 +115,78 @@ namespace Wink
             };
             inputHelper.IfMouseLeftButtonPressedOn(Tile, onClick);
             base.HandleInput(inputHelper);
+        }
+
+        public override GameObject Find(Func<GameObject, bool> del)
+        {
+            if (del.Invoke(mouseSlot))
+                return mouseSlot;
+
+            return mouseSlot.Find(del) ?? base.Find(del);
+        }
+
+        public override List<GameObject> FindAll(Func<GameObject, bool> del)
+        {
+            List<GameObject> result = new List<GameObject>();
+            if (del.Invoke(mouseSlot))
+                result.Add(mouseSlot);
+
+            result.AddRange(mouseSlot.FindAll(del));
+            result.AddRange(base.FindAll(del));
+            return result;
+        }
+
+        public void InitGUI(Dictionary<string, object> guiState)
+        {
+            if (Id == LocalPlayerName)
+            {
+                PlayingGUI gui = GameWorld.Find("PlayingGui") as PlayingGUI;
+                SpriteFont textfieldFont = GameEnvironment.AssetManager.GetFont("Arial26");
+
+                const int barX = 150;
+                Vector2 HPBarPosition = new Vector2(barX, 14);
+                Vector2 MPBarPosition = new Vector2(barX, HPBarPosition.Y + 32);
+
+                //Healthbar
+                Bar<Player> hpBar = new Bar<Player>(this, p => p.Health, p => p.MaxHealth, textfieldFont, Color.Red, 2, "HealthBar", 0, 2.5f);
+                hpBar.Position = new Vector2(HPBarPosition.X, HPBarPosition.Y);
+                gui.Add(hpBar);
+
+                //Manabar
+                Bar<Player> mpBar = new Bar<Player>(this, p => p.Mana, p => p.MaxMana, textfieldFont, Color.Blue, 2, "ManaBar", 0, 2.5f);
+                mpBar.Position = new Vector2(MPBarPosition.X, MPBarPosition.Y);
+                gui.Add(mpBar);
+
+                //Action Points
+                Bar<Player> apBar = new Bar<Player>(this, p => p.ActionPoints, p => MaxActionPoints, textfieldFont, Color.Yellow, 2, "ActionBar", 0, 2.5f);
+                int screenWidth = GameEnvironment.Screen.X;
+                Vector2 APBarPosition = new Vector2(screenWidth - barX - apBar.Width, HPBarPosition.Y);
+                apBar.Position = new Vector2(APBarPosition.X, APBarPosition.Y);
+                gui.Add(apBar);
+
+                PlayerInventoryAndEquipment pie = new PlayerInventoryAndEquipment(Inventory, EquipmentSlots);
+                pie.Position = new Vector2(screenWidth - pie.Width, 300);
+                pie.Visible = guiState.ContainsKey("playerI&EVisibility") ? (bool)guiState["playerI&EVisibility"] : false;
+                gui.Add(pie);
+
+                gui.Add(mouseSlot);
+            }
+        }
+
+        public void CleanupGUI(Dictionary<string, object> guiState)
+        {
+            if (Id == LocalPlayerName)
+            {
+                PlayingGUI gui = GameWorld.Find("PlayingGui") as PlayingGUI;
+                PlayerInventoryAndEquipment pIaE = gui.Find(obj => obj is PlayerInventoryAndEquipment) as PlayerInventoryAndEquipment;
+                guiState["playerI&EVisibility"] = pIaE.Visible;
+
+                gui.RemoveImmediatly(gui.Find("HealthBar"));
+                gui.RemoveImmediatly(gui.Find("ManaBar"));
+                gui.RemoveImmediatly(gui.Find("ActionBar"));
+                gui.RemoveImmediatly(pIaE);
+                gui.RemoveImmediatly(mouseSlot);
+            }
         }
     }
 }
