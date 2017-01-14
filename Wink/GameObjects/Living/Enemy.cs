@@ -16,7 +16,7 @@ namespace Wink
             get { return Health > 0; }
         }
 
-        public Enemy(int layer, string id = "Enemy") : base(layer, id)
+        public Enemy(int layer, string id = "Enemy", float FOVlength = 8.5f) : base(layer, id,FOVlength)
         {
         }
 

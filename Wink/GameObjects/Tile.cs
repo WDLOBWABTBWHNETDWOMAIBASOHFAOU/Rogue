@@ -145,6 +145,19 @@ namespace Wink
             base.DrawDebug(gameTime, spriteBatch, camera);
         }
 
+        public override void DrawDebug(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
+        {
+            if (debugTags.ContainsKey("ExitConnectionPoint"))
+            {
+                string[] coord = debugTags["ExitConnectionPoint"].Split(',');
+                TileField tf = parent as TileField;
+                Tile t = tf.Get(int.Parse(coord[0]), int.Parse(coord[1])) as Tile;
+                if (t != null)
+                    Line.DrawLine(spriteBatch, camera.CalculateScreenPosition(this), camera.CalculateScreenPosition(t), Color.Red);
+            }
+            base.DrawDebug(gameTime, spriteBatch, camera);
+        }
+
         public override void HandleInput(InputHelper inputHelper)
         {
             onTile.HandleInput(inputHelper);

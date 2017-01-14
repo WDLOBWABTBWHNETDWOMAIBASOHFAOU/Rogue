@@ -76,7 +76,11 @@ namespace Wink
             #endregion
 
             tf.InitSpriteSheetIndexation();
-        }
+            foreach (Tile t in tf.Objects)
+            {
+                t.Visible = false;
+            }
+    }
 
         private Tile LoadTile(char tileType, int x, int y)
         {

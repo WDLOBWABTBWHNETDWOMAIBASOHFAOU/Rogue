@@ -155,7 +155,6 @@ public class GameEnvironment : Game
         spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, null, null, null, null, spriteScale);
 
         //Pass along the default camera in the draw methods.
-        
         gameStateManager.Draw(gameTime, spriteBatch, DefaultCamera);
         if (debuggingMode)
             gameStateManager.DrawDebug(gameTime, spriteBatch, DefaultCamera);

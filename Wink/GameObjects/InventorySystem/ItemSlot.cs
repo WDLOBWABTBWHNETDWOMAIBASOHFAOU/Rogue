@@ -22,7 +22,8 @@ namespace Wink
 
         public ItemSlot(string assetName = "empty:65:65:10:Gray", int layer = 0, string id = "", int sheetIndex = 0, float cameraSensitivity = 0, float scale = 1) : base(assetName, layer, id, sheetIndex, cameraSensitivity, scale)
         {
-            slotItem = null;
+            slotItem = null;            
+            containsPrev = false;
         }
 
         #region Serialization
@@ -60,9 +61,13 @@ namespace Wink
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
-            if(slotItem != null)
+            if (slotItem != null)
             {
                 slotItem.Position = GlobalPosition;
+                if (slotItem.stackCount <= 0)
+                {
+                    slotItem = null;
+                }
             }
         }
 
@@ -77,13 +82,32 @@ namespace Wink
 
         public override void HandleInput(InputHelper inputHelper)
         {
-            Action onClick = () =>
+            Action onLeftClick = () =>
             {
                 Player player = GameWorld.Find(Player.LocalPlayerName) as Player;
                 PickupEvent pue = new PickupEvent(slotItem, player, this);
                 Server.Send(pue);
             };
-            inputHelper.IfMouseLeftButtonPressedOn(this, onClick);
+            
+            Action onRightClick = () =>
+            {
+                // rightclick action
+                Player player = (Root as GameObjectList).Find("player_" + Environment.MachineName) as Player;
+                slotItem.ItemAction(player);
+               
+            };
+
+            if (slotItem != null)
+            {
+                inputHelper.IfMouseRightButtonPressedOn(this, onRightClick);
+                if (ContainsMouse(inputHelper) && !containsPrev)
+                {
+                    Player player = (Root as GameObjectList).Find("player_" + Environment.MachineName) as Player;
+                    player.MouseSlot.InfoScreen(this);
+                    containsPrev = true;
+                }
+            }
+            inputHelper.IfMouseLeftButtonPressedOn(this, onLeftClick);
 
             base.HandleInput(inputHelper);
         }
@@ -102,6 +126,11 @@ namespace Wink
                 return slotItem;
             else
                 return null;
+        }
+
+        public bool ContainsMouse(InputHelper inputHelper)
+        {
+            return BoundingBox.Contains(inputHelper.MousePosition);
         }
     }
 }

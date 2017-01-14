@@ -14,11 +14,9 @@ namespace Wink
         protected string idleAnimation, moveAnimation, dieAnimation;
         private string dieSound;
 
-        //private GameObjectGrid itemGrid;
-        /*public GameObjectGrid ItemGrid
-        {
-            get { return itemGrid; }
-        }*/
+        protected Vector2 FOVpos;
+        protected float FOVlength;
+        
         public InventoryBox Inventory { get { return inventory; } }
         private InventoryBox inventory;
 
@@ -55,11 +53,12 @@ namespace Wink
             get { return true; }
         }
 
-        public Living(int layer = 0, string id = "", float scale = 1.0f) : base(layer, id, scale)
+        public Living(int layer = 0, string id = "",float FOVlength=8.5f, float scale = 1.0f) : base(layer, id, scale)
         {
             SetStats();
             InitAnimation();
             timeleft = 1000;
+            this.FOVlength = FOVlength;
 
             GameObjectGrid itemGrid = new GameObjectGrid(3, 6, 0, "");
             inventory = new InventoryBox(itemGrid);
@@ -82,9 +81,11 @@ namespace Wink
         #region Serialization
         public Living(SerializationInfo info, StreamingContext context) : base(info, context)
         {
+            //timer and turn
             timeleft = info.GetInt32("timeleft");
             startTimer = info.GetBoolean("startTimer");
 
+            //animations
             idleAnimation = info.GetString("idleAnimation");
             moveAnimation = info.GetString("moveAnimation");
             dieAnimation = info.GetString("dieAnimation");
@@ -108,15 +109,22 @@ namespace Wink
             strength = info.GetInt32("strength");
             dexterity = info.GetInt32("dexterity");
             intelligence = info.GetInt32("intelligence");
+            wisdom = info.GetInt32("wisdom");
+            luck = info.GetInt32("luck");
+            vitality = info.GetInt32("vitality");
             creatureLevel = info.GetInt32("creatureLevel");
             baseReach = info.GetInt32("baseReach");
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
+            base.GetObjectData(info, context);
+
+            // time and turn
             info.AddValue("timeleft", timeleft);
             info.AddValue("startTimer", startTimer);
 
+            //animations
             info.AddValue("idleAnimation", idleAnimation);
             info.AddValue("moveAnimation", moveAnimation);
             info.AddValue("dieAnimation", dieAnimation);
@@ -141,8 +149,10 @@ namespace Wink
             info.AddValue("dexterity", dexterity);
             info.AddValue("intelligence", intelligence);
             info.AddValue("creatureLevel", creatureLevel);
-            info.AddValue("baseReach", baseReach);
-            base.GetObjectData(info, context);
+            info.AddValue("vitality", vitality);
+            info.AddValue("wisdom", wisdom);
+            info.AddValue("luck", luck);
+            
         }
         #endregion
 
@@ -191,6 +201,15 @@ namespace Wink
                     else
                         timeleft -= gameTime.TotalGameTime.Seconds;
                 }
+            }
+            else if(healthPoints > MaxHealth)
+            {
+                healthPoints = MaxHealth;
+            }
+
+            if(manaPoints > MaxMana)
+            {
+                manaPoints = MaxMana;
             }
             // Stijn zegt voer hier een ring bonus methode uit
             // met de manier waarop ik ring heb gemaakt valt er niks te bonussen

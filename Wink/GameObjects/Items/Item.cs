@@ -10,6 +10,8 @@ namespace Wink
         int stackSize;
         public int stackCount;
         public int getStackSize { get { return stackSize; } }
+        protected GameObjectList infoList;
+        public GameObjectList InfoList { get { return infoList; } }
 
         public Point PointInTile
         {
@@ -25,22 +27,46 @@ namespace Wink
         {
             // item id is needed to chech if they are the same, for now assetname to test.
             // if item are proceduraly generated, there should be an algoritim that generates a id that is the same if stats (and sprite) are the same.
-            this.id = assetName;
+            if (id == "")
+            {
+                this.id = assetName;
+            }
+            else
+            {
+                this.id = id;
+            }
             stackCount = 1;
             this.stackSize = stackSize;
-            cameraSensitivity = 0;    
+            cameraSensitivity = 0;
         }
 
         #region Serialization
         public Item(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             stackSize = info.GetInt32("stackSize");
+            stackCount = info.GetInt32("stackCount");
+            infoList = info.GetValue("infoList", typeof(GameObjectList)) as GameObjectList;
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             base.GetObjectData(info, context);
             info.AddValue("stackSize", stackSize);
+            info.AddValue("stackCount", stackCount);
+            info.AddValue("infoList", infoList);
+        }
+
+        public virtual void ItemInfo(ItemSlot caller)
+        {
+            infoList = new GameObjectList();
+            TextGameObject IDinfo = new TextGameObject("Arial26",0,0,"IDinfo."+this);
+            IDinfo.Text = Id;
+            IDinfo.Color = Color.Red;
+            infoList.Add(IDinfo);
+        }
+
+        public virtual void ItemAction(Living caller)
+        {
         }
         #endregion
 
@@ -51,9 +77,9 @@ namespace Wink
 
         public override void HandleInput(InputHelper inputHelper)
         {
-
             base.HandleInput(inputHelper);
         }
+        
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
         {
