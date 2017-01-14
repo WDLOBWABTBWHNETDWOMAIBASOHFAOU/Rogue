@@ -3,6 +3,7 @@ using System;
 
 namespace Wink
 {
+    //Could be obsoleet in final version. delete?
     [Serializable]
     class EmptyItem : Item
     {

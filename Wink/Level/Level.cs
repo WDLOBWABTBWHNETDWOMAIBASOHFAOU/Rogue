@@ -44,7 +44,7 @@ namespace Wink
             this.levelIndex = levelIndex;
         }
 
-        public Level()
+        public Level() : base(0, "Level")
         {
             List<Room> rooms = GenerateRooms();
             List<Tuple<Room, Room>> hallwayPairs = GenerateHallwayPairs(rooms);
@@ -80,20 +80,18 @@ namespace Wink
             //Putting the item one layer above the inventory box
             int inventoryLayer = layer + 1;
             int itemLayer = layer + 2;
-
-            Item testItem = new TestItem("empty:65:65:10:Pink", 1, itemLayer); 
+            
 
             // ENEMY CODE (test)
             for(int i = 0; i < 2; i++)
             {
                 Enemy testEnemy = new Enemy(layer + 1);
+                testEnemy.SetStats();
                 Add(testEnemy);
                 testEnemy.InitPosition();
             }
             // END ENEMY CODE (test)
-
-            testItem.Position = new Vector2(GameEnvironment.Random.Next(0, tf.Columns - 1) * Tile.TileWidth, GameEnvironment.Random.Next(0, tf.Rows - 1) * Tile.TileHeight);
-            Add(testItem); 
+            
         }
 
         private Tile LoadTile(char tileType, int x, int y)
@@ -114,6 +112,8 @@ namespace Wink
                     return LoadDoorTile(x, y/*, "spr_door"*/);
                 case 'E':
                     return LoadEndTile(x, y/*, "spr_end"*/);
+                case 't':
+                    return LoadTrapTile("spr_trap", TileType.Normal, x, y);
                 default:
                     return LoadWTFTile();
             }
@@ -148,6 +148,18 @@ namespace Wink
             t.Passable = false;
             return t;
         }
+
+        private Tile LoadTrapTile(string name, TileType tileType, int x, int y)
+        {
+            Tile t = new Tile("empty:65:65:10:DarkGreen", tileType);
+            //DarkRed for development testing, should have same or simular sprite as the tile in final version
+            Trap trap = new Trap("empty:65:65:10:DarkRed");
+            trap.Position = new Vector2(x * Tile.TileWidth, y * Tile.TileHeight);
+            Add(trap);
+            t.Passable = true;
+            return t;
+        }
+
         private Tile LoadChestTile(int x, int y, string assetName = "empty:65:65:10:DarkGreen")
         {
             Tile t = new Tile(assetName, TileType.Normal);
