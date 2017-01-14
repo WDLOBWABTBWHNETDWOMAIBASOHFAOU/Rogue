@@ -52,6 +52,11 @@ namespace Wink
                 
                 (obj as IGUIGameObject).InitGUI(guiState ?? new Dictionary<string, object>());
             }
+
+            if (!client.Camera.BoundingBox.Intersects(client.Player.BoundingBox))
+            {
+                client.Camera.CenterOn(client.Player);
+            }
         }
 
         public override void OnServerReceive(LocalServer server)

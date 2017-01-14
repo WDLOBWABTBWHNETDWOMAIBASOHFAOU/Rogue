@@ -177,8 +177,8 @@ namespace Wink
                 gui.Add(apBar);
 
                 PlayerInventoryAndEquipment pie = new PlayerInventoryAndEquipment(Inventory, EquipmentSlots);
-                pie.Position = new Vector2(screenWidth - pie.Width, 300);
-                pie.Visible = guiState.ContainsKey("playerI&EVisibility") ? (bool)guiState["playerI&EVisibility"] : false;
+                pie.Position = guiState.ContainsKey("playerIaEPosition") ? (Vector2)guiState["playerIaEPosition"] : new Vector2(screenWidth - pie.Width, 300);
+                pie.Visible = guiState.ContainsKey("playerIaEVisibility") ? (bool)guiState["playerIaEVisibility"] : false;
                 gui.Add(pie);
 
                 gui.Add(mouseSlot);
@@ -191,7 +191,8 @@ namespace Wink
             {
                 PlayingGUI gui = GameWorld.Find("PlayingGui") as PlayingGUI;
                 PlayerInventoryAndEquipment pIaE = gui.Find(obj => obj is PlayerInventoryAndEquipment) as PlayerInventoryAndEquipment;
-                guiState["playerI&EVisibility"] = pIaE.Visible;
+                guiState.Add("playerIaEVisibility", pIaE.Visible);
+                guiState.Add("playerIaEPosition", pIaE.Position);
 
                 gui.RemoveImmediatly(gui.Find("HealthBar"));
                 gui.RemoveImmediatly(gui.Find("ManaBar"));

@@ -28,9 +28,8 @@ namespace Wink
 
         // This dictionary will hold all of the multipliers for balancing rings for the different stats
         // for now these will all be set to 1
-        protected Dictionary<RingType, double> balanceMultiplier = new Dictionary<RingType, double>(); 
-
-        private void setBalance()
+        protected Dictionary<RingType, double> balanceMultiplier = new Dictionary<RingType, double>();
+        private void SetBalance()
         {
             balanceMultiplier.Add(RingType.Strength, 0.8);
             balanceMultiplier.Add(RingType.Vitality, 1);
@@ -52,11 +51,13 @@ namespace Wink
 
         public RingEquipment(string assetName, int maxEffects = 3, int stackSize = 1, int layer = 0, string id = "", bool reflectEffect = false) : base(assetName, id, stackSize, layer)
         {
-            setBalance();
+            SetBalance();
             GenerateRing(maxEffects + 1);
-            if (reflectEffect) AddReflection();
+            if (reflectEffect)
+                AddReflection();
         }
 
+        #region Serialization
         public RingEquipment(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             ringEffects = info.GetValue("ringEffects", typeof(List<RingEffect>)) as List<RingEffect>;
@@ -69,6 +70,7 @@ namespace Wink
             info.AddValue("ringEffects", ringEffects, typeof(List<RingEffect>));
             info.AddValue("balanceMultiplier", balanceMultiplier, typeof(Dictionary<RingType, double>));
         }
+        #endregion
 
         protected void AddEffect(RingType effectType, double effectValue, bool multiplier)
         {
@@ -86,10 +88,9 @@ namespace Wink
 
         protected void GenerateRing(int maxEffects = 3)
         {
-            for(int i = 0; i < GameEnvironment.Random.Next(0, maxEffects); i++)
-            {
+            int effectAmt = GameEnvironment.Random.Next(0, maxEffects);
+            for (int i = 0; i < effectAmt; i++)
                 GenerateEffect();
-            }
         }
 
         protected void GenerateEffect()
@@ -98,20 +99,17 @@ namespace Wink
             RingType effectType = (RingType)values.GetValue(GameEnvironment.Random.Next(values.Length - magicEffects));
 
             bool multiplier = true;
-            if (GameEnvironment.Random.NextDouble() < mulchance) multiplier = false;
+            if (GameEnvironment.Random.NextDouble() < mulchance)
+                multiplier = false;
 
-            Dictionary<string, object> ret = new Dictionary<string, object>();
-
+            Dictionary<string, object> ret = new Dictionary<string, object>(); 
             double effectValue = 0;
 
-            if (multiplier)
-            {
-                effectValue = 1 + Math.Round(GameEnvironment.Random.NextDouble(), 2);
-            }
-            else
-            {
-                effectValue = Math.Round(acceptablePower * GameEnvironment.Random.NextDouble());
-            }
+            if (multiplier) 
+                effectValue = 1 + Math.Round(GameEnvironment.Random.NextDouble(), 2); 
+            else 
+                effectValue = Math.Round(acceptablePower * GameEnvironment.Random.NextDouble()); 
+
             effectValue *= balanceMultiplier[effectType];
             AddEffect(effectType, effectValue, multiplier);
         }
@@ -152,6 +150,10 @@ namespace Wink
         protected bool multiplier;
         protected double effectValue;
 
+        public RingType EffectType { get { return effectType; } }
+        public bool Multiplier { get { return multiplier; } }
+        public double EffectValue { get { return effectValue; } }
+
         public RingEffect(RingType effectType, bool multiplier, double effectValue)
         {
             this.effectType = effectType;
@@ -174,10 +176,6 @@ namespace Wink
             info.AddValue("effectValue", effectValue);
         }
         #endregion
-
-        public RingType EffectType { get { return effectType; } }
-        public bool Multiplier { get { return multiplier; } }
-        public double EffectValue { get { return effectValue; } }
     }
 
     [Serializable]
@@ -185,6 +183,9 @@ namespace Wink
     {
         protected double power;
         protected double chance;
+
+        public double Power { get { return power; } }
+        public double Chance { get { return chance; } }
 
         public ReflectionEffect(double power, double chance) : base(RingType.Reflection, false, -1)
         {
@@ -208,8 +209,6 @@ namespace Wink
         }
         #endregion
 
-        public double Power { get { return power; } }
-        public double Chance { get { return chance; } }
         public double this[string val]
         {
             get

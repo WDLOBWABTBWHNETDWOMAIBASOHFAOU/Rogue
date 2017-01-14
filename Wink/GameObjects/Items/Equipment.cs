@@ -68,7 +68,7 @@ namespace Wink
 
         public override void ItemAction(Living caller)
         {
-            //TODO: send event to switch this equipment with the equipment currently in the appropriate shot.
+            //TODO: send event to switch this equipment with the equipment currently in the appropriate slot.
         }
     }
 }
