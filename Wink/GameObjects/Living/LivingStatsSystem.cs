@@ -28,12 +28,12 @@ namespace Wink
                 if (slot.SlotItem != null && slot.Id.Contains("ringSlot"))
                 {
                     RingEquipment ring = slot.SlotItem as RingEquipment;
-                    foreach (Dictionary<string, object> effect in ring.RingEffects)
+                    foreach (RingEffect effect in ring.RingEffects)
                     {
-                        if ((RingType)effect["type"] == ringType)
+                        if (effect.EffectType == ringType)
                         {
-                            if ((bool)effect["multiplier"]) { p *= (double)effect["value"]; }
-                            else { i += (int)(double)effect["value"]; }
+                            if (effect.Multiplier) { p *= effect.EffectValue; }
+                            else { i += (int)effect.EffectValue; }
                         }
                     }
                 }

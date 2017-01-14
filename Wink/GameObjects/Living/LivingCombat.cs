@@ -37,15 +37,16 @@ namespace Wink
                     if (slot.SlotItem != null && slot.Id.Contains("ringSlot"))
                     {
                         RingEquipment ring = slot.SlotItem as RingEquipment;
-                        foreach (Dictionary<string, object> effect in ring.RingEffects)
+                        foreach (RingEffect effect in ring.RingEffects)
                         {
-                            if ((RingType)effect["type"] == RingType.reflection)
+                            if (effect.EffectType == RingType.reflection)
                             {
+                                ReflectionEffect rEffect = effect as ReflectionEffect;
                                 double randomNumber = GameEnvironment.Random.NextDouble();
-                                double reflectChance = 0.6 - 1 / source.luck;
+                                double reflectChance = rEffect["chance"] - 1 / source.luck;
                                 if (randomNumber <= reflectChance)
                                 {
-                                    TakeReflectionDamage(source, damage, (double)effect["power"]);
+                                    TakeReflectionDamage(source, damage, rEffect["power"]);
                                 }
                             }
                         }

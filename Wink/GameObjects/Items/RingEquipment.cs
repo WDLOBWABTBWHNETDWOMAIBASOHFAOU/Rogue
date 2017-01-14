@@ -22,10 +22,6 @@ namespace Wink
 
     class RingEquipment : Equipment
     {
-        protected bool multiplier;
-        protected double ringValue;
-        protected RingType ringType;
-
         // mulchance is the chance a ring effect will be a multiplier, I'm keeping this relatively high because
         // a multiplier is much easier to balance than a set value
         protected double mulchance = 0.7;
@@ -47,17 +43,13 @@ namespace Wink
             balanceMultiplier.Add(RingType.wisdom, 1);
         }
 
-        protected List<Dictionary<string, object>> ringEffects = new List<Dictionary<string, object>>();
+        protected List<RingEffect> ringEffects = new List<RingEffect>();
 
         // the amount of magic effects in the RingType enum, these will not be put on randomly generated rings
         protected int magicEffects = 1;
 
         public RingEquipment(double ringValue, RingType ringType, string assetName, bool multiplier = false, int stackSize = 1, int layer = 0, string id = "") : base(assetName, id, stackSize, layer)
         {
-            this.ringType = ringType;
-            this.ringValue = ringValue;
-            this.multiplier = multiplier;
-            Dictionary<string, object> effect = new Dictionary<string, object>();
             AddEffect(ringType, ringValue, multiplier);
         }
 
@@ -70,25 +62,18 @@ namespace Wink
 
         public RingEquipment(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            ringType = (RingType)info.GetValue("ringType", typeof(RingType));
-            ringValue = info.GetDouble("ringValue");
-            multiplier = info.GetBoolean("multiplier");
+            // IK SNAP SERIALIZATION NIET!
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             base.GetObjectData(info, context);
-            info.AddValue("type", RingType);
-            info.AddValue("ringValue", ringValue);
-            info.AddValue("multiplier", multiplier);
+            // I REPEAT, ME NO UNDERSTANDO
         }
 
         protected void AddEffect(RingType effectType, double effectValue, bool multiplier)
         {
-            Dictionary<string, object> effect = new Dictionary<string, object>(); 
-            effect.Add("type", effectType);
-            effect.Add("multiplier", multiplier);
-            effect.Add("value", effectValue);
+            RingEffect effect = new RingEffect(effectType, multiplier, effectValue);
             ringEffects.Add(effect);
         }
 
@@ -96,10 +81,7 @@ namespace Wink
         {
             // This method adds a special effect to a ring, this being the "Reflection" effect.
             // It's the first attempt of magic in the game
-            Dictionary<string, object> reflectionEffect = new Dictionary<string, object>();
-            reflectionEffect.Add("type", RingType.reflection);
-            reflectionEffect.Add("chance", 1.5);
-            reflectionEffect.Add("power", 2.5);
+            ReflectionEffect reflectionEffect = new ReflectionEffect(2.5, 1.5);
             ringEffects.Add(reflectionEffect);
         }
 
@@ -135,12 +117,14 @@ namespace Wink
             AddEffect(effectType, effectValue, multiplier);
         }
 
-        public List<Dictionary<string, object>> RingEffects
+        public List<RingEffect> RingEffects
         {
             get { return ringEffects; }
         }
 
-        public override void ItemInfo(ItemSlot caller)
+        // Change in code broke this part
+
+        /*public override void ItemInfo(ItemSlot caller)
         {
             base.ItemInfo(caller);
 
@@ -160,20 +144,55 @@ namespace Wink
                 ringInfo.Parent = infoList;
                 infoList.Children.Insert(1, ringInfo);
             }
-        }
+        }*/
+    }
 
-        public double RingValue
+    class RingEffect
+    {
+        protected RingType effectType;
+        protected bool multiplier;
+        protected double effectValue;
+        public RingEffect(RingType effectType, bool multiplier, double effectValue)
         {
-            get { return ringValue; }
-            set { ringValue = value; }
+            this.effectType = effectType;
+            this.multiplier = multiplier;
+            this.effectValue = effectValue;
         }
 
-        public RingType RingType
-        {
-            get { return ringType; }
-            set { ringType = value; }
-        }
-
+        public RingType EffectType { get { return effectType; } }
         public bool Multiplier { get { return multiplier; } }
+        public double EffectValue { get { return effectValue; } }
+    }
+
+    class ReflectionEffect : RingEffect
+    {
+        protected double power;
+        protected double chance;
+        public ReflectionEffect(double power, double chance) : base(RingType.reflection, false, -1)
+        {
+            this.power = power;
+            this.chance = chance;
+        }
+
+        public double Power { get { return power; } }
+        public double Chance { get { return chance; } }
+        public double this[string val]
+        {
+            get
+            {
+                if (val == "power")
+                {
+                    return Power;
+                }
+                else if (val == "chance")
+                {
+                    return Chance;
+                }
+                else
+                {
+                    throw new KeyNotFoundException("The value " + val + " is not in ReflectionEffect");
+                }
+            }
+        }
     }
 }
