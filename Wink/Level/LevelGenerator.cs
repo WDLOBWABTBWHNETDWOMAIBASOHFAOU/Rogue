@@ -386,15 +386,18 @@ namespace Wink
 
             //Generate EndTile
             List<Room> forEnd = new List<Room>();
+            List<Room> usedRooms = new List<Room>();
             for (int a = 0; a < hallwayPairs.Count; a++)
             {
                 if (!forEnd.Contains(hallwayPairs[a].Item1))
                 {
                     forEnd.Add(hallwayPairs[a].Item1);
+                    usedRooms.Add(hallwayPairs[a].Item1);
                 }
                 if (!forEnd.Contains(hallwayPairs[a].Item2))
                 {
                     forEnd.Add(hallwayPairs[a].Item2);
+                    usedRooms.Add(hallwayPairs[a].Item2);
                 }
             }
 
@@ -413,6 +416,32 @@ namespace Wink
                 }
             }
             tf.Add(LoadEndTile(), forEnd[0].Location.ToRoundedPoint().X + 1, forEnd[0].Location.ToRoundedPoint().Y + 1);
+
+            //Test door spawn
+            for (int i = 0; i < usedRooms.Count; i++)
+            {
+                for (int x = rooms[i].Location.ToRoundedPoint().X; x < rooms[i].Location.ToRoundedPoint().X + rooms[i].Size.X; x++)
+                {
+                    if (tf.GetTileType(x, rooms[i].Location.ToRoundedPoint().Y - 1) == TileType.Floor)
+                    {
+                        if (!(tf.GetTileType(x + 1, rooms[i].Location.ToRoundedPoint().Y - 1) == TileType.Floor || tf.GetTileType(x - 1, rooms[i].Location.ToRoundedPoint().Y - 1) == TileType.Floor))
+                        {
+                            tf.Add(LoadDoorTile(), x, rooms[i].Location.ToRoundedPoint().Y - 1);
+                        }
+                    }
+                    if (tf.GetTileType(x, rooms[i].Location.ToRoundedPoint().Y + rooms[i].Size.Y) == TileType.Floor)
+                    {
+                        if (!(tf.GetTileType(x + 1, rooms[i].Location.ToRoundedPoint().Y + rooms[i].Size.Y) == TileType.Floor || tf.GetTileType(x - 1, rooms[i].Location.ToRoundedPoint().Y + rooms[i].Size.Y) == TileType.Floor))
+                        {
+                            tf.Add(LoadDoorTile(), x, rooms[i].Location.ToRoundedPoint().Y + rooms[i].Size.Y);
+                        }
+                    }
+                }
+            }
+            //End test
+
+
+
 
             //Test enemy spawn
             int numberOfEnemys = 8;
