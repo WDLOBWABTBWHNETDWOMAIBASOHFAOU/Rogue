@@ -42,6 +42,7 @@ namespace Wink
         {
             LoadTiles("Content/Levels/" + levelIndex + ".txt");
             this.levelIndex = levelIndex;
+            
         }
 
         public Level() : base(0, "Level")
@@ -87,11 +88,18 @@ namespace Wink
             {
                 Enemy testEnemy = new Enemy(layer + 1);
                 testEnemy.SetStats();
+                EquipmentSlot armorSlot = testEnemy.EquipmentSlots.Find("bodySlot") as EquipmentSlot;
+                armorSlot.ChangeItem(new BodyEquipment("empty:65:65:10:Brown", "testArmor", 40, 5));
                 Add(testEnemy);
                 testEnemy.InitPosition();
             }
             // END ENEMY CODE (test)
-            
+
+            foreach (Tile t in tf.Objects)
+            {
+                t.Visible = false;
+            }
+
         }
 
         private Tile LoadTile(char tileType, int x, int y)

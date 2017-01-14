@@ -1,10 +1,12 @@
-﻿namespace Wink
+﻿using System.Collections.Generic;
+
+namespace Wink
 {
     public abstract partial class Living : AnimatedGameObject
     {
         public const int MaxActionPoints = 4;
 
-        protected int manaPoints, healthPoints, actionPoints, baseAttack, baseArmor, strength, dexterity, intelligence, creatureLevel, baseReach;
+        protected int manaPoints, healthPoints, actionPoints, baseAttack, baseArmor, vitality, strength, dexterity, wisdom, luck, intelligence, creatureLevel, baseReach;
 
         public int Dexterity { get { return Ringbonus(RingType.dexterity, dexterity); } }
         public int Intelligence { get { return Ringbonus(RingType.intelligence, intelligence); } }
@@ -13,7 +15,7 @@
         public int ActionPoints { get { return actionPoints; } set { actionPoints = value; } }
 
         public int Health { get { return healthPoints; } set { healthPoints = value; } }
-        public int Mana { get { return manaPoints; } }
+        public int Mana { get { return manaPoints; } set { manaPoints = value; } }
 
 
         protected int Ringbonus(RingType ringType, int baseValue)
@@ -26,14 +28,17 @@
                 if (slot.SlotItem != null && slot.Id.Contains("ringSlot"))
                 {
                     RingEquipment ring = slot.SlotItem as RingEquipment;
-                    if (ring.RingType == ringType)
+                    foreach (RingEffect effect in ring.RingEffects)
                     {
-                        if (ring.Multiplier) { p *= ring.RingValue; }
-                        else { i += (int)ring.RingValue; }
+                        if (effect.EffectType == ringType)
+                        {
+                            if (effect.Multiplier) { p *= effect.EffectValue; }
+                            else { i += (int)effect.EffectValue; }
+                        }
                     }
                 }
             }
-                return (int)(baseValue * p + i);
+            return (int)(baseValue * p + i);
         }
 
         /// <summary>
@@ -49,9 +54,12 @@
         public void SetStats(int creatureLevel = 1, int vitality = 2, int strength = 2, int dexterity = 2, int intelligence = 2, int wisdom = 2, int luck = 2, int baseAttack = 40, int baseArmor = 5, int baseReach = 1)
         {
             this.creatureLevel = creatureLevel;
+            this.vitality = vitality;
             this.strength = strength;
             this.dexterity = dexterity;
             this.intelligence = intelligence;
+            this.wisdom = wisdom;
+            this.luck = luck;
             this.baseAttack = baseAttack;
             this.baseArmor = baseArmor;
             actionPoints = MaxActionPoints;
@@ -64,13 +72,13 @@
         /// Calculetes a stat based value for living objects
         /// </summary>
         /// <param name="baseValue"></param>
-        /// <param name="stat"></param>
+        /// <param name="stat1"></param>
         /// <param name="extra">Sum of extra effects</param>
-        /// <param name="modifier"></param>
+        /// <param name="modifier1"></param>
         /// <returns></returns>
-        protected double CalculateValue(double baseValue, int stat = 0, double modifier = 1, double extra = 0)
+        public double CalculateValue(double baseValue, int stat1 = 0, double modifier1 = 1, double extra = 0, int stat2 = 0, double modifier2 = 0, int stat3 = 0, double modifier3 = 0)
         {
-            double value = baseValue + modifier * stat + extra;
+            double value = baseValue + baseValue*modifier1 * stat1 + extra + baseValue * modifier2 * stat2 + baseValue * modifier3 * stat3;
             return value;
         }
 
@@ -80,10 +88,10 @@
         /// <returns></returns>
         protected int MaxHP()
         {
-            int maxHP = (int)CalculateValue(40, creatureLevel - 1, 4);
+            int maxHP = (int)CalculateValue(40, vitality - 1, 4);
             return maxHP;
         }
-        public int MaxHealth { get { return Ringbonus(RingType.health, MaxHP()); } }
+        public int MaxHealth { get { return Ringbonus(RingType.vitality, MaxHP()); } }
 
         /// <summary>
         /// returns the maximum of manapoints the living object can have
@@ -91,7 +99,7 @@
         /// <returns></returns>
         protected int MaxManaPoints()
         {
-            int maxManaPoints = (int)CalculateValue(50, Intelligence, 15);
+            int maxManaPoints = (int)CalculateValue(50, wisdom, 1);
             return maxManaPoints;
         }
         public int MaxMana { get { return MaxManaPoints(); } }
@@ -102,7 +110,7 @@
         /// <returns></returns>
         protected double HitChance()
         {
-            double hitChance = CalculateValue(0.7, Dexterity, 0.01);
+            double hitChance = CalculateValue(0.7, luck, 0.01);
             return hitChance;
         }
 
@@ -112,7 +120,7 @@
         /// <returns></returns>
         protected double DodgeChance()
         {
-            double dodgeChance = CalculateValue(0.3, Dexterity, 0.01);
+            double dodgeChance = CalculateValue(0.3, luck, 0.01);
             return dodgeChance;
         }
 
@@ -145,25 +153,16 @@
 
             int attack = baseAttack;
             double mod = 1;
-
+            int attackValue;
             if (weapon.SlotItem !=null)
             {
                 WeaponEquipment weaponItem = weapon.SlotItem as WeaponEquipment;
-
-                if(weaponItem.StrRequirement > Strength)
-                {
-                    int dif = weaponItem.StrRequirement - Strength;
-                    double penaltyMod = 0.4; // needs balancing, possibly dependent on weapon
-                    attack = (int)(weaponItem.BaseDamage - weaponItem.BaseDamage*(dif * penaltyMod));
-                }
-                else
-                {
-                    attack = weaponItem.BaseDamage;
-                    mod = weaponItem.ScalingFactor;
-                }
+                attackValue = weaponItem.Value(this);
             }
-                        
-            int attackValue = (int)CalculateValue(attack, Strength, mod);     
+            else
+            {
+                attackValue = (int)CalculateValue(attack, Strength, mod); 
+            }   
 
             return attackValue;
         }
@@ -172,22 +171,13 @@
         /// returns armorvalue based on the summ the equiped armoritems
         /// </summary>
         /// <returns></returns>
-        protected int ArmorValue()
+        protected int ArmorValue(DamageType damageType)
         {
             int armorValue=baseArmor;
             if (body.SlotItem != null)
             {
                 BodyEquipment ArmorItem = body.SlotItem as BodyEquipment;
-                if(ArmorItem.StrRequirement > Strength)
-                {
-                    int dif = ArmorItem.StrRequirement - Strength;
-                    double penaltyMod = 0.2;// needs balancing, possibly dependent on armor
-                    armorValue = baseArmor + (int)(ArmorItem.ArmorValue - ArmorItem.ArmorValue*(dif * penaltyMod));
-                }
-                else
-                {
-                    armorValue = baseArmor + ArmorItem.ArmorValue;
-                }
+                armorValue = ArmorItem.Value(this, damageType);
             }
 
             if(armorValue <= 0)

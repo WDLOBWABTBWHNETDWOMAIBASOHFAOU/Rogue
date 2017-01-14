@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Runtime.Serialization;
 
 namespace Wink
 {
@@ -12,10 +13,24 @@ namespace Wink
     {
         Item slotItem;
         public Item SlotItem { get { return slotItem; } }
+        
+        public bool containsPrev;
 
         public ItemSlot(string assetName = "empty:65:65:10:Gray", int layer = 0, string id = "", int sheetIndex = 0, float cameraSensitivity = 0, float scale = 1) : base(assetName, layer, id, sheetIndex, cameraSensitivity, scale)
         {
-            slotItem = null;
+            slotItem = null;            
+            containsPrev = false;
+        }
+
+        public ItemSlot(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+            slotItem = info.GetValue("slotItem", typeof(Item)) as Item;
+        }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            base.GetObjectData(info, context);
+            info.AddValue("slotItem", slotItem);
         }
 
         public void ChangeItem(Item newItem)
@@ -26,9 +41,13 @@ namespace Wink
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
-            if(slotItem != null)
+            if (slotItem != null)
             {
                 slotItem.Position = GlobalPosition;
+                if (slotItem.stackCount <= 0)
+                {
+                    slotItem = null;
+                }
             }
         }
 
@@ -43,7 +62,7 @@ namespace Wink
 
         public override void HandleInput(InputHelper inputHelper)
         {
-            Action onClick = () =>
+            Action onLeftClick = () =>
             {
                 PickupEvent pue = new PickupEvent();
                 pue.item = slotItem;
@@ -51,9 +70,33 @@ namespace Wink
                 pue.player = (Root as GameObjectList).Find("player_" + Environment.MachineName) as Player;
                 Server.Send(pue);
             };
-            inputHelper.IfMouseLeftButtonPressedOn(this, onClick);
+            
+            Action onRightClick = () =>
+            {
+                // rightclick action
+                Player player = (Root as GameObjectList).Find("player_" + Environment.MachineName) as Player;
+                slotItem.ItemAction(player);
+               
+            };
+
+            if (slotItem != null)
+            {
+                inputHelper.IfMouseRightButtonPressedOn(this, onRightClick);
+                if (ContainsMouse(inputHelper) && !containsPrev)
+                {
+                    Player player = (Root as GameObjectList).Find("player_" + Environment.MachineName) as Player;
+                    player.MouseSlot.InfoScreen(this);
+                    containsPrev = true;
+                }
+            }
+            inputHelper.IfMouseLeftButtonPressedOn(this, onLeftClick);
 
             base.HandleInput(inputHelper);
+        }
+
+        public bool ContainsMouse(InputHelper inputHelper)
+        {
+            return BoundingBox.Contains(inputHelper.MousePosition);
         }
     }
 }

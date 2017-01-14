@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Graphics;
+using System.Runtime.Serialization;
 
 namespace Wink
 {
@@ -15,6 +16,19 @@ namespace Wink
         public Container(string asset, GameObjectGrid itemGrid = null, int layer=0, string id=""):base(asset,layer,id)
         {
             setInventory();
+        }
+
+        public Container(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+            iBox = info.GetValue("iBox", typeof(InventoryBox)) as InventoryBox;
+            iWindow = info.GetValue("iWindow", typeof(Window)) as Window;
+        }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            base.GetObjectData(info, context);
+            info.AddValue("iBox", iBox);
+            info.AddValue("iWindow", iWindow);
         }
 
         public void InitGUI()
