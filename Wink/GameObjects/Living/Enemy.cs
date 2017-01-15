@@ -121,12 +121,13 @@ namespace Wink
                 hpBar = GameWorld.Find("HealthBar" + guid.ToString()) as Bar<Enemy>;
                 hpBar.SetValueObject(this);
             }
-            hpBar.Visible = Tile.Visible;
+            hpBar.Visible = !Tile.Visible ? false : Visible;
             PositionHPBar();
         }
 
         public void CleanupGUI(Dictionary<string, object> guiState)
         {
+
         }
     }
 }

@@ -55,10 +55,8 @@ namespace Wink
             get { return (stringVisible ? (int)font.MeasureString(inner.Value.ToString()).X : 0) + outer.Width; }
         }
 
-        float cameraSensitivity;
-        public Bar(T o, Func<T, int> value, Func<T, int> maxValue, SpriteFont font, Color color, int layer = 0, string id = "",float cameraSensitivity = 0, float scale = 1, bool stringVisible = true) : base(layer, id)
+        public Bar(T o, Func<T, int> value, Func<T, int> maxValue, SpriteFont font, Color color, int layer = 0, string id = "", float cameraSensitivity = 0, float scale = 1, bool stringVisible = true) : base(layer, id)
         {
-            this.cameraSensitivity = cameraSensitivity;
             this.font = font;
             this.color = color;
             this.scale = scale;
@@ -72,8 +70,8 @@ namespace Wink
             inner = new InnerBar(layer, id + "_inner", cameraSensitivity, scale);
             inner.DrawColor = color;
             float xdif = (outer.Sprite.Width - inner.Sprite.Width) / 2;
-            float ydif = (outer.Sprite.Height - inner.Sprite.Height) / 2; 
-            inner.Position = new Vector2(xdif, ydif)*scale;
+            float ydif = (outer.Sprite.Height - inner.Sprite.Height) / 2;
+            inner.Position = new Vector2(xdif, ydif) * scale;
             Add(inner);
             inner.AddMaxValue(o, maxValue);
             inner.ValueTuple = new Tuple<T, Func<T, int>>(o, value);
@@ -86,19 +84,18 @@ namespace Wink
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
         {
+            base.Draw(gameTime, spriteBatch, camera);
             if (Visible)
             {
-                outer.Draw(gameTime, spriteBatch, camera);
-                inner.Draw(gameTime, spriteBatch, camera);
-
                 Vector2 stringSize = font.MeasureString(inner.Value.ToString());
                 float x = GlobalPosition.X + outer.Width + 10;
                 float y = inner.GlobalPosition.Y - inner.Height / 2;
 
                 if (stringVisible)
                 {
-                    spriteBatch.DrawString(font, inner.Value.ToString() + "/" + inner.MaxValue.ToString(), new Vector2(x, y) - (cameraSensitivity * camera.GlobalPosition), color, 0, Vector2.Zero, scale / 2.5f, SpriteEffects.None, 0);
-                }
+                    string valueString = inner.Value.ToString() + "/" + inner.MaxValue.ToString();
+                    spriteBatch.DrawString(font, valueString, new Vector2(x, y) - (inner.CameraSensitivity * camera.GlobalPosition), color, 0, Vector2.Zero, scale / 2.5f, SpriteEffects.None, 0);
+                }       
             }
         }
     }

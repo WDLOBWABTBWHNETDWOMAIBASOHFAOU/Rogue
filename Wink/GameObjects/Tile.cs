@@ -95,6 +95,14 @@ namespace Wink
 
             if (viewer is Player)
                 Visible = true;
+
+            foreach (GameObject go in onTile.Children)
+            {
+                if (!(go is Living) || seenBy.Count(obj => obj.Key is Player) > 0)
+                    go.Visible = true;
+                else
+                    go.Visible = false;
+            }
         }
 
         public override void Replace(GameObject replacement)
@@ -140,9 +148,7 @@ namespace Wink
             
             if (Visible)
             {
-                foreach (GameObject go in onTile.Children)
-                    if (!(go is Living) || seenBy.Count(obj => obj.Key is Player) > 0)
-                        onTile.Draw(gameTime, spriteBatch, camera);
+                onTile.Draw(gameTime, spriteBatch, camera);
 
                 Texture2D blackTex = GameEnvironment.AssetManager.GetSingleColorPixel(Color.Black);
                 float min = 0.75f;
