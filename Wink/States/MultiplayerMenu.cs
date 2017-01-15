@@ -40,16 +40,26 @@ namespace Wink
                 SpriteFont arial26 = GameEnvironment.AssetManager.GetFont("Arial26");
 
                 //Create a text field for the ip address
-                ipAddress = new TextField(arial26, Color.Red);
+                ipAddress = new TextField(arial26, Color.Black);
                 ipAddress.Position = new Vector2((screen.X - ipAddress.Width) / 2, 50);
                 ipAddress.Editable = true;
                 Add(ipAddress);
+                TextGameObject ipAddressLabel = new TextGameObject("Arial26");
+                ipAddressLabel.Text = "IP address: ";
+                ipAddressLabel.Position = new Vector2(ipAddress.Position.X - ipAddressLabel.Size.X - 10, ipAddress.Position.Y);
+                ipAddressLabel.Color = Color.Black;
+                Add(ipAddressLabel);
 
                 //Create a text field for the user name
-                userName = new TextField(arial26, Color.Red);
+                userName = new TextField(arial26, Color.Black);
                 userName.Position = new Vector2((screen.X - userName.Width) / 2, 125);
                 userName.Editable = true;
                 Add(userName);
+                TextGameObject userNameLabel = new TextGameObject("Arial26");
+                userNameLabel.Text = "Username: ";
+                userNameLabel.Position = new Vector2(userName.Position.X - userNameLabel.Size.X - 10, userName.Position.Y);
+                userNameLabel.Color = Color.Black;
+                Add(userNameLabel);
 
                 //Create a button to start connecting.
                 connectButton = new Button("button", "Connect", arial26, Color.Black);
@@ -93,7 +103,7 @@ namespace Wink
 
             Point screen = GameEnvironment.Screen;
             //Make a TabField and add the two tabs.
-            TabField tabField = new TabField(new List<TabField.Tab> { lanTab, onlineTab }, Color.Black, arial26, screen.X, screen.Y - 200);
+            TabField tabField = new TabField(new List<TabField.Tab> { lanTab, onlineTab }, Color.Black, new Color(230, 230, 230), arial26, screen.X, screen.Y - 200);
             Add(tabField);
 
             //Create a button to go back to the main menu.

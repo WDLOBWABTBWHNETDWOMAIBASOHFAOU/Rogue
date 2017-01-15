@@ -161,8 +161,6 @@ namespace Wink
 
         public void ComputeVisibility()
         {
-            //foreach (Tile t in tf.Objects) // darken the tiles out of range
-            //    t.Visible = false; 
             TileField tf = GameWorld.Find("TileField") as TileField;
             Point pos = Tile.TilePosition;
 
