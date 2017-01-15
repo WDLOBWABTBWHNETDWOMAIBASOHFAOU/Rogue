@@ -169,7 +169,7 @@ public abstract class GameObject : IGameLoopObject, ISerializable
         get { return id; }
     }
     
-    public bool Visible
+    public virtual bool Visible
     {
         get { return visible; }
         set { visible = value; }
