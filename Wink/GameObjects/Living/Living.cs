@@ -6,7 +6,7 @@ using System.Runtime.Serialization;
 namespace Wink
 {
     [Serializable]
-    public abstract partial class Living : AnimatedGameObject, ITileObject, IGameObjectContainer
+    public abstract partial class Living : AnimatedGameObject, ITileObject, IGameObjectContainer, IViewer
     {
         private int timeleft;
         private bool startTimer;
@@ -14,7 +14,7 @@ namespace Wink
         protected string idleAnimation, moveAnimation, dieAnimation;
         private string dieSound;
         
-        protected float FOVlength;
+        protected float viewDistance;
         
         public InventoryBox Inventory { get { return inventory; } }
         private InventoryBox inventory;
@@ -31,6 +31,10 @@ namespace Wink
         private EquipmentSlot Ring2 { get { return equipmentSlots.Find("ringSlot2") as EquipmentSlot; } }
         #endregion
 
+        public float ViewDistance
+        {
+            get { return viewDistance; }
+        }
         public Tile Tile
         {
             get
@@ -41,12 +45,10 @@ namespace Wink
                     return null;
             }
         }
-
         public virtual Point PointInTile
         {
             get { return new Point(Tile.TileWidth / 2, Tile.TileHeight); }
         }
-
         public virtual bool BlocksTile
         {
             get { return true; }
@@ -57,7 +59,7 @@ namespace Wink
             SetStats();
             InitAnimation();
             timeleft = 1000;
-            this.FOVlength = FOVlength;
+            viewDistance = FOVlength;
 
             GameObjectGrid itemGrid = new GameObjectGrid(3, 6, 0, "");
             inventory = new InventoryBox(itemGrid);
@@ -67,14 +69,6 @@ namespace Wink
             equipmentSlots.Add(new EquipmentSlot(typeof(BodyEquipment), id: "bodySlot"));
             equipmentSlots.Add(new EquipmentSlot(typeof(RingEquipment), id: "ringSlot1"));
             equipmentSlots.Add(new EquipmentSlot(typeof(RingEquipment), id: "ringSlot2"));
-        }
-
-        public override void Replace(GameObject replacement)
-        {
-            if (inventory != null && inventory.GUID == replacement.GUID)
-                inventory = replacement as InventoryBox;
-
-            base.Replace(replacement);
         }
 
         #region Serialization
@@ -113,6 +107,7 @@ namespace Wink
             vitality = info.GetInt32("vitality");
             creatureLevel = info.GetInt32("creatureLevel");
             baseReach = info.GetInt32("baseReach");
+            viewDistance = info.GetInt32("viewDistance");
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
@@ -152,8 +147,29 @@ namespace Wink
             info.AddValue("wisdom", wisdom);
             info.AddValue("luck", luck);
             info.AddValue("baseReach", baseReach);
+            info.AddValue("viewDistance", viewDistance);
         }
         #endregion
+
+        public override void Replace(GameObject replacement)
+        {
+            if (inventory != null && inventory.GUID == replacement.GUID)
+                inventory = replacement as InventoryBox;
+
+            base.Replace(replacement);
+        }
+
+        public void ComputeVisibility()
+        {
+            //foreach (Tile t in tf.Objects) // darken the tiles out of range
+            //    t.Visible = false; 
+            TileField tf = GameWorld.Find("TileField") as TileField;
+            Point pos = Tile.TilePosition;
+
+            ShadowCast.ComputeVisibility(tf, pos.X, pos.Y, this);
+            //skill idea: peek corner, allows the player to move its FOV position 1 tile in N,S,E or W direction,
+            //allowing the player to peek around a corner into a halway whithout actualy stepping out
+        }
 
         public List<GameObject> DoAllBehaviour()
         {

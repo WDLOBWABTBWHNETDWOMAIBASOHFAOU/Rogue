@@ -15,7 +15,7 @@ namespace Wink
         {
             get { return Health > 0; }
         }
-
+        
         public Enemy(int layer, string id = "Enemy", float FOVlength = 8.5f) : base(layer, id,FOVlength)
         {
         }
@@ -110,22 +110,19 @@ namespace Wink
 
         public void InitGUI(Dictionary<string, object> guiState)
         {
-            //if (GameWorld != null)
-            //{
-                //Healthbar
-                if (GameWorld.Find("HealthBar" + guid.ToString()) == null)
-                {
-                    SpriteFont textfieldFont = GameEnvironment.AssetManager.GetFont("Arial26");
-                    hpBar = new Bar<Enemy>(this, e => e.Health, e => e.MaxHealth, textfieldFont, Color.Red, 2, "HealthBar" + guid.ToString(), 1.0f, 1f, false);
-                    (GameWorld.Find("PlayingGui") as PlayingGUI).Add(hpBar);
-                }
-                else
-                {
-                    hpBar = GameWorld.Find("HealthBar" + guid.ToString()) as Bar<Enemy>;
-                    hpBar.SetValueObject(this);
-                }
-                PositionHPBar();
-            //}
+            if (GameWorld.Find("HealthBar" + guid.ToString()) == null)
+            {
+                SpriteFont textfieldFont = GameEnvironment.AssetManager.GetFont("Arial26");
+                hpBar = new Bar<Enemy>(this, e => e.Health, e => e.MaxHealth, textfieldFont, Color.Red, 2, "HealthBar" + guid.ToString(), 1.0f, 1f, false);
+                (GameWorld.Find("PlayingGui") as PlayingGUI).Add(hpBar);
+            }
+            else
+            {
+                hpBar = GameWorld.Find("HealthBar" + guid.ToString()) as Bar<Enemy>;
+                hpBar.SetValueObject(this);
+            }
+            hpBar.Visible = Tile.Visible;
+            PositionHPBar();
         }
 
         public void CleanupGUI(Dictionary<string, object> guiState)

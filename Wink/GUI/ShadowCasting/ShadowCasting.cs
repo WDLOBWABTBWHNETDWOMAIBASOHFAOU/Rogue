@@ -92,13 +92,13 @@ namespace Wink
         /// <param name="gridPosnX">The player's X-position within the grid.</param>
         /// <param name="gridPosnY">The player's Y-position within the grid.</param>
         /// <param name="viewRadius">Maximum view distance; can be a fractional value.</param>
-        public static void ComputeVisibility(ICellGrid grid, int gridPosnX, int gridPosnY, float viewRadius)
+        public static void ComputeVisibility(ICellGrid grid, int gridPosnX, int gridPosnY, IViewer viewer)
         {
             //Debug.Assert(gridPosn.x >= 0 && gridPosn.x < grid.xDim);
             //Debug.Assert(gridPosn.y >= 0 && gridPosn.y < grid.yDim);
-
+            
             // Viewer's cell is always visible.
-            grid.SetLight(gridPosnX, gridPosnY, 0.0f);
+            grid.SetLight(gridPosnX, gridPosnY, 0.0f, viewer);
 
             // Cast light into cells for each of 8 octants.
             //
@@ -112,7 +112,7 @@ namespace Wink
             // It's much tidier this way though.
             for (int txidx = 0; txidx < s_octantTransform.Length; txidx++)
             {
-                CastLight(grid, gridPosnX, gridPosnY, viewRadius, 1, 1.0f, 0.0f, s_octantTransform[txidx]);
+                CastLight(grid, gridPosnX, gridPosnY, viewer, 1, 1.0f, 0.0f, s_octantTransform[txidx]);
             }
         }
 
@@ -132,15 +132,15 @@ namespace Wink
         /// <param name="txfrm">Coordinate multipliers for the octant transform.</param>
         ///
         /// Maximum recursion depth is (Ceiling(viewRadius)).
-        private static void CastLight(ICellGrid grid, int gridPosnX, int gridPosnY, float viewRadius,
+        private static void CastLight(ICellGrid grid, int gridPosnX, int gridPosnY, IViewer viewer,
                 int startColumn, float leftViewSlope, float rightViewSlope, OctantTransform txfrm)
         {
             //Debug.Assert(leftViewSlope >= rightViewSlope);
 
             // Used for distance test.
-            float viewRadiusSq = viewRadius * viewRadius;
+            float viewRadiusSq = viewer.ViewDistance * viewer.ViewDistance;
 
-            int viewCeiling = (int)Math.Ceiling(viewRadius);
+            int viewCeiling = (int)Math.Ceiling(viewer.ViewDistance);
 
             // Set true if the previous cell we encountered was blocked.
             bool prevWasBlocked = false;
@@ -220,7 +220,7 @@ namespace Wink
                     float distanceSquared = xc * xc + yc * yc;
                     if (distanceSquared <= viewRadiusSq)
                     {
-                        grid.SetLight(gridX, gridY, distanceSquared);
+                        grid.SetLight(gridX, gridY, distanceSquared, viewer);
                     }
 
                     bool curBlocked = grid.IsWall(gridX, gridY);
@@ -253,7 +253,7 @@ namespace Wink
                             // that here.
                             if (leftBlockSlope <= leftViewSlope)
                             {
-                                CastLight(grid, gridPosnX,gridPosnY, viewRadius, currentCol + 1,
+                                CastLight(grid, gridPosnX,gridPosnY, viewer, currentCol + 1,
                                     leftViewSlope, leftBlockSlope, txfrm);
                             }
 

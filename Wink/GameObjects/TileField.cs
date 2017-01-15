@@ -102,11 +102,11 @@ namespace Wink
             return !t.Passable; //TODO: make separate property in Tile that describes whether or not it obstructs line of sight. (!Passable as placeholder) 
         }
 
-        public void SetLight(int x, int y, float distanceSquared)
+        public void SetLight(int x, int y, float distanceSquared, IViewer seenBy)
         {
             //TODO: system to change the visibility of a tile
             Tile t = grid[x, y] as Tile;
-            t.Visible = true;
+            t.SeenBy(seenBy as Living, (float)Math.Sqrt(distanceSquared));
         }
 
         #region Table that maps 3x3 Permission arrays to an index.

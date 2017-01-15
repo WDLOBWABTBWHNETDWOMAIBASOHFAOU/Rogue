@@ -85,19 +85,6 @@ namespace Wink
             }
         }
 
-        public void ComputeVisibility()
-        {
-            TileField tf = GameWorld.Find("TileField") as TileField;
-            Point FOVpos = Tile.TilePosition;
-
-            foreach (Tile t in tf.Objects) // darken the tiles out of range
-                t.Visible = false; 
-
-            ShadowCast.ComputeVisibility(tf, FOVpos.X, FOVpos.Y, FOVlength);
-            //skill idea: peek corner, allows the player to move its FOV position 1 tile in N,S,E or W direction,
-            //allowing the player to peek around a corner into a halway whithout actualy stepping out
-        }
-
         /// <summary>
         /// returns the experience a creature requires for its next level.
         /// </summary>

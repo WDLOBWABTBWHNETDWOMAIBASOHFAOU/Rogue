@@ -82,7 +82,7 @@ namespace Wink
             SendOutUpdatedLevel(true);
         }
         
-        public void ProcessEvents(Client c)
+        public void ProcessAllEvents(Client c)
         {
             foreach (Event e in clientEvents[c])
             {
@@ -93,6 +93,20 @@ namespace Wink
                 }
             }
             clientEvents[c].Clear();
+        }
+
+        public void ProcessEvent(Client c)
+        {
+            if (clientEvents[c].Count > 0)
+            {
+                Event e = clientEvents[c][0];
+                if (e.Validate(Level))
+                {
+                    e.Sender = c;
+                    e.OnServerReceive(this);
+                    clientEvents[c].Remove(e);
+                }
+            }
         }
 
         public void IncomingEvent(Client c, Event e)
@@ -146,22 +160,36 @@ namespace Wink
         public override void Update(GameTime gameTime)
         {
             Level.Update(gameTime);
-            while (!(livingObjects[turnIndex] is Player))
+            
+            if (!(livingObjects[turnIndex] is Player))
             {
-                changedObjects.AddRange(livingObjects[turnIndex].DoAllBehaviour());
+                while (!(livingObjects[turnIndex] is Player))
+                {
+                    ComputeVisibilities();
+                    changedObjects.AddRange(livingObjects[turnIndex].DoAllBehaviour());
+                    UpdateTurn();
+                }
+            }
+            else
+            {
+                Client currentClient = Clients.Find(client => client.Player.GUID == livingObjects[turnIndex].GUID);
+                ComputeVisibilities();
+                ProcessEvent(currentClient);
                 UpdateTurn();
             }
-
-            Client currentClient = Clients.Find(client => client.Player.GUID == livingObjects[turnIndex].GUID);
-            ProcessEvents(currentClient);
-
-            UpdateTurn();
+            
             if (changedObjects.Count > 0)
             {
                 SendOutUpdatedLevel();
                 changedObjects.Clear();
             }
             //SendOutLevelChanges();
+        }
+
+        public void ComputeVisibilities()
+        {
+            foreach (Living l in livingObjects)
+                l.ComputeVisibility();
         }
 
         private void UpdateTurn()

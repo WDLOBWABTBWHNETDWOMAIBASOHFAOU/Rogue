@@ -34,6 +34,9 @@ namespace Wink
                 Player player = playerlist[p - 1] as Player;
                 player.MoveTo(level.Find("StartTile" + p) as Tile);
             }
+            foreach (Player p in playerlist)
+                p.ComputeVisibility();
+
             server.Level = level;
         }
 

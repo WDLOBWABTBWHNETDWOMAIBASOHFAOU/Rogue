@@ -129,7 +129,7 @@ namespace Wink
             { 
                 foreach (Client c in clients)
                 {
-                    (server as LocalServer).ProcessEvents(c);
+                    (server as LocalServer).ProcessAllEvents(c);
                 }
             }
         }
