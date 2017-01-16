@@ -390,7 +390,6 @@ namespace Wink
                 }
             }
 
-            //Exchange all remaining background tiles for Wall tiles.
             for (int x = 0; x < tf.Columns; x++)
             {
                 for (int y = 0; y < tf.Rows; y++)
@@ -406,10 +405,8 @@ namespace Wink
                 }
             }
 
-            //Add starttiles
-            for (int p = 0; p < 4; p++)
-                tf.Add(LoadStartTile(p+1), rooms[0].Location.ToRoundedPoint().X + p % 2, rooms[0].Location.ToRoundedPoint().Y + p / 2);
-            
+            tf.Add(LoadStartTile(), rooms[0].Location.ToRoundedPoint().X + 1, rooms[0].Location.ToRoundedPoint().Y + 1);
+
             //Must be last statement, executed after the Tilefield is done.
             tf.InitSpriteSheetIndexation();
             return tf;
