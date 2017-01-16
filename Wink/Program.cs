@@ -14,8 +14,7 @@ namespace Wink
         [STAThread]
         static void Main()
         {
-            using (var game = Treehugger.Instance)
-                game.Run();
+            Treehugger.RunGame();
         }
     }
 #endif

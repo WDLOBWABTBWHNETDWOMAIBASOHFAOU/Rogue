@@ -41,11 +41,12 @@ namespace Wink
             throw new NotImplementedException();
         }
 
-        public override void DoAction(LocalServer server)
+        protected override void DoAction(LocalServer server)
         {
             server.ChangedObjects.Add(player.Tile);
             server.ChangedObjects.Add(tile);
             player.MoveTo(tile);
+            player.ComputeVisibility();
         }
 
         protected override bool ValidateAction(Level level)
@@ -55,7 +56,7 @@ namespace Wink
 
             bool theSame = dx == 0 && dy == 0;
             bool withinReach = dx <= Tile.TileWidth && dy <= Tile.TileHeight;
-            return withinReach && !theSame && !tile.Blocked;
+            return withinReach && !theSame;
         }
     }
 }

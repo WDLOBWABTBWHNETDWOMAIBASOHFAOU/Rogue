@@ -55,7 +55,7 @@ namespace Wink
             startButton.Action = () =>
             {
                 LocalServer ls = (LocalServer)server;
-                ls.SetupLevel(1, clients);
+                ls.SetupLevel(1);
                 GameEnvironment.GameStateManager.SwitchTo("playingState");
             };
             startButton.Position = new Vector2(screen.X - startButton.Width - 50, screen.Y  - startButton.Height - 50);
@@ -65,6 +65,9 @@ namespace Wink
         private void AddClient(Client c)
         {
             clients.Add(c);
+            if (server is LocalServer)
+                (server as LocalServer).AddClient(c);
+
             ClientField cf = new ClientField(c, clients.Count);
             cf.Position = new Vector2(100, 100 * clients.Count);
             Add(cf);
@@ -119,12 +122,15 @@ namespace Wink
             }
 
             if (server is RemoteServer)
+            { 
                 server.Update(gameTime);
-
-            foreach (Client c in clients)
-            {
-                if (c is RemoteClient)
-                    (c as RemoteClient).ProcessInitialEvent();
+            }
+            else
+            { 
+                foreach (Client c in clients)
+                {
+                    (server as LocalServer).ProcessAllEvents(c);
+                }
             }
         }
 

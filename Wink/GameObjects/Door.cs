@@ -71,7 +71,7 @@ namespace Wink
                 Action onClick = () =>
                 {
                     //TODO: Replace this with Event.
-                    Player player = GameWorld.Find(p => p is Player) as Player;
+                    Player player = GameWorld.Find(p => p.Id == Player.LocalPlayerName) as Player;
 
                     int dx = (int)Math.Abs(player.Tile.Position.X - parentTile.Position.X);
                     int dy = (int)Math.Abs(player.Tile.Position.Y - parentTile.Position.Y);

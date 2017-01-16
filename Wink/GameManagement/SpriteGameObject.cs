@@ -79,7 +79,7 @@ public class SpriteGameObject : GameObject
             return;
 
         //Draw every SpriteGameObject in its position relative to the camera but only to the extent specified by the CameraSensitivity property.
-        sprite.Draw(spriteBatch, GlobalPosition - (cameraSensitivity * camera.GlobalPosition), origin, scale, DrawColor);
+        sprite.Draw(spriteBatch, camera.CalculateScreenPosition(this), origin, scale, DrawColor);
     }
 
     public override void DrawDebug(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
@@ -106,7 +106,7 @@ public class SpriteGameObject : GameObject
         }
     }
 
-    public void LoadSprite(int spriteSheetIndex)
+    public void LoadSprite(int spriteSheetIndex = 0)
     {
         if (spriteAssetName != "")
         {

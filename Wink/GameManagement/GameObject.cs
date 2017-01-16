@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using Wink;
 
@@ -31,9 +32,7 @@ public abstract class GameObject : IGameLoopObject, ISerializable
         guid = Guid.NewGuid();
     }
 
-    /// <summary>
-    /// Used for deserialization only.
-    /// </summary>
+    #region Serialization
     protected GameObject(SerializationInfo info, StreamingContext context)
     {
         if (context.GetVars().GUIDSerialization)
@@ -71,6 +70,7 @@ public abstract class GameObject : IGameLoopObject, ISerializable
         info.AddValue("visible", visible);
         info.AddValue("guid", guid);
     }
+    #endregion
 
     public virtual void HandleInput(InputHelper inputHelper)
     {
@@ -169,7 +169,7 @@ public abstract class GameObject : IGameLoopObject, ISerializable
         get { return id; }
     }
     
-    public bool Visible
+    public virtual bool Visible
     {
         get { return visible; }
         set { visible = value; }

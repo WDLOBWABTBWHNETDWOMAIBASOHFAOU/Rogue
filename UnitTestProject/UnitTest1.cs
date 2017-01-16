@@ -10,7 +10,6 @@ namespace UnitTestProject
         [TestInitialize()]
         public void Initialize()
         {
-            Treehugger th = Treehugger.Instance;
         }
 
         [TestMethod]

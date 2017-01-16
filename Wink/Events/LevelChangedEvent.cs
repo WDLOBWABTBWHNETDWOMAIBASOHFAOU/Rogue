@@ -36,8 +36,9 @@ namespace Wink
             {
                 client.Replace(go);
 
-                if (go is IGUIGameObject)
-                    (go as IGUIGameObject).InitGUI();
+                //if (go is IGUIGameObject)
+                    //(go as IGUIGameObject).InitGUI();
+                    //TODO: enable this again but make replace return the 
             }
                 
         }

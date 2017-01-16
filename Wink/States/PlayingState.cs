@@ -9,7 +9,10 @@ namespace Wink
         private Client client;
 
         GameSetupState.GameMode currentGameMode;
-        public GameSetupState.GameMode CurrentGameMode { get { return currentGameMode; } set { currentGameMode = value; } }
+        public GameSetupState.GameMode CurrentGameMode {
+            get { return currentGameMode; }
+            set { currentGameMode = value; }
+        }
 
         public void SetClientAndServer(Client client, Server server)
         {
@@ -53,7 +56,7 @@ namespace Wink
                 {
                     LocalServer ls = server as LocalServer;
                     // temp gameover check
-                    Player player = ls.Level.Find((p) => p.GetType() == typeof(Player)) as Player;
+                    Player player = ls.Level.Find(Player.LocalPlayerName) as Player;
                     if (player != null && player.Health <= 0)
                     {
                         GameOverState gos = GameEnvironment.GameStateManager.GetGameState("gameOverState") as GameOverState;
@@ -75,7 +78,8 @@ namespace Wink
 
         public void Reset()
         {
-            
+            if (server != null)
+                server.Reset();
         }
     }
 }

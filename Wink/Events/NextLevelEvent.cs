@@ -29,11 +29,14 @@ namespace Wink
         {
             Level level = new Level(server.LevelIndex + 1);
             List<GameObject> playerlist = server.Level.FindAll(obj => obj is Player);
-            foreach (GameObject obj in playerlist)
+            for (int p = 1; p <= playerlist.Count; p++)
             {
-                level.Add(obj);
-                (obj as Player).MoveTo(level.Find("startTile") as Tile);
+                Player player = playerlist[p - 1] as Player;
+                player.MoveTo(level.Find("StartTile" + p) as Tile);
             }
+            foreach (Player p in playerlist)
+                p.ComputeVisibility();
+
             server.Level = level;
         }
 

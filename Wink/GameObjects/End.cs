@@ -76,7 +76,7 @@ namespace Wink
             Action onClick = () =>
                 {
                     // correct player when in multiplayer?
-                    Player player = GameWorld.Find(p => p is Player) as Player;
+                    Player player = GameWorld.Find(p => p.Id == Player.LocalPlayerName) as Player;
 
                     int dx = (int)Math.Abs(player.Position.X - player.Origin.X - Position.X);
                     int dy = (int)Math.Abs(player.Position.Y - player.Origin.Y - Position.Y);

@@ -24,5 +24,6 @@ namespace Wink
         protected abstract void ReallySend(Event e);
 
         public abstract void Update(GameTime gameTime);
+        public abstract void Reset();
     }
 }

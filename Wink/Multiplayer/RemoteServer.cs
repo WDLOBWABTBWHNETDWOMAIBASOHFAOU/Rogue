@@ -17,6 +17,7 @@ namespace Wink
         private List<Event> pendingEvents; //From the server
 
         private Thread receivingThread;
+        private bool receiving;
 
         public Level Level
         {
@@ -35,6 +36,7 @@ namespace Wink
             pendingEvents = new List<Event>();
 
             StartReceiving();
+
             ReallySend(new JoinServerEvent(client.ClientName));
         }
 
@@ -57,17 +59,19 @@ namespace Wink
 
         private void StartReceiving()
         {
+            receivingThread = new Thread(new ThreadStart(Receive));
             receivingThread.Start();
+            receiving = true;
         }
 
         public void StopReceiving()
         {
-            receivingThread.Abort();
+            receiving = false;
         }
 
         private void Receive()
         {
-            while (true)
+            while (receiving)
             {
                 NetworkStream s = tcp.GetStream();
                 if (s.DataAvailable)
@@ -93,6 +97,12 @@ namespace Wink
                 binaryFormatter.Context = c;
                 binaryFormatter.Serialize(tcp.GetStream(), e);
             }
+        }
+
+        public override void Reset()
+        {
+            StopReceiving();
+            receivingThread.Join();
         }
     }
 }

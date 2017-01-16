@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace Wink
@@ -31,17 +32,31 @@ namespace Wink
 
         public override void OnClientReceive(LocalClient client)
         {
+            Dictionary<Guid, Dictionary<string, object>> guiStates = new Dictionary<Guid, Dictionary<string, object>>();
             if (client.Level != null)
+            {
                 foreach (GameObject obj in client.Level.FindAll(obj => obj is IGUIGameObject))
-                    (obj as IGUIGameObject).CleanupGUI();
+                {
+                    Dictionary<string, object> guiState = new Dictionary<string, object>();
+                    (obj as IGUIGameObject).CleanupGUI(guiState);
+                    guiStates.Add(obj.GUID, guiState);
+                }
+            }   
             
             client.Level = updatedLevel;
 
-            foreach (GameObject obj in updatedLevel.FindAll(obj => obj is IGUIGameObject)) 
-                (obj as IGUIGameObject).InitGUI();
+            foreach (GameObject obj in updatedLevel.FindAll(obj => obj is IGUIGameObject))
+            {
+                Dictionary<string, object> guiState;
+                guiStates.TryGetValue(obj.GUID, out guiState);
+                
+                (obj as IGUIGameObject).InitGUI(guiState ?? new Dictionary<string, object>());
+            }
 
-            if (!(GameEnvironment.GameStateManager.CurrentGameState is PlayingState))
-                GameEnvironment.GameStateManager.SwitchTo("playingState");
+            if (!client.Camera.BoundingBox.Intersects(client.Player.BoundingBox))
+            {
+                client.Camera.CenterOn(client.Player);
+            }
         }
 
         public override void OnServerReceive(LocalServer server)

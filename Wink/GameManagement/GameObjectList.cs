@@ -75,6 +75,14 @@ public class GameObjectList : GameObject, IGameObjectContainer
             obj.Parent = null;
     }
 
+    public void RemoveImmediatly(GameObject obj)
+    {
+        children.Remove(obj);
+
+        if (obj.Parent == this)
+            obj.Parent = null;
+    }
+
     public override void Replace(GameObject replacement)
     {
         for (int i = 0; i < children.Count; i++)
@@ -134,6 +142,11 @@ public class GameObjectList : GameObject, IGameObjectContainer
             }
         }
         return null;
+    }
+
+    public GameObject Find(string id)
+    {
+        return Find(obj => obj.Id == id);
     }
 
     public override void HandleInput(InputHelper inputHelper)

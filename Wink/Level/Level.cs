@@ -11,28 +11,30 @@ namespace Wink
     public partial class Level : GameObjectList
     {
         private int levelIndex;
+        public int Index
+        {
+            get { return levelIndex; }
+        }
 
         public Level(int levelIndex) : base(0, "Level")
         {
-            LoadTiles("Content/Levels/" + levelIndex + ".txt");
+            string path = "Content/Levels/" + levelIndex + ".txt";
+            if (File.Exists(path))
+            {
+                LoadTiles(path);
+            }
+            else
+            {
+                List<Room> rooms = GenerateRooms();
+                List<Tuple<Room, Room>> hallwayPairs = GenerateHallwayPairs(rooms);
+                GenerateTiles(rooms, hallwayPairs);
+            }
+
             this.levelIndex = levelIndex;
         }
 
-        public Level() : base(0, "Level")
-        {
-            List<Room> rooms = GenerateRooms();
-            List<Tuple<Room, Room>> hallwayPairs = GenerateHallwayPairs(rooms);
-            GenerateTiles(rooms, hallwayPairs);
-        }
-
         public Level(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
-        }
-        
-        public override void Update(GameTime gameTime)
-        {
-            base.Update(gameTime);
-        }
+        { }
 
         public void LoadTiles(string path)
         {
@@ -57,26 +59,24 @@ namespace Wink
                     tf.Add(t, x, y);
                 }
             }
+            //Putting the item one layer above the inventory box
+            int inventoryLayer = layer + 1;
+            int itemLayer = layer + 2;
             
-            Item testItem = new TestItem("empty:64:64:10:Pink", 1, 0);
-            List<Tile> floorTiles = tf.FindAll(obj => obj.GetType() == typeof(Tile) && (obj as Tile).TileType == TileType.Floor).Cast<Tile>().ToList();
-            floorTiles[Random.Next(floorTiles.Count)].PutOnTile(testItem);
-
-            // ENEMY CODE (test)
+            #region ENEMY CODE (test)
             for (int i = 0; i < 2; i++)
             {
-                Enemy testEnemy = new Enemy(0);
-
+                Enemy testEnemy = new Enemy(0, "Enemy" + i);
+                testEnemy.SetStats();
                 //First find all passable tiles then select one at random.
                 List<GameObject> tileCandidates = tf.FindAll(obj => obj is Tile && (obj as Tile).Passable);
                 Tile startTile = tileCandidates[GameEnvironment.Random.Next(tileCandidates.Count)] as Tile;
-
                 testEnemy.MoveTo(startTile);
             }
-            // END ENEMY CODE (test)
-            
+            #endregion
+
             tf.InitSpriteSheetIndexation();
-        }
+    }
 
         private Tile LoadTile(char tileType, int x, int y)
         {
@@ -85,7 +85,10 @@ namespace Wink
                 case '.':
                     return new Tile();
                 case '1':
-                    return LoadStartTile();
+                case '2':
+                case '3':
+                case '4':
+                    return LoadStartTile(tileType - 48);
                 case '#':
                     return LoadWallTile(x, y);
                 case '-':
@@ -96,6 +99,8 @@ namespace Wink
                     return LoadDoorTile();
                 case 'E':
                     return LoadEndTile();
+                case 't':
+                    return LoadTrapTile("spr_trap", TileType.Floor, x, y);
                 default:
                     return LoadWTFTile();
             }
@@ -103,7 +108,7 @@ namespace Wink
 
         private Tile LoadWallTile(int x, int y, string assetName = "test-wall-sprite2@10x5", string id = "")
         {
-            TileField tf = this.Find("TileField") as TileField;
+            TileField tf = Find("TileField") as TileField;
             Tile aboveTile = tf[x, y - 1] as Tile;
 
             Tile newTile;
@@ -125,9 +130,9 @@ namespace Wink
             return t;
         }
 
-        private Tile LoadStartTile(string assetName = "empty:64:64:10:Red")
+        private Tile LoadStartTile(int number, string assetName = "empty:64:64:10:Red")
         {
-            return LoadFloorTile("startTile", assetName);
+            return LoadFloorTile("StartTile" + number, assetName);
         }
 
         private Tile LoadDoorTile(string assetName = "spr_floor")
@@ -139,6 +144,17 @@ namespace Wink
             return t;
         }
 
+        private Tile LoadTrapTile(string name, TileType tileType, int x, int y)
+        {
+            Tile t = new Tile("empty:65:65:10:DarkGreen", tileType);
+            t.Passable = true;
+
+            //DarkRed for development testing, should have same or simular sprite as the tile in final version
+            Trap trap = new Trap("empty:65:65:10:DarkRed");
+            t.PutOnTile(trap);
+            return t;
+        }
+        
         private Tile LoadChestTile(string assetName = "spr_floor")
         {
             Tile t = LoadFloorTile("", assetName);

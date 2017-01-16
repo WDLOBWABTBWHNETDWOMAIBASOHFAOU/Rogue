@@ -1,69 +1,76 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
 using System.Runtime.Serialization;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Wink
 {
     public abstract class Item : SpriteGameObject, ITileObject
     {
-        int stackSize;
+        private int stackSize;
+        public int stackCount;
+        protected GameObjectList infoList;
 
+        public int getStackSize { get { return stackSize; } }
+        public GameObjectList InfoList { get { return infoList; } }
         public Point PointInTile
         {
             get { return new Point(0, 0); }
         }
-
         public bool BlocksTile
         {
             get { return false; }
         }
 
-        public Item(string assetName, int stackSize = 1, int layer = 0, string id = "") : base(assetName, layer, id)
+        public Item(string assetName, int stackSize = 1, int layer = 0, string id = "") : base(assetName, layer, id, cameraSensitivity: 0)
         {
-            this.stackSize = stackSize;    
+            //item id is needed to check if they are the same, for now assetname to test.
+            //TODO: if item are proceduraly generated, there should be an algorithm that generates an id that is the same if stats (and sprite) are the same.
+            if (id == "")
+                this.id = assetName;
+            else
+                this.id = id;
+
+            stackCount = 1;
+            this.stackSize = stackSize;
         }
 
+        #region Serialization
         public Item(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             stackSize = info.GetInt32("stackSize");
+            stackCount = info.GetInt32("stackCount");
+            infoList = info.GetValue("infoList", typeof(GameObjectList)) as GameObjectList;
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             base.GetObjectData(info, context);
             info.AddValue("stackSize", stackSize);
+            info.AddValue("stackCount", stackCount);
+            info.AddValue("infoList", infoList);
+        }
+        #endregion
+
+        public virtual void ItemInfo(ItemSlot caller)
+        {
+            infoList = new GameObjectList();
+            TextGameObject IDinfo = new TextGameObject("Arial26", 0, 0, "IDinfo." + this);
+            IDinfo.Text = Id;
+            IDinfo.Color = Color.Red;
+            infoList.Add(IDinfo);
         }
 
-        public override void Update(GameTime gameTime)
-        {
-            base.Update(gameTime);
-            if (Parent is MouseSlot)
-            {
-                cameraSensitivity = 0;
-            }
-            else if (Parent is GameObjectGrid)
-            {
-                cameraSensitivity = 0;
-            }
-            else
-            {
-                cameraSensitivity = 1;
-            }
-        }
+        public virtual void ItemAction(Living caller) { }
 
-        public override void HandleInput(InputHelper inputHelper)
+        public override void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
         {
-            Action onClick = () =>
-            {
-                PickupEvent PuE = new PickupEvent();
-                PuE.player = (Root as GameObjectList).Find("player_" + Environment.MachineName) as Player;
-                PuE.item = this;
-                PuE.target = PuE.item.Parent as GameObjectGrid;
-                Server.Send(PuE);
-            };
-            inputHelper.IfMouseLeftButtonPressedOn(this, onClick);
+            base.Draw(gameTime, spriteBatch, camera);
 
-            base.HandleInput(inputHelper);
+            if (stackCount > 1)
+            {
+                // Position and color subject to change
+                spriteBatch.DrawString(GameEnvironment.AssetManager.GetFont("Arial26"), stackCount.ToString(), GlobalPosition, Color.WhiteSmoke);
+            }
         }
     }   
 }

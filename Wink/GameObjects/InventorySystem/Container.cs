@@ -1,12 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
-using Microsoft.Xna.Framework.Graphics;
 using System.Runtime.Serialization;
+using System.Collections.Generic;
 
 namespace Wink
 {
     [Serializable]
-    public class Container : SpriteGameObject, IGUIGameObject, ITileObject
+    public class Container : SpriteGameObject, IGameObjectContainer, IGUIGameObject, ITileObject
     {
         private InventoryBox iBox;
         private Window iWindow;
@@ -15,15 +15,19 @@ namespace Wink
         {
             get { return new Point(0, 0); }
         }
-
         public bool BlocksTile
         {
             get { return true; }
         }
+        private Tile Tile
+        {
+            get { return parent as Tile; }
+        }
 
         public Container(string asset, GameObjectGrid itemGrid = null, int layer = 0, string id = "") : base(asset, layer, id)
         {
-            SetInventory();
+            itemGrid = itemGrid ?? new GameObjectGrid(2, 4);
+            iBox = new InventoryBox(itemGrid, layer + 1, "", cameraSensitivity);
         }
 
         #region Serialization
@@ -61,52 +65,48 @@ namespace Wink
             base.Replace(replacement);
         }
 
-        public void InitGUI()
+        public void InitGUI(Dictionary<string, object> guiState)
         {
             iWindow = new Window(iBox.ItemGrid.Columns * Tile.TileWidth, iBox.ItemGrid.Rows * Tile.TileHeight);
             iWindow.Add(iBox);
-            iWindow.Position = new Vector2(300, 300);
-            iWindow.Visible = false;
+            iWindow.Position = guiState.ContainsKey("iWindowPosition") ? (Vector2)guiState["iWindowPosition"] : new Vector2(300, 300);
+            iWindow.Visible = guiState.ContainsKey("iWindowVisibility") ? (bool)guiState["iWindowVisibility"] : false;
 
             PlayingGUI gui = GameWorld.Find("PlayingGui") as PlayingGUI;
             gui.Add(iWindow);
         }
 
-        public void CleanupGUI()
+        public void CleanupGUI(Dictionary<string, object> guiState)
         {
             PlayingGUI gui = GameWorld.Find("PlayingGui") as PlayingGUI;
             gui.Remove(iWindow);
-        }
 
-        public void SetInventory(GameObjectGrid itemGrid = null)
-        {
-            if (itemGrid == null)
-            {
-                iBox = new InventoryBox(new GameObjectGrid(2, 4), layer + 1, "", cameraSensitivity);
-            }
-            else
-            {
-                iBox = new InventoryBox(itemGrid, layer + 1, "", cameraSensitivity);
-            }
+            guiState.Add("iWindowVisibility", iWindow.Visible);
+            guiState.Add("iWindowPosition", iWindow.Position);
         }
 
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
             iBox.Update(gameTime);
-        }
 
-        public override void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
-        {
-            base.Draw(gameTime, spriteBatch, camera);
+            if (iWindow != null && iWindow.Visible)
+            {
+                Player player = GameWorld.Find(Player.LocalPlayerName) as Player;
+                int dx = (int)Math.Abs(player.Tile.Position.X - Tile.Position.X);
+                int dy = (int)Math.Abs(player.Tile.Position.Y - Tile.Position.Y);
+                bool withinReach = dx <= Tile.TileWidth && dy <= Tile.TileHeight;
+
+                if (!withinReach)
+                    iWindow.Visible = false;
+            }
         }
 
         public override void HandleInput(InputHelper inputHelper)
         {
             Action onClick = () =>
             {
-                // correct player when in multiplayer?
-                Player player = GameWorld.Find(p => p is Player) as Player;
+                Player player = GameWorld.Find(p => p.Id == Player.LocalPlayerName) as Player;
 
                 int dx = (int)Math.Abs(player.Tile.Position.X - GlobalPosition.X);
                 int dy = (int)Math.Abs(player.Tile.Position.Y - GlobalPosition.Y);
@@ -118,6 +118,16 @@ namespace Wink
             };
             inputHelper.IfMouseLeftButtonPressedOn(this, onClick);
             base.HandleInput(inputHelper);
+        }
+
+        public List<GameObject> FindAll(Func<GameObject, bool> del)
+        {
+            return iBox.FindAll(del);
+        }
+
+        public GameObject Find(Func<GameObject, bool> del)
+        {
+            return iBox.Find(del);
         }
     }
 }

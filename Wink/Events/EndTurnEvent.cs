@@ -41,7 +41,7 @@ namespace Wink
 
         public override bool Validate(Level level)
         {
-            return true;
+            return player.ActionPoints > 0;
         }
     }
 }
