@@ -55,15 +55,23 @@ namespace Wink
         {
             base.ItemInfo(caller);
 
-            TextGameObject requirementsText = new TextGameObject("Arial12", 0, 0, "reqInfoText." + this);
-            requirementsText.Text = "Requirements";
-            requirementsText.Color = Color.Red;
-            infoList.Add(requirementsText);
+            if(strRequirement != 0 || dexRequirement != 0 || intRequirement != 0)
+            {
+                TextGameObject emptyLine = new TextGameObject("Arial12", 0, 0, "emptyLine." + this);
+                emptyLine.Text = " ";
+                emptyLine.Color = Color.Red;
+                infoList.Add(emptyLine);
 
-            TextGameObject requirements = new TextGameObject("Arial12", 0, 0, "reqInfo." + this);
-            requirements.Text = "Str: " + strRequirement+ "   Dex: " + dexRequirement + "   Int: " + intRequirement ;
-            requirements.Color = Color.Red;
-            infoList.Add(requirements);
+                TextGameObject requirementsText = new TextGameObject("Arial12", 0, 0, "reqInfoText." + this);
+                requirementsText.Text = "Requirements";
+                requirementsText.Color = Color.Red;
+                infoList.Add(requirementsText);
+
+                TextGameObject requirements = new TextGameObject("Arial12", 0, 0, "reqInfo." + this);
+                requirements.Text = "Str: " + strRequirement+ "   Dex: " + dexRequirement + "   Int: " + intRequirement ;
+                requirements.Color = Color.Red;
+                infoList.Add(requirements);
+            }
         }
 
         public override void ItemAction(Living caller)

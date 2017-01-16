@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using Microsoft.Xna.Framework;
 
 namespace Wink
 {
@@ -121,27 +122,19 @@ namespace Wink
 
         // Change in code broke this part
 
-        /*public override void ItemInfo(ItemSlot caller)
+        public override void ItemInfo(ItemSlot caller)
         {
             base.ItemInfo(caller);
 
-            if (Multiplier)
+            foreach(RingEffect e in ringEffects)
             {
                 TextGameObject ringInfo = new TextGameObject("Arial12", 0, 0, "RingInfo." + this);
-                ringInfo.Text = "Multiplies " + RingType + " by " + RingValue;
+                ringInfo.Text = e.EffectType.ToString() + " Ring";// needs more telling information but not sure what to use/ how to read/reach it
                 ringInfo.Color = Color.Red;
                 ringInfo.Parent = infoList;
-                infoList.Children.Insert(1, ringInfo);
+                infoList.Children.Insert(1,ringInfo);
             }
-            else
-            {
-                TextGameObject ringInfo = new TextGameObject("Arial12", 0, 0, "RingInfo." + this);
-                ringInfo.Text = "Adds " + RingValue + " to " + RingType;
-                ringInfo.Color = Color.Red;
-                ringInfo.Parent = infoList;
-                infoList.Children.Insert(1, ringInfo);
-            }
-        }*/
+        }
     }
     [Serializable]
     class RingEffect : ISerializable

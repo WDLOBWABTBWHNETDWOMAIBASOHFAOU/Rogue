@@ -75,7 +75,8 @@ namespace Wink
                     throw new Exception("invalid damageType");
             }
             scalingText.Color = Color.Red;
-            infoList.Add(scalingText);
+            scalingText.Parent = infoList;
+            infoList.Children.Insert(2, scalingText);
         }
 
         public int Value(Living l)
