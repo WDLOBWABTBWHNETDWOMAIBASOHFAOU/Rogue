@@ -55,6 +55,17 @@ namespace Wink
                 Array pTypeValues = Enum.GetValues(typeof(PotionType));
                 potionType = (PotionType)pTypeValues.GetValue(GameEnvironment.Random.Next(pTypeValues.Length-1));
             }
+            switch (potionType)
+            {
+                case PotionType.Health:
+                    spriteAssetName = "empty:64:64:10:Red";//TODO: replace by correct spritename
+                    break;
+                case PotionType.Mana:
+                    spriteAssetName = "empty:64:64:10:Blue";//TODO: replace by correct spritename
+                    break;
+                default:
+                    throw new Exception("invalid potionType");
+            }
 
             // set power
             Array pPowerValues = Enum.GetValues(typeof(PotionPower));

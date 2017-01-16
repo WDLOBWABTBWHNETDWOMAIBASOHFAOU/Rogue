@@ -114,6 +114,8 @@ namespace Wink
                     strRequirement = GameEnvironment.Random.Next(baseValue) / highPriority;
                     dexRequirement = GameEnvironment.Random.Next(baseValue) / lowPriority;
                     intRequirement =0;
+
+                    spriteAssetName = "empty:64:64:10:DarkGoldenrod";//TODO: replace by correct spritename
                     break;
                 case WeaponType.bow:
                     //base values
@@ -132,6 +134,8 @@ namespace Wink
                     strRequirement = GameEnvironment.Random.Next(baseValue) / lowPriority;
                     dexRequirement = GameEnvironment.Random.Next(baseValue) / highPriority;
                     intRequirement = 0;
+
+                    spriteAssetName = "empty:64:64:10:Honeydew";//TODO: replace by correct spritename
                     break;
                 case WeaponType.staff:
                     //base values
@@ -149,6 +153,7 @@ namespace Wink
                     strRequirement = GameEnvironment.Random.Next(baseValue) / lowPriority;
                     dexRequirement = GameEnvironment.Random.Next(baseValue) / lowPriority;
                     intRequirement = GameEnvironment.Random.Next(baseValue) / highPriority;
+                    spriteAssetName = "empty:64:64:10:LightSkyBlue";//TODO: replace by correct spritename
                     break;
                 default:
                     throw new Exception("invalid weaponType");
