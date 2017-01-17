@@ -8,9 +8,7 @@ namespace Wink
     class Door : SpriteGameObject, ITileObject
     {
         private Tile parentTile;
-        public bool open;
-
-        public Tile ParentTile { get { return parentTile; } }
+        private bool open;
 
         public Door(Tile pTile, string assetName = "spr_door@2x1", int layer = 0, string id = "") : base(assetName, layer, id)
         {
@@ -70,29 +68,21 @@ namespace Wink
         {
             if (!open)
             {
-                Action onLeftClick = () =>//left click to open a closed door
+                Action onClick = () =>
                 {
-                    Player player = GameWorld.Find(p => p.Id == Player.LocalPlayerName) as Player;                    
-                    OpenDoorEvent oDe = new OpenDoorEvent(player, this);
-                    oDe.door = this;
-                    Server.Send(oDe);
-                };
-
-                inputHelper.IfMouseLeftButtonPressedOn(this, onLeftClick);
-
-                base.HandleInput(inputHelper);
-            }
-            else
-            {
-                Action onRightClick = () =>//right click to close a open door
-                {
+                    //TODO: Replace this with Event.
                     Player player = GameWorld.Find(p => p.Id == Player.LocalPlayerName) as Player;
-                    OpenDoorEvent oDe = new OpenDoorEvent(player, this);
-                    oDe.door = this;
-                    Server.Send(oDe);
+
+                    int dx = (int)Math.Abs(player.Tile.Position.X - parentTile.Position.X);
+                    int dy = (int)Math.Abs(player.Tile.Position.Y - parentTile.Position.Y);
+                    if (dx <= Tile.TileWidth && dy <= Tile.TileHeight)
+                    {
+                        SpriteSheetIndex = 1;
+                        open = true;
+                    }
                 };
 
-                inputHelper.IfMouseRightButtonPressedOn(this, onRightClick);
+                inputHelper.IfMouseLeftButtonPressedOn(this, onClick);
 
                 base.HandleInput(inputHelper);
             }

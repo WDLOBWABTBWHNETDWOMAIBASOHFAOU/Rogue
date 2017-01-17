@@ -99,9 +99,7 @@ namespace Wink
         public bool IsWall(int x, int y)
         {
             Tile t = grid[x, y] as Tile;
-            if(t.Blocked)
-                return true;
-            return t.TileType == TileType.Wall; //TODO: make separate property in Tile that describes whether or not it obstructs line of sight. (!Passable as placeholder) 
+            return !t.Passable; //TODO: make separate property in Tile that describes whether or not it obstructs line of sight. (!Passable as placeholder) 
         }
 
         public void SetLight(int x, int y, float distanceSquared, IViewer seenBy)

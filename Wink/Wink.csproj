@@ -48,7 +48,6 @@
     <Compile Include="Events\LevelChangedEvent.cs" />
     <Compile Include="Events\LevelUpdatedEvent.cs" />
     <Compile Include="Events\NextLevelEvent.cs" />
-    <Compile Include="Events\OpenDoorEvent.cs" />
     <Compile Include="Events\PickupEvent.cs" />
     <Compile Include="Events\PlayerMoveEvent.cs" />
     <Compile Include="Events\TakenPotionEvent.cs" />
