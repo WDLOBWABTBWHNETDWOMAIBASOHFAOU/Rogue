@@ -15,7 +15,7 @@ namespace Wink
             if (Weapon.SlotItem != null)
             {
                 WeaponEquipment weaponItem = Weapon.SlotItem as WeaponEquipment;
-                damageType = weaponItem.DamageType;
+                damageType = weaponItem.GetDamageType;
             }
 
             double hitNumber = GameEnvironment.Random.NextDouble();

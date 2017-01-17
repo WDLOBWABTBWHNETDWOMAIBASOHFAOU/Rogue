@@ -45,7 +45,7 @@ namespace Wink
         protected override void DoAction(LocalServer server)
         {
             potion.stackCount--;
-            switch (potion.PotionType)
+            switch (potion.GetPotionType)
             {
                 case PotionType.Health:
                     player.Health += potion.PotionValue;
@@ -60,7 +60,7 @@ namespace Wink
 
         protected override bool ValidateAction(Level level)
         {
-            switch (potion.PotionType)
+            switch (potion.GetPotionType)
             {
                 case PotionType.Health:
                     if(!(player.Health >= player.MaxHealth))
