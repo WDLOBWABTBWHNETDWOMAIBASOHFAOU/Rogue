@@ -46,6 +46,11 @@ namespace Wink
             return ValidateAction(level) && player.ActionPoints >= Cost;
         }
 
+        public override void OnClientReceive(LocalClient client)
+        {
+            throw new NotImplementedException();
+        }
+
         protected abstract bool ValidateAction(Level level);
         protected abstract void DoAction(LocalServer server);
     }

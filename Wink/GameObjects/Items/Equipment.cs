@@ -17,6 +17,25 @@ namespace Wink
         protected int dexRequirement;
         protected int intRequirement;
 
+        /// <summary>
+        /// Generated equipment
+        /// </summary>
+        /// <param name="layer"></param>
+        /// <param name="stackSize"></param>
+        public Equipment(int floorNumber,  int layer = 0, int stackSize = 1) : base(floorNumber,stackSize, layer)
+        {
+        }
+
+        /// <summary>
+        /// specific equipment
+        /// </summary>
+        /// <param name="assetName"></param>
+        /// <param name="id"></param>
+        /// <param name="layer"></param>
+        /// <param name="stackSize"></param>
+        /// <param name="strRequirement"></param>
+        /// <param name="dexRequirement"></param>
+        /// <param name="intRequirement"></param>
         public Equipment(string assetName, string id, int layer = 0, int stackSize = 1, int strRequirement = 0, int dexRequirement = 0, int intRequirement = 0) : base(assetName, stackSize, layer, id)
         {
             this.strRequirement = strRequirement;
@@ -55,16 +74,33 @@ namespace Wink
         {
             base.ItemInfo(caller);
 
-            TextGameObject requirementsText = new TextGameObject("Arial12", 0, 0, "reqInfoText." + this);
-            requirementsText.Text = "Requirements";
-            requirementsText.Color = Color.Red;
-            infoList.Add(requirementsText);
+            if(strRequirement != 0 || dexRequirement != 0 || intRequirement != 0)
+            {
+                TextGameObject emptyLine = new TextGameObject("Arial12", 0, 0, "emptyLine." + this);
+                emptyLine.Text = " ";
+                emptyLine.Color = Color.Red;
+                infoList.Add(emptyLine);
 
-            TextGameObject requirements = new TextGameObject("Arial12", 0, 0, "reqInfo." + this);
-            requirements.Text = "Str: " + strRequirement+ "   Dex: " + dexRequirement + "   Int: " + intRequirement ;
-            requirements.Color = Color.Red;
-            infoList.Add(requirements);
+                TextGameObject requirementsText = new TextGameObject("Arial12", 0, 0, "reqInfoText." + this);
+                requirementsText.Text = "Requirements";
+                requirementsText.Color = Color.Red;
+                infoList.Add(requirementsText);
+
+                TextGameObject requirements = new TextGameObject("Arial12", 0, 0, "reqInfo." + this);
+                requirements.Text = "Str: " + strRequirement+ "   Dex: " + dexRequirement + "   Int: " + intRequirement ;
+                requirements.Color = Color.Red;
+                infoList.Add(requirements);
+            }
         }
+
+        #region BonusValues
+        protected int LowBonusValue(int baseBonusValue)
+        { return (GameEnvironment.Random.Next(baseBonusValue) - baseBonusValue / 2) / 10; }
+        protected int MediumBonusValue(int baseBonusValue)
+        { return (GameEnvironment.Random.Next(baseBonusValue)) / 10; }
+        protected int HighBonusValue(int baseBonusValue)
+        { return (GameEnvironment.Random.Next(baseBonusValue) + baseBonusValue / 2) / 10; }
+        #endregion
 
         public override void ItemAction(Living caller)
         {

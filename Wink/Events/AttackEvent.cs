@@ -50,13 +50,29 @@ namespace Wink
 
         protected override bool ValidateAction(Level level)
         {
-            Vector2 delta = Defender.Tile.GlobalPosition - Attacker.Tile.GlobalPosition;
+            return AbleToHit(Attacker, Defender);
+        }
 
-            double distance = Math.Sqrt(Math.Pow(delta.X, 2) + Math.Pow(delta.Y, 2));
-            double reach = Tile.TileWidth * Attacker.Reach;
+        public static bool AbleToHit(Living att, Living def)
+        {
+            if (def.Tile.GetSeenBy.ContainsKey(att))
+            {
+                //plus a half tile to get the more natural reach area we discussed (melee can also attack 1 tile diagonaly) 
 
-            bool result = distance <= reach;
-            return result;
+                // GlobalPositon based
+                //Vector2 delta = Defender.Tile.GlobalPosition - Attacker.Tile.GlobalPosition;
+                //double reach = Tile.TileWidth * Attacker.Reach + Tile.TileWidth/2; 
+
+                //TilePosition based
+                Point delta = def.Tile.TilePosition - att.Tile.TilePosition;
+                double reach = att.Reach + 0.5f;
+
+                double distance = Math.Sqrt(Math.Pow(delta.X, 2) + Math.Pow(delta.Y, 2));
+
+                bool result = distance <= reach;
+                return result;
+            }
+            return false;
         }
     }
 }

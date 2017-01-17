@@ -28,6 +28,8 @@ namespace Wink
         //Dictionary containing what Living objects saw this tile this tick and at what distance;
         protected Dictionary<Living, float> seenBy;
 
+        public Dictionary<Living, float> GetSeenBy { get { return seenBy; } }
+
         public GameObjectList OnTile
         {
             get { return onTile; }

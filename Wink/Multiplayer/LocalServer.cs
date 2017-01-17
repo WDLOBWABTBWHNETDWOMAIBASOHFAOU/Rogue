@@ -104,7 +104,7 @@ namespace Wink
             clientEvents[c].Clear();
         }
 
-        public void ProcessEvent(Client c)
+        public void ProcessActionEvents(Client c)
         {
             if (clientEvents[c].Count > 0)
             {
@@ -115,6 +115,8 @@ namespace Wink
                     if (e.OnServerReceive(this))
                         clientEvents[c].Remove(e);
                 }
+                else
+                    clientEvents[c].Remove(e);
             }
         }
 
@@ -186,7 +188,7 @@ namespace Wink
             {
                 Client currentClient = Clients.Find(client => client.Player.GUID == livingObjects[turnIndex].GUID);
                 ComputeVisibilities();
-                ProcessEvent(currentClient);
+                ProcessActionEvents(currentClient);
                 UpdateTurn();
             }
             

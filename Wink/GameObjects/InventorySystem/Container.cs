@@ -10,6 +10,9 @@ namespace Wink
     {
         private InventoryBox iBox;
         private Window iWindow;
+        int clickCount;
+        int floorNumber;
+        public InventoryBox IBox { get { return iBox; } }
 
         public Point PointInTile
         {
@@ -24,10 +27,12 @@ namespace Wink
             get { return parent as Tile; }
         }
 
-        public Container(string asset, GameObjectGrid itemGrid = null, int layer = 0, string id = "") : base(asset, layer, id)
+        public Container(string asset, int floorNumber, GameObjectGrid itemGrid = null, int layer = 0, string id = "") : base(asset, layer, id)
         {
             itemGrid = itemGrid ?? new GameObjectGrid(2, 4);
             iBox = new InventoryBox(itemGrid, layer + 1, "", cameraSensitivity);
+            clickCount = 0;
+            this.floorNumber = floorNumber;
         }
 
         #region Serialization
@@ -41,6 +46,8 @@ namespace Wink
             {
                 iBox = info.GetValue("iBox", typeof(InventoryBox)) as InventoryBox;
             }
+            clickCount = info.GetInt32("clickCount");
+            floorNumber = info.GetInt32("floorNumber");
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
@@ -53,6 +60,9 @@ namespace Wink
             {
                 info.AddValue("iBox", iBox); 
             }
+            info.AddValue("clickCount", clickCount);
+            info.AddValue("floorNumber", floorNumber);
+
             base.GetObjectData(info, context);
         }
         #endregion
@@ -102,6 +112,47 @@ namespace Wink
             }
         }
 
+        void InitContents(int floorNumber)
+        {
+            for(int x = 0; x < IBox.ItemGrid.Columns; x++)
+            {
+                int i=x % 4;
+                int spawnChance;
+                Item newItem;
+                switch (i)
+                {
+                    #region cases
+                    case 0:
+                        spawnChance = 50;
+                        newItem = new Potion(floorNumber);
+                        break;
+                    case 1:
+                        spawnChance = 30;
+                        newItem = new WeaponEquipment(floorNumber);
+                        break;
+                    case 2:
+                        spawnChance = 30;
+                        newItem = new BodyEquipment(floorNumber,3);
+                        break;
+                    case 3:
+                        spawnChance = 30;
+                        newItem = new RingEquipment("empty:64:64:10:Gold");
+                        break;
+                    default:
+                        throw new Exception("wtf");
+                        #endregion
+                }
+                for (int y = 0; y < IBox.ItemGrid.Rows; y++)
+                {
+                    if(spawnChance > GameEnvironment.Random.Next(100))
+                    {
+                        ItemSlot cS = IBox.ItemGrid.Get(x,y) as ItemSlot;
+                        cS.ChangeItem(newItem);
+                    }
+                }
+            }
+        }
+
         public override void HandleInput(InputHelper inputHelper)
         {
             Action onClick = () =>
@@ -112,8 +163,14 @@ namespace Wink
                 int dy = (int)Math.Abs(player.Tile.Position.Y - GlobalPosition.Y);
                 if (dx <= Tile.TileWidth && dy <= Tile.TileHeight)
                 {
+                    //if(clickCount == 0)
+                    //{
+                    //    InitContents(floorNumber);
+                    //}
+                    //clickCount++;
                     iWindow.Visible = !iWindow.Visible;
                 }
+                //possibly generate items here on first click instead of at floor generation (possible to take specific players luck in to account)
 
             };
             inputHelper.IfMouseLeftButtonPressedOn(this, onClick);

@@ -45,45 +45,47 @@ namespace Wink
         public void GoTo(List<GameObject> changedObjects, Player player)
         {
             TileField tf = GameWorld.Find("TileField") as TileField;
-            
-            int dx = (int)Math.Abs(player.Tile.Position.X - Tile.Position.X);
-            int dy = (int)Math.Abs(player.Tile.Position.Y - Tile.Position.Y);
 
-            double distance = Math.Abs(Math.Sqrt(Math.Pow(dx, 2) + Math.Pow(dy, 2)));
-            double reach = Tile.TileWidth * Reach;
-
-            bool withinReach = distance <= reach;
-
-            if (withinReach)
+            if (player.Tile.GetSeenBy.ContainsKey(this))
             {
-                Attack(player);
-                actionPoints--;
-                changedObjects.Add(player);
-            }
-            else
-            {
-                PathFinder pf = new PathFinder(tf);
-                List<Tile> path = pf.ShortestPath(Tile, player.Tile);
-                if (path.Count > 0)
+                bool ableToHit = AttackEvent.AbleToHit(this, player);
+                if (ableToHit)
                 {
-                    changedObjects.Add(this);
-                    changedObjects.Add(Tile);
-                    changedObjects.Add(path[0]);
-
-                    MoveTo(path[0]);
+                    Attack(player);
                     actionPoints--;
+                    changedObjects.Add(player);
                 }
                 else
                 {
-                    Idle();
+                    PathFinder pf = new PathFinder(tf);
+                    List<Tile> path = pf.ShortestPath(Tile, player.Tile);
+                    // TODO?:(assuming there are tiles that cannot be walked over but can be fired over)
+                    // check if there is a path to a spot that can hit the player (move closer water to fire over it)
+                    if (path.Count > 0)
+                    {
+                        changedObjects.Add(this);
+                        changedObjects.Add(Tile);
+                        changedObjects.Add(path[0]);
+
+                        MoveTo(path[0]);
+                        actionPoints--;
+                    }
+                    else
+                    {
+                        Idle();
+                    }
                 }
+            }
+            else
+            {
+                Idle();
             }
         }
 
         private void Idle()
         {
-            //TODO: implement idle behaviour (right now for if there is no path to the player, later for if it can't see the player.)
-            actionPoints--;
+            //TODO: implement idle behaviour (seeing the player part done)
+            actionPoints=0;//if this is reached the enemy has no other options than to skip its turn (reduses number of GoTo loops executed) compared to actionpoints--;
         }
         
         public override void HandleInput(InputHelper inputHelper)
