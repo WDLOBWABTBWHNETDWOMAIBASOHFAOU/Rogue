@@ -20,7 +20,28 @@ namespace Wink
         {
             get { return false; }
         }
+        /// <summary>
+        /// Generated Item
+        /// </summary>
+        /// <param name="stackSize"></param>
+        /// <param name="layer"></param>
+        public Item(int floorNumber, int stackSize = 1, int layer = 0) : base("empty:64:64:10:BlanchedAlmond", layer, "", cameraSensitivity: 0)
+        { //item id is needed to check if they are the same, for now assetname to test.
+            //TODO: if item are proceduraly generated, there should be an algorithm that generates an id that is the same if stats (and sprite) are the same.
+            if (id == "")
+                this.id = "empty:64:64:10:BlanchedAlmond";
 
+            stackCount = 1;
+            this.stackSize = stackSize;
+        }
+
+        /// <summary>
+        /// Specific Item
+        /// </summary>
+        /// <param name="assetName"></param>
+        /// <param name="stackSize"></param>
+        /// <param name="layer"></param>
+        /// <param name="id"></param>
         public Item(string assetName, int stackSize = 1, int layer = 0, string id = "") : base(assetName, layer, id, cameraSensitivity: 0)
         {
             //item id is needed to check if they are the same, for now assetname to test.
@@ -55,7 +76,7 @@ namespace Wink
         {
             infoList = new GameObjectList();
             TextGameObject IDinfo = new TextGameObject("Arial26", 0, 0, "IDinfo." + this);
-            IDinfo.Text = Id;
+            IDinfo.Text = Id.Split(':')[0];//only show first part of the id
             IDinfo.Color = Color.Red;
             infoList.Add(IDinfo);
         }

@@ -83,7 +83,7 @@
         /// <returns></returns>
         protected int MaxHP()
         {
-            int maxHP = (int)CalculateValue(40, vitality - 1, 4);
+            int maxHP = (int)CalculateValue(40, vitality - 1, 0.1);
             return maxHP;
         }
         public int MaxHealth { get { return Ringbonus(RingType.Vitality, MaxHP()); } }
@@ -94,7 +94,7 @@
         /// <returns></returns>
         protected int MaxManaPoints()
         {
-            int maxManaPoints = (int)CalculateValue(50, wisdom, 1);
+            int maxManaPoints = (int)CalculateValue(50, wisdom, 0.1);
             return maxManaPoints;
         }
         public int MaxMana { get { return MaxManaPoints(); } }

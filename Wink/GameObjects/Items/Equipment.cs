@@ -17,6 +17,25 @@ namespace Wink
         protected int dexRequirement;
         protected int intRequirement;
 
+        /// <summary>
+        /// Generated equipment
+        /// </summary>
+        /// <param name="layer"></param>
+        /// <param name="stackSize"></param>
+        public Equipment(int floorNumber,  int layer = 0, int stackSize = 1) : base(floorNumber,stackSize, layer)
+        {
+        }
+
+        /// <summary>
+        /// specific equipment
+        /// </summary>
+        /// <param name="assetName"></param>
+        /// <param name="id"></param>
+        /// <param name="layer"></param>
+        /// <param name="stackSize"></param>
+        /// <param name="strRequirement"></param>
+        /// <param name="dexRequirement"></param>
+        /// <param name="intRequirement"></param>
         public Equipment(string assetName, string id, int layer = 0, int stackSize = 1, int strRequirement = 0, int dexRequirement = 0, int intRequirement = 0) : base(assetName, stackSize, layer, id)
         {
             this.strRequirement = strRequirement;
@@ -73,6 +92,15 @@ namespace Wink
                 infoList.Add(requirements);
             }
         }
+
+        #region BonusValues
+        protected int LowBonusValue(int baseBonusValue)
+        { return (GameEnvironment.Random.Next(baseBonusValue) - baseBonusValue / 2) / 10; }
+        protected int MediumBonusValue(int baseBonusValue)
+        { return (GameEnvironment.Random.Next(baseBonusValue)) / 10; }
+        protected int HighBonusValue(int baseBonusValue)
+        { return (GameEnvironment.Random.Next(baseBonusValue) + baseBonusValue / 2) / 10; }
+        #endregion
 
         public override void ItemAction(Living caller)
         {
