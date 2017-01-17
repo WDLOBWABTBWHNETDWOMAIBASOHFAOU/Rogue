@@ -75,7 +75,11 @@ namespace Wink
             potionPower = (PotionPower)pPowerValues.GetValue(GameEnvironment.Random.Next(pPVNumber));
 
             //set number of
-            stackCount = GameEnvironment.Random.Next(1, (getStackSize*floorNumber)/getStackSize);
+            stackCount = GameEnvironment.Random.Next(1, (getStackSize*(floorNumber+1)));
+            if(stackCount > getStackSize)
+            {
+                stackCount = getStackSize;
+            }
         }
 
         void SetId()

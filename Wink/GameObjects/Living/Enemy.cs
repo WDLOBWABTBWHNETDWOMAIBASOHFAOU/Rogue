@@ -85,7 +85,7 @@ namespace Wink
         private void Idle()
         {
             //TODO: implement idle behaviour (seeing the player part done)
-            actionPoints--;
+            actionPoints=0;//if this is reached the enemy has no other options than to skip its turn (reduses number of GoTo loops executed) compared to actionpoints--;
         }
         
         public override void HandleInput(InputHelper inputHelper)

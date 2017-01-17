@@ -442,7 +442,7 @@ namespace Wink
                 }
             }
             tf.Add(LoadEndTile(), forEnd[0].Location.ToRoundedPoint().X + 1, forEnd[0].Location.ToRoundedPoint().Y + 1);
-            tf.Add(LoadChestTile(), forEnd[0].Location.ToRoundedPoint().X + forEnd[0].Size.X - 2, forEnd[0].Location.ToRoundedPoint().Y + 1);
+            tf.Add(LoadChestTile(levelIndex), forEnd[0].Location.ToRoundedPoint().X + forEnd[0].Size.X - 2, forEnd[0].Location.ToRoundedPoint().Y + 1);
             
             //Door spawn
             for (int i = 0; i < usedRooms.Count; i++)
@@ -475,7 +475,7 @@ namespace Wink
                 usedRooms.Remove(rooms[chestRoom]);
                 int xChest = rooms[chestRoom].Location.ToRoundedPoint().X + rooms[chestRoom].Size.X / 2;
                 int yChest = rooms[chestRoom].Location.ToRoundedPoint().Y + rooms[chestRoom].Size.Y / 2;
-                tf.Add(LoadChestTile(), xChest, yChest);
+                tf.Add(LoadChestTile(levelIndex), xChest, yChest);
             }
             //End test
 
@@ -488,17 +488,7 @@ namespace Wink
                 Tile spawnLocation = spawnLocations[GameEnvironment.Random.Next(spawnLocations.Count)] as Tile;
                 enemy.MoveTo(spawnLocation);
             }
-            //End test
-
-
-
-
-
-
-
-
-
-
+            //End test            
 
             //Must be last statement, executed after the Tilefield is done.
             tf.InitSpriteSheetIndexation();
