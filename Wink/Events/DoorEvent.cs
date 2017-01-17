@@ -45,7 +45,9 @@ namespace Wink
 
         protected override void DoAction(LocalServer server)
         {
+            door.Sprite.SheetIndex = (door.Sprite.SheetIndex + 1) % 2;
             door.Open();
+            player.ComputeVisibility();
             server.ChangedObjects.Add(door);
         }
 
