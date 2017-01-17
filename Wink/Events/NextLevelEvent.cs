@@ -54,7 +54,6 @@ namespace Wink
                 p.ComputeVisibility();
 
             server.Level = level;
-            return true;
         }
 
         protected override bool ValidateAction(Level level)
