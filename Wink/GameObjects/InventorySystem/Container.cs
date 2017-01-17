@@ -163,11 +163,11 @@ namespace Wink
                 int dy = (int)Math.Abs(player.Tile.Position.Y - GlobalPosition.Y);
                 if (dx <= Tile.TileWidth && dy <= Tile.TileHeight)
                 {
-                    if(clickCount == 0)
-                    {
-                        InitContents(floorNumber);
-                    }
-                    clickCount++;
+                    //if(clickCount == 0)
+                    //{
+                    //    InitContents(floorNumber);
+                    //}
+                    //clickCount++;
                     iWindow.Visible = !iWindow.Visible;
                 }
                 //possibly generate items here on first click instead of at floor generation (possible to take specific players luck in to account)

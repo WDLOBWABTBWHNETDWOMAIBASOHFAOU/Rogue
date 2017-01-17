@@ -159,43 +159,43 @@ namespace Wink
         {
             Tile t = LoadFloorTile("", assetName);
             Container chest = new Container("empty:64:64:10:Brown",levelIndex);
-            //for(int x = 0; x < chest.IBox.ItemGrid.Columns; x++)
-            //{
-            //    int i=x % 4;
-            //    int spawnChance;
-            //    Item newItem;
-            //    switch (i)
-            //    {
-            //        #region cases
-            //        case 0:
-            //            spawnChance = 50;
-            //            newItem = new Potion(floorNumber);
-            //            break;
-            //        case 1:
-            //            spawnChance = 30;
-            //            newItem = new WeaponEquipment(floorNumber);
-            //            break;
-            //        case 2:
-            //            spawnChance = 30;
-            //            newItem = new BodyEquipment(floorNumber,3);
-            //            break;
-            //        case 3:
-            //            spawnChance = 30;
-            //            newItem = new RingEquipment("empty:64:64:10:Gold");
-            //            break;
-            //        default:
-            //            throw new Exception("wtf");
-            //            #endregion
-            //    }
-            //    for (int y = 0; y < chest.IBox.ItemGrid.Rows; y++)
-            //    {
-            //        if(spawnChance > GameEnvironment.Random.Next(100))
-            //        {
-            //            ItemSlot cS = chest.IBox.ItemGrid.Get(x,y) as ItemSlot;
-            //            cS.ChangeItem(newItem);
-            //        }
-            //    }
-            //}
+            for (int x = 0; x < chest.IBox.ItemGrid.Columns; x++)
+            {
+                int i = x % 4;
+                int spawnChance;
+                Item newItem;
+                switch (i)
+                {
+                    #region cases
+                    case 0:
+                        spawnChance = 50;
+                        newItem = new Potion(floorNumber);
+                        break;
+                    case 1:
+                        spawnChance = 30;
+                        newItem = new WeaponEquipment(floorNumber);
+                        break;
+                    case 2:
+                        spawnChance = 30;
+                        newItem = new BodyEquipment(floorNumber, 3);
+                        break;
+                    case 3:
+                        spawnChance = 30;
+                        newItem = new RingEquipment("empty:64:64:10:Gold");
+                        break;
+                    default:
+                        throw new Exception("wtf");
+                        #endregion
+                }
+                for (int y = 0; y < chest.IBox.ItemGrid.Rows; y++)
+                {
+                    if (spawnChance > GameEnvironment.Random.Next(100))
+                    {
+                        ItemSlot cS = chest.IBox.ItemGrid.Get(x, y) as ItemSlot;
+                        cS.ChangeItem(newItem);
+                    }
+                }
+            }
 
             t.PutOnTile(chest);
             return t;
