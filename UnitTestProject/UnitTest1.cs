@@ -15,8 +15,8 @@ namespace UnitTestProject
         [TestMethod]
         public void TestLevelGeneration()
         {
-            Level level = new Level();
-            Debug.Write(level.ToString());
+            //Level level = new Level();
+            //Debug.Write(level.ToString());
         }
     }
 }
