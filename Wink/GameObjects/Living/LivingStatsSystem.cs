@@ -119,6 +119,13 @@
             return dodgeChance;
         }
 
+        protected bool TryHit(Living target)
+        {
+            double dodgeChance = DodgeChance();
+            double hitChance = target.HitChance();
+            return true;
+        }
+
         public int Reach
         {
             get
