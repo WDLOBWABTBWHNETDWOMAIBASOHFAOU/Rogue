@@ -487,7 +487,7 @@ namespace Wink
                 List<GameObject> spawnLocations = tf.FindAll(obj => obj is Tile && (obj as Tile).Passable);
                 Tile spawnLocation = spawnLocations[GameEnvironment.Random.Next(spawnLocations.Count)] as Tile;
                 enemy.MoveTo(spawnLocation);
-                enemy.SetStats(1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+                enemy.SetStats(1, 2, 2, 2, 2, 2, 2, 30, 5, 1);
             }
             //End test            
 

@@ -5,27 +5,43 @@ using System.Runtime.Serialization;
 namespace Wink
 {
     [Serializable]
-    class NextLevelEvent : Event
+    class NextLevelEvent : ActionEvent
     {
-        public NextLevelEvent()
+        private End end;
+
+        public NextLevelEvent(End end, Player player): base(player)
         {
+            this.end = end;
         }
 
+        #region Serialization
         public NextLevelEvent(SerializationInfo info, StreamingContext context) : base(info, context)
         {
+            end = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("endGUID"))) as End;
         }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            base.GetObjectData(info, context);
+            info.AddValue("endGUID", end.GUID.ToString());
+        }
+        #endregion
+
 
         public override bool GUIDSerialization
         {
             get { return false; }
         }
 
-        public override void OnClientReceive(LocalClient client)
+        protected override int Cost
         {
-            throw new NotImplementedException();
+            get
+            {
+                return 0;
+            }
         }
 
-        public override void OnServerReceive(LocalServer server)
+        protected override void DoAction(LocalServer server)
         {
             Level level = new Level(server.LevelIndex + 1);
             List<GameObject> playerlist = server.Level.FindAll(obj => obj is Player);
@@ -40,9 +56,12 @@ namespace Wink
             server.Level = level;
         }
 
-        public override bool Validate(Level level)
+        protected override bool ValidateAction(Level level)
         {
-            return true;
+            int dx = (int)Math.Abs(player.Tile.Position.X - end.Tile.Position.X);
+            int dy = (int)Math.Abs(player.Tile.Position.Y - end.Tile.Position.Y);
+
+            return dx <= Tile.TileWidth && dy <= Tile.TileHeight;
         }
     }
 }

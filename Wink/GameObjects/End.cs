@@ -15,6 +15,11 @@ namespace Wink
         private int levelIndex;
         private Level level;
 
+        public Tile Tile
+        {
+            get { return parentTile; }
+        }
+
         public Point PointInTile
         {
             get { return new Point(0, 0); }
@@ -75,17 +80,10 @@ namespace Wink
         {
             Action onClick = () =>
                 {
-                    // correct player when in multiplayer?
                     Player player = GameWorld.Find(p => p.Id == Player.LocalPlayerName) as Player;
 
-                    int dx = (int)Math.Abs(player.Position.X - player.Origin.X - Position.X);
-                    int dy = (int)Math.Abs(player.Position.Y - player.Origin.Y - Position.Y);
-
-                    if (dx <= Tile.TileWidth && dy <= Tile.TileHeight)
-                    {
-                        Event e = new NextLevelEvent();
-                        Server.Send(e);
-                    }
+                    Event e = new NextLevelEvent(this, player);
+                    Server.Send(e);
                 };
             inputHelper.IfMouseLeftButtonPressedOn(this, onClick);
             base.HandleInput(inputHelper);
