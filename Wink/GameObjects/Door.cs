@@ -6,7 +6,7 @@ using System.Collections.Generic;
 namespace Wink
 {
     [Serializable]
-    public class Door : SpriteGameObject, ITileObject, IGUIGameObject
+    public class Door : SpriteGameObject, ITileObject
     {
         private Tile parentTile;
         private bool open;
