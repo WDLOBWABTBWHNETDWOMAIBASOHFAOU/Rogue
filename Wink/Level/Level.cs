@@ -71,7 +71,7 @@ namespace Wink
                 //First find all passable tiles then select one at random.
                 List<GameObject> tileCandidates = tf.FindAll(obj => obj is Tile && (obj as Tile).Passable);
                 Tile startTile = tileCandidates[GameEnvironment.Random.Next(tileCandidates.Count)] as Tile;
-                testEnemy.MoveTo(startTile);
+                startTile.PutOnTile(testEnemy);
             }
             #endregion
 

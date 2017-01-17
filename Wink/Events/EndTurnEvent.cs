@@ -29,14 +29,15 @@ namespace Wink
             get { return false; }
         }
 
-        public override void OnClientReceive(LocalClient client)
+        public override bool OnClientReceive(LocalClient client)
         {
             throw new NotImplementedException();
         }
 
-        public override void OnServerReceive(LocalServer server)
+        public override bool OnServerReceive(LocalServer server)
         {
             server.EndTurn(player);
+            return true;
         }
 
         public override bool Validate(Level level)

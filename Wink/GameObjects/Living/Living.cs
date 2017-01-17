@@ -203,7 +203,7 @@ namespace Wink
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
-            if(healthPoints <= 0)
+            if (healthPoints <= 0)
             {
                 startTimer = true;
                 DeathFeedback("die", dieSound);
@@ -215,12 +215,12 @@ namespace Wink
                         timeleft -= gameTime.TotalGameTime.Seconds;
                 }
             }
-            else if(healthPoints > MaxHealth)
+            else if (healthPoints > MaxHealth)
             {
                 healthPoints = MaxHealth;
             }
 
-            if(manaPoints > MaxMana)
+            if (manaPoints > MaxMana)
             {
                 manaPoints = MaxMana;
             }
@@ -236,8 +236,14 @@ namespace Wink
                 oldTile.Remove(this);
 
             if (!t.PutOnTile(this))
+            {
                 if (!oldTile.PutOnTile(this))
                     throw new Exception();
+            }
+            else if (Visible)
+            {
+                LocalServer.SendToClients(new LivingMoveAnimationEvent(this, t));
+            }
         }
 
         public virtual List<GameObject> FindAll(Func<GameObject, bool> del)

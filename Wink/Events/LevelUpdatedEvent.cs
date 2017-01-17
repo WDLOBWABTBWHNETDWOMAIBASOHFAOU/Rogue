@@ -30,12 +30,13 @@ namespace Wink
             get { return false; }
         }
 
-        public override void OnClientReceive(LocalClient client)
+        public override bool OnClientReceive(LocalClient client)
         {
             Dictionary<Guid, Dictionary<string, object>> guiStates = new Dictionary<Guid, Dictionary<string, object>>();
             if (client.Level != null)
             {
-                foreach (GameObject obj in client.Level.FindAll(obj => obj is IGUIGameObject))
+                HashSet<GameObject> set = new HashSet<GameObject>(client.Level.FindAll(obj => obj is IGUIGameObject));
+                foreach (GameObject obj in set)
                 {
                     Dictionary<string, object> guiState = new Dictionary<string, object>();
                     (obj as IGUIGameObject).CleanupGUI(guiState);
@@ -45,7 +46,7 @@ namespace Wink
             
             client.Level = updatedLevel;
 
-            foreach (GameObject obj in updatedLevel.FindAll(obj => obj is IGUIGameObject))
+            foreach (GameObject obj in new HashSet<GameObject>(updatedLevel.FindAll(obj => obj is IGUIGameObject)))
             {
                 Dictionary<string, object> guiState;
                 guiStates.TryGetValue(obj.GUID, out guiState);
@@ -57,9 +58,10 @@ namespace Wink
             {
                 client.Camera.CenterOn(client.Player);
             }
+            return true;
         }
 
-        public override void OnServerReceive(LocalServer server)
+        public override bool OnServerReceive(LocalServer server)
         {
             throw new NotImplementedException();
         }

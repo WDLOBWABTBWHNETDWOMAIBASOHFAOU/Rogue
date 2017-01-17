@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
 using Microsoft.Xna.Framework;
 using System.Runtime.Serialization;
+using System;
 
 namespace Wink
 {
@@ -40,23 +40,6 @@ namespace Wink
             ReallySend(new JoinServerEvent(client.ClientName));
         }
 
-        public override void Update(GameTime gameTime)
-        {
-            ProcessEvents();
-        }
-
-        public void ProcessEvents()
-        {
-            foreach (Event e in pendingEvents)
-            {
-                if (e.Validate(client.Level))
-                {
-                    e.OnClientReceive(client);
-                }
-            }
-            pendingEvents.Clear();
-        }
-
         private void StartReceiving()
         {
             receivingThread = new Thread(new ThreadStart(Receive));
@@ -77,9 +60,8 @@ namespace Wink
                 if (s.DataAvailable)
                 {
                     System.Diagnostics.Debug.WriteLine("data is available");
-                    Event e = SerializationHelper.Deserialize(s, client, false) as Event; 
-                    //Event e = (Event)binaryFormatter.Deserialize(s);
-                    pendingEvents.Add(e);
+                    Event e = SerializationHelper.Deserialize(s, client, false) as Event;
+                    client.IncomingEvent(e);
                 }
                 else
                 {
@@ -103,6 +85,10 @@ namespace Wink
         {
             StopReceiving();
             receivingThread.Join();
+        }
+
+        public override void Update(GameTime gameTime)
+        {
         }
     }
 }

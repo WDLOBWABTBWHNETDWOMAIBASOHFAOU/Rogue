@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.IO;
+using System.Collections.Generic;
 
 namespace Wink
 {
@@ -11,6 +12,8 @@ namespace Wink
 
         private GameObjectList gameObjects;
         private Camera newCamera;
+
+        private List<Event> pendingEvents;
 
         public Level Level
         {
@@ -52,6 +55,9 @@ namespace Wink
             if (guid == Guid.Empty)
                 return null;
 
+            if (new HashSet<GameObject>(Level.FindAll(o => o.GUID == guid)).Count > 1)
+                throw new Exception("!");
+
             GameObject obj = Level.Find(o => o.GUID == guid);
             return obj;
         }
@@ -67,14 +73,10 @@ namespace Wink
 
             gameObjects = new GameObjectList();
             gameObjects.Add(new PlayingGUI());
+
+            pendingEvents = new List<Event>();
         }
-        /*
-        public void LoadPlayerGUI()
-        {
-            PlayingGUI pgui = gameObjects.Find(obj => obj is PlayingGUI) as PlayingGUI;
-            pgui.AddPlayerGUI(this);
-        }
-        */
+
         public void Replace(GameObject go)
         {
             gameObjects.Replace(go);
@@ -83,6 +85,9 @@ namespace Wink
         public override void Update(GameTime gameTime)
         {
             GUI.Update(gameTime);
+
+            if (pendingEvents.Count > 0)
+                ExecuteIfValid(pendingEvents[0]);
         }
 
         public void HandleInput(InputHelper inputHelper) 
@@ -109,20 +114,29 @@ namespace Wink
             spriteBatch.DrawString(sf, fps, new Vector2(1, 100), Color.Red);
         }
 
+        public void IncomingEvent(Event e)
+        {
+            pendingEvents.Add(e);
+        }
+
         public override void Send(Event e)
         {
             e = SerializationHelper.Clone(e, this, e.GUIDSerialization);
-
-            if (e.Validate(Level))
-                e.OnClientReceive(this);
+            pendingEvents.Add(e);
         }
 
         public override void SendPreSerialized(MemoryStream ms)
         {
             ms.Seek(0, SeekOrigin.Begin);
             Event e = SerializationHelper.Deserialize(ms, this, false) as Event;
+            pendingEvents.Add(e);
+        }
+
+        private void ExecuteIfValid(Event e)
+        {
             if (e.Validate(Level))
-                e.OnClientReceive(this);
+                if (e.OnClientReceive(this))
+                    pendingEvents.Remove(e);
         }
 
         public override void Reset()

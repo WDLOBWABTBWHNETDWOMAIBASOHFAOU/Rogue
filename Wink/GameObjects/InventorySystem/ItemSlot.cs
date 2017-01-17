@@ -117,7 +117,7 @@ namespace Wink
         public List<GameObject> FindAll(Func<GameObject, bool> del)
         {
             List<GameObject> result = new List<GameObject>();
-            if (del.Invoke(slotItem))
+            if (slotItem != null && del.Invoke(slotItem))
                 result.Add(slotItem);
             return result;
         }

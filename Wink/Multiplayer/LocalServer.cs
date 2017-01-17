@@ -8,6 +8,14 @@ namespace Wink
 {
     public class LocalServer : Server, ILocal
     {
+        public static void SendToClients(Event e)
+        {
+            if (instance is LocalServer)
+                (instance as LocalServer).SendToAllClients(e);
+            else
+                throw new Exception("Server is not local.");
+        }
+
         private Dictionary<Client, List<Event>> clientEvents;
         public List<Client> Clients
         {
@@ -74,7 +82,7 @@ namespace Wink
             {
                 Client c = Clients[i];
                 Player player = new Player(c.ClientName, Level.Layer);
-                player.MoveTo(Level.Find("StartTile" + (i + 1)) as Tile);
+                (Level.Find("StartTile" + (i + 1)) as Tile).PutOnTile(player);
                 player.ComputeVisibility();
             }
 
@@ -89,7 +97,8 @@ namespace Wink
                 if (e.Validate(Level))
                 {
                     e.Sender = c;
-                    e.OnServerReceive(this);
+                    if (e.OnServerReceive(this))
+                        clientEvents[c].Remove(e);
                 }
             }
             clientEvents[c].Clear();
@@ -103,8 +112,8 @@ namespace Wink
                 if (e.Validate(Level))
                 {
                     e.Sender = c;
-                    e.OnServerReceive(this);
-                    clientEvents[c].Remove(e);
+                    if (e.OnServerReceive(this))
+                        clientEvents[c].Remove(e);
                 }
             }
         }
@@ -133,14 +142,17 @@ namespace Wink
         private void SendOutUpdatedLevel(bool first = false)
         {
             LevelUpdatedEvent e = first ? new JoinedServerEvent(Level) : new LevelUpdatedEvent(Level);
+            SendToAllClients(e);
+        }
+
+        public void SendToAllClients(Event e)
+        {
             using (MemoryStream ms = new MemoryStream())
             {
                 SerializationHelper.Serialize(ms, e, this, e.GUIDSerialization);
                 ms.Seek(0, SeekOrigin.Begin);
-                foreach (Client c in Clients)
-                {
-                    c.SendPreSerialized(ms);
-                }
+                foreach (Client c in Clients) 
+                    c.SendPreSerialized(ms); 
             }
         }
 

@@ -20,12 +20,12 @@ namespace Wink
             get { return false; }
         }
 
-        public override void OnClientReceive(LocalClient client)
+        public override bool OnClientReceive(LocalClient client)
         {
             throw new NotImplementedException();
         }
 
-        public override void OnServerReceive(LocalServer server)
+        public override bool OnServerReceive(LocalServer server)
         {
             Level level = new Level(server.LevelIndex + 1);
             List<GameObject> playerlist = server.Level.FindAll(obj => obj is Player);
@@ -38,6 +38,7 @@ namespace Wink
                 p.ComputeVisibility();
 
             server.Level = level;
+            return true;
         }
 
         public override bool Validate(Level level)

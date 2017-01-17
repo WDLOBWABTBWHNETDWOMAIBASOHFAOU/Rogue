@@ -14,6 +14,7 @@ namespace Wink
             this.tile = tile;
         }
 
+        #region Serialization
         public PlayerMoveEvent(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             tile = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("tileGUID"))) as Tile;
@@ -25,6 +26,7 @@ namespace Wink
             info.AddValue("tileGUID", tile.GUID.ToString());
             base.GetObjectData(info, context);
         }
+        #endregion
 
         public override bool GUIDSerialization
         {
@@ -34,11 +36,6 @@ namespace Wink
         protected override int Cost
         {
             get { return 1; }
-        }
-
-        public override void OnClientReceive(LocalClient client)
-        {
-            throw new NotImplementedException();
         }
 
         protected override void DoAction(LocalServer server)
@@ -51,6 +48,8 @@ namespace Wink
 
         protected override bool ValidateAction(Level level)
         {
+            if (player.Tile == null)
+                return false;
             int dx = (int)Math.Abs(player.Tile.Position.X - tile.Position.X);
             int dy = (int)Math.Abs(player.Tile.Position.Y - tile.Position.Y);
 

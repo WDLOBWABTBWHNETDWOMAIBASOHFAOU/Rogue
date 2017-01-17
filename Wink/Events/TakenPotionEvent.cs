@@ -37,11 +37,6 @@ namespace Wink
             get { return true; }
         }
 
-        public override void OnClientReceive(LocalClient client)
-        {
-            throw new NotImplementedException();
-        }
-
         protected override void DoAction(LocalServer server)
         {
             potion.stackCount--;

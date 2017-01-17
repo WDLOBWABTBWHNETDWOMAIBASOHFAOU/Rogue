@@ -40,6 +40,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Events\ActionEvent.cs" />
+    <Compile Include="Events\AnimationEvent.cs" />
     <Compile Include="Events\AttackEvent.cs" />
     <Compile Include="Events\EndTurnEvent.cs" />
     <Compile Include="Events\Event.cs" />
@@ -47,6 +48,7 @@
     <Compile Include="Events\JoinServerEvent.cs" />
     <Compile Include="Events\LevelChangedEvent.cs" />
     <Compile Include="Events\LevelUpdatedEvent.cs" />
+    <Compile Include="Events\LivingMoveAnimationEvent.cs" />
     <Compile Include="Events\NextLevelEvent.cs" />
     <Compile Include="Events\PickupEvent.cs" />
     <Compile Include="Events\PlayerMoveEvent.cs" />
