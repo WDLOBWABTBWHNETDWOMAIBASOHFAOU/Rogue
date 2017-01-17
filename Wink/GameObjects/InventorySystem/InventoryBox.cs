@@ -31,6 +31,9 @@ namespace Wink
             ItemSlot testItem2 = itemGrid.Get(0, 1) as ItemSlot;
             testItem2.ChangeItem(new TestItem());
 
+
+            ItemSlot stafflvl0 = itemGrid.Get(1, 1) as ItemSlot;
+            stafflvl0.ChangeItem(new WeaponEquipment("empty:65:65:10:Aqua", "Staff", ))
             ItemSlot testItem3 = itemGrid.Get(1, 1) as ItemSlot;
             testItem3.ChangeItem(new WeaponEquipment("empty:65:65:10:Aqua","testWeapon",40,DamageType.Magic,1,2,1,0,0,0.1,0.1,0.1));
 
