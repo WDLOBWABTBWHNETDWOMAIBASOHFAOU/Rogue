@@ -62,6 +62,7 @@
     <Compile Include="GameObjects\Items\Equipment.cs" />
     <Compile Include="GameObjects\Items\Potion.cs" />
     <Compile Include="GameObjects\Items\Ring\RingEquipment.cs" />
+    <Compile Include="GameObjects\Items\Weapon\TestWeapon.cs" />
     <Compile Include="GameObjects\Items\Weapon\WeaponEquipment.cs" />
     <Compile Include="GUI\ShadowCasting\ICellGrid.cs" />
     <Compile Include="GUI\ShadowCasting\IViewer.cs" />
