@@ -9,6 +9,9 @@
         public int Dexterity { get { return Ringbonus(RingType.Dexterity, dexterity); } }
         public int Intelligence { get { return Ringbonus(RingType.Intelligence, intelligence); } }
         public int Strength { get { return Ringbonus(RingType.Strength, strength); } }
+        public int Wisdom { get { return Ringbonus(RingType.Wisdom, wisdom); } }
+        public int Vitality { get { return Ringbonus(RingType.Vitality, vitality); } }
+        public int Luck { get { return Ringbonus(RingType.Luck, luck); } }
         public int ActionPoints { get { return actionPoints; } set { actionPoints = value; } }
         public int Health { get { return healthPoints; } set { healthPoints = value; } }
         public int Mana { get { return manaPoints; } set { manaPoints = value; } }
@@ -83,7 +86,7 @@
         /// <returns></returns>
         protected int MaxHP()
         {
-            int maxHP = (int)CalculateValue(40, vitality - 1, 0.1);
+            int maxHP = (int)CalculateValue(40, Vitality - 1, 0.1);
             return maxHP;
         }
         public int MaxHealth { get { return Ringbonus(RingType.Vitality, MaxHP()); } }
@@ -94,7 +97,7 @@
         /// <returns></returns>
         protected int MaxManaPoints()
         {
-            int maxManaPoints = (int)CalculateValue(50, wisdom, 0.1);
+            int maxManaPoints = (int)CalculateValue(50, Wisdom, 0.1);
             return maxManaPoints;
         }
         public int MaxMana { get { return MaxManaPoints(); } }
@@ -105,7 +108,7 @@
         /// <returns></returns>
         protected double HitChance()
         {
-            double hitChance = CalculateValue(0.7, luck, 0.01);
+            double hitChance = CalculateValue(0.7, Luck, 0.01);
             return hitChance;
         }
 
@@ -115,7 +118,7 @@
         /// <returns></returns>
         protected double DodgeChance()
         {
-            double dodgeChance = CalculateValue(0.3, luck, 0.01);
+            double dodgeChance = CalculateValue(0.3, Luck, 0.01);
             return dodgeChance;
         }
 

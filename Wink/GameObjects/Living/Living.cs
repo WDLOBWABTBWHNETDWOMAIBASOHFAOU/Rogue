@@ -237,7 +237,7 @@ namespace Wink
 
             if (!t.PutOnTile(this))
                 if (!oldTile.PutOnTile(this))
-                    throw new Exception();
+                    throw new Exception();//appears that some times a enemy (i think) gets spawend at a invalid location
         }
 
         public virtual List<GameObject> FindAll(Func<GameObject, bool> del)
