@@ -408,7 +408,7 @@ namespace Wink
 
             //Add starttiles
             for (int p = 0; p < 4; p++)
-                tf.Add(LoadStartTile(p+1), rooms[0].Location.ToRoundedPoint().X + p % 2, rooms[0].Location.ToRoundedPoint().Y + p / 2);
+                tf.Add(LoadStartTile(p + 1), rooms[0].Location.ToRoundedPoint().X + 1 + p % 2, rooms[0].Location.ToRoundedPoint().Y + 1 + p / 2);
 
             //Generate EndTile
             List<Room> forEnd = new List<Room>();
@@ -484,9 +484,9 @@ namespace Wink
             for (int n = 0; n < numberOfEnemys; n++)
             {
                 Enemy enemy = new Enemy(0);
-                List<GameObject> spawnLocations = tf.FindAll(obj => obj is Tile && (obj as Tile).Passable);
+                List<GameObject> spawnLocations = tf.FindAll(obj => obj is Tile && (obj as Tile).Passable && !(obj as Tile).Blocked);
                 Tile spawnLocation = spawnLocations[GameEnvironment.Random.Next(spawnLocations.Count)] as Tile;
-                enemy.MoveTo(spawnLocation);
+                spawnLocation.PutOnTile(enemy);
                 enemy.SetStats(1, 2, 2, 2, 2, 2, 2, 30, 5, 1);
             }
             //End test            

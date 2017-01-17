@@ -14,6 +14,7 @@ namespace Wink
             updatedLevel = level;
         }
 
+        #region Serialization
         public LevelUpdatedEvent(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             updatedLevel = info.GetValue("updatedLevel", typeof(Level)) as Level;
@@ -24,6 +25,7 @@ namespace Wink
             info.AddValue("updatedLevel", updatedLevel);
             base.GetObjectData(info, context);
         }
+        #endregion
 
         public override bool GUIDSerialization
         {

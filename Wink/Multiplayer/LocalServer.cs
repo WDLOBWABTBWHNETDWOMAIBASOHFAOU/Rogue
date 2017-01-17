@@ -90,18 +90,24 @@ namespace Wink
             SendOutUpdatedLevel(true);
         }
         
-        public void ProcessAllEvents(Client c)
+        public void ProcessAllNonActionEvents()
         {
-            foreach (Event e in clientEvents[c])
+            foreach (Client c in clientEvents.Keys)
             {
-                if (e.Validate(Level))
+                List<Event> done = new List<Event>();
+                foreach (Event e in clientEvents[c])
                 {
-                    e.Sender = c;
-                    if (e.OnServerReceive(this))
-                        clientEvents[c].Remove(e);
+                    if (!(e is ActionEvent) && e.Validate(Level))
+                    {
+                        e.Sender = c;
+                        if (e.OnServerReceive(this))
+                            done.Add(e);
+                    }
                 }
+
+                foreach (Event e in done)
+                    clientEvents[c].Remove(e);
             }
-            clientEvents[c].Clear();
         }
 
         public void ProcessActionEvents(Client c)
@@ -109,14 +115,12 @@ namespace Wink
             if (clientEvents[c].Count > 0)
             {
                 Event e = clientEvents[c][0];
-                if (e.Validate(Level))
+                if (e is ActionEvent && e.Validate(Level))
                 {
                     e.Sender = c;
                     if (e.OnServerReceive(this))
                         clientEvents[c].Remove(e);
                 }
-                else
-                    clientEvents[c].Remove(e);
             }
         }
 
@@ -174,7 +178,9 @@ namespace Wink
         public override void Update(GameTime gameTime)
         {
             Level.Update(gameTime);
-            
+
+            ProcessAllNonActionEvents();
+
             if (!(livingObjects[turnIndex] is Player))
             {
                 while (!(livingObjects[turnIndex] is Player))
@@ -221,7 +227,9 @@ namespace Wink
         {
             if (livingObjects[turnIndex] == player)
             {
-                turnIndex = (turnIndex + 1) % livingObjects.Count;
+                player.ActionPoints = 0;
+                ComputeVisibilities();
+                UpdateTurn();
             }
         }
 

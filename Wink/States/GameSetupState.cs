@@ -122,14 +122,14 @@ namespace Wink
             }
 
             if (server is RemoteServer)
-            { 
-                server.Update(gameTime);
+            { //server == remote -> client is local
+                clients[0].Update(gameTime);
             }
             else
             { 
                 foreach (Client c in clients)
                 {
-                    (server as LocalServer).ProcessAllEvents(c);
+                    (server as LocalServer).ProcessAllNonActionEvents();
                 }
             }
         }

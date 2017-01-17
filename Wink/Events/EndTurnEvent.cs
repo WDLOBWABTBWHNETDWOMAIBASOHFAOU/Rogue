@@ -13,6 +13,7 @@ namespace Wink
             this.player = player;
         }
 
+        #region Serialization
         public EndTurnEvent(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             player = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("playerGUID"))) as Player;
@@ -23,6 +24,7 @@ namespace Wink
             info.AddValue("playerGUID", player.GUID.ToString());
             base.GetObjectData(info, context);
         }
+        #endregion
 
         public override bool GUIDSerialization
         {
