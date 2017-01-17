@@ -7,7 +7,7 @@ public class SpriteGameObject : GameObject
 {
     protected SpriteSheet sprite;
     protected string spriteAssetName;
-    protected int SpriteSheetIndex
+    public int SpriteSheetIndex
     {
         get { return sprite != null ? sprite.SheetIndex : -1; }
         set {

@@ -8,7 +8,9 @@ namespace Wink
     class Door : SpriteGameObject, ITileObject
     {
         private Tile parentTile;
-        private bool open;
+        public bool open;
+
+        public Tile ParentTile { get { return parentTile; } }
 
         public Door(Tile pTile, string assetName = "spr_door@2x1", int layer = 0, string id = "") : base(assetName, layer, id)
         {
@@ -68,21 +70,29 @@ namespace Wink
         {
             if (!open)
             {
-                Action onClick = () =>
+                Action onLeftClick = () =>//left click to open a closed door
                 {
-                    //TODO: Replace this with Event.
-                    Player player = GameWorld.Find(p => p.Id == Player.LocalPlayerName) as Player;
-
-                    int dx = (int)Math.Abs(player.Tile.Position.X - parentTile.Position.X);
-                    int dy = (int)Math.Abs(player.Tile.Position.Y - parentTile.Position.Y);
-                    if (dx <= Tile.TileWidth && dy <= Tile.TileHeight)
-                    {
-                        SpriteSheetIndex = 1;
-                        open = true;
-                    }
+                    Player player = GameWorld.Find(p => p.Id == Player.LocalPlayerName) as Player;                    
+                    OpenDoorEvent oDe = new OpenDoorEvent(player, this);
+                    oDe.door = this;
+                    Server.Send(oDe);
                 };
 
-                inputHelper.IfMouseLeftButtonPressedOn(this, onClick);
+                inputHelper.IfMouseLeftButtonPressedOn(this, onLeftClick);
+
+                base.HandleInput(inputHelper);
+            }
+            else
+            {
+                Action onRightClick = () =>//right click to close a open door
+                {
+                    Player player = GameWorld.Find(p => p.Id == Player.LocalPlayerName) as Player;
+                    OpenDoorEvent oDe = new OpenDoorEvent(player, this);
+                    oDe.door = this;
+                    Server.Send(oDe);
+                };
+
+                inputHelper.IfMouseRightButtonPressedOn(this, onRightClick);
 
                 base.HandleInput(inputHelper);
             }
