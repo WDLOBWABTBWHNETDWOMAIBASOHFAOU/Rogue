@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using System.Runtime.Serialization;
+using System.Collections.Generic;
 
 namespace Wink
 {
@@ -62,6 +63,7 @@ namespace Wink
         public void Open()
         {
             open = true;
+            SpriteSheetIndex = 1;
         }
 
         public Point PointInTile
@@ -81,7 +83,6 @@ namespace Wink
                 Action onClick = () =>
                 {
                     Player player = GameWorld.Find(p => p.Id == Player.LocalPlayerName) as Player;
-
                     Server.Send(new DoorEvent(this, player));
                 };
 
