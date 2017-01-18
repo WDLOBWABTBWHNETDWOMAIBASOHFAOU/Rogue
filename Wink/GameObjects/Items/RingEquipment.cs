@@ -25,7 +25,7 @@ namespace Wink
         protected double mulchance = 0.7;
         // acceptablePower is the maximum power for a single stat boost on a ring, can be changed for balancing
         // This should eventually be a function based on the floor the ring was found on
-        protected int acceptablePower = 500;
+        protected int acceptablePower = 5;
 
         // This dictionary will hold all of the multipliers for balancing rings for the different stats
         // for now these will all be set to 1
