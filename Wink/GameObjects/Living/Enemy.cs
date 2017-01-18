@@ -52,7 +52,13 @@ namespace Wink
                 if (ableToHit)
                 {
                     Attack(player);
-                    actionPoints--;
+
+                    int cost = BaseActionCost;
+                    if((EquipmentSlots.Find("bodySlot") as EquipmentSlot).SlotItem != null)
+                    {
+                        cost =(int)(cost * ((EquipmentSlots.Find("bodySlot") as EquipmentSlot).SlotItem as BodyEquipment).WalkCostMod);
+                    }
+                    actionPoints -= cost;
                     changedObjects.Add(player);
                 }
                 else
@@ -68,7 +74,7 @@ namespace Wink
                         changedObjects.Add(path[0]);
 
                         MoveTo(path[0]);
-                        actionPoints--;
+                        actionPoints -= BaseActionCost;
                     }
                     else
                     {

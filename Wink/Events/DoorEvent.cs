@@ -40,7 +40,7 @@ namespace Wink
 
         protected override int Cost
         {
-            get { return 1; }
+            get { return Living.BaseActionCost/2; }
         }
 
         protected override void DoAction(LocalServer server)

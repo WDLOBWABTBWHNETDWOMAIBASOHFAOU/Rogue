@@ -34,7 +34,7 @@ namespace Wink
 
         protected override int Cost
         {
-            get { return 1; }
+            get { return Living.BaseActionCost; }
         }
 
         public override bool GUIDSerialization

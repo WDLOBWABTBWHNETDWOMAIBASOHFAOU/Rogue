@@ -35,7 +35,16 @@ namespace Wink
 
         protected override int Cost
         {
-            get { return 1; }
+            get
+            {
+                int mc = Living.BaseActionCost;
+                if ((player.EquipmentSlots.Find("bodySlot") as EquipmentSlot).SlotItem != null)
+                {
+                    mc = (int)(mc * ((player.EquipmentSlots.Find("bodySlot") as EquipmentSlot).SlotItem as BodyEquipment).WalkCostMod);
+                }
+
+                return mc;
+            }
         }
 
         protected override void DoAction(LocalServer server)

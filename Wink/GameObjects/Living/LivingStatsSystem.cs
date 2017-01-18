@@ -2,7 +2,8 @@
 {
     public abstract partial class Living : AnimatedGameObject
     {
-        public const int MaxActionPoints = 4;
+        public const int MaxActionPoints = 35;
+        public const int BaseActionCost = 10;
 
         protected int manaPoints, healthPoints, actionPoints, baseAttack, baseArmor, vitality, strength, dexterity, wisdom, luck, intelligence, creatureLevel, baseReach;
 
