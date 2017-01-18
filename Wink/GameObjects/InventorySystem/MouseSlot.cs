@@ -83,10 +83,7 @@ namespace Wink
             target.ChangeItem(oldItem);
             item = newItem;
             if (item != null)
-            {
                 item.Parent = this;
-                item.Position = this.position;//should fix visual glich but somehow position is always 0,0 when called here but not elsewhere. position gets reset somewhere?
-            }
         }
 
         public void InfoScreen(ItemSlot caller)
@@ -166,7 +163,6 @@ namespace Wink
         {
             base.HandleInput(inputHelper);
             Position = inputHelper.MousePosition + new Vector2(10, 10);
-
             if (caller != null)
             {
                 // check if mouse is still above the caller, if not dissable infoWindow

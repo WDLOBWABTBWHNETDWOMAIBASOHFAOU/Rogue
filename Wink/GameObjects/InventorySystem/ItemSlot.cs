@@ -62,10 +62,7 @@ namespace Wink
         {
             slotItem = newItem;
             if (slotItem != null)
-            {
                 slotItem.Parent = this;
-                slotItem.Position = Parent.Position;//partial (placing) fix for visual glich when placing and picking up item
-            }
         }
 
         public override void Update(GameTime gameTime)
