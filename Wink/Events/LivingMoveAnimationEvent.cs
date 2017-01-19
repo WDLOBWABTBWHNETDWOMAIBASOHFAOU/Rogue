@@ -44,6 +44,8 @@ namespace Wink
         
         public override void PreAnimate(LocalClient client)
         {
+
+
             origin = toMove.Tile;
             toMove.Position = toMove.GlobalPosition;
             client.Level.Add(toMove);
