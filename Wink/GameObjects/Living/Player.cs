@@ -7,6 +7,8 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Wink
 {
+
+    public enum PlayerType { warrior, archer, mage, random }
     [Serializable]
     public class Player : Living, IGameObjectContainer, IGUIGameObject
     {
@@ -26,13 +28,51 @@ namespace Wink
             get { return new Point(Tile.TileWidth / 2, Tile.TileHeight / 2); }
         }
 
-        public Player(string clientName, int layer, float FOVlength = 8.5f) : base(layer, "player_" + clientName, FOVlength)
+        public Player(string clientName, int layer,PlayerType playerType, float FOVlength = 8.5f) : base(layer, "player_" + clientName, FOVlength)
         {
             //Inventory
-            mouseSlot = new MouseSlot(layer + 11, "mouseSlot");            
-            SetStats();
+            mouseSlot = new MouseSlot(layer + 11, "mouseSlot");  
+            SetupType(playerType);
             InitAnimation(); //not sure if overriden version gets played right without restating
-            
+        }
+
+
+        private void SetupType(PlayerType ptype)
+        {
+            if (ptype == PlayerType.random)
+            {
+                //select random armorType
+                Array pTypeValues = Enum.GetValues(typeof(PlayerType));
+                ptype = (PlayerType)pTypeValues.GetValue(GameEnvironment.Random.Next(pTypeValues.Length - 1));
+            }
+
+            EquipmentSlot weaponslot = EquipmentSlots.Find("weaponSlot") as EquipmentSlot;
+            EquipmentSlot bodyslot = EquipmentSlots.Find("bodySlot") as EquipmentSlot;
+            int EquipmentStartingStenght = 3;
+
+            switch (ptype)
+            {
+                case PlayerType.warrior:
+                    weaponslot.ChangeItem(new WeaponEquipment(EquipmentStartingStenght, WeaponType.melee));
+                    bodyslot.ChangeItem(new BodyEquipment(EquipmentStartingStenght, 2, ArmorType.heavy));
+                    SetStats(1, 4, 4, 1, 1, 1, 1);
+                    break;
+
+                case PlayerType.archer:
+                    weaponslot.ChangeItem(new WeaponEquipment(EquipmentStartingStenght, WeaponType.bow));
+                    bodyslot.ChangeItem(new BodyEquipment(EquipmentStartingStenght, 2, ArmorType.normal));
+                    SetStats(1, 1, 1, 4, 1, 1, 4);
+                    break;
+
+                case PlayerType.mage:
+                    weaponslot.ChangeItem(new WeaponEquipment(EquipmentStartingStenght, WeaponType.staff));
+                    bodyslot.ChangeItem(new BodyEquipment(EquipmentStartingStenght, 2, ArmorType.robes));
+                    SetStats(1, 1, 1, 1, 4, 4, 1);
+                    break;
+
+                default:
+                    throw new Exception("invalid enemy type");
+            }
         }
 
         protected override void DoBehaviour(List<GameObject> changedObjects)

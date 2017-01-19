@@ -16,6 +16,7 @@ namespace Wink
                 name.Color = Color.White;
                 Add(name);
 
+                client.playerType = PlayerType.mage;
                 //SelectField for heroes.
                 //SelectField<> sf = new SelectField<>();
             }
