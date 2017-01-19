@@ -238,10 +238,10 @@ namespace Wink
             {
                 Client currentClient = Clients.Find(client => client.Player.GUID == livingObjects[turnIndex].GUID);
                 ProcessActionEvents(currentClient);
+                SendOutUpdatedLevelIf();
                 UpdateTurn();
             }
             
-            SendOutUpdatedLevelIf();
             //SendOutLevelChanges();
         }
 
@@ -258,7 +258,6 @@ namespace Wink
                 turnIndex = (turnIndex + 1) % livingObjects.Count;
                 livingObjects[turnIndex].ActionPoints = Living.MaxActionPoints;
                 changedObjects.Add(livingObjects[turnIndex]);
-                SendOutUpdatedLevelIf();
             }
         }
 
