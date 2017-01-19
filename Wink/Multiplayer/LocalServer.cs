@@ -219,19 +219,17 @@ namespace Wink
 
         public override void Update(GameTime gameTime)
         {
+            //First we update the level so all update methods in all gameobjects get called.
+            //This also empties the seenBy in Tile.
             Level.Update(gameTime);
+            //Then we let every Living object calculate what tiles it can see, that object is then added to these Tiles' seenBy list.
             ComputeVisibilities();
 
             ProcessAllNonActionEvents();
-
+            
             if (!(livingObjects[turnIndex] is Player))
             {
-                List<GameObject> seenGOs = GetSeenGameObjects();
-                if (seenGOs.Contains(livingObjects[turnIndex]))
-                    changedObjects.AddRange(livingObjects[turnIndex].DoAllBehaviour());
-                else
-                    livingObjects[turnIndex].ActionPoints = 0;
-
+                changedObjects.AddRange(livingObjects[turnIndex].DoAllBehaviour());
                 UpdateTurn();
             }
             else
