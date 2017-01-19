@@ -27,12 +27,18 @@ namespace Wink
             info.AddValue("playerGUID", player.GUID.ToString());
         }
 
-        public sealed override void OnServerReceive(LocalServer server)
+        public sealed override bool OnServerReceive(LocalServer server)
         {
             server.ChangedObjects.Add(player);
             DoAction(server);
             player.ActionPoints -= Cost;
             //server.SendOutLevelChanges();
+            return true;
+        }
+        
+        public override bool OnClientReceive(LocalClient client)
+        {
+            throw new NotImplementedException();
         }
 
         public sealed override bool Validate(Level level)

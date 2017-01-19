@@ -16,7 +16,7 @@ namespace Wink
             get { return Health > 0; }
         }
         
-        public Enemy(int layer, string id = "Enemy", float FOVlength = 8.5f) : base(layer, id,FOVlength)
+        public Enemy(int layer, string id = "Enemy", float FOVlength = 8.5f) : base(layer, id, FOVlength)
         {
         }
 
@@ -52,7 +52,13 @@ namespace Wink
                 if (ableToHit)
                 {
                     Attack(player);
-                    actionPoints--;
+
+                    int cost = BaseActionCost;
+                    if((EquipmentSlots.Find("bodySlot") as EquipmentSlot).SlotItem != null)
+                    {
+                        cost =(int)(cost * ((EquipmentSlots.Find("bodySlot") as EquipmentSlot).SlotItem as BodyEquipment).WalkCostMod);
+                    }
+                    actionPoints -= cost;
                     changedObjects.Add(player);
                 }
                 else
@@ -68,7 +74,7 @@ namespace Wink
                         changedObjects.Add(path[0]);
 
                         MoveTo(path[0]);
-                        actionPoints--;
+                        actionPoints -= BaseActionCost;
                     }
                     else
                     {
@@ -85,7 +91,7 @@ namespace Wink
         private void Idle()
         {
             //TODO: implement idle behaviour (seeing the player part done)
-            actionPoints--;
+            actionPoints=0;//if this is reached the enemy has no other options than to skip its turn (reduses number of GoTo loops executed) compared to actionpoints--;
         }
         
         public override void HandleInput(InputHelper inputHelper)

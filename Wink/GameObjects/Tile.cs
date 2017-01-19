@@ -30,6 +30,10 @@ namespace Wink
 
         public Dictionary<Living, float> GetSeenBy { get { return seenBy; } }
 
+        public GameObjectList OnTile
+        {
+            get { return onTile; }
+        }
         public Point TilePosition {
             get
             {
@@ -118,6 +122,8 @@ namespace Wink
         public void Remove(GameObject go)
         {
             onTile.Children.Remove(go);
+            if (go.Parent == onTile)
+                go.Parent = null;
         }
 
         public bool IsEmpty()
@@ -213,6 +219,20 @@ namespace Wink
         public TileType TileType
         {
             get { return type; }
+        }
+
+        public override string ToString()
+        {
+            string result = TilePosition.ToString();
+            if (onTile.Children.Count > 0)
+            {
+                foreach (GameObject go in onTile.Children)
+                {
+                    result += " " + go + ", ";
+                }
+                result = result.Substring(0, result.Length - 2);
+            }
+            return result;
         }
     }
 }

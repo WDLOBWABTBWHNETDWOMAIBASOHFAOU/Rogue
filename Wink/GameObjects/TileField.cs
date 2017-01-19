@@ -32,6 +32,21 @@ namespace Wink
         }
         #endregion
 
+        public List<Tile> AllTilesWithObjects
+        {
+            get
+            {
+                List<Tile> result = new List<Tile>();
+                foreach (GameObject go in Objects)
+                {
+                    Tile t = go as Tile;
+                    if (t.OnTile.Children.Count > 0)
+                        result.Add(t);
+                }
+                return result;
+            }
+        }
+
         public override string ToString()
         {
             char[] char1 = new char[(Columns + 1) * Rows];
@@ -99,7 +114,9 @@ namespace Wink
         public bool IsWall(int x, int y)
         {
             Tile t = grid[x, y] as Tile;
-            return !t.Passable; //TODO: make separate property in Tile that describes whether or not it obstructs line of sight. (!Passable as placeholder) 
+            if (t.Blocked)
+                return true;
+            return t.TileType == TileType.Wall; //TODO: make separate property in Tile that describes whether or not it obstructs line of sight. (!Passable as placeholder) 
         }
 
         public void SetLight(int x, int y, float distanceSquared, IViewer seenBy)

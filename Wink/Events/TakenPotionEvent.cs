@@ -29,7 +29,7 @@ namespace Wink
 
         protected override int Cost
         {
-            get { return 1; }
+            get { return Living.BaseActionCost/3; }
         }
 
         public override bool GUIDSerialization
@@ -37,15 +37,10 @@ namespace Wink
             get { return true; }
         }
 
-        public override void OnClientReceive(LocalClient client)
-        {
-            throw new NotImplementedException();
-        }
-
         protected override void DoAction(LocalServer server)
         {
             potion.stackCount--;
-            switch (potion.PotionType)
+            switch (potion.GetPotionType)
             {
                 case PotionType.Health:
                     player.Health += potion.PotionValue;
@@ -60,7 +55,7 @@ namespace Wink
 
         protected override bool ValidateAction(Level level)
         {
-            switch (potion.PotionType)
+            switch (potion.GetPotionType)
             {
                 case PotionType.Health:
                     if(!(player.Health >= player.MaxHealth))

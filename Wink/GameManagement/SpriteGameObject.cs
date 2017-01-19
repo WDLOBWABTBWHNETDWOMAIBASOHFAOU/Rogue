@@ -26,11 +26,13 @@ public class SpriteGameObject : GameObject
 
     public Color DrawColor { get; set; }
 
-    public float CameraSensitivity {
+    public float CameraSensitivity
+    {
         get { return cameraSensitivity; }
     }
 
-    public Dictionary<string, string> DebugTags {
+    public Dictionary<string, string> DebugTags
+    {
         get { return debugTags; }
     }
 
@@ -44,6 +46,7 @@ public class SpriteGameObject : GameObject
         LoadSprite(sheetIndex);
     }
 
+    #region Serialization
     public SpriteGameObject(SerializationInfo info, StreamingContext context) : base(info, context)
     {
         Color color = new Color();
@@ -72,6 +75,7 @@ public class SpriteGameObject : GameObject
         info.AddValue("debugTags", debugTags);
         info.AddValue("DrawColor", DrawColor.PackedValue);
     }
+    #endregion
 
     public override void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
     {

@@ -30,8 +30,8 @@ namespace Wink
 
         public abstract bool GUIDSerialization { get; }
 
-        public abstract void OnClientReceive(LocalClient client);
-        public abstract void OnServerReceive(LocalServer server);
+        public abstract bool OnClientReceive(LocalClient client);
+        public abstract bool OnServerReceive(LocalServer server);
 
         /// <summary>
         /// This method is called once on the client before sending this event. 

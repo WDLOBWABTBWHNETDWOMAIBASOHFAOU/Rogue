@@ -38,16 +38,17 @@ namespace Wink
             get { return true; }
         }
 
-        public override void OnClientReceive(LocalClient client)
+        public override bool OnClientReceive(LocalClient client)
         {
             throw new NotImplementedException();
         }
 
-        public override void OnServerReceive(LocalServer server)
+        public override bool OnServerReceive(LocalServer server)
         {
             player.MouseSlot.AddTo(item, target);
             server.ChangedObjects.Add(item);
             server.ChangedObjects.Add(target);
+            return true;
         }
 
         public override bool Validate(Level level)

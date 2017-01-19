@@ -390,6 +390,7 @@ namespace Wink
                 }
             }
 
+            //Exchange all remaining background tiles for Wall tiles.
             for (int x = 0; x < tf.Columns; x++)
             {
                 for (int y = 0; y < tf.Rows; y++)
@@ -405,8 +406,96 @@ namespace Wink
                 }
             }
 
-            tf.Add(LoadStartTile(), rooms[0].Location.ToRoundedPoint().X + 1, rooms[0].Location.ToRoundedPoint().Y + 1);
+            //Add starttiles
+            for (int p = 0; p < 4; p++)
+                tf.Add(LoadStartTile(p + 1), rooms[0].Location.ToRoundedPoint().X + 1 + p % 2, rooms[0].Location.ToRoundedPoint().Y + 1 + p / 2);
 
+            //Generate EndTile
+            List<Room> forEnd = new List<Room>();
+            List<Room> usedRooms = new List<Room>();
+            for (int a = 0; a < hallwayPairs.Count; a++)
+            {
+                if (!forEnd.Contains(hallwayPairs[a].Item1))
+                {
+                    forEnd.Add(hallwayPairs[a].Item1);
+                    usedRooms.Add(hallwayPairs[a].Item1);
+                }
+                if (!forEnd.Contains(hallwayPairs[a].Item2))
+                {
+                    forEnd.Add(hallwayPairs[a].Item2);
+                    usedRooms.Add(hallwayPairs[a].Item2);
+                }
+            }
+
+            for (int a = 0; a < hallwayPairs.Count; a++)
+            {
+                if (hallwayPairs[a].Item1 == rooms[0] || hallwayPairs[a].Item2 == rooms[0])
+                {
+                    if (forEnd.Contains(hallwayPairs[a].Item1))
+                    {
+                        forEnd.Remove(hallwayPairs[a].Item1);
+                    }
+                    if (forEnd.Contains(hallwayPairs[a].Item2))
+                    {
+                        forEnd.Remove(hallwayPairs[a].Item2);
+                    }
+                }
+            }
+            tf.Add(LoadEndTile(), forEnd[0].Location.ToRoundedPoint().X + 1, forEnd[0].Location.ToRoundedPoint().Y + 1);
+            tf.Add(LoadChestTile(levelIndex), forEnd[0].Location.ToRoundedPoint().X + forEnd[0].Size.X - 2, forEnd[0].Location.ToRoundedPoint().Y + 1);
+            
+            //Door spawn
+            for (int i = 0; i < usedRooms.Count; i++)
+            {
+                for (int x = rooms[i].Location.ToRoundedPoint().X; x < rooms[i].Location.ToRoundedPoint().X + rooms[i].Size.X; x++)
+                {
+                    if (!tf.IsWall(x, rooms[i].Location.ToRoundedPoint().Y - 1))
+                    {
+                        if (tf.IsWall(x + 1, rooms[i].Location.ToRoundedPoint().Y - 1) && tf.IsWall(x - 1, rooms[i].Location.ToRoundedPoint().Y - 1))
+                        {
+                            tf.Add(LoadDoorTile(), x, rooms[i].Location.ToRoundedPoint().Y - 1);
+                        }
+                    }
+                    if (!tf.IsWall(x, rooms[i].Location.ToRoundedPoint().Y + rooms[i].Size.Y))
+                    {
+                        if (tf.IsWall(x + 1, rooms[i].Location.ToRoundedPoint().Y + rooms[i].Size.Y) && tf.IsWall(x - 1, rooms[i].Location.ToRoundedPoint().Y + rooms[i].Size.Y))
+                        {
+                            tf.Add(LoadDoorTile(), x, rooms[i].Location.ToRoundedPoint().Y + rooms[i].Size.Y);
+                        }
+                    }
+                }
+            }
+            
+            //Test chest spawn
+            int chestAmount = Random.Next(1, 2);
+            usedRooms.Remove(rooms[0]);
+            for (int i = 0; i < chestAmount; i++)
+            {
+                int chestRoom = Random.Next(usedRooms.Count);
+                usedRooms.Remove(rooms[chestRoom]);
+                int xChest = rooms[chestRoom].Location.ToRoundedPoint().X + rooms[chestRoom].Size.X / 2;
+                int yChest = rooms[chestRoom].Location.ToRoundedPoint().Y + rooms[chestRoom].Size.Y / 2;
+                tf.Add(LoadChestTile(levelIndex), xChest, yChest);
+            }
+            //End test
+
+            //Test enemy spawn
+            int numberOfEnemys = 8;
+            for (int n = 0; n < numberOfEnemys; n++)
+            {
+                Enemy enemy = new Enemy(0);
+                int floorNumber = levelIndex;
+                if (floorNumber < 1)
+                {
+                    floorNumber = 1;
+                }
+                List<GameObject> spawnLocations = tf.FindAll(obj => obj is Tile && (obj as Tile).Passable && !(obj as Tile).Blocked);
+                Tile spawnLocation = spawnLocations[GameEnvironment.Random.Next(spawnLocations.Count)] as Tile;
+                spawnLocation.PutOnTile(enemy);
+                enemy.SetStats(1*floorNumber, 2 + (floorNumber/2), 2 + (floorNumber / 2), 2 + (floorNumber / 2), 2 + (floorNumber / 2), 2 + (floorNumber / 2), 2 + (floorNumber / 2), 20 + floorNumber*3, 2, GameEnvironment.Random.Next(1,3));
+            }
+            //End test            
+           
             //Must be last statement, executed after the Tilefield is done.
             tf.InitSpriteSheetIndexation();
             return tf;

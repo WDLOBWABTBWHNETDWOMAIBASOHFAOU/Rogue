@@ -40,13 +40,16 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Events\ActionEvent.cs" />
+    <Compile Include="Events\AnimationEvent.cs" />
     <Compile Include="Events\AttackEvent.cs" />
+    <Compile Include="Events\DoorEvent.cs" />
     <Compile Include="Events\EndTurnEvent.cs" />
     <Compile Include="Events\Event.cs" />
     <Compile Include="Events\JoinedServerEvent.cs" />
     <Compile Include="Events\JoinServerEvent.cs" />
     <Compile Include="Events\LevelChangedEvent.cs" />
     <Compile Include="Events\LevelUpdatedEvent.cs" />
+    <Compile Include="Events\LivingMoveAnimationEvent.cs" />
     <Compile Include="Events\NextLevelEvent.cs" />
     <Compile Include="Events\PickupEvent.cs" />
     <Compile Include="Events\PlayerMoveEvent.cs" />
@@ -81,7 +84,6 @@
     <Compile Include="Util\FrameCounter.cs" />
     <Compile Include="Util\MultiArray.cs" />
     <Compile Include="Util\PathFinder.cs" />
-    <Compile Include="GameObjects\Items\EmptyItem.cs" />
     <Compile Include="GameObjects\InventorySystem\InventoryBox.cs" />
     <Compile Include="GameObjects\Items\Item.cs" />
     <Compile Include="GameObjects\Living\Enemy.cs" />
@@ -90,7 +92,6 @@
     <Compile Include="GameObjects\Living\LivingStatsSystem.cs" />
     <Compile Include="GameObjects\Living\Player.cs" />
     <Compile Include="GameObjects\InventorySystem\MouseSlot.cs" />
-    <Compile Include="GameObjects\Items\TestItem.cs" />
     <Compile Include="GameObjects\Tile.cs" />
     <Compile Include="GameObjects\TileField.cs" />
     <Compile Include="GUI\Bar.cs" />

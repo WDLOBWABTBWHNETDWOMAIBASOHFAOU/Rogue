@@ -18,6 +18,7 @@ namespace Wink
             Defender = defender;
         }
 
+        #region Serialization
         public AttackEvent(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             Defender = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("DefenderGUID"))) as Living;
@@ -29,20 +30,16 @@ namespace Wink
             info.AddValue("DefenderGUID", Defender.GUID.ToString());
             base.GetObjectData(info, context);
         }
+        #endregion
 
         protected override int Cost
         {
-            get { return 1; }
+            get { return Living.BaseActionCost; }
         }
 
         public override bool GUIDSerialization
         {
             get { return false; }
-        }
-
-        public override void OnClientReceive(LocalClient client)
-        {
-            throw new NotImplementedException();
         }
 
         protected override void DoAction(LocalServer server)

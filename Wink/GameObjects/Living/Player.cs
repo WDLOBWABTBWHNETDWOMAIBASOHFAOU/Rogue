@@ -25,7 +25,7 @@ namespace Wink
             get { return new Point(Tile.TileWidth / 2, Tile.TileHeight / 2); }
         }
 
-        public Player(string clientName, int layer,float FOVlength=8.5f) : base(layer, "player_" + clientName, FOVlength)
+        public Player(string clientName, int layer, float FOVlength = 8.5f) : base(layer, "player_" + clientName, FOVlength)
         {
             //Inventory
             mouseSlot = new MouseSlot(layer + 11, "mouseSlot");            
@@ -112,7 +112,8 @@ namespace Wink
                 Event e = new EndTurnEvent(this);
                 Server.Send(e);
             };
-            inputHelper.IfMouseLeftButtonPressedOn(Tile, onClick);
+            if (Tile != null)
+                inputHelper.IfMouseLeftButtonPressedOn(Tile, onClick);
             base.HandleInput(inputHelper);
         }
 
