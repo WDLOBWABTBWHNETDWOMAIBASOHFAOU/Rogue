@@ -7,13 +7,14 @@ namespace Wink
     public class PlayingGUI : GameObjectList
     {
         private PlayingMenu playingMenu;
-        private Window CharacterScreen;
-        private Window Inventory
-        
-        
 
+        public StatScreen CharacterScreen
         {
-            get { return Find(obj => obj is PlayerInventoryAndEquipment) as Window; }
+            get { return Find(obj => obj is StatScreen) as StatScreen; }
+        }
+        public PlayerInventoryAndEquipment Inventory
+        {
+            get { return Find(obj => obj is PlayerInventoryAndEquipment) as PlayerInventoryAndEquipment; }
         }
 
         public PlayingGUI()

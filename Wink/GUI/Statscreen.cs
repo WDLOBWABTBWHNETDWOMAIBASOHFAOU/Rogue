@@ -7,23 +7,13 @@ using System.Threading.Tasks;
 
 namespace Wink
 {
-    class Statscreen : Window
+    public class StatScreen : Window
     {
-        public Statscreen(Statsscreenbox statscreen, GameObjectList statsslots): base(statsslots.ItemGrid.Columns * Tile.TileHeight, ((2 + statsslots.ItemGrid.Rows)) * Tile.TileHeight)
+        public StatScreen(Player player): base(300, 300)
         {
-            statscreen.Position = new Vector2(0, 4 * statscreen.ItemGrid.CellHeight);
-
-            statsslots.Find("strenghtSlot").Position = Vector2.Zero;
-            statsslots.Find("dexteritySlot").Position = new Vector2(0, statsslots.Item.CellHeight);
-            statsslots.Find("intelligenceSlots").Position = new Vector2(0, 3 * statsslots.ItemGrid.CellHeight);
-            statsslots.Find("vitalitySLots").Position = new Vector2(0, 4 * statsslots.ItemGrid.CellHeight);
-            statsslots.Find("wisdomSlots").Position = new Vector2(0, 5 * statsslots.ItemGrid.CellHeight);
-            statsslots.Find("luckSlots").Position = new Vector2(0, 6 * statsslots.ItemGrid.CellHeight);
-
-           
-
-
-            Add(statsslots);
+            //Gebruik TextGameObject om hier de stats als player.Dexterity aan dit window toe te voegen.
+            
         }
+
     }
 }

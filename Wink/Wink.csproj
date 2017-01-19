@@ -76,13 +76,12 @@
     <Compile Include="GameObjects\InventorySystem\Container.cs" />
     <Compile Include="GameObjects\InventorySystem\EquipmentSlot.cs" />
     <Compile Include="GameObjects\InventorySystem\ItemSlot.cs" />
-    <Compile Include="GameObjects\InventorySystem\Statsscreenbox.cs" />
     <Compile Include="GameObjects\Items\BodyEquipment.cs" />
     <Compile Include="GameObjects\Items\Equipment.cs" />
     <Compile Include="GameObjects\Items\Potion.cs" />
     <Compile Include="GameObjects\Items\RingEquipment.cs" />
     <Compile Include="GameObjects\Items\WeaponEquipment.cs" />
-    <Compile Include="GUI\Statscreen.cs" />
+    <Compile Include="GUI\StatScreen.cs" />
     <Compile Include="GUI\ShadowCasting\ICellGrid.cs" />
     <Compile Include="GUI\ShadowCasting\IViewer.cs" />
     <Compile Include="GUI\ShadowCasting\ShadowCasting.cs" />

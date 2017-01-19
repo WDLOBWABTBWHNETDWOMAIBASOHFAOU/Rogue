@@ -169,6 +169,11 @@ namespace Wink
                 pie.Visible = guiState.ContainsKey("playerIaEVisibility") ? (bool)guiState["playerIaEVisibility"] : false;
                 gui.Add(pie);
 
+                StatScreen ss = new StatScreen(this);
+                ss.Position = guiState.ContainsKey("playerSsPosition") ? (Vector2)guiState["playerSsPosition"] : new Vector2(0, 300);
+                ss.Visible = guiState.ContainsKey("playerSsVisibility") ? (bool)guiState["playerSsVisibility"] : false;
+                gui.Add(ss);
+
                 gui.Add(mouseSlot);
             }
         }
@@ -178,14 +183,19 @@ namespace Wink
             if (Id == LocalPlayerName)
             {
                 PlayingGUI gui = GameWorld.Find("PlayingGui") as PlayingGUI;
-                PlayerInventoryAndEquipment pIaE = gui.Find(obj => obj is PlayerInventoryAndEquipment) as PlayerInventoryAndEquipment;
+                PlayerInventoryAndEquipment pIaE = gui.Inventory;
+                StatScreen pSs = gui.CharacterScreen;
+
                 guiState.Add("playerIaEVisibility", pIaE.Visible);
                 guiState.Add("playerIaEPosition", pIaE.Position);
+                guiState.Add("playerSsVisibility", pSs.Visible);
+                guiState.Add("playerSsPosition", pSs.Position);
 
                 gui.RemoveImmediatly(gui.Find("HealthBar"));
                 gui.RemoveImmediatly(gui.Find("ManaBar"));
                 gui.RemoveImmediatly(gui.Find("ActionBar"));
                 gui.RemoveImmediatly(pIaE);
+                gui.RemoveImmediatly(pSs);
                 gui.RemoveImmediatly(mouseSlot);
             }
         }
