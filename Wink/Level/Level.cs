@@ -1,9 +1,7 @@
-﻿using Microsoft.Xna.Framework;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.IO;
-using System.Linq;
 
 namespace Wink
 {
@@ -33,8 +31,18 @@ namespace Wink
             this.levelIndex = levelIndex;
         }
 
+        #region Serialization
         public Level(SerializationInfo info, StreamingContext context) : base(info, context)
-        { }
+        {
+            levelIndex = info.GetInt32("levelIndex");
+        }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            base.GetObjectData(info, context);
+            info.AddValue("levelIndex", levelIndex);
+        }
+        #endregion
 
         public void LoadTiles(string path)
         {
