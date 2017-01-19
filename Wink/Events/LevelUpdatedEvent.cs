@@ -44,10 +44,10 @@ namespace Wink
                     (obj as IGUIGameObject).CleanupGUI(guiState);
                     guiStates.Add(obj.GUID, guiState);
                 }
-            }   
+            }
             
             client.Level = updatedLevel;
-
+            updatedLevel.InitGUI(null);
             foreach (GameObject obj in new HashSet<GameObject>(updatedLevel.FindAll(obj => obj is IGUIGameObject)))
             {
                 Dictionary<string, object> guiState;

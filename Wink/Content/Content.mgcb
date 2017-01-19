@@ -178,3 +178,9 @@
 /processorParam:TextureFormat=Color
 /build:textfield.png
 
+#begin Arial36.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:TextureFormat=Compressed
+/build:Arial36.spritefont
+
