@@ -186,7 +186,6 @@ namespace Wink
         {
             if (changedObjects.Count > 0 || first)
             {
-                ComputeVisibilities();
                 LevelUpdatedEvent e = first ? new JoinedServerEvent(Level) : new LevelUpdatedEvent(Level);
                 SendToAllClients(e);
                 changedObjects.Clear();
@@ -227,19 +226,21 @@ namespace Wink
 
             ProcessAllNonActionEvents();
             
-            if (!(livingObjects[turnIndex] is Player))
-            {
-                changedObjects.AddRange(livingObjects[turnIndex].DoAllBehaviour());
-                UpdateTurn();
-            }
-            else
+            if (livingObjects[turnIndex] is Player)
             {
                 Client currentClient = Clients.Find(client => client.Player.GUID == livingObjects[turnIndex].GUID);
                 ProcessActionEvents(currentClient);
+                livingObjects[turnIndex].ComputeVisibility();
                 SendOutUpdatedLevelIf();
-                UpdateTurn();
             }
-            
+            else
+            {
+                changedObjects.AddRange(livingObjects[turnIndex].DoAllBehaviour());
+                livingObjects[turnIndex].ComputeVisibility();
+            }
+
+            UpdateTurn();
+
             //SendOutLevelChanges();
         }
 

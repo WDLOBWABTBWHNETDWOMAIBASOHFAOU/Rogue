@@ -163,6 +163,10 @@ namespace Wink
         {
             TileField tf = GameWorld.Find("TileField") as TileField;
             Point pos = Tile.TilePosition;
+            
+            if (tf.Find(obj => obj is Tile && (obj as Tile).SeenBy.ContainsKey(this)) != null)
+                foreach (Tile t in tf.Objects)
+                    t.SeenBy.Remove(this);
 
             ShadowCast.ComputeVisibility(tf, pos.X, pos.Y, this);
             //skill idea: peek corner, allows the player to move its FOV position 1 tile in N,S,E or W direction,
