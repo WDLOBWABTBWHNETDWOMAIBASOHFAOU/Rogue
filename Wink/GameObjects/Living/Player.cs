@@ -16,6 +16,7 @@ namespace Wink
         }
 
         protected int exp;
+        public int freeStatPoints;
 
         private MouseSlot mouseSlot;
         public MouseSlot MouseSlot { get { return mouseSlot; } }
@@ -31,6 +32,7 @@ namespace Wink
             mouseSlot = new MouseSlot(layer + 11, "mouseSlot");            
             SetStats();
             InitAnimation(); //not sure if overriden version gets played right without restating
+            
         }
 
         protected override void DoBehaviour(List<GameObject> changedObjects)
@@ -42,6 +44,7 @@ namespace Wink
         public Player(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             exp = info.GetInt32("exp");
+            freeStatPoints = info.GetInt32("freeStatPoints");
             if (context.GetVars().GUIDSerialization)
                 mouseSlot = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("mouseSlotGUID"))) as MouseSlot;
             else
@@ -56,6 +59,7 @@ namespace Wink
                 info.AddValue("mouseSlot", mouseSlot);
 
             info.AddValue("exp", exp);
+            info.AddValue("freeStatPoints", freeStatPoints);
             base.GetObjectData(info, context);
         }
         #endregion
@@ -86,24 +90,42 @@ namespace Wink
         }
 
         /// <summary>
+        /// Adds exp to the players current exp. Can be a flat value or calculated based on the killed enemy his "power"
+        /// </summary>
+        /// <param name="expGained"></param>
+        /// <param name="killedEnemy"></param>
+        public void ReciveExp(int expGained, Enemy killedEnemy = null)
+        {
+            if(killedEnemy != null)
+            {
+                int expmod = 100;
+                float statAverige = (killedEnemy.Strength + killedEnemy.Dexterity + killedEnemy.Intelligence + killedEnemy.Wisdom + killedEnemy.Vitality + killedEnemy.Luck) / 6;
+                expGained = (int)(statAverige * expmod);
+            }
+
+            exp += expGained;
+        }
+
+        /// <summary>
         /// returns the experience a creature requires for its next level.
         /// </summary>
         /// <returns></returns>
         protected int RequiredExperience()
         {
-            double mod = 36.79;
+            double mod = 36.79;//chose this because it gives a 100 exp requirement for leveling from lvl 1 to 2
             double pow = Math.Pow(Math.E, Math.Sqrt(creatureLevel));
             int reqExp = (int)(mod * pow);
             return reqExp;
         }
 
+        // handle a lvlup
         protected void LevelUp()
         {
             exp -= RequiredExperience();
             creatureLevel++;
-
-            // + some amount of neutral stat points, distriputed by user discresion or increase stats based on picked hero
+            freeStatPoints = 3;
         }
+        
 
         public override void HandleInput(InputHelper inputHelper)
         {
@@ -123,6 +145,36 @@ namespace Wink
                 return mouseSlot;
 
             return mouseSlot.Find(del) ?? base.Find(del);
+        }
+        
+        public enum Stat { vitality, strength, dexterity, wisdom, luck, intelligence }
+
+        public void AddStatPoint(Stat stat)
+        {
+            switch (stat)
+            {
+                case Stat.vitality:
+                    vitality++;
+                    break;
+                case Stat.strength:
+                    strength++;
+                    break;
+                case Stat.dexterity:
+                    dexterity++;
+                    break;
+                case Stat.wisdom:
+                    wisdom++;
+                    break;
+                case Stat.luck:
+                    luck++;
+                    break;
+                case Stat.intelligence:
+                    intelligence++;
+                    break;
+                default:
+                    break;
+            }
+            freeStatPoints--;
         }
 
         public override List<GameObject> FindAll(Func<GameObject, bool> del)

@@ -71,7 +71,7 @@ namespace Wink
         public Living(int layer = 0, string id = "", float FOVlength = 8.5f, float scale = 1.0f) : base(layer, id, scale)
         {
             SetStats();
-            InitAnimation();
+            //InitAnimation();
             timeleft = 1000;
             viewDistance = FOVlength;
 
@@ -217,7 +217,7 @@ namespace Wink
         /// <summary>
         /// Initializes the animations for the living object
         /// </summary>
-        protected virtual void InitAnimation(string idleColor = "empty:64:64:10:Magenta")
+        protected virtual void InitAnimation(string idleColor)
         {
             //General animations
             idleAnimation = idleColor;

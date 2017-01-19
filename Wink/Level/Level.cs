@@ -1,14 +1,13 @@
-﻿using Microsoft.Xna.Framework;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.IO;
-using System.Linq;
+using Microsoft.Xna.Framework;
 
 namespace Wink
 {
     [Serializable]
-    public partial class Level : GameObjectList
+    public partial class Level : GameObjectList, IGUIGameObject
     {
         private int levelIndex;
         public int Index
@@ -33,8 +32,18 @@ namespace Wink
             this.levelIndex = levelIndex;
         }
 
+        #region Serialization
         public Level(SerializationInfo info, StreamingContext context) : base(info, context)
-        { }
+        {
+            levelIndex = info.GetInt32("levelIndex");
+        }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            base.GetObjectData(info, context);
+            info.AddValue("levelIndex", levelIndex);
+        }
+        #endregion
 
         public void LoadTiles(string path)
         {
@@ -66,7 +75,7 @@ namespace Wink
             #region ENEMY CODE (test)
             for (int i = 0; i < 2; i++)
             {
-                Enemy testEnemy = new Enemy(0, "Enemy" + i);
+                Enemy testEnemy = new Enemy(0,Index,EnemyType.random, "Enemy" + i);
                 testEnemy.SetStats();
                 //First find all passable tiles then select one at random.
                 List<GameObject> tileCandidates = tf.FindAll(obj => obj is Tile && (obj as Tile).Passable);
@@ -214,6 +223,19 @@ namespace Wink
             End end = new End(t, levelIndex, this);
             t.PutOnTile(end);
             return t;
+        }
+
+        public void InitGUI(Dictionary<string, object> guiState)
+        {
+            PlayingGUI pg = GameWorld.Find("PlayingGui") as PlayingGUI;
+            SpriteGameObject floor = pg.Find("FloorBG") as SpriteGameObject;
+            TextGameObject floorNumber = pg.Find("FloorNumber") as TextGameObject;
+            floorNumber.Text = Index.ToString();
+            floorNumber.Position = floor.Position + (floor.BoundingBox.Size.ToVector2() - floorNumber.Size) / 2;
+        }
+
+        public void CleanupGUI(Dictionary<string, object> guiState)
+        {            
         }
     }
 }
