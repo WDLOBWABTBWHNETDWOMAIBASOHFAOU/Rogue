@@ -495,31 +495,6 @@ namespace Wink
                 enemy.SetStats(1*floorNumber, 2 + (floorNumber/2), 2 + (floorNumber / 2), 2 + (floorNumber / 2), 2 + (floorNumber / 2), 2 + (floorNumber / 2), 2 + (floorNumber / 2), 20 + floorNumber*3, 2, GameEnvironment.Random.Next(1,3));
             }
             //End test            
-
-            / Test chest spawn
-            int chestAmount = Random.Next(1, 2);
-            usedRooms.Remove(rooms[0]);
-            for (int i = 0; i < chestAmount; i++)
-            {
-                int chestRoom = Random.Next(usedRooms.Count);
-                usedRooms.Remove(rooms[chestRoom]);
-                int xChest = rooms[chestRoom].Location.ToRoundedPoint().X + rooms[chestRoom].Size.X / 2;
-                int yChest = rooms[chestRoom].Location.ToRoundedPoint().Y + rooms[chestRoom].Size.Y / 2;
-                tf.Add(LoadChestTile(levelIndex), xChest, yChest);
-            }
-            //End test
-            //Test chest spawn
-            int chestAmount = Random.Next(1,2);
-            usedRooms.Remove(rooms[0]);
-            for (int i = 0; i < chestAmount; i++)
-            {
-                int chestRoom = Random.Next(usedRooms.Count);
-                usedRooms.Remove(rooms[chestRoom]);
-                int xChest = rooms[chestRoom].Location.ToRoundedPoint().X + rooms[chestRoom].Size.X/2;
-                int yChest = rooms[chestRoom].Location.ToRoundedPoint().Y + rooms[chestRoom].Size.Y/2;
-                tf.Add(LoadChestTile(), xChest, yChest);
-            }
-            //End test
            
             //Must be last statement, executed after the Tilefield is done.
             tf.InitSpriteSheetIndexation();
