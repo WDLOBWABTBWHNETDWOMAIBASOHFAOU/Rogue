@@ -37,6 +37,12 @@ namespace Wink
             PlayAnimation("idle");
         }
 
+        protected override void Death()
+        {
+            // call recive exp for every player
+            base.Death();
+        }
+
         protected override void DoBehaviour(List<GameObject> changedObjects)
         {
             GoTo(changedObjects, GameWorld.Find(Player.LocalPlayerName) as Player);
