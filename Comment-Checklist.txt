@@ -1,0 +1,10 @@
++---------------------------------------------------------------------------------------------+
+|                       A list of all files I've went over and commented                      |
+|            if you edit a file that's in here please add proper comments yourself            |
++---------------------------------------+--------------+--------------------------------------+
+|                                       |    TheMez    |                                      |
++---------------------------------------+--------------+--------------------------------------+
+
+\Rogue\Wink\GameObjects\Living\Living.cs
+\Rogue\Wink\GameObjects\Living\LivingCombat.cs
+\Rogue\Wink\GameObjects\Living\LivingStatsSystem.cs
