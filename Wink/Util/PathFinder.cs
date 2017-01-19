@@ -6,7 +6,7 @@ namespace Wink
 {
     class PathFinder
     {
-        public class Node
+        private class Node
         {
             public Tile tile;
             public Node originNode;
@@ -45,11 +45,11 @@ namespace Wink
             }
         }
 
+        private const int baseCost = 100;
+
         private Node startingNode, endingNode;
         private List<Func<Node, Node, int>> addedCosts;
-        private int baseCost = 100;
         private TileField tileField;
-
         private Dictionary<Tile, Node> nodeTable;
 
         public PathFinder(TileField tf)
@@ -66,7 +66,12 @@ namespace Wink
             });
         }
 
-        public Node GetNode(Tile t)
+        /// <summary>
+        /// Used to get a Node for a certain tile.
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns></returns>
+        private Node GetNode(Tile t)
         {
             if (t == null)
             {
@@ -80,6 +85,9 @@ namespace Wink
             return nodeTable[t];
         }
 
+        /// <summary>
+        /// Adds costs so that diagonal movement and zigzagging are punished.
+        /// </summary>
         public void EnableStraightLines()
         {
             AddCost((current, adjacent) =>
@@ -98,7 +106,7 @@ namespace Wink
                         float dEnd = (endingNode.tile.TilePosition - adjacent.tile.TilePosition).ToVector2().Length();
                         float totalLength = dStart + dEnd;
                         //TODO: Figure out why this only works when effectively rewarding a bend in the middle, and not when evening out.
-                        //Maybe because A* only visits opennodes with the lowest cost?
+                        //Maybe something to do with A* only visiting opennodes with the lowest cost?
                         return (int)(50 - (1 - Math.Abs(dStart / totalLength - dEnd / totalLength)) * 60);
                     }
                     else
@@ -114,11 +122,17 @@ namespace Wink
         /// The Func's Node parameter is one of the surrounding nodes, of which the cost must be calculated.
         /// The Func's Vector2 is the difference in position of the surrounding node compared to the current node.
         /// </param>
-        public void AddCost(Func<Node, Node, int> cost)
+        private void AddCost(Func<Node, Node, int> cost)
         {
             addedCosts.Add(cost);
         }
 
+        /// <summary>
+        /// Calculates cost based on the costFunc objects added to the addedCosts list.
+        /// </summary>
+        /// <param name="current"></param>
+        /// <param name="adjacent"></param>
+        /// <returns></returns>
         private int CalculateCost(Node current, Node adjacent)
         {
             int totalCost = baseCost;

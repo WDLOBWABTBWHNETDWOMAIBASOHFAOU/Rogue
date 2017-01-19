@@ -10,19 +10,22 @@ public class InputHelper
     protected KeyboardState currentKeyboardState, previousKeyboardState;
     protected Vector2 scale, offset;
     protected Camera camera;
-
+    
     protected List<GameObject> leftMousePressedHandlers;
+    protected List<GameObject> rightMousePressedHandlers;
 
     public InputHelper()
     {
         scale = Vector2.One;
         offset = Vector2.Zero;
         leftMousePressedHandlers = new List<GameObject>();
+        rightMousePressedHandlers = new List<GameObject>();
     }
 
     public void Update()
     {
         leftMousePressedHandlers.Clear();
+        rightMousePressedHandlers.Clear();
 
         previousMouseState = currentMouseState;
         previousKeyboardState = currentKeyboardState;
@@ -79,9 +82,34 @@ public class InputHelper
         IfMouseLeftButtonPressedOn(handler, action, handler.BoundingBox, doAswell);
     }
 
+    public void IfMouseRightButtonPressedOn(GameObject handler, Action action, Rectangle sensitiveArea, bool doAswell = false)
+    {
+        bool isPressed = IsMouseRightButtonPressed();
+        Vector2 globalMousePosition = MousePosition;
+        if (handler is SpriteGameObject)
+        {
+            globalMousePosition += ((handler as SpriteGameObject).CameraSensitivity * (camera != null ? camera.Position : Vector2.One));
+        }
+        if (isPressed && (rightMousePressedHandlers.Count == 0 || doAswell) && sensitiveArea.Contains(globalMousePosition))
+        {
+            action.Invoke();
+            rightMousePressedHandlers.Add(handler);
+        }
+    }
+
+    public void IfMouseRightButtonPressedOn(GameObject handler, Action action, bool doAswell = false)
+    {
+        IfMouseRightButtonPressedOn(handler, action, handler.BoundingBox, doAswell);
+    }
+
     public bool IsMouseLeftButtonPressed()
     {
         return currentMouseState.LeftButton == ButtonState.Pressed && previousMouseState.LeftButton == ButtonState.Released;
+    }
+
+    public bool IsMouseRightButtonPressed()
+    {
+        return currentMouseState.RightButton == ButtonState.Pressed && previousMouseState.RightButton == ButtonState.Released;
     }
 
     public bool MouseLeftButtonReleased()

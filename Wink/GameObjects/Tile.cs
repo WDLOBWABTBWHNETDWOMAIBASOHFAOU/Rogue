@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Linq;
 using System.Runtime.Serialization;
 using System.Collections.Generic;
 
@@ -10,8 +11,7 @@ namespace Wink
     {
         Background,
         Floor,
-        Wall,
-        End
+        Wall
     }
 
     [Serializable]
@@ -25,6 +25,15 @@ namespace Wink
 
         protected GameObjectList onTile;
 
+        //Dictionary containing what Living objects saw this tile this tick and at what distance;
+        protected Dictionary<Living, float> seenBy;
+
+        public Dictionary<Living, float> GetSeenBy { get { return seenBy; } }
+
+        public GameObjectList OnTile
+        {
+            get { return onTile; }
+        }
         public Point TilePosition {
             get
             {
@@ -34,7 +43,6 @@ namespace Wink
                 );
             }
         }
-
         public bool Blocked
         {
             get
@@ -47,7 +55,6 @@ namespace Wink
                 return false;
             }
         }
-
         public bool Passable
         {
             get { return passable; }
@@ -56,15 +63,14 @@ namespace Wink
 
         public Tile(string assetname = "", TileType tp = TileType.Background, int layer = 0, string id = "", float cameraSensitivity = 1) : base(assetname, layer, id, 0, cameraSensitivity)
         {
+            seenBy = new Dictionary<Living, float>();
             onTile = new GameObjectList();
             onTile.Parent = this;
-
             type = tp;
+            visible = false;
 
             if (sprite != null)
-            {
                 origin = new Vector2(0, sprite.Height - TileHeight);
-            }
         }
 
         #region Serialization
@@ -73,6 +79,7 @@ namespace Wink
             type = (TileType)info.GetValue("type", typeof(TileType));
             passable = info.GetBoolean("passable");
             onTile = info.GetValue("onTile", typeof(GameObjectList)) as GameObjectList;
+            seenBy = info.GetValue("seenBy", typeof(Dictionary<Living, float>)) as Dictionary<Living, float>;
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
@@ -80,9 +87,29 @@ namespace Wink
             info.AddValue("type", type);
             info.AddValue("passable", passable);
             info.AddValue("onTile", onTile);
+            info.AddValue("seenBy", seenBy);
             base.GetObjectData(info, context);
         }
         #endregion
+
+        public void SeenBy(Living viewer, float distance)
+        {
+            if (seenBy.ContainsKey(viewer))
+                seenBy[viewer] = distance;
+            else
+                seenBy.Add(viewer, distance);
+
+            if (viewer is Player)
+                Visible = true;
+
+            foreach (GameObject go in onTile.Children)
+            {
+                if (!(go is Living) || seenBy.Count(obj => obj.Key is Player) > 0)
+                    go.Visible = true;
+                else
+                    go.Visible = false;
+            }
+        }
 
         public override void Replace(GameObject replacement)
         {
@@ -94,7 +121,9 @@ namespace Wink
 
         public void Remove(GameObject go)
         {
-            onTile.Remove(go);
+            onTile.Children.Remove(go);
+            if (go.Parent == onTile)
+                go.Parent = null;
         }
 
         public bool IsEmpty()
@@ -117,6 +146,7 @@ namespace Wink
         {
             base.Update(gameTime);
             onTile.Update(gameTime);
+            seenBy.Clear();
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
@@ -124,25 +154,36 @@ namespace Wink
             if (type != TileType.Background)
                 base.Draw(gameTime, spriteBatch, camera);
             
-            onTile.Draw(gameTime, spriteBatch, camera);
+            if (Visible)
+            {
+                onTile.Draw(gameTime, spriteBatch, camera);
+
+                Texture2D blackTex = GameEnvironment.AssetManager.GetSingleColorPixel(Color.Black);
+                float min = 0.75f;
+                foreach (KeyValuePair<Living, float> kvp in seenBy)
+                {
+                    if (kvp.Key is Player)
+                    {
+                        float p = kvp.Value / kvp.Key.ViewDistance;
+                        min = p < min ? p : min;
+                    }
+                }
+                Rectangle drawBox = new Rectangle(camera.CalculateScreenPosition(this).ToPoint(), new Point(sprite.Width, sprite.Height));
+                Color drawColor = new Color(Color.White, min);
+                spriteBatch.Draw(blackTex, null, drawBox, sprite.SourceRectangle, origin, 0.0f, new Vector2(scale), drawColor, SpriteEffects.None, 0.0f);
+            }
         }
 
         public override void DrawDebug(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
         {
-            onTile.DrawDebug(gameTime, spriteBatch, camera);
-
             if (debugTags.ContainsKey("ExitConnectionPoint"))
             {
-                string[] coord = debugTags["ExitConnectionPoint"].Split(':')[1].Split(',');
+                string[] coord = debugTags["ExitConnectionPoint"].Split(',');
                 TileField tf = parent as TileField;
                 Tile t = tf.Get(int.Parse(coord[0]), int.Parse(coord[1])) as Tile;
                 if (t != null)
-                {
-                    Line.DrawLine(spriteBatch, camera.CalculateScreenPosition(this) + Center, camera.CalculateScreenPosition(t) + Center, Color.Red);
-                }
-
+                    Line.DrawLine(spriteBatch, camera.CalculateScreenPosition(this), camera.CalculateScreenPosition(t), Color.Red);
             }
-
             base.DrawDebug(gameTime, spriteBatch, camera);
         }
 
@@ -154,7 +195,7 @@ namespace Wink
             {
                 Action onClick = () =>
                 {
-                    Player player = GameWorld.Find(p => p is Player) as Player;
+                    Player player = GameWorld.Find(Player.LocalPlayerName) as Player;
                     PlayerMoveEvent pme = new PlayerMoveEvent(player, this);
                     Server.Send(pme);
                 };
@@ -178,6 +219,20 @@ namespace Wink
         public TileType TileType
         {
             get { return type; }
+        }
+
+        public override string ToString()
+        {
+            string result = TilePosition.ToString();
+            if (onTile.Children.Count > 0)
+            {
+                foreach (GameObject go in onTile.Children)
+                {
+                    result += " " + go + ", ";
+                }
+                result = result.Substring(0, result.Length - 2);
+            }
+            return result;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Serialization;
 
 namespace Wink
 {
@@ -7,7 +8,18 @@ namespace Wink
     {
         private string clientName;
 
-        public JoinServerEvent(string clientName) : base()
+        public JoinServerEvent(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+            clientName = info.GetString("clientName");
+        }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("clientName", clientName);
+            base.GetObjectData(info, context);
+        }
+
+        public JoinServerEvent(string clientName)
         {
             this.clientName = clientName;
         }
@@ -17,13 +29,15 @@ namespace Wink
             get { return false; }
         }
 
-        public override void OnClientReceive(LocalClient client)
+        public override bool OnClientReceive(LocalClient client)
         {
+            throw new NotImplementedException();
         }
 
-        public override void OnServerReceive(LocalServer server)
+        public override bool OnServerReceive(LocalServer server)
         {
             (Sender as RemoteClient).ClientName = clientName;
+            return true;
         }
 
         public override bool Validate(Level level)

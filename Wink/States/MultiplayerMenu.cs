@@ -31,35 +31,67 @@ namespace Wink
         {
             Button connectButton;
             TextField ipAddress;
+            TextField userName;
+            Button hostButton;
 
             public LANTab()
             {
                 Point screen = GameEnvironment.Screen;
-                SpriteFont buttonFont = GameEnvironment.AssetManager.GetFont("Arial26");
+                SpriteFont arial26 = GameEnvironment.AssetManager.GetFont("Arial26");
 
                 //Create a text field for the ip address
-                ipAddress = new TextField(buttonFont, Color.Red);
+                ipAddress = new TextField(arial26, Color.Black);
                 ipAddress.Position = new Vector2((screen.X - ipAddress.Width) / 2, 50);
                 ipAddress.Editable = true;
                 Add(ipAddress);
+                TextGameObject ipAddressLabel = new TextGameObject("Arial26");
+                ipAddressLabel.Text = "IP address: ";
+                ipAddressLabel.Position = new Vector2(ipAddress.Position.X - ipAddressLabel.Size.X - 10, ipAddress.Position.Y);
+                ipAddressLabel.Color = Color.Black;
+                Add(ipAddressLabel);
+
+                //Create a text field for the user name
+                userName = new TextField(arial26, Color.Black);
+                userName.Position = new Vector2((screen.X - userName.Width) / 2, 125);
+                userName.Editable = true;
+                Add(userName);
+                TextGameObject userNameLabel = new TextGameObject("Arial26");
+                userNameLabel.Text = "Username: ";
+                userNameLabel.Position = new Vector2(userName.Position.X - userNameLabel.Size.X - 10, userName.Position.Y);
+                userNameLabel.Color = Color.Black;
+                Add(userNameLabel);
 
                 //Create a button to start connecting.
-                connectButton = new Button("button", "Connect", buttonFont, Color.Black);
+                connectButton = new Button("button", "Connect", arial26, Color.Black);
                 connectButton.Action = () =>
                 {
+                    GameEnvironment.GameSettingsManager.SetValue("user_name", userName.Text);
                     GameEnvironment.GameSettingsManager.SetValue("server_ip_address", ipAddress.Text);
                     GameSetupState gss = GameEnvironment.GameStateManager.GetGameState("gameSetupState") as GameSetupState;
                     gss.InitializeGameMode(GameSetupState.GameMode.MultiplayerClient);
                     GameEnvironment.GameStateManager.SwitchTo("gameSetupState");
                 };
-                connectButton.Position = new Vector2((screen.X - connectButton.Width) / 2, 125);
-                Add(connectButton);
+                //Create a button to start hosting.
+                hostButton = new Button("button", "Host a Game", arial26, Color.Black);
+                hostButton.Action = () =>
+                {
+                    GameEnvironment.GameSettingsManager.SetValue("user_name", userName.Text);
+                    GameSetupState gss = GameEnvironment.GameStateManager.GetGameState("gameSetupState") as GameSetupState;
+                    gss.InitializeGameMode(GameSetupState.GameMode.MultiplayerHost);
+                    GameEnvironment.GameStateManager.SwitchTo("gameSetupState");
+                };
+                
+                int x = (screen.X - hostButton.Width - connectButton.Width - 25) / 2;
 
+                hostButton.Position = new Vector2(x + connectButton.Width + 25, 200);
+                Add(hostButton);
+
+                connectButton.Position = new Vector2(x, 200);
+                Add(connectButton);
             }
         }
 
         Button backButton;
-        Button hostButton;
 
         public MultiplayerMenu()
         {
@@ -71,7 +103,7 @@ namespace Wink
 
             Point screen = GameEnvironment.Screen;
             //Make a TabField and add the two tabs.
-            TabField tabField = new TabField(new List<TabField.Tab> { lanTab, onlineTab }, Color.Black, arial26, screen.X, screen.Y - 200);
+            TabField tabField = new TabField(new List<TabField.Tab> { lanTab, onlineTab }, Color.Black, new Color(230, 230, 230), arial26, screen.X, screen.Y - 200);
             Add(tabField);
 
             //Create a button to go back to the main menu.
@@ -82,17 +114,6 @@ namespace Wink
             };
             backButton.Position = new Vector2(100, screen.Y - 100);
             Add(backButton);
-
-            //Create a button to start hosting.
-            hostButton = new Button("button", "Host a Game", arial26, Color.Black);
-            hostButton.Action = () =>
-            {
-                GameSetupState gss = GameEnvironment.GameStateManager.GetGameState("gameSetupState") as GameSetupState;
-                gss.InitializeGameMode(GameSetupState.GameMode.MultiplayerHost);
-                GameEnvironment.GameStateManager.SwitchTo("gameSetupState");
-            };
-            hostButton.Position = new Vector2(screen.X - hostButton.Width - 100, screen.Y - 100);
-            Add(hostButton);
         }
     }
 }

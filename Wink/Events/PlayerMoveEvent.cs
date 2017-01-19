@@ -14,6 +14,7 @@ namespace Wink
             this.tile = tile;
         }
 
+        #region Serialization
         public PlayerMoveEvent(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             tile = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("tileGUID"))) as Tile;
@@ -25,6 +26,7 @@ namespace Wink
             info.AddValue("tileGUID", tile.GUID.ToString());
             base.GetObjectData(info, context);
         }
+        #endregion
 
         public override bool GUIDSerialization
         {
@@ -33,29 +35,36 @@ namespace Wink
 
         protected override int Cost
         {
-            get { return 1; }
+            get
+            {
+                int mc = Living.BaseActionCost;
+                if ((player.EquipmentSlots.Find("bodySlot") as EquipmentSlot).SlotItem != null)
+                {
+                    mc = (int)(mc * ((player.EquipmentSlots.Find("bodySlot") as EquipmentSlot).SlotItem as BodyEquipment).WalkCostMod);
+                }
+
+                return mc;
+            }
         }
 
-        public override void OnClientReceive(LocalClient client)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void DoAction(LocalServer server)
+        protected override void DoAction(LocalServer server)
         {
             server.ChangedObjects.Add(player.Tile);
             server.ChangedObjects.Add(tile);
             player.MoveTo(tile);
+            player.ComputeVisibility();
         }
 
         protected override bool ValidateAction(Level level)
         {
+            if (player.Tile == null)
+                return false;
             int dx = (int)Math.Abs(player.Tile.Position.X - tile.Position.X);
             int dy = (int)Math.Abs(player.Tile.Position.Y - tile.Position.Y);
 
             bool theSame = dx == 0 && dy == 0;
             bool withinReach = dx <= Tile.TileWidth && dy <= Tile.TileHeight;
-            return withinReach && !theSame && !tile.Blocked;
+            return withinReach && !theSame;
         }
     }
 }

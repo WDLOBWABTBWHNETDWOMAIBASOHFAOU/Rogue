@@ -3,36 +3,33 @@ using Microsoft.Xna.Framework;
 using System.Runtime.Serialization;
 using System.Diagnostics;
 using System.Collections.Generic;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Wink
 {
     [Serializable]
-    public class Player : Living
+    public class Player : Living, IGameObjectContainer, IGUIGameObject
     {
-        protected int exp;
-        private MouseSlot mouseSlot;
-
-        public MouseSlot MouseSlot { get { return mouseSlot; } }
-
-        private GameObjectGrid itemGrid;
-        public GameObjectGrid ItemGrid
+        public static string LocalPlayerName
         {
-            get { return itemGrid; }
+            get { return "player_" + GameEnvironment.GameSettingsManager.GetValue("user_name"); }
         }
 
+        protected int exp;
+
+        private MouseSlot mouseSlot;
+        public MouseSlot MouseSlot { get { return mouseSlot; } }
+        
         public override Point PointInTile
         {
             get { return new Point(Tile.TileWidth / 2, Tile.TileHeight / 2); }
         }
 
-        public Player(string clientName, int layer) : base(layer, "player_" + clientName)
+        public Player(string clientName, int layer, float FOVlength = 8.5f) : base(layer, "player_" + clientName, FOVlength)
         {
             //Inventory
-            mouseSlot = new MouseSlot(layer + 11, "mouseSlot");
-            itemGrid = new GameObjectGrid(3, 6, 0, "");
-
-            SetStats(5, 5, 5, 5, 55);
-
+            mouseSlot = new MouseSlot(layer + 11, "mouseSlot");            
+            SetStats();
             InitAnimation(); //not sure if overriden version gets played right without restating
         }
 
@@ -46,29 +43,18 @@ namespace Wink
         {
             exp = info.GetInt32("exp");
             if (context.GetVars().GUIDSerialization)
-            {
                 mouseSlot = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("mouseSlotGUID"))) as MouseSlot;
-                itemGrid = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("itemGridGUID"))) as GameObjectGrid; 
-            }
             else
-            {
                 mouseSlot = info.GetValue("mouseSlot", typeof(MouseSlot)) as MouseSlot;
-                itemGrid = info.GetValue("itemGrid", typeof(GameObjectGrid)) as GameObjectGrid;
-            }
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             if (context.GetVars().GUIDSerialization)
-            {
                 info.AddValue("mouseSlotGUID", mouseSlot.GUID.ToString());
-                info.AddValue("itemGridGUID", itemGrid.GUID.ToString()); 
-            }
             else
-            {
                 info.AddValue("mouseSlot", mouseSlot);
-                info.AddValue("itemGrid", itemGrid);
-            }
+
             info.AddValue("exp", exp);
             base.GetObjectData(info, context);
         }
@@ -78,8 +64,6 @@ namespace Wink
         {
             if (mouseSlot != null && mouseSlot.GUID == replacement.GUID)
                 mouseSlot = replacement as MouseSlot;
-            if (itemGrid != null && itemGrid.GUID == replacement.GUID)
-                itemGrid = replacement as GameObjectGrid;
 
             base.Replace(replacement);
         }
@@ -119,6 +103,91 @@ namespace Wink
             creatureLevel++;
 
             // + some amount of neutral stat points, distriputed by user discresion or increase stats based on picked hero
+        }
+
+        public override void HandleInput(InputHelper inputHelper)
+        {
+            Action onClick = () =>
+            {
+                Event e = new EndTurnEvent(this);
+                Server.Send(e);
+            };
+            if (Tile != null)
+                inputHelper.IfMouseLeftButtonPressedOn(Tile, onClick);
+            base.HandleInput(inputHelper);
+        }
+
+        public override GameObject Find(Func<GameObject, bool> del)
+        {
+            if (del.Invoke(mouseSlot))
+                return mouseSlot;
+
+            return mouseSlot.Find(del) ?? base.Find(del);
+        }
+
+        public override List<GameObject> FindAll(Func<GameObject, bool> del)
+        {
+            List<GameObject> result = new List<GameObject>();
+            if (del.Invoke(mouseSlot))
+                result.Add(mouseSlot);
+
+            result.AddRange(mouseSlot.FindAll(del));
+            result.AddRange(base.FindAll(del));
+            return result;
+        }
+
+        public void InitGUI(Dictionary<string, object> guiState)
+        {
+            if (Id == LocalPlayerName)
+            {
+                PlayingGUI gui = GameWorld.Find("PlayingGui") as PlayingGUI;
+                SpriteFont textfieldFont = GameEnvironment.AssetManager.GetFont("Arial26");
+
+                const int barX = 150;
+                Vector2 HPBarPosition = new Vector2(barX, 14);
+                Vector2 MPBarPosition = new Vector2(barX, HPBarPosition.Y + 32);
+
+                //Healthbar
+                Bar<Player> hpBar = new Bar<Player>(this, p => p.Health, p => p.MaxHealth, textfieldFont, Color.Red, 2, "HealthBar", 0, 2.5f);
+                hpBar.Position = new Vector2(HPBarPosition.X, HPBarPosition.Y);
+                gui.Add(hpBar);
+
+                //Manabar
+                Bar<Player> mpBar = new Bar<Player>(this, p => p.Mana, p => p.MaxMana, textfieldFont, Color.Blue, 2, "ManaBar", 0, 2.5f);
+                mpBar.Position = new Vector2(MPBarPosition.X, MPBarPosition.Y);
+                gui.Add(mpBar);
+
+                //Action Points
+                Bar<Player> apBar = new Bar<Player>(this, p => p.ActionPoints, p => MaxActionPoints, textfieldFont, Color.Yellow, 2, "ActionBar", 0, 2.5f);
+                int screenWidth = GameEnvironment.Screen.X;
+                Vector2 APBarPosition = new Vector2(screenWidth - barX - apBar.Width, HPBarPosition.Y);
+                apBar.Position = new Vector2(APBarPosition.X, APBarPosition.Y);
+                gui.Add(apBar);
+
+                PlayerInventoryAndEquipment pie = new PlayerInventoryAndEquipment(Inventory, EquipmentSlots);
+                pie.Position = guiState.ContainsKey("playerIaEPosition") ? (Vector2)guiState["playerIaEPosition"] : new Vector2(screenWidth - pie.Width, 300);
+                pie.Visible = guiState.ContainsKey("playerIaEVisibility") ? (bool)guiState["playerIaEVisibility"] : false;
+                gui.Add(pie);
+
+                gui.Add(mouseSlot);
+            }
+        }
+
+        public void CleanupGUI(Dictionary<string, object> guiState)
+        {
+            if (Id == LocalPlayerName)
+            {
+                PlayingGUI gui = GameWorld.Find("PlayingGui") as PlayingGUI;
+                PlayerInventoryAndEquipment pIaE = gui.Find(obj => obj is PlayerInventoryAndEquipment) as PlayerInventoryAndEquipment;
+                guiState.Add("playerIaEVisibility", pIaE.Visible);
+                guiState.Add("playerIaEPosition", pIaE.Position);
+
+                gui.RemoveImmediatly(gui.Find("HealthBar"));
+                gui.RemoveImmediatly(gui.Find("ManaBar"));
+                gui.RemoveImmediatly(gui.Find("ActionBar"));
+                gui.RemoveImmediatly(pIaE);
+                gui.RemoveImmediatly(mouseSlot);
+            }
         }
     }
 }

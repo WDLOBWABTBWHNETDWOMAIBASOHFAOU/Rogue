@@ -126,7 +126,7 @@ public class GameEnvironment : Game
     {
         DrawingHelper.Initialize(GraphicsDevice);
         spriteBatch = new SpriteBatch(GraphicsDevice);
-        assetManager = new AssetManager(Content, graphics.GraphicsDevice, spriteBatch);
+        assetManager = new AssetManager(Content, GraphicsDevice, new SpriteBatch(GraphicsDevice));
     }
 
     protected void HandleInput()
@@ -152,18 +152,13 @@ public class GameEnvironment : Game
     protected override void Draw(GameTime gameTime)
     {
         GraphicsDevice.Clear(Color.Black);
-        spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, spriteScale);
+        spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, null, null, null, null, spriteScale);
 
         //Pass along the default camera in the draw methods.
-        try
-        {
-            gameStateManager.Draw(gameTime, spriteBatch, DefaultCamera);
-            if (debuggingMode)
-                gameStateManager.DrawDebug(gameTime, spriteBatch, DefaultCamera);
-        }
-        finally
-        {
-            spriteBatch.End();
-        }
+        gameStateManager.Draw(gameTime, spriteBatch, DefaultCamera);
+        if (debuggingMode)
+            gameStateManager.DrawDebug(gameTime, spriteBatch, DefaultCamera);
+        
+        spriteBatch.End();
     }
 }

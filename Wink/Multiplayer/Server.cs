@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace Wink
@@ -24,5 +23,6 @@ namespace Wink
         protected abstract void ReallySend(Event e);
 
         public abstract void Update(GameTime gameTime);
+        public abstract void Reset();
     }
 }

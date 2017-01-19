@@ -1,38 +1,49 @@
-﻿using Microsoft.Xna.Framework;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.IO;
-using System.Linq;
+using Microsoft.Xna.Framework;
 
 namespace Wink
 {
     [Serializable]
-    public partial class Level : GameObjectList
+    public partial class Level : GameObjectList, IGUIGameObject
     {
         private int levelIndex;
+        public int Index
+        {
+            get { return levelIndex; }
+        }
 
         public Level(int levelIndex) : base(0, "Level")
         {
-            LoadTiles("Content/Levels/" + levelIndex + ".txt");
+            string path = "Content/Levels/" + levelIndex + ".txt";
+            if (File.Exists(path))
+            {
+                LoadTiles(path);
+            }
+            else
+            {
+                List<Room> rooms = GenerateRooms();
+                List<Tuple<Room, Room>> hallwayPairs = GenerateHallwayPairs(rooms);
+                GenerateTiles(rooms, hallwayPairs);
+            }
+
             this.levelIndex = levelIndex;
         }
 
-        public Level() : base(0, "Level")
-        {
-            List<Room> rooms = GenerateRooms();
-            List<Tuple<Room, Room>> hallwayPairs = GenerateHallwayPairs(rooms);
-            GenerateTiles(rooms, hallwayPairs);
-        }
-
+        #region Serialization
         public Level(SerializationInfo info, StreamingContext context) : base(info, context)
         {
+            levelIndex = info.GetInt32("levelIndex");
         }
-        
-        public override void Update(GameTime gameTime)
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            base.Update(gameTime);
+            base.GetObjectData(info, context);
+            info.AddValue("levelIndex", levelIndex);
         }
+        #endregion
 
         public void LoadTiles(string path)
         {
@@ -57,26 +68,24 @@ namespace Wink
                     tf.Add(t, x, y);
                 }
             }
+            //Putting the item one layer above the inventory box
+            int inventoryLayer = layer + 1;
+            int itemLayer = layer + 2;
             
-            Item testItem = new TestItem("empty:64:64:10:Pink", 1, 0);
-            List<Tile> floorTiles = tf.FindAll(obj => obj.GetType() == typeof(Tile) && (obj as Tile).TileType == TileType.Floor).Cast<Tile>().ToList();
-            floorTiles[Random.Next(floorTiles.Count)].PutOnTile(testItem);
-
-            // ENEMY CODE (test)
+            #region ENEMY CODE (test)
             for (int i = 0; i < 2; i++)
             {
-                Enemy testEnemy = new Enemy(0);
-
+                Enemy testEnemy = new Enemy(0, "Enemy" + i);
+                testEnemy.SetStats();
                 //First find all passable tiles then select one at random.
                 List<GameObject> tileCandidates = tf.FindAll(obj => obj is Tile && (obj as Tile).Passable);
                 Tile startTile = tileCandidates[GameEnvironment.Random.Next(tileCandidates.Count)] as Tile;
-
-                testEnemy.MoveTo(startTile);
+                startTile.PutOnTile(testEnemy);
             }
-            // END ENEMY CODE (test)
-            
+            #endregion
+
             tf.InitSpriteSheetIndexation();
-        }
+    }
 
         private Tile LoadTile(char tileType, int x, int y)
         {
@@ -85,17 +94,22 @@ namespace Wink
                 case '.':
                     return new Tile();
                 case '1':
-                    return LoadStartTile();
+                case '2':
+                case '3':
+                case '4':
+                    return LoadStartTile(tileType - 48);
                 case '#':
                     return LoadWallTile(x, y);
                 case '-':
                     return LoadFloorTile();
                 case 'c':
-                    return LoadChestTile();
+                    return LoadChestTile(levelIndex);
                 case 'D':
                     return LoadDoorTile();
                 case 'E':
                     return LoadEndTile();
+                case 't':
+                    return LoadTrapTile("spr_trap", TileType.Floor, x, y);
                 default:
                     return LoadWTFTile();
             }
@@ -103,7 +117,7 @@ namespace Wink
 
         private Tile LoadWallTile(int x, int y, string assetName = "test-wall-sprite2@10x5", string id = "")
         {
-            TileField tf = this.Find("TileField") as TileField;
+            TileField tf = Find("TileField") as TileField;
             Tile aboveTile = tf[x, y - 1] as Tile;
 
             Tile newTile;
@@ -125,9 +139,9 @@ namespace Wink
             return t;
         }
 
-        private Tile LoadStartTile(string assetName = "empty:64:64:10:Red")
+        private Tile LoadStartTile(int number, string assetName = "empty:64:64:10:Red")
         {
-            return LoadFloorTile("startTile", assetName);
+            return LoadFloorTile("StartTile" + number, assetName);
         }
 
         private Tile LoadDoorTile(string assetName = "spr_floor")
@@ -139,11 +153,59 @@ namespace Wink
             return t;
         }
 
-        private Tile LoadChestTile(string assetName = "spr_floor")
+        private Tile LoadTrapTile(string name, TileType tileType, int x, int y)
         {
-            Tile t = LoadFloorTile("", assetName);
+            Tile t = new Tile("empty:65:65:10:DarkGreen", tileType);
+            t.Passable = true;
 
-            Container chest = new Container("empty:64:64:10:Brown");
+            //DarkRed for development testing, should have same or simular sprite as the tile in final version
+            Trap trap = new Trap("empty:65:65:10:DarkRed");
+            t.PutOnTile(trap);
+            return t;
+        }
+        
+        private Tile LoadChestTile(int floorNumber=1,string assetName = "spr_floor" )
+        {
+            floorNumber++;
+            Tile t = LoadFloorTile("", assetName);
+            Container chest = new Container("empty:64:64:10:Brown",levelIndex);
+            for (int x = 0; x < chest.IBox.ItemGrid.Columns; x++)
+            {
+                for (int y = 0; y < chest.IBox.ItemGrid.Rows; y++)
+                {
+                    int i = x % 4;
+                    int spawnChance;
+                    Item newItem;
+                    switch (i)
+                    {
+                        #region cases
+                        case 0:
+                            spawnChance = 50;
+                            newItem = new Potion(floorNumber);
+                            break;
+                        case 1:
+                            spawnChance = 30;
+                            newItem = new WeaponEquipment(floorNumber);
+                            break;
+                        case 2:
+                            spawnChance = 30;
+                            newItem = new BodyEquipment(floorNumber, 3);
+                            break;
+                        case 3:
+                            spawnChance = 30;
+                            newItem = new RingEquipment("empty:64:64:10:Gold");
+                            break;
+                        default:
+                            throw new Exception("wtf");
+                            #endregion
+                    }
+                    if (spawnChance > GameEnvironment.Random.Next(100))
+                    {
+                        ItemSlot cS = chest.IBox.ItemGrid.Get(x, y) as ItemSlot;
+                        cS.ChangeItem(newItem);
+                    }
+                }
+            }
             t.PutOnTile(chest);
             return t;
         }
@@ -161,6 +223,19 @@ namespace Wink
             End end = new End(t, levelIndex, this);
             t.PutOnTile(end);
             return t;
+        }
+
+        public void InitGUI(Dictionary<string, object> guiState)
+        {
+            PlayingGUI pg = GameWorld.Find("PlayingGui") as PlayingGUI;
+            SpriteGameObject floor = pg.Find("FloorBG") as SpriteGameObject;
+            TextGameObject floorNumber = pg.Find("FloorNumber") as TextGameObject;
+            floorNumber.Text = Index.ToString();
+            floorNumber.Position = floor.Position + (floor.BoundingBox.Size.ToVector2() - floorNumber.Size) / 2;
+        }
+
+        public void CleanupGUI(Dictionary<string, object> guiState)
+        {            
         }
     }
 }

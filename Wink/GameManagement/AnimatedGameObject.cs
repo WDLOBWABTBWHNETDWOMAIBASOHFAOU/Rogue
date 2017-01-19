@@ -11,6 +11,7 @@ public class AnimatedGameObject : SpriteGameObject
         animations = new Dictionary<string, Animation>();
     }
 
+    #region Serialization
     public AnimatedGameObject(SerializationInfo info, StreamingContext context) : base(info, context)
     {
         animations = info.GetValue("animations", typeof(Dictionary<string, Animation>)) as Dictionary<string, Animation>;
@@ -23,6 +24,7 @@ public class AnimatedGameObject : SpriteGameObject
         info.AddValue("animations", animations);
         info.AddValue("Current", Current);
     }
+    #endregion
 
     public void LoadAnimation(string assetName, string id, bool looping, float frameTime = 0.1f)
     {

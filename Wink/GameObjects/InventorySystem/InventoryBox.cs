@@ -16,8 +16,37 @@ namespace Wink
         {
             itemGrid.CellHeight = Tile.TileHeight;
             itemGrid.CellWidth = Tile.TileWidth;
-            CheckGrid(itemGrid);
-            itemGrid.Add(new TestItem(), 0, 0);
+
+            for (int x = 0; x < itemGrid.Columns; x++)
+            {
+                for (int y = 0; y < itemGrid.Rows; y++)
+                {
+                    itemGrid.Add(new ItemSlot(), x, y);
+                }
+            }
+
+            ////TODO: test items REMOVE BEFORE RELEASE!!!
+            //ItemSlot testItem = itemGrid.Get(0, 0) as ItemSlot;
+            //testItem.ChangeItem( new TestItem());
+            //ItemSlot testItem2 = itemGrid.Get(0, 1) as ItemSlot;
+            //testItem2.ChangeItem(new TestItem());
+
+            //ItemSlot testItem3 = itemGrid.Get(1, 1) as ItemSlot;
+            //testItem3.ChangeItem(new WeaponEquipment(2));
+
+            //ItemSlot testItem4 = itemGrid.Get(2, 1) as ItemSlot;
+            //testItem4.ChangeItem(new BodyEquipment(2,5));
+
+            //ItemSlot testItem5 = itemGrid[2, 0] as ItemSlot;
+            //testItem5.ChangeItem(new RingEquipment(200, RingType.Intelligence, "empty:65:65:10:Purple", id: "Intelligence Test Ring"));
+
+            //ItemSlot testItem6 = itemGrid[1, 0] as ItemSlot;
+            //testItem6.ChangeItem(new RingEquipment("empty:65:65:10:Green", 0, reflectEffect: true, id: "Reflecting Test Ring"));
+
+            //ItemSlot testItem7 = itemGrid[3, 0] as ItemSlot;
+            //testItem7.ChangeItem(new Potion(5,25));
+            //// end test items
+
             Add(itemGrid);
         }
 
@@ -31,25 +60,6 @@ namespace Wink
             base.GetObjectData(info, context);
         }
         #endregion
-
-        private void CheckGrid(GameObjectGrid itemGrid)
-        {
-            for (int x = 0; x < itemGrid.Columns; x++)
-            {
-                for (int y = 0; y < itemGrid.Rows; y++)
-                {
-                    if ( itemGrid.Get(x,y) == null)
-                    {
-                        itemGrid.Add(new EmptyItem("empty:64:64:10:Gray"),x,y);
-                    }
-                }
-            }
-        }
-
-        public override void Update(GameTime gameTime)
-        {
-            CheckGrid(ItemGrid);
-            base.Update(gameTime);
-        }
+        
     } 
 }

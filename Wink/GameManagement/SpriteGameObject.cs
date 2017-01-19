@@ -26,11 +26,13 @@ public class SpriteGameObject : GameObject
 
     public Color DrawColor { get; set; }
 
-    public float CameraSensitivity {
+    public float CameraSensitivity
+    {
         get { return cameraSensitivity; }
     }
 
-    public Dictionary<string, string> DebugTags {
+    public Dictionary<string, string> DebugTags
+    {
         get { return debugTags; }
     }
 
@@ -44,6 +46,7 @@ public class SpriteGameObject : GameObject
         LoadSprite(sheetIndex);
     }
 
+    #region Serialization
     public SpriteGameObject(SerializationInfo info, StreamingContext context) : base(info, context)
     {
         Color color = new Color();
@@ -72,6 +75,7 @@ public class SpriteGameObject : GameObject
         info.AddValue("debugTags", debugTags);
         info.AddValue("DrawColor", DrawColor.PackedValue);
     }
+    #endregion
 
     public override void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
     {
@@ -79,7 +83,7 @@ public class SpriteGameObject : GameObject
             return;
 
         //Draw every SpriteGameObject in its position relative to the camera but only to the extent specified by the CameraSensitivity property.
-        sprite.Draw(spriteBatch, GlobalPosition - (cameraSensitivity * camera.GlobalPosition), origin, scale, DrawColor);
+        sprite.Draw(spriteBatch, camera.CalculateScreenPosition(this), origin, scale, DrawColor);
     }
 
     public override void DrawDebug(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
@@ -106,7 +110,7 @@ public class SpriteGameObject : GameObject
         }
     }
 
-    public void LoadSprite(int spriteSheetIndex)
+    public void LoadSprite(int spriteSheetIndex = 0)
     {
         if (spriteAssetName != "")
         {

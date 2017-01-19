@@ -40,21 +40,37 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Events\ActionEvent.cs" />
+    <Compile Include="Events\AnimationEvent.cs" />
     <Compile Include="Events\AttackEvent.cs" />
+    <Compile Include="Events\DoorEvent.cs" />
     <Compile Include="Events\EndTurnEvent.cs" />
     <Compile Include="Events\Event.cs" />
     <Compile Include="Events\JoinedServerEvent.cs" />
     <Compile Include="Events\JoinServerEvent.cs" />
     <Compile Include="Events\LevelChangedEvent.cs" />
     <Compile Include="Events\LevelUpdatedEvent.cs" />
+    <Compile Include="Events\LivingMoveAnimationEvent.cs" />
     <Compile Include="Events\NextLevelEvent.cs" />
     <Compile Include="Events\PickupEvent.cs" />
     <Compile Include="Events\PlayerMoveEvent.cs" />
+    <Compile Include="Events\TakenPotionEvent.cs" />
     <Compile Include="GameObjects\Door.cs" />
     <Compile Include="GameObjects\End.cs" />
     <Compile Include="GameManagement\IGameObjectContainer.cs" />
     <Compile Include="GameObjects\IGUIGameObject.cs" />
     <Compile Include="GameObjects\InventorySystem\Container.cs" />
+    <Compile Include="GameObjects\InventorySystem\EquipmentSlot.cs" />
+    <Compile Include="GameObjects\InventorySystem\ItemSlot.cs" />
+    <Compile Include="GameObjects\Items\BodyEquipment.cs" />
+    <Compile Include="GameObjects\Items\Equipment.cs" />
+    <Compile Include="GameObjects\Items\Potion.cs" />
+    <Compile Include="GameObjects\Items\RingEquipment.cs" />
+    <Compile Include="GameObjects\Items\WeaponEquipment.cs" />
+    <Compile Include="GUI\ShadowCasting\ICellGrid.cs" />
+    <Compile Include="GUI\ShadowCasting\IViewer.cs" />
+    <Compile Include="GUI\ShadowCasting\ShadowCasting.cs" />
+    <Compile Include="GameObjects\Trap.cs" />
+    <Compile Include="GUI\PlayerInventoryAndEquipment.cs" />
     <Compile Include="GameObjects\ITileObject.cs" />
     <Compile Include="GUI\TrackingTextGameObject.cs" />
     <Compile Include="GUI\Window.cs" />
@@ -68,7 +84,6 @@
     <Compile Include="Util\FrameCounter.cs" />
     <Compile Include="Util\MultiArray.cs" />
     <Compile Include="Util\PathFinder.cs" />
-    <Compile Include="GameObjects\Items\EmptyItem.cs" />
     <Compile Include="GameObjects\InventorySystem\InventoryBox.cs" />
     <Compile Include="GameObjects\Items\Item.cs" />
     <Compile Include="GameObjects\Living\Enemy.cs" />
@@ -77,7 +92,6 @@
     <Compile Include="GameObjects\Living\LivingStatsSystem.cs" />
     <Compile Include="GameObjects\Living\Player.cs" />
     <Compile Include="GameObjects\InventorySystem\MouseSlot.cs" />
-    <Compile Include="GameObjects\Items\TestItem.cs" />
     <Compile Include="GameObjects\Tile.cs" />
     <Compile Include="GameObjects\TileField.cs" />
     <Compile Include="GUI\Bar.cs" />
@@ -152,7 +166,7 @@
     <Content Include="Content\Levels\1.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\Levels\2.txt">
+    <Content Include="Content\Levels\4.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Icon.ico" />

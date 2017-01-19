@@ -15,7 +15,7 @@ namespace Wink
             IsMouseVisible = true;
         }
 
-        public static Treehugger Instance
+        protected static Treehugger Instance
         {
             get {
                 if (instance == null)
@@ -29,16 +29,21 @@ namespace Wink
             (Instance as GameEnvironment).ApplyResolutionSettings(fullscreen);
         }
 
-        public static void QuitGame()
+        public static void ExitGame()
         {
             Instance.Exit();
+        }
+
+        public static void RunGame()
+        {
+            Instance.Run();
         }
 
         protected override void LoadContent()
         {
             base.LoadContent();
             screen = new Point(1920, 1080);
-            windowSize = new Point(1024, 576);
+            windowSize = new Point(960, 540);
             FullScreen = false;
 
             gameStateManager.AddGameState("gameSetupState", new GameSetupState());
@@ -49,11 +54,16 @@ namespace Wink
             gameStateManager.AddGameState("optionsMenu", new OptionsMenu());
             gameStateManager.SwitchTo("mainMenuState");
 
-            //AssetManager.PlayMusic("Sounds/snd_music");
+            /* 
+             * Since deserialization happens on a separate thread we need to
+             * pre-load the transparent sprites, so concurrent drawing doesn't overwrite the sprite.
+             */
+            AssetManager.GetSprite("*test-wall-sprite2@10x5");
         }
 
         protected override void UnloadContent()
         {
+            gameStateManager.ResetAll();
         }
     }
 }

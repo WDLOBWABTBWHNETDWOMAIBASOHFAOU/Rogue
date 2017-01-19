@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
 using Microsoft.Xna.Framework;
 using System.Runtime.Serialization;
+using System;
 
 namespace Wink
 {
@@ -17,6 +17,7 @@ namespace Wink
         private List<Event> pendingEvents; //From the server
 
         private Thread receivingThread;
+        private bool receiving;
 
         public Level Level
         {
@@ -35,47 +36,32 @@ namespace Wink
             pendingEvents = new List<Event>();
 
             StartReceiving();
+
             ReallySend(new JoinServerEvent(client.ClientName));
-        }
-
-        public override void Update(GameTime gameTime)
-        {
-            ProcessEvents();
-        }
-
-        public void ProcessEvents()
-        {
-            foreach (Event e in pendingEvents)
-            {
-                if (e.Validate(client.Level))
-                {
-                    e.OnClientReceive(client);
-                }
-            }
-            pendingEvents.Clear();
         }
 
         private void StartReceiving()
         {
+            receivingThread = new Thread(new ThreadStart(Receive));
             receivingThread.Start();
+            receiving = true;
         }
 
         public void StopReceiving()
         {
-            receivingThread.Abort();
+            receiving = false;
         }
 
         private void Receive()
         {
-            while (true)
+            while (receiving)
             {
                 NetworkStream s = tcp.GetStream();
                 if (s.DataAvailable)
                 {
                     System.Diagnostics.Debug.WriteLine("data is available");
-                    Event e = SerializationHelper.Deserialize(s, client, false) as Event; 
-                    //Event e = (Event)binaryFormatter.Deserialize(s);
-                    pendingEvents.Add(e);
+                    Event e = SerializationHelper.Deserialize(s, client, false) as Event;
+                    client.IncomingEvent(e);
                 }
                 else
                 {
@@ -93,6 +79,16 @@ namespace Wink
                 binaryFormatter.Context = c;
                 binaryFormatter.Serialize(tcp.GetStream(), e);
             }
+        }
+
+        public override void Reset()
+        {
+            StopReceiving();
+            receivingThread.Join();
+        }
+
+        public override void Update(GameTime gameTime)
+        {
         }
     }
 }

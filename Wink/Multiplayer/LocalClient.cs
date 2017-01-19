@@ -1,8 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using System;
 using System.IO;
+using System.Collections.Generic;
 
 namespace Wink
 {
@@ -12,6 +12,8 @@ namespace Wink
 
         private GameObjectList gameObjects;
         private Camera newCamera;
+
+        private List<Event> pendingEvents;
 
         public Level Level
         {
@@ -33,7 +35,7 @@ namespace Wink
         }
         public override Player Player
         {
-            get { return gameObjects.Find("player_" + ClientName) as Player; }
+            get { return gameObjects.Find(Player.LocalPlayerName) as Player; }
         }
 
         public bool IsMyTurn { set; get; }
@@ -53,6 +55,9 @@ namespace Wink
             if (guid == Guid.Empty)
                 return null;
 
+            if (new HashSet<GameObject>(Level.FindAll(o => o.GUID == guid)).Count > 1)
+                throw new Exception("!");
+
             GameObject obj = Level.Find(o => o.GUID == guid);
             return obj;
         }
@@ -61,19 +66,15 @@ namespace Wink
         {
             frameCounter = new FrameCounter();
 
-            ClientName = System.Environment.MachineName;
+            ClientName =  GameEnvironment.GameSettingsManager.GetValue("user_name");
 
             newCamera = new Camera();
             GameEnvironment.InputHelper.Camera = newCamera;
 
             gameObjects = new GameObjectList();
             gameObjects.Add(new PlayingGUI());
-        }
 
-        public void LoadPlayerGUI()
-        {
-            PlayingGUI pgui = gameObjects.Find(obj => obj is PlayingGUI) as PlayingGUI;
-            pgui.AddPlayerGUI(this);
+            pendingEvents = new List<Event>();
         }
 
         public void Replace(GameObject go)
@@ -81,9 +82,12 @@ namespace Wink
             gameObjects.Replace(go);
         }
 
-        public void Update(GameTime gameTime)
+        public override void Update(GameTime gameTime)
         {
             GUI.Update(gameTime);
+
+            if (pendingEvents.Count > 0)
+                ExecuteIfValid(pendingEvents[0]);
         }
 
         public void HandleInput(InputHelper inputHelper) 
@@ -110,25 +114,33 @@ namespace Wink
             spriteBatch.DrawString(sf, fps, new Vector2(1, 100), Color.Red);
         }
 
+        public void IncomingEvent(Event e)
+        {
+            pendingEvents.Add(e);
+        }
+
         public override void Send(Event e)
         {
             e = SerializationHelper.Clone(e, this, e.GUIDSerialization);
-
-            if (e.Validate(Level))
-                e.OnClientReceive(this);
+            pendingEvents.Add(e);
         }
 
         public override void SendPreSerialized(MemoryStream ms)
         {
             ms.Seek(0, SeekOrigin.Begin);
             Event e = SerializationHelper.Deserialize(ms, this, false) as Event;
-            if (e.Validate(Level))
-                e.OnClientReceive(this);
+            pendingEvents.Add(e);
         }
 
-        public void Reset()
+        private void ExecuteIfValid(Event e)
         {
-            throw new NotImplementedException();
+            if (e.Validate(Level))
+                if (e.OnClientReceive(this))
+                    pendingEvents.Remove(e);
+        }
+
+        public override void Reset()
+        {
         }
     }
 }

@@ -12,20 +12,21 @@ namespace Wink
     {
         private class TabButton : Button
         {
+            Color bgColor;
             Point size;
             public Tab tab;
 
-            public TabButton(Point size, Tab tab, SpriteFont titleFont, Color color, int layer = 0, string id = "", int sheetIndex = 0, float scale = 1) : base("", tab.Title, titleFont, color)
+            public TabButton(Point size, Tab tab, SpriteFont titleFont, Color textColor, Color bgColor, int layer = 0, string id = "", int sheetIndex = 0, float scale = 1) : base("", tab.Title, titleFont, textColor)
             {
                 this.size = size;
                 this.tab = tab;
+                this.bgColor = bgColor;
             }
 
             public override int Width
             {
                 get { return size.X; }
             }
-
             public override int Height
             {
                 get { return size.Y; }
@@ -33,7 +34,7 @@ namespace Wink
 
             public override void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
             {
-                Texture2D white = GameEnvironment.AssetManager.GetSingleColorPixel(tab.Active ? Color.White : Color.LightGray);
+                Texture2D white = GameEnvironment.AssetManager.GetSingleColorPixel(tab.Active ? bgColor : Color.LightGray);
                 spriteBatch.Draw(white, new Rectangle(Position.ToPoint(), size), Color.White);
                 base.Draw(gameTime, spriteBatch, camera);
             }
@@ -57,9 +58,10 @@ namespace Wink
         private int height;
 
         private Color titleColor;
+        private Color bgColor;
         private SpriteFont titleFont;
 
-        public TabField(List<Tab> tabs, Color titleColor, SpriteFont titleFont, int width, int height)
+        public TabField(List<Tab> tabs, Color titleColor, Color bgColor, SpriteFont titleFont, int width, int height)
         {
             GameObjectList tabTitles = new GameObjectList(0, "TabTitles");
             Add(tabTitles);
@@ -68,6 +70,7 @@ namespace Wink
             Add(content);
 
             this.titleColor = titleColor;
+            this.bgColor = bgColor;
             this.titleFont = titleFont;
             this.width = width;
             this.height = height;
@@ -85,7 +88,7 @@ namespace Wink
             int tabTitleWidth = width / tabs.Count - 4;
             int index = tabs.FindIndex(t => t.Equals(tab));
 
-            TabButton b = new TabButton(new Point(width / tabs.Count - 4, 50), tab, titleFont, titleColor);
+            TabButton b = new TabButton(new Point(width / tabs.Count - 4, 50), tab, titleFont, titleColor, bgColor);
             b.Action = () =>
             {
                 Tab prevActive = tabs.Find(t => t.Active);
@@ -109,9 +112,9 @@ namespace Wink
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
         {
-            Texture2D white = GameEnvironment.AssetManager.GetSingleColorPixel(Color.White);
+            Texture2D bgTex = GameEnvironment.AssetManager.GetSingleColorPixel(bgColor);
             Point screen = GameEnvironment.Screen;
-            spriteBatch.Draw(white, null, new Rectangle(0,52,width,height-54));
+            spriteBatch.Draw(bgTex, null, new Rectangle(0, 52, width, height - 54));
 
             base.Draw(gameTime, spriteBatch, camera);
         }

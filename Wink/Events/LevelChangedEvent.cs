@@ -30,19 +30,20 @@ namespace Wink
             get { return true; }
         }
 
-        public override void OnClientReceive(LocalClient client)
+        public override bool OnClientReceive(LocalClient client)
         {
             foreach (GameObject go in changedObjects)
             {
                 client.Replace(go);
 
-                if (go is IGUIGameObject)
-                    (go as IGUIGameObject).InitGUI();
+                //if (go is IGUIGameObject)
+                    //(go as IGUIGameObject).InitGUI();
+                    //TODO: enable this again but make replace return the 
             }
-                
+            return true;
         }
 
-        public override void OnServerReceive(LocalServer server)
+        public override bool OnServerReceive(LocalServer server)
         {
             throw new NotImplementedException();
         }

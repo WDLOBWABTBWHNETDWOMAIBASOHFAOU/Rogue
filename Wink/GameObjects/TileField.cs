@@ -9,30 +9,42 @@ namespace Wink
      * This class came from the TickTick Game.
      */
     [Serializable]
-    public class TileField : GameObjectGrid
+    public class TileField : GameObjectGrid, ICellGrid
     {
+        public int xDim
+        {
+            get { return Columns; }
+        }
+        public int yDim
+        {
+            get { return Rows; }
+        }
+
         public TileField(int rows, int columns, int layer = 0, string id = "") : base(rows, columns, layer, id)
         {
             CellWidth = Tile.TileWidth;
             CellHeight = Tile.TileHeight;
         }
 
+        #region Serialization
         public TileField(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
+        #endregion
 
-        public TileType GetTileType(int x, int y)
+        public List<Tile> AllTilesWithObjects
         {
-            if (x < 0 || x >= Columns)
+            get
             {
-                return TileType.Floor;
+                List<Tile> result = new List<Tile>();
+                foreach (GameObject go in Objects)
+                {
+                    Tile t = go as Tile;
+                    if (t.OnTile.Children.Count > 0)
+                        result.Add(t);
+                }
+                return result;
             }
-            if (y < 0 || y >= Rows)
-            {
-                return TileType.Background;
-            }
-            Tile current = Objects[x, y] as Tile;
-            return current.TileType;
         }
 
         public override string ToString()
@@ -98,8 +110,25 @@ namespace Wink
                 }
             }
         }
+        
+        public bool IsWall(int x, int y)
+        {
+            Tile t = grid[x, y] as Tile;
+            if (t.Blocked)
+                return true;
+            return t.TileType == TileType.Wall; //TODO: make separate property in Tile that describes whether or not it obstructs line of sight. (!Passable as placeholder) 
+        }
 
+        public void SetLight(int x, int y, float distanceSquared, IViewer seenBy)
+        {
+            //TODO: system to change the visibility of a tile
+            Tile t = grid[x, y] as Tile;
+            t.SeenBy(seenBy as Living, (float)Math.Sqrt(distanceSquared));
+        }
+
+        #region Table that maps 3x3 Permission arrays to an index.
         public enum Permission { Either, NotEqual, Equal };
+
         //Added a Type Alias to make more readable
         private Dictionary<Permission[,], int> table = new Dictionary<Permission[,], int>()
         {
@@ -359,5 +388,6 @@ namespace Wink
                 { P.NotEqual, P.Equal,    P.Equal }
             }, 49 },
         };
+        #endregion
     }
 }

@@ -60,7 +60,7 @@ namespace Wink
             quitButton = new Button("button", "Quit", textfieldFont, Color.Black);
             quitButton.Action = () =>
             {
-                Treehugger.QuitGame();
+                Treehugger.ExitGame();
             };
             quitButton.Position = new Vector2(centerx, restartButton.Position.Y + buttonOffSett);
             Add(quitButton);
