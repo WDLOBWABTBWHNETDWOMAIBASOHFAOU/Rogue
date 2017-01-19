@@ -6,34 +6,109 @@ using System.Runtime.Serialization;
 
 namespace Wink
 {
+    public enum EnemyType { warrior,archer,mage,random}
     [Serializable]
+
     public class Enemy : Living, IGUIGameObject
     {
         private Bar<Enemy> hpBar;
+        string enemySprite;
         
         public override bool BlocksTile
         {
             get { return Health > 0; }
         }
         
-        public Enemy(int layer, string id = "Enemy", float FOVlength = 8.5f) : base(layer, id, FOVlength)
+        public Enemy(int layer, int floorNumber,EnemyType type=EnemyType.random, string id = "Enemy", float FOVlength = 8.5f) : base(layer, id, FOVlength)
         {
+            if(floorNumber < 1)
+            {
+                floorNumber = 1;
+            }
+            SetupType(type, floorNumber);
+            InitAnimation(enemySprite);
         }
+
+        private void SetupType(EnemyType etype, int floorNumber)
+        {
+            if (etype == EnemyType.random)
+            {
+                //select random armorType
+                Array eTypeValues = Enum.GetValues(typeof(EnemyType));
+                etype = (EnemyType)eTypeValues.GetValue(GameEnvironment.Random.Next(eTypeValues.Length - 1));
+            }
+            id += " : " + etype.ToString();
+            int eLvl = GameEnvironment.Random.Next(1,floorNumber);
+            int weaponChance = 15 * floorNumber; // higher chance the deeper you go
+            int armorChance = 15*floorNumber;
+
+            switch (etype)
+            {
+                case EnemyType.warrior:
+                    if(weaponChance < GameEnvironment.Random.Next(100))
+                    {
+                        EquipmentSlot weaponslot = EquipmentSlots.Find("weaponSlot") as EquipmentSlot;
+                        weaponslot.ChangeItem(new WeaponEquipment(floorNumber,WeaponType.melee));
+                    }
+                    if (armorChance < GameEnvironment.Random.Next(100))
+                    {
+                        EquipmentSlot bodyslot = EquipmentSlots.Find("bodySlot") as EquipmentSlot;
+                       // bodyslot.ChangeItem(new BodyEquipment(floorNumber, 2, ArmorType.normal));
+                    }
+                    SetStats(eLvl, 3 + (eLvl), 3 + (eLvl), 2 + (eLvl / 2), 1 + (eLvl / 2), 1 + (eLvl / 2), 2 + (eLvl / 2), 20 + eLvl * 3, 2, 1);
+                    enemySprite = "empty:65:65:12:Brown";
+                    break;
+
+                case EnemyType.archer:
+                    if (weaponChance < GameEnvironment.Random.Next(100))
+                    {
+                        EquipmentSlot weaponslot = EquipmentSlots.Find("weaponSlot") as EquipmentSlot;
+                        weaponslot.ChangeItem(new WeaponEquipment(floorNumber, WeaponType.bow));
+                    }
+                    if (armorChance < GameEnvironment.Random.Next(100))
+                    {
+                        EquipmentSlot bodyslot = EquipmentSlots.Find("bodySlot") as EquipmentSlot;
+                        //bodyslot.ChangeItem(new BodyEquipment(floorNumber, 2, ArmorType.normal));
+                    }
+                    SetStats(eLvl, 2 + (eLvl/2), 1 + (eLvl/2), 3 + (eLvl), 1 + (eLvl / 2), 1 + (eLvl / 2), 3 + (eLvl), 20 + eLvl * 3, 2, 1);
+                    enemySprite = "empty:65:65:12:Yellow";
+                    break;
+                case EnemyType.mage:
+                    if (weaponChance < GameEnvironment.Random.Next(100))
+                    {
+                        EquipmentSlot weaponslot = EquipmentSlots.Find("weaponSlot") as EquipmentSlot;
+                        weaponslot.ChangeItem(new WeaponEquipment(floorNumber, WeaponType.staff));
+                    }
+                    if (armorChance < GameEnvironment.Random.Next(100))
+                    {
+                        EquipmentSlot bodyslot = EquipmentSlots.Find("bodySlot") as EquipmentSlot;
+                        //bodyslot.ChangeItem(new BodyEquipment(floorNumber, 2, ArmorType.robes));
+                    }
+                    SetStats(eLvl, 1 + (eLvl/2), 1 + (eLvl/2), 1 + (eLvl / 2), 3 + (eLvl), 3 + (eLvl), 1 + (eLvl / 2), 20 + eLvl * 3, 2, 2);
+                    enemySprite = "empty:65:65:12:CornflowerBlue";
+                    break;
+                default:
+                    throw new Exception("invalid enemy type");
+            }
+        }
+
 
         #region Serialization
         public Enemy(SerializationInfo info, StreamingContext context) : base(info, context)
         {
+            enemySprite = info.GetString("enemySprite");
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
+            info.AddValue("enemySprite", enemySprite);
             base.GetObjectData(info, context);
         }
         #endregion
 
-        protected override void InitAnimation(string idleColor = "empty:64:64:10:Magenta")
+        protected override void InitAnimation(string idleColor)
         {
-            base.InitAnimation("empty:64:64:10:Purple");
+            base.InitAnimation(idleColor);
             PlayAnimation("idle");
         }
 
