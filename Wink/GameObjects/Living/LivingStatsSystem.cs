@@ -30,21 +30,21 @@
             int i = 0;
             double p = 1;
             if (EquipmentSlots != null)
-            foreach (ItemSlot slot in EquipmentSlots.Children)
-            {
-                if (slot.SlotItem != null && slot.Id.Contains("ringSlot"))
+                foreach (ItemSlot slot in EquipmentSlots.Children)
                 {
-                    RingEquipment ring = slot.SlotItem as RingEquipment;
-                    foreach (RingEffect effect in ring.RingEffects)
+                    if (slot.SlotItem != null && slot.Id.Contains("ringSlot"))
                     {
-                        if (effect.EffectType == effectType)
+                        RingEquipment ring = slot.SlotItem as RingEquipment;
+                        foreach (RingEffect effect in ring.RingEffects)
                         {
-                            if (effect.Multiplier) { p *= effect.EffectValue; }
-                            else { i += (int)effect.EffectValue; }
+                            if (effect.EffectType == effectType)
+                            {
+                                if (effect.Multiplier) { p *= effect.EffectValue; }
+                                else { i += (int)effect.EffectValue; }
+                            }
                         }
                     }
                 }
-            }
             return (int)(baseValue * p + i);
         }
 
