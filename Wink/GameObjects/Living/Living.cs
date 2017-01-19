@@ -56,6 +56,9 @@ namespace Wink
             get { return new Point(Tile.TileWidth / 2, Tile.TileHeight); }
         }
 
+        /// <summary>
+        /// Return true because by default all living objects block the tile they're standing on
+        /// </summary>
         public virtual bool BlocksTile
         {
             get { return true; }

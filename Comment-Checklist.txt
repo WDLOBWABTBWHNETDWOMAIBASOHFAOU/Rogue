@@ -8,3 +8,4 @@
 \Rogue\Wink\GameObjects\Living\Living.cs
 \Rogue\Wink\GameObjects\Living\LivingCombat.cs
 \Rogue\Wink\GameObjects\Living\LivingStatsSystem.cs
+\Rogue\Wink\GameObjects\Living\Enemy.cs
