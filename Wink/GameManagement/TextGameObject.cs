@@ -14,8 +14,10 @@ public class TextGameObject : GameObject
         spriteFont = GameEnvironment.AssetManager.Content.Load<SpriteFont>(fontName);
         color = Color.White;
         CameraSensitivity = cameraSensitivity;
+        text = "";
     }
 
+    #region Serialization
     public TextGameObject(SerializationInfo info, StreamingContext context) : base(info, context)
     {
         spriteFont = info.GetValue("spriteFont", typeof(SpriteFont)) as SpriteFont;
@@ -27,7 +29,6 @@ public class TextGameObject : GameObject
     public override void GetObjectData(SerializationInfo info, StreamingContext context)
     {
         base.GetObjectData(info, context);
-
         info.AddValue("spriteFont", spriteFont);
         info.AddValue("color.R", color.R);
         info.AddValue("color.G", color.G);
@@ -36,6 +37,7 @@ public class TextGameObject : GameObject
         info.AddValue("text", text);
         info.AddValue("CameraSensitivity", CameraSensitivity);
     }
+    #endregion
 
     public override void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
     {

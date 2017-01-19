@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.IO;
+using Microsoft.Xna.Framework;
 
 namespace Wink
 {
     [Serializable]
-    public partial class Level : GameObjectList
+    public partial class Level : GameObjectList, IGUIGameObject
     {
         private int levelIndex;
         public int Index
@@ -222,6 +223,19 @@ namespace Wink
             End end = new End(t, levelIndex, this);
             t.PutOnTile(end);
             return t;
+        }
+
+        public void InitGUI(Dictionary<string, object> guiState)
+        {
+            PlayingGUI pg = GameWorld.Find("PlayingGui") as PlayingGUI;
+            SpriteGameObject floor = pg.Find("FloorBG") as SpriteGameObject;
+            TextGameObject floorNumber = pg.Find("FloorNumber") as TextGameObject;
+            floorNumber.Text = Index.ToString();
+            floorNumber.Position = floor.Position + (floor.BoundingBox.Size.ToVector2() - floorNumber.Size) / 2;
+        }
+
+        public void CleanupGUI(Dictionary<string, object> guiState)
+        {            
         }
     }
 }
