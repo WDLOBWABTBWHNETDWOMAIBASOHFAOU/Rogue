@@ -7,7 +7,11 @@ namespace Wink
     public class PlayingGUI : GameObjectList
     {
         private PlayingMenu playingMenu;
+        private Window CharacterScreen;
         private Window Inventory
+        
+        
+
         {
             get { return Find(obj => obj is PlayerInventoryAndEquipment) as Window; }
         }
@@ -50,6 +54,11 @@ namespace Wink
             if (inputHelper.KeyPressed(Keys.I))
             {
                 Inventory.Visible = !Inventory.Visible;
+            }
+
+            if (inputHelper.KeyPressed(Keys.C))
+            {
+                CharacterScreen.Visible = !CharacterScreen.Visible;
             }
         }
     }
