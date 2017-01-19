@@ -46,7 +46,7 @@ namespace Wink
         {
             TileField tf = GameWorld.Find("TileField") as TileField;
 
-            if (player.Tile.GetSeenBy.ContainsKey(this))
+            if (player.Tile.SeenBy.ContainsKey(this))
             {
                 bool ableToHit = AttackEvent.AbleToHit(this, player);
                 if (ableToHit)

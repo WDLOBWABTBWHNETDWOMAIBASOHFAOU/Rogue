@@ -123,7 +123,7 @@ namespace Wink
         {
             //TODO: system to change the visibility of a tile
             Tile t = grid[x, y] as Tile;
-            t.SeenBy(seenBy as Living, (float)Math.Sqrt(distanceSquared));
+            t.IsSeenBy(seenBy as Living, (float)Math.Sqrt(distanceSquared));
         }
 
         #region Table that maps 3x3 Permission arrays to an index.
