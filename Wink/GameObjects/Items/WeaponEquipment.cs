@@ -231,6 +231,12 @@ namespace Wink
             scalingStatText.Color = Color.Red;
             scalingStatText.Parent = infoList;
             infoList.Children.Insert(3, scalingStatText);
+
+            TextGameObject reachText = new TextGameObject("Arial12", 0, 0, "ReachInfoText." + this);
+            reachText.Text = "Reach: " + reach;
+            reachText.Color = Color.Red;
+            reachText.Parent = infoList;
+            infoList.Add(reachText);
         }
 
         public int Value(Living l)

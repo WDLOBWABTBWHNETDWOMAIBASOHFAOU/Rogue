@@ -25,7 +25,7 @@ namespace Wink
         protected double mulchance = 0.7;
         // acceptablePower is the maximum power for a single stat boost on a ring, can be changed for balancing
         // This should eventually be a function based on the floor the ring was found on
-        protected int acceptablePower = 500;
+        protected int acceptablePower = 5;
 
         // This dictionary will hold all of the multipliers for balancing rings for the different stats
         // for now these will all be set to 1
@@ -48,6 +48,7 @@ namespace Wink
         public RingEquipment(double ringValue, RingType ringType, string assetName, bool multiplier = false, int stackSize = 1, int layer = 0, string id = "") : base(assetName, id, stackSize, layer)
         {
             AddEffect(ringType, ringValue, multiplier);
+            SetId();
         }
 
         public RingEquipment(string assetName, int maxEffects = 3, int stackSize = 1, int layer = 0, string id = "", bool reflectEffect = false) : base(assetName, id, stackSize, layer)
@@ -56,6 +57,20 @@ namespace Wink
             GenerateRing(maxEffects + 1);
             if (reflectEffect)
                 AddReflection();
+            SetId();
+        }
+
+        void SetId()
+        {
+            id = "Ring of ";
+            foreach (RingEffect rE in RingEffects)
+            {
+                id += rE.EffectType.ToString()+ ",";
+            }
+            if ( ringEffects.Count == 0)
+            {
+                id = "Plain Ring";
+            }
         }
 
         #region Serialization
@@ -129,7 +144,15 @@ namespace Wink
             foreach(RingEffect e in ringEffects)
             {
                 TextGameObject ringInfo = new TextGameObject("Arial12", 0, 0, "RingInfo." + this);
-                ringInfo.Text = e.EffectType.ToString() + " Ring";// needs more telling information but not sure what to use/ how to read/reach it
+                ringInfo.Text = e.EffectType.ToString() + " Ring" + " : " + e.EffectValue;// needs more telling information but not sure what to use/ how to read/reach it
+                if (e.Multiplier)
+                {
+                    ringInfo.Text += " : multipier";
+                }
+                else
+                {
+                    ringInfo.Text += " : bonus";
+                }
                 ringInfo.Color = Color.Red;
                 ringInfo.Parent = infoList;
                 infoList.Children.Insert(1,ringInfo);
