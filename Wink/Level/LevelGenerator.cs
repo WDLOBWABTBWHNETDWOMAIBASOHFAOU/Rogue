@@ -483,16 +483,10 @@ namespace Wink
             int numberOfEnemys = 8;
             for (int n = 0; n < numberOfEnemys; n++)
             {
-                Enemy enemy = new Enemy(0);
-                int floorNumber = levelIndex;
-                if (floorNumber < 1)
-                {
-                    floorNumber = 1;
-                }
+                Enemy enemy = new Enemy(0, Index, EnemyType.random, "Enemy");
                 List<GameObject> spawnLocations = tf.FindAll(obj => obj is Tile && (obj as Tile).Passable && !(obj as Tile).Blocked);
                 Tile spawnLocation = spawnLocations[GameEnvironment.Random.Next(spawnLocations.Count)] as Tile;
                 spawnLocation.PutOnTile(enemy);
-                enemy.SetStats(1*floorNumber, 2 + (floorNumber/2), 2 + (floorNumber / 2), 2 + (floorNumber / 2), 2 + (floorNumber / 2), 2 + (floorNumber / 2), 2 + (floorNumber / 2), 20 + floorNumber*3, 2, GameEnvironment.Random.Next(1,3));
             }
             //End test            
 

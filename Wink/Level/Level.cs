@@ -75,7 +75,7 @@ namespace Wink
             #region ENEMY CODE (test)
             for (int i = 0; i < 2; i++)
             {
-                Enemy testEnemy = new Enemy(0, "Enemy" + i);
+                Enemy testEnemy = new Enemy(0,Index,EnemyType.random, "Enemy" + i);
                 testEnemy.SetStats();
                 //First find all passable tiles then select one at random.
                 List<GameObject> tileCandidates = tf.FindAll(obj => obj is Tile && (obj as Tile).Passable);

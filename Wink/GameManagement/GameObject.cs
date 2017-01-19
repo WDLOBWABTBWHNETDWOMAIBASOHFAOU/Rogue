@@ -76,6 +76,10 @@ public abstract class GameObject : IGameLoopObject, ISerializable
     {
     }
 
+    /// <summary>
+    /// Updates the gameobject, this is typically performed once every frame
+    /// </summary>
+    /// <param name="gameTime">The current gameTime variable</param>
     public virtual void Update(GameTime gameTime)
     {
         position += velocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
