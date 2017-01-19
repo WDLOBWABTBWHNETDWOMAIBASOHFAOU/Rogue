@@ -11,7 +11,7 @@ namespace Wink
     {
         public StatScreen(Player player): base(300, 300)
         {
-            //Gebruik TextGameObject om hier de stats als player.Dexterity aan dit window toe te voegen.
+            //Gebruik TextGameObject om hier de stats zoals player.Dexterity aan dit window toe te voegen.
             
         }
 
