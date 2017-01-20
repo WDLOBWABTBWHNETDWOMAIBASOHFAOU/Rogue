@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
+using System;
 
 namespace Wink
 {
@@ -12,13 +13,43 @@ namespace Wink
         {
             public ClientField(Client client, int nr)
             {
+                // need to check if in multiplayer you can change the type of a different player
+                SpriteFont textFieldFont = GameEnvironment.AssetManager.GetFont("Arial26");
+                SelectField<SelectPlayer> SelectPlayer = new SelectField<SelectPlayer>(true, textFieldFont, Color.Red);
+                SelectPlayer.Options = new List<SelectPlayer>() { new SelectPlayer(PlayerType.warrior , client), new SelectPlayer(PlayerType.archer, client), new SelectPlayer(PlayerType.mage, client), new SelectPlayer(PlayerType.random, client) };
+                Add(SelectPlayer);
+
                 TextGameObject name = new TrackingTextGameObject<Client>(client, c => nr + ". " + c.ClientName, "Arial26");
                 name.Color = Color.White;
+                name.Position = SelectPlayer.Position + new Vector2(SelectPlayer.Width, 0);               
                 Add(name);
+            }
 
-                client.playerType = PlayerType.mage;
-                //SelectField for heroes.
-                //SelectField<> sf = new SelectField<>();
+            private class SelectPlayer : SelectField<SelectPlayer>.OptionAction
+            {
+                PlayerType pType;
+                Client c;
+
+                /// <summary>
+                /// select Hero Classes
+                /// </summary>
+                /// <param name="pType"></param>
+                /// <param name="c"></param>
+                public SelectPlayer(PlayerType pType, Client c)
+                {
+                    this.pType = pType;
+                    this.c = c;
+                }
+
+                public override string ToString()
+                {
+                    return pType.ToString();
+                }
+
+                public void execute()
+                {
+                    c.playerType = pType;
+                }
             }
         }
 
