@@ -6,7 +6,7 @@ using System.Runtime.Serialization;
 
 namespace Wink
 {
-    public enum EnemyType { warrior,archer,mage,random}
+    public enum EnemyType {warrior,archer,mage,random}
     [Serializable]
 
     public class Enemy : Living, IGUIGameObject
@@ -14,12 +14,24 @@ namespace Wink
         private Bar<Enemy> hpBar;
         string enemySprite;
         
+        /// <summary>
+        /// Return True if health > 0 meaning the enemy is blocking the tile it's standing on
+        /// </summary>
         public override bool BlocksTile
         {
             get { return Health > 0; }
         }
-        
-        public Enemy(int layer, int floorNumber,EnemyType type=EnemyType.random, string id = "Enemy", float FOVlength = 8.5f) : base(layer, id, FOVlength)
+
+        /// <summary>
+        /// Create a new Enemy object
+        /// </summary>
+        /// <param name="layer">The layer for drawing the object</param>
+        /// <param name="floorNumber">The floor the Enemy is placed on</param>
+        /// <param name="type">The enemy type</param>
+        /// <param name="id">The (unique) object ID</param>
+        /// <param name="FOVlength">The view distance for the Enemy</param>
+        /// <param name="scale">The scale (multiplier) for the sprite size</param>
+        public Enemy(int layer, int floorNumber, EnemyType type = EnemyType.random, string id = "Enemy", float FOVlength = 8.5f) : base(layer, id, FOVlength)
         {
             if(floorNumber < 1)
             {
@@ -29,6 +41,11 @@ namespace Wink
             InitAnimation(enemySprite);
         }
 
+        /// <summary>
+        /// Set up the enemy
+        /// </summary>
+        /// <param name="etype">The Enemy type</param>
+        /// <param name="floorNumber">The floor the enemy is on</param>
         private void SetupType(EnemyType etype, int floorNumber)
         {
             if (etype == EnemyType.random)
@@ -40,7 +57,7 @@ namespace Wink
             id += " : " + etype.ToString();
             int eLvl = GameEnvironment.Random.Next(1,floorNumber);
             int weaponChance = 15 * floorNumber; // higher chance the deeper you go
-            int armorChance = 15*floorNumber;
+            int armorChance = 15  *floorNumber;  //
 
             switch (etype)
             {
@@ -123,11 +140,15 @@ namespace Wink
             GoTo(changedObjects, GameWorld.Find(Player.LocalPlayerName) as Player);
         }
 
+        /// <summary>
+        /// Pathfind towards a given player
+        /// </summary>
+        /// <param name="player">The player to target with Pathfinding</param>
         public void GoTo(List<GameObject> changedObjects, Player player)
         {
             TileField tf = GameWorld.Find("TileField") as TileField;
 
-            if (player.Tile.GetSeenBy.ContainsKey(this))
+            if (player.Tile.SeenBy.ContainsKey(this))
             {
                 bool ableToHit = AttackEvent.AbleToHit(this, player);
                 if (ableToHit)
@@ -172,7 +193,7 @@ namespace Wink
         private void Idle()
         {
             //TODO: implement idle behaviour (seeing the player part done)
-            actionPoints=0;//if this is reached the enemy has no other options than to skip its turn (reduses number of GoTo loops executed) compared to actionpoints--;
+            actionPoints=0;//if this is reached the enemy has no other options than to skip its turn (reduces number of GoTo loops executed) compared to actionpoints--;
         }
         
         public override void HandleInput(InputHelper inputHelper)
@@ -192,6 +213,9 @@ namespace Wink
             }
         }
 
+        /// <summary>
+        /// Position the HP bar directly above the Enemy
+        /// </summary>
         private void PositionHPBar()
         {
             hpBar.Position = Tile.GlobalPosition - new Vector2(Math.Abs(Tile.Width - hpBar.Width) / 2, 0);

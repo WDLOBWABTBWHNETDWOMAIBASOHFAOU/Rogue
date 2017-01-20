@@ -38,7 +38,7 @@ namespace Wink
             //testItem4.ChangeItem(new BodyEquipment(2,5));
 
             //ItemSlot testItem5 = itemGrid[2, 0] as ItemSlot;
-            //testItem5.ChangeItem(new RingEquipment(200, RingType.Intelligence, "empty:65:65:10:Purple", id: "Intelligence Test Ring"));
+            //testItem5.ChangeItem(new RingEquipment(200, EffectType.Intelligence, "empty:65:65:10:Purple", id: "Intelligence Test Ring"));
 
             //ItemSlot testItem6 = itemGrid[1, 0] as ItemSlot;
             //testItem6.ChangeItem(new RingEquipment("empty:65:65:10:Green", 0, reflectEffect: true, id: "Reflecting Test Ring"));

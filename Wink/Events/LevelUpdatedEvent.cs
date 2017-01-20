@@ -57,9 +57,8 @@ namespace Wink
             }
 
             if (!client.Camera.BoundingBox.Intersects(client.Player.BoundingBox))
-            {
                 client.Camera.CenterOn(client.Player);
-            }
+
             return true;
         }
 

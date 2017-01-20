@@ -55,7 +55,7 @@ namespace Wink
 
         public static bool AbleToHit(Living att, Living def)
         {
-            if (def.Tile.GetSeenBy.ContainsKey(att))
+            if (def.Tile.SeenBy.ContainsKey(att))
             {
                 //plus a half tile to get the more natural reach area we discussed (melee can also attack 1 tile diagonaly) 
 

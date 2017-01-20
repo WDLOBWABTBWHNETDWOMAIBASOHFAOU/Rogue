@@ -40,7 +40,7 @@ namespace Wink
             {
                 level = value;
                 InitLivingObjects();
-                SendOutUpdatedLevel();
+                SendOutUpdatedLevelIf();
             }
         }
 
@@ -121,7 +121,7 @@ namespace Wink
             }
 
             InitLivingObjects();
-            SendOutUpdatedLevel(true);
+            SendOutUpdatedLevelIf(true);
         }
         
         public void ProcessAllNonActionEvents()
@@ -149,11 +149,14 @@ namespace Wink
             if (clientEvents[c].Count > 0)
             {
                 Event e = clientEvents[c][0];
-                if (e is ActionEvent && e.Validate(Level))
+                if (e is ActionEvent)
                 {
-                    e.Sender = c;
-                    if (e.OnServerReceive(this))
-                        clientEvents[c].Remove(e);
+                    if (e.Validate(Level))
+                    {
+                        e.Sender = c;
+                        e.OnServerReceive(this);
+                    }
+                    clientEvents[c].Remove(e);
                 }
             }
         }
@@ -179,10 +182,14 @@ namespace Wink
             }
         }
 
-        private void SendOutUpdatedLevel(bool first = false)
+        private void SendOutUpdatedLevelIf(bool first = false)
         {
-            LevelUpdatedEvent e = first ? new JoinedServerEvent(Level) : new LevelUpdatedEvent(Level);
-            SendToAllClients(e);
+            if (changedObjects.Count > 0 || first)
+            {
+                LevelUpdatedEvent e = first ? new JoinedServerEvent(Level) : new LevelUpdatedEvent(Level);
+                SendToAllClients(e);
+                changedObjects.Clear();
+            }
         }
 
         public void SendToAllClients(Event e)
@@ -211,32 +218,29 @@ namespace Wink
 
         public override void Update(GameTime gameTime)
         {
+            //First we update the level so all update methods in all gameobjects get called.
+            //This also empties the seenBy in Tile.
             Level.Update(gameTime);
+            //Then we let every Living object calculate what tiles it can see, that object is then added to these Tiles' seenBy list.
+            ComputeVisibilities();
 
             ProcessAllNonActionEvents();
-
-            if (!(livingObjects[turnIndex] is Player))
+            
+            if (livingObjects[turnIndex] is Player)
             {
-                while (!(livingObjects[turnIndex] is Player))
-                {
-                    ComputeVisibilities();
-                    changedObjects.AddRange(livingObjects[turnIndex].DoAllBehaviour());
-                    UpdateTurn();
-                }
+                Client currentClient = Clients.Find(client => client.Player.GUID == livingObjects[turnIndex].GUID);
+                ProcessActionEvents(currentClient);
+                livingObjects[turnIndex].ComputeVisibility();
+                SendOutUpdatedLevelIf();
             }
             else
             {
-                Client currentClient = Clients.Find(client => client.Player.GUID == livingObjects[turnIndex].GUID);
-                ComputeVisibilities();
-                ProcessActionEvents(currentClient);
-                UpdateTurn();
+                changedObjects.AddRange(livingObjects[turnIndex].DoAllBehaviour());
+                livingObjects[turnIndex].ComputeVisibility();
             }
-            
-            if (changedObjects.Count > 0)
-            {
-                SendOutUpdatedLevel();
-                changedObjects.Clear();
-            }
+
+            UpdateTurn();
+
             //SendOutLevelChanges();
         }
 
@@ -252,9 +256,20 @@ namespace Wink
             {
                 turnIndex = (turnIndex + 1) % livingObjects.Count;
                 livingObjects[turnIndex].ActionPoints = Living.MaxActionPoints;
-                //changedObjects.Add(livingObjects[turnIndex]);
-                SendOutUpdatedLevel();
+                changedObjects.Add(livingObjects[turnIndex]);
             }
+        }
+
+        private List<GameObject> GetSeenGameObjects()
+        {
+            List<Tile> seenTiles = new List<Tile>();
+            foreach (Living l in livingObjects)
+                if (l is Player)
+                    seenTiles.AddRange(Level.FindAll(obj => obj is Tile && (obj as Tile).SeenBy.ContainsKey(l)).Cast<Tile>());
+
+            HashSet<Tile> seenTilesSet = new HashSet<Tile>(seenTiles);
+            List<GameObject> seenObjects = seenTilesSet.SelectMany(t => t.OnTile.Children).ToList();
+            return seenObjects;
         }
 
         public void EndTurn(Player player)

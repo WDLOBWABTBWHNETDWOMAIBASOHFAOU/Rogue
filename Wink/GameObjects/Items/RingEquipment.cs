@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework;
 
 namespace Wink
 {
-    public enum RingType
+    public enum EffectType
     {
         Vitality,
         Strength,
@@ -29,23 +29,23 @@ namespace Wink
 
         // This dictionary will hold all of the multipliers for balancing rings for the different stats
         // for now these will all be set to 1
-        protected Dictionary<RingType, double> balanceMultiplier = new Dictionary<RingType, double>();
+        protected Dictionary<EffectType, double> balanceMultiplier = new Dictionary<EffectType, double>();
         private void SetBalance()
         {
-            balanceMultiplier.Add(RingType.Strength, 0.8);
-            balanceMultiplier.Add(RingType.Vitality, 1);
-            balanceMultiplier.Add(RingType.Dexterity, 0.8);
-            balanceMultiplier.Add(RingType.Luck, 1);
-            balanceMultiplier.Add(RingType.Intelligence, 1.2);
-            balanceMultiplier.Add(RingType.Wisdom, 1);
+            balanceMultiplier.Add(EffectType.Strength, 0.8);
+            balanceMultiplier.Add(EffectType.Vitality, 1);
+            balanceMultiplier.Add(EffectType.Dexterity, 0.8);
+            balanceMultiplier.Add(EffectType.Luck, 1);
+            balanceMultiplier.Add(EffectType.Intelligence, 1.2);
+            balanceMultiplier.Add(EffectType.Wisdom, 1);
         }
 
         protected List<RingEffect> ringEffects = new List<RingEffect>();
 
-        // the amount of magic effects in the RingType enum, these will not be put on randomly generated rings
+        // the amount of magic effects in the EffectType enum, these will not be put on randomly generated rings
         protected int magicEffects = 1;
 
-        public RingEquipment(double ringValue, RingType ringType, string assetName, bool multiplier = false, int stackSize = 1, int layer = 0, string id = "") : base(assetName, id, stackSize, layer)
+        public RingEquipment(double ringValue, EffectType ringType, string assetName, bool multiplier = false, int stackSize = 1, int layer = 0, string id = "") : base(assetName, id, stackSize, layer)
         {
             AddEffect(ringType, ringValue, multiplier);
             SetId();
@@ -77,18 +77,18 @@ namespace Wink
         public RingEquipment(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             ringEffects = info.GetValue("ringEffects", typeof(List<RingEffect>)) as List<RingEffect>;
-            balanceMultiplier = info.GetValue("balanceMultiplier", typeof(Dictionary<RingType, double>)) as Dictionary<RingType, double>;
+            balanceMultiplier = info.GetValue("balanceMultiplier", typeof(Dictionary<EffectType, double>)) as Dictionary<EffectType, double>;
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             base.GetObjectData(info, context);
             info.AddValue("ringEffects", ringEffects, typeof(List<RingEffect>));
-            info.AddValue("balanceMultiplier", balanceMultiplier, typeof(Dictionary<RingType, double>));
+            info.AddValue("balanceMultiplier", balanceMultiplier, typeof(Dictionary<EffectType, double>));
         }
         #endregion
 
-        protected void AddEffect(RingType effectType, double effectValue, bool multiplier)
+        protected void AddEffect(EffectType effectType, double effectValue, bool multiplier)
         {
             RingEffect effect = new RingEffect(effectType, multiplier, effectValue);
             ringEffects.Add(effect);
@@ -111,8 +111,8 @@ namespace Wink
 
         protected void GenerateEffect()
         {
-            Array values = RingType.GetValues(typeof(RingType));
-            RingType effectType = (RingType)values.GetValue(GameEnvironment.Random.Next(values.Length - magicEffects));
+            Array values = EffectType.GetValues(typeof(EffectType));
+            EffectType effectType = (EffectType)values.GetValue(GameEnvironment.Random.Next(values.Length - magicEffects));
 
             bool multiplier = true;
             if (GameEnvironment.Random.NextDouble() < mulchance)
@@ -162,15 +162,15 @@ namespace Wink
     [Serializable]
     class RingEffect : ISerializable
     {
-        protected RingType effectType;
+        protected EffectType effectType;
         protected bool multiplier;
         protected double effectValue;
 
-        public RingType EffectType { get { return effectType; } }
+        public EffectType EffectType { get { return effectType; } }
         public bool Multiplier { get { return multiplier; } }
         public double EffectValue { get { return effectValue; } }
 
-        public RingEffect(RingType effectType, bool multiplier, double effectValue)
+        public RingEffect(EffectType effectType, bool multiplier, double effectValue)
         {
             this.effectType = effectType;
             this.multiplier = multiplier;
@@ -180,14 +180,14 @@ namespace Wink
         #region Serialization
         public RingEffect(SerializationInfo info, StreamingContext context)
         {
-            effectType = (RingType)info.GetValue("effectType", typeof(RingType));
+            effectType = (EffectType)info.GetValue("effectType", typeof(EffectType));
             multiplier = info.GetBoolean("multiplier");
             effectValue = info.GetDouble("effectValue");
         }
 
         public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            info.AddValue("effectType", effectType, typeof(RingType));
+            info.AddValue("effectType", effectType, typeof(EffectType));
             info.AddValue("multiplier", multiplier);
             info.AddValue("effectValue", effectValue);
         }
@@ -203,7 +203,7 @@ namespace Wink
         public double Power { get { return power; } }
         public double Chance { get { return chance; } }
 
-        public ReflectionEffect(double power, double chance) : base(RingType.Reflection, false, -1)
+        public ReflectionEffect(double power, double chance) : base(EffectType.Reflection, false, -1)
         {
             this.power = power;
             this.chance = chance;
@@ -212,7 +212,7 @@ namespace Wink
         #region Serialization
         public ReflectionEffect(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            effectType = (RingType)info.GetValue("effectType", typeof(RingType));
+            effectType = (EffectType)info.GetValue("effectType", typeof(EffectType));
             power = info.GetDouble("power");
             chance = info.GetDouble("chance");
         }

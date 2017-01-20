@@ -28,7 +28,10 @@ namespace Wink
         //Dictionary containing what Living objects saw this tile this tick and at what distance;
         protected Dictionary<Living, float> seenBy;
 
-        public Dictionary<Living, float> GetSeenBy { get { return seenBy; } }
+        public Dictionary<Living, float> SeenBy
+        {
+            get { return seenBy; }
+        }
 
         public GameObjectList OnTile
         {
@@ -92,7 +95,7 @@ namespace Wink
         }
         #endregion
 
-        public void SeenBy(Living viewer, float distance)
+        public void IsSeenBy(Living viewer, float distance)
         {
             if (seenBy.ContainsKey(viewer))
                 seenBy[viewer] = distance;

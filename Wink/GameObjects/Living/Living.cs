@@ -20,6 +20,7 @@ namespace Wink
         private InventoryBox inventory;
 
         #region EquipmentSlots
+        // Accessors for all the different equipment slots
         private GameObjectList equipmentSlots;
         public GameObjectList EquipmentSlots
         {
@@ -35,6 +36,7 @@ namespace Wink
         {
             get { return viewDistance; }
         }
+
         public Tile Tile
         {
             get
@@ -45,15 +47,30 @@ namespace Wink
                     return null;
             }
         }
+
+        /// <summary>
+        /// Returns a point with position (0.5 * TileWidth, TileHeight)
+        /// </summary>
         public virtual Point PointInTile
         {
             get { return new Point(Tile.TileWidth / 2, Tile.TileHeight); }
         }
+
+        /// <summary>
+        /// Return true because by default all living objects block the tile they're standing on
+        /// </summary>
         public virtual bool BlocksTile
         {
             get { return true; }
         }
 
+        /// <summary>
+        /// Create a new Living object
+        /// </summary>
+        /// <param name="layer">The layer for drawing the object</param>
+        /// <param name="id">The (unique) object ID</param>
+        /// <param name="FOVlength">The view distance for the object</param>
+        /// <param name="scale">The scale (multiplier) for the sprite size</param>
         public Living(int layer = 0, string id = "", float FOVlength = 8.5f, float scale = 1.0f) : base(layer, id, scale)
         {
             SetStats();
@@ -151,6 +168,10 @@ namespace Wink
         }
         #endregion
 
+        /// <summary>
+        /// Replace the inventory with a given replacement
+        /// </summary>
+        /// <param name="replacement">The replacement object</param>
         public override void Replace(GameObject replacement)
         {
             if (inventory != null && inventory.GUID == replacement.GUID)
@@ -159,16 +180,27 @@ namespace Wink
             base.Replace(replacement);
         }
 
+        /// <summary>
+        /// Process which tiles the living object can and cannot see using ShadowCast
+        /// </summary>
         public void ComputeVisibility()
         {
             TileField tf = GameWorld.Find("TileField") as TileField;
             Point pos = Tile.TilePosition;
+            
+            if (tf.Find(obj => obj is Tile && (obj as Tile).SeenBy.ContainsKey(this)) != null)
+                foreach (Tile t in tf.Objects)
+                    t.SeenBy.Remove(this);
 
             ShadowCast.ComputeVisibility(tf, pos.X, pos.Y, this);
             //skill idea: peek corner, allows the player to move its FOV position 1 tile in N,S,E or W direction,
             //allowing the player to peek around a corner into a halway whithout actualy stepping out
         }
 
+        /// <summary>
+        /// Do behavior until action points run out
+        /// </summary>
+        /// <returns>All objects that changed</returns>
         public List<GameObject> DoAllBehaviour()
         {
             List<GameObject> changedObjects = new List<GameObject>();
@@ -189,6 +221,9 @@ namespace Wink
 
         protected abstract void DoBehaviour(List<GameObject> changedObjects);
 
+        /// <summary>
+        /// Initializes the animations for the living object
+        /// </summary>
         protected virtual void InitAnimation(string idleColor)
         {
             //General animations
@@ -200,11 +235,15 @@ namespace Wink
             LoadAnimation(dieAnimation, "die", false);
         }
 
+        /// <summary>
+        /// Updates the Living object
+        /// </summary>
         public override void Update(GameTime gameTime)
         {
+            // Call update for the inheritance
             base.Update(gameTime);
             if (healthPoints <= 0)
-            {
+            {   // death
                 startTimer = true;
                 DeathFeedback("die", dieSound);
                 if (startTimer)
@@ -215,20 +254,21 @@ namespace Wink
                         timeleft -= gameTime.TotalGameTime.Seconds;
                 }
             }
-            else if (healthPoints > MaxHealth)
-            {
+            else if (healthPoints >= MaxHealth)
+            {   // Make sure health can't exceed max health 
                 healthPoints = MaxHealth;
             }
 
-            if (manaPoints > MaxMana)
-            {
+            if (manaPoints >= MaxMana)
+            {   // Make sure mana can't exceed max mana
                 manaPoints = MaxMana;
             }
-            // Stijn zegt voer hier een ring bonus methode uit
-            // met de manier waarop ik ring heb gemaakt valt er niks te bonussen
-            // alles moet bij stat calculation worden afgehandeld
         }
         
+        /// <summary>
+        /// Puts the Living object on a given tile (if possible)
+        /// </summary>
+        /// <param name="t">Destination tile</param>
         public virtual void MoveTo(Tile t)
         {
             Tile oldTile = Tile;
@@ -241,11 +281,17 @@ namespace Wink
                     throw new Exception();
             }
             else if (Visible)
-            {
+            {   // Movement animation
+                // I have been told this has some issues and is therefore turned off
                 //LocalServer.SendToClients(new LivingMoveAnimationEvent(this, t));
             }
         }
 
+        /// <summary>
+        /// Find all children with a given condition
+        /// </summary>
+        /// <param name="del">The function to filter results with</param>
+        /// <returns>All children to which "del" applies</returns>
         public virtual List<GameObject> FindAll(Func<GameObject, bool> del)
         {
             List<GameObject> result = new List<GameObject>();
@@ -254,13 +300,19 @@ namespace Wink
             return result;
         }
 
+        /// <summary>
+        /// Find an object among children with a given condition
+        /// </summary>
+        /// <param name="del"></param>
+        /// <returns></returns>
         public virtual GameObject Find(Func<GameObject, bool> del)
         {
-            if (del.Invoke(inventory))
+            if (del.Invoke(inventory)) // Check if the inventory fits "del"
                 return inventory;
-            if (del.Invoke(equipmentSlots))
+            if (del.Invoke(equipmentSlots)) // check if equipmentSlots fits "del"
                 return equipmentSlots;
 
+            // Find the object matching "del" among the children of inventory and equipmentSlots
             return inventory.Find(del) ?? equipmentSlots.Find(del);
         }
     }
