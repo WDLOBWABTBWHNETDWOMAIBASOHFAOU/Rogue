@@ -38,10 +38,11 @@ namespace Wink
             SetId();
         }
 
-        public Potion(string assetName, string id, PotionType potionType, PotionPower potionPower, int stackSize = 10, int layer = 0):base(assetName, stackSize, layer, id)
+        public Potion(string assetName, PotionType potionType, PotionPower potionPower,int stackCount=1, int stackSize = 10, int layer = 0):base(assetName, stackSize, layer)
         {
             this.potionType = potionType;
             this.potionPower = potionPower;
+            this.stackCount = stackCount;
             setPotionPower();
             SetId();
         }

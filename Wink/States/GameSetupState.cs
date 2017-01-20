@@ -49,6 +49,10 @@ namespace Wink
                 public void execute()
                 {
                     c.playerType = pType;
+
+                    //send new player type to the server
+                    ClientPlayerType CPT= new ClientPlayerType(c.ClientName,c.playerType);
+                    Server.Send(CPT);
                 }
             }
         }

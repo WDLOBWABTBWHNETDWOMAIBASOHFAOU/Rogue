@@ -82,40 +82,7 @@ namespace Wink
             {
                 Client c = Clients[i];
                 Player player = new Player(c.ClientName, Level.Layer,c.playerType);
-
-                ///*TEST PLAYER SET UP, REPLACE WHITH SELECTED HERO*/
-
-                ////armor
-                //ItemSlot slot_0_0 =player.Inventory.ItemGrid[0, 0] as ItemSlot;
-                //slot_0_0.ChangeItem(new BodyEquipment(2, 3, ArmorType.heavy));
-                //ItemSlot slot_1_0 = player.Inventory.ItemGrid[1, 0] as ItemSlot;
-                //slot_1_0.ChangeItem(new BodyEquipment(2, 3, ArmorType.normal));
-                //ItemSlot slot_2_0 = player.Inventory.ItemGrid[2, 0] as ItemSlot;
-                //slot_2_0.ChangeItem(new BodyEquipment(2, 3, ArmorType.light));
-                //ItemSlot slot_3_0 = player.Inventory.ItemGrid[3, 0] as ItemSlot;
-                //slot_3_0.ChangeItem(new BodyEquipment(2, 3, ArmorType.robes));
-
-                ////weapons
-                //ItemSlot slot_0_1 = player.Inventory.ItemGrid[0, 1] as ItemSlot;
-                //slot_0_1.ChangeItem(new WeaponEquipment(2,WeaponType.melee));
-                //ItemSlot slot_1_1 = player.Inventory.ItemGrid[1, 1] as ItemSlot;
-                //slot_1_1.ChangeItem(new WeaponEquipment(2, WeaponType.bow));
-                //ItemSlot slot_2_1 = player.Inventory.ItemGrid[2, 1] as ItemSlot;
-                //slot_2_1.ChangeItem(new WeaponEquipment(2, WeaponType.staff));
-
-                ////potions and rings
-                //ItemSlot slot_0_2 = player.Inventory.ItemGrid[0, 2] as ItemSlot;
-                //slot_0_2.ChangeItem(new Potion(2,10,PotionType.Health));
-                //ItemSlot slot_1_2 = player.Inventory.ItemGrid[1, 2] as ItemSlot;
-                //slot_1_2.ChangeItem(new Potion(2, 10, PotionType.Mana));
-                //ItemSlot slot_2_2 = player.Inventory.ItemGrid[2, 2] as ItemSlot;
-                //slot_2_2.ChangeItem(new RingEquipment("empty:64:64:10:Pink"));
-
-                ////player stats
-                //player.SetStats(2, 3, 3, 3, 3, 3, 3, 20, 5, 1);
-
-                /*END PLAYER SETUP*/
-
+                
                 (Level.Find("StartTile" + (i + 1)) as Tile).PutOnTile(player);
                 player.ComputeVisibility();
             }

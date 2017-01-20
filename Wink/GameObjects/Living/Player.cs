@@ -19,6 +19,7 @@ namespace Wink
 
         protected int exp;
         public int freeStatPoints;
+        private TextGameObject playerNameTitle;
 
         private MouseSlot mouseSlot;
         public MouseSlot MouseSlot { get { return mouseSlot; } }
@@ -34,8 +35,14 @@ namespace Wink
             mouseSlot = new MouseSlot(layer + 11, "mouseSlot");  
             SetupType(playerType);
             InitAnimation(); //not sure if overriden version gets played right without restating
+            PlayerNameTitle();
         }
 
+        private void PlayerNameTitle()
+        {
+            playerNameTitle = new TextGameObject("Arial12");
+            playerNameTitle.Text = Id;//for now
+        }
 
         private void SetupType(PlayerType ptype)
         {
@@ -49,6 +56,9 @@ namespace Wink
             EquipmentSlot weaponslot = EquipmentSlots.Find("weaponSlot") as EquipmentSlot;
             EquipmentSlot bodyslot = EquipmentSlots.Find("bodySlot") as EquipmentSlot;
             int EquipmentStartingStenght = 3;
+
+            ItemSlot slot_0_0 = Inventory.ItemGrid[0, 0] as ItemSlot;
+            slot_0_0.ChangeItem(new Potion("empty:64:64:10:Red",PotionType.Health,PotionPower.minor,5));//some starting healt potions
 
             switch (ptype)
             {
@@ -68,6 +78,8 @@ namespace Wink
                     weaponslot.ChangeItem(new WeaponEquipment(EquipmentStartingStenght, WeaponType.staff));
                     bodyslot.ChangeItem(new BodyEquipment(EquipmentStartingStenght, 2, ArmorType.robes));
                     SetStats(1, 1, 1, 1, 4, 4, 1);
+                    ItemSlot slot_1_0 = Inventory.ItemGrid[1, 0] as ItemSlot;
+                    slot_1_0.ChangeItem(new Potion("empty:64:64:10:Blue", PotionType.Mana, PotionPower.minor, 5));//some starting mana potions
                     break;
 
                 default:
@@ -226,6 +238,12 @@ namespace Wink
             result.AddRange(mouseSlot.FindAll(del));
             result.AddRange(base.FindAll(del));
             return result;
+        }
+
+        public override void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
+        {
+            base.Draw(gameTime, spriteBatch, camera);
+            playerNameTitle.Draw(gameTime, spriteBatch, camera);   
         }
 
         public void InitGUI(Dictionary<string, object> guiState)
