@@ -40,8 +40,15 @@ namespace Wink
 
         private void PlayerNameTitle()
         {
-            playerNameTitle = new TextGameObject("Arial12");
-            playerNameTitle.Text = Id;//for now
+            playerNameTitle = new TextGameObject("Arial26");
+            playerNameTitle.Text = Id.Split('_')[1];
+            playerNameTitle.Color = Color.Red;
+            playerNameTitle.Parent = this;
+            int tileWidth = 64;//tiles are not compiled when this is called
+            if (tileWidth < playerNameTitle.Size.X)//anything overlapping the tiles on the right gets cut off, therefore correct so it is size.x is no larget than a tile size
+                { playerNameTitle.scale= tileWidth / playerNameTitle.Size.X; }
+            Vector2 size = playerNameTitle.Size * playerNameTitle.scale;
+            playerNameTitle.Position = position - new Vector2((size.X/2),64+size.Y );
         }
 
         private void SetupType(PlayerType ptype)
@@ -97,6 +104,7 @@ namespace Wink
         {
             exp = info.GetInt32("exp");
             freeStatPoints = info.GetInt32("freeStatPoints");
+            playerNameTitle = info.GetValue("playerNameTitle", typeof(TextGameObject)) as TextGameObject;
             if (context.GetVars().GUIDSerialization)
                 mouseSlot = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("mouseSlotGUID"))) as MouseSlot;
             else
@@ -109,7 +117,7 @@ namespace Wink
                 info.AddValue("mouseSlotGUID", mouseSlot.GUID.ToString());
             else
                 info.AddValue("mouseSlot", mouseSlot);
-
+            info.AddValue("playerNameTitle",playerNameTitle);
             info.AddValue("exp", exp);
             info.AddValue("freeStatPoints", freeStatPoints);
             base.GetObjectData(info, context);
