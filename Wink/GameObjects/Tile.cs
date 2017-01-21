@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using System;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -22,6 +23,7 @@ namespace Wink
 
         protected TileType type;
         protected bool passable;
+        protected bool ShowHittable;
 
         protected GameObjectList onTile;
 
@@ -162,18 +164,36 @@ namespace Wink
                 onTile.Draw(gameTime, spriteBatch, camera);
 
                 Texture2D blackTex = GameEnvironment.AssetManager.GetSingleColorPixel(Color.Black);
-                float min = 0.75f;
+                float bmin = 0.75f;
+
                 foreach (KeyValuePair<Living, float> kvp in seenBy)
                 {
                     if (kvp.Key is Player)
                     {
                         float p = kvp.Value / kvp.Key.ViewDistance;
-                        min = p < min ? p : min;
+                        bmin = p < bmin ? p : bmin;
+                        #region HighlightReach
+                        //highlight tiles that are hittable for the local player
+                        //only if requested and the tile is not a wall or the key's tile
+                        if (ShowHittable  && !(TileType == TileType.Wall || kvp.Key.Tile == this))
+                        {
+                            //current key is the localplayer and whithin reach of the local player
+                            if (kvp.Key.Id == Player.LocalPlayerName && kvp.Value <= kvp.Key.Reach + 0.5f)
+                            {
+                                //draw highlight
+                                float highlightStrenght = 0.2f;
+                                Texture2D redTex = GameEnvironment.AssetManager.GetSingleColorPixel(Color.Red);
+                                Rectangle drawhBox = new Rectangle(camera.CalculateScreenPosition(this).ToPoint(), new Point(sprite.Width, sprite.Width));
+                                Color drawRColor = new Color(Color.White, highlightStrenght);
+                                spriteBatch.Draw(redTex, null, drawhBox, sprite.SourceRectangle, origin, 0.0f, new Vector2(scale), drawRColor, SpriteEffects.None, 0.0f);
+                            }
+                        }
+                        #endregion
                     }
                 }
                 Rectangle drawBox = new Rectangle(camera.CalculateScreenPosition(this).ToPoint(), new Point(sprite.Width, sprite.Height));
-                Color drawColor = new Color(Color.White, min);
-                spriteBatch.Draw(blackTex, null, drawBox, sprite.SourceRectangle, origin, 0.0f, new Vector2(scale), drawColor, SpriteEffects.None, 0.0f);
+                Color drawBColor = new Color(Color.White, bmin);
+                spriteBatch.Draw(blackTex, null, drawBox, sprite.SourceRectangle, origin, 0.0f, new Vector2(scale), drawBColor, SpriteEffects.None, 0.0f);                
             }
         }
 
@@ -193,6 +213,11 @@ namespace Wink
         public override void HandleInput(InputHelper inputHelper)
         {
             onTile.HandleInput(inputHelper);
+
+            if (inputHelper.IsKeyDown(Keys.Tab))
+            { ShowHittable = true; }
+            else
+            { ShowHittable = false; }
 
             if (TileType == TileType.Floor)
             {
