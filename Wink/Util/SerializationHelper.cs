@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 
@@ -9,6 +10,18 @@ namespace Wink
         public static SerializationHelper.Variables GetVars(this StreamingContext sc)
         {
             return sc.Context as SerializationHelper.Variables;
+        }
+
+        public static T TryGUIDThenFull<T>(this SerializationInfo info, StreamingContext context, string variableName) where T : GameObject
+        {
+            try
+            {
+                return context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString(variableName + "GUID"))) as T;
+            }
+            catch (SerializationException se)
+            {
+                return info.GetValue(variableName, typeof(T)) as T;
+            }
         }
     }
 

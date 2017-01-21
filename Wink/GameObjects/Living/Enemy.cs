@@ -6,7 +6,7 @@ using System.Runtime.Serialization;
 
 namespace Wink
 {
-    public enum EnemyType {warrior,archer,mage,random}
+    public enum EnemyType { warrior, archer, mage, random }
     [Serializable]
 
     public class Enemy : Living, IGUIGameObject
@@ -108,7 +108,6 @@ namespace Wink
                     throw new Exception("invalid enemy type");
             }
         }
-
 
         #region Serialization
         public Enemy(SerializationInfo info, StreamingContext context) : base(info, context)
