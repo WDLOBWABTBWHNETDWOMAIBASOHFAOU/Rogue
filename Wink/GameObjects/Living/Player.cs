@@ -35,20 +35,14 @@ namespace Wink
             mouseSlot = new MouseSlot(layer + 11, "mouseSlot");  
             SetupType(playerType);
             InitAnimation(); //not sure if overriden version gets played right without restating
-            PlayerNameTitle();
         }
 
         private void PlayerNameTitle()
         {
-            playerNameTitle = new TextGameObject("Arial26");
+            playerNameTitle = new TextGameObject("Arial26",1,0,"playerName" + guid.ToString());
             playerNameTitle.Text = Id.Split('_')[1];
             playerNameTitle.Color = Color.Red;
-            playerNameTitle.Parent = this;
-            int tileWidth = 64;//tiles are not compiled when this is called
-            if (tileWidth < playerNameTitle.Size.X)//anything overlapping the tiles on the right gets cut off, therefore correct so it is size.x is no larget than a tile size
-                { playerNameTitle.scale= tileWidth / playerNameTitle.Size.X; }
-            Vector2 size = playerNameTitle.Size * playerNameTitle.scale;
-            playerNameTitle.Position = position - new Vector2((size.X/2),64+size.Y );
+            playerNameTitle.Position = GlobalPosition - new Vector2((playerNameTitle.Size.X/2),64+ playerNameTitle.Size.Y );
         }
 
         private void SetupType(PlayerType ptype)
@@ -248,17 +242,14 @@ namespace Wink
             return result;
         }
 
-        public override void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
-        {
-            base.Draw(gameTime, spriteBatch, camera);
-            playerNameTitle.Draw(gameTime, spriteBatch, camera);   
-        }
-
         public void InitGUI(Dictionary<string, object> guiState)
         {
+            PlayingGUI gui = GameWorld.Find("PlayingGui") as PlayingGUI;
+            PlayerNameTitle();
+            gui.Add(playerNameTitle);
+
             if (Id == LocalPlayerName)
             {
-                PlayingGUI gui = GameWorld.Find("PlayingGui") as PlayingGUI;
                 SpriteFont textfieldFont = GameEnvironment.AssetManager.GetFont("Arial26");
 
                 const int barX = 150;
@@ -293,9 +284,10 @@ namespace Wink
 
         public void CleanupGUI(Dictionary<string, object> guiState)
         {
+            PlayingGUI gui = GameWorld.Find("PlayingGui") as PlayingGUI;
+            gui.Remove(gui.Find("playerName" + guid.ToString()));
             if (Id == LocalPlayerName)
             {
-                PlayingGUI gui = GameWorld.Find("PlayingGui") as PlayingGUI;
                 PlayerInventoryAndEquipment pIaE = gui.Find(obj => obj is PlayerInventoryAndEquipment) as PlayerInventoryAndEquipment;
                 guiState.Add("playerIaEVisibility", pIaE.Visible);
                 guiState.Add("playerIaEPosition", pIaE.Position);
