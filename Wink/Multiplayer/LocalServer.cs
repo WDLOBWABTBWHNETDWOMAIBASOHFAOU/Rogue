@@ -17,22 +17,19 @@ namespace Wink
         }
 
         private Dictionary<Client, List<Event>> clientEvents;
+        private List<Living> livingObjects;
+        private Level level;
+        private int turnIndex;
+        private List<GameObject> changedObjects;
+
         public List<Client> Clients
         {
             get { return new List<Client>(clientEvents.Keys); }
         }
-
-        private List<Living> livingObjects;
-        private Level level;
-        
-        private int turnIndex;
-
-        private List<GameObject> changedObjects;
         public List<GameObject> ChangedObjects
         {
             get { return changedObjects; }
         }
-
         public Level Level
         {
             get { return level; }
@@ -43,7 +40,6 @@ namespace Wink
                 SendOutUpdatedLevelIf();
             }
         }
-
         public int LevelIndex
         {
             get { return level.Index; }
@@ -192,7 +188,7 @@ namespace Wink
             }
         }
 
-        public void SendToAllClients(Event e)
+        private void SendToAllClients(Event e)
         {
             using (MemoryStream ms = new MemoryStream())
             {
@@ -259,19 +255,7 @@ namespace Wink
                 changedObjects.Add(livingObjects[turnIndex]);
             }
         }
-
-        private List<GameObject> GetSeenGameObjects()
-        {
-            List<Tile> seenTiles = new List<Tile>();
-            foreach (Living l in livingObjects)
-                if (l is Player)
-                    seenTiles.AddRange(Level.FindAll(obj => obj is Tile && (obj as Tile).SeenBy.ContainsKey(l)).Cast<Tile>());
-
-            HashSet<Tile> seenTilesSet = new HashSet<Tile>(seenTiles);
-            List<GameObject> seenObjects = seenTilesSet.SelectMany(t => t.OnTile.Children).ToList();
-            return seenObjects;
-        }
-
+        
         public void EndTurn(Player player)
         {
             if (livingObjects[turnIndex] == player)
@@ -285,9 +269,7 @@ namespace Wink
         public override void Reset()
         {
             foreach (Client client in Clients)
-            {
                 client.Reset();
-            }
         }
     }
 }
