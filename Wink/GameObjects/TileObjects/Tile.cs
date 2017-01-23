@@ -23,7 +23,8 @@ namespace Wink
 
         protected TileType type;
         protected bool passable;
-        protected bool ShowHittable;
+        protected bool ShowNormalReach;
+        protected bool ShowSKillReach;
 
         protected GameObjectList onTile;
 
@@ -173,16 +174,28 @@ namespace Wink
                         float p = kvp.Value / kvp.Key.ViewDistance;
                         bmin = p < bmin ? p : bmin;
                         #region HighlightReach
-                        //highlight tiles that are hittable for the local player
-                        //only if requested and the tile is not a wall or the key's tile
-                        if (ShowHittable  && !(TileType == TileType.Wall || kvp.Key.Tile == this))
+                        //highlight tiles that are whithin reach for the local player
+                        //current key is the localplayer and the tile is not a wall or the key's tile
+                        if ( kvp.Key.Id == Player.LocalPlayerName && !(TileType == TileType.Wall || kvp.Key.Tile == this))
                         {
-                            //current key is the localplayer and whithin reach of the local player
-                            if (kvp.Key.Id == Player.LocalPlayerName && kvp.Value <= kvp.Key.Reach + 0.5f)
+
+                            // whithin normal attack reach of the local player
+                            if (ShowNormalReach  && kvp.Value <= kvp.Key.Reach + 0.5f)
                             {
                                 //draw highlight
                                 float highlightStrenght = 0.2f;
                                 Texture2D redTex = GameEnvironment.AssetManager.GetSingleColorPixel(Color.Red);
+                                Rectangle drawhBox = new Rectangle(camera.CalculateScreenPosition(this).ToPoint(), new Point(sprite.Width, sprite.Width));
+                                Color drawRColor = new Color(Color.White, highlightStrenght);
+                                spriteBatch.Draw(redTex, null, drawhBox, sprite.SourceRectangle, origin, 0.0f, new Vector2(scale), drawRColor, SpriteEffects.None, 0.0f);
+                            }
+
+                            // whithin skillreach of the local player
+                            if (ShowSKillReach && kvp.Key.CurrentSkill!=null && kvp.Value <= kvp.Key.CurrentSkill.SkillReach + 0.5f)
+                            {
+                                //draw highlight
+                                float highlightStrenght = 0.2f;
+                                Texture2D redTex = GameEnvironment.AssetManager.GetSingleColorPixel(Color.Blue);
                                 Rectangle drawhBox = new Rectangle(camera.CalculateScreenPosition(this).ToPoint(), new Point(sprite.Width, sprite.Width));
                                 Color drawRColor = new Color(Color.White, highlightStrenght);
                                 spriteBatch.Draw(redTex, null, drawhBox, sprite.SourceRectangle, origin, 0.0f, new Vector2(scale), drawRColor, SpriteEffects.None, 0.0f);
@@ -214,10 +227,13 @@ namespace Wink
         {
             onTile.HandleInput(inputHelper);
 
-            if (inputHelper.IsKeyDown(Keys.Tab))
-            { ShowHittable = true; }
-            else
-            { ShowHittable = false; }
+            ShowNormalReach = false;
+            ShowSKillReach = false;
+
+            if (inputHelper.IsKeyDown(Keys.Q))
+                ShowNormalReach = true;
+            if (inputHelper.IsKeyDown(Keys.E))
+                ShowSKillReach = true;
 
             if (TileType == TileType.Floor)
             {

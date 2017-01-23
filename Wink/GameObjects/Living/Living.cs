@@ -91,10 +91,6 @@ namespace Wink
                 }
             }
 
-            (skillList.Children[0] as RestrictedItemSlot).ChangeItem(new TestSkill());//testSkill (could be replaced by some default skill)
-            //selectedSkill = new Point(0, 0);
-
-
             GameObjectGrid itemGrid = new GameObjectGrid(3, 6, 0, "");
             inventory = new InventoryBox(itemGrid);
 

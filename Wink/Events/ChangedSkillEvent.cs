@@ -48,7 +48,15 @@ namespace Wink
 
         public override bool OnServerReceive(LocalServer server)
         {
-            player.CurrentSkill = newSelectedSkill;
+            if(player.CurrentSkill != newSelectedSkill)
+            {
+                player.CurrentSkill = newSelectedSkill;
+            }
+            else
+            {
+                player.CurrentSkill = null;
+            }
+
             return true;
         }
 

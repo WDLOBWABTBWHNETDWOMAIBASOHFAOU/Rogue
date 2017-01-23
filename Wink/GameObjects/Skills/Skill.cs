@@ -12,12 +12,14 @@ namespace Wink
     public abstract class Skill : Item
     {//Skills are considerd items to fasilitate picking up and droping them between the skillbar and skill storage (inventory or skillbook). Think of it as scrolls
         
-        protected int SkillReach;
+        protected int skillReach;
+        public int SkillReach { get { return skillReach; } }
+
         protected int ManaCost;
 
-        public Skill(int SkillReach = 3, int ManaCost = 10, string assetName = "empty:64:64:10:White") : base(assetName)
+        public Skill(int SkillReach = 2, int ManaCost = 20, string assetName = "empty:64:64:10:White") : base(assetName)
         {
-            this.SkillReach = SkillReach;
+            this.skillReach = SkillReach;
             this.ManaCost = ManaCost;
             SetId();
         }
@@ -30,13 +32,13 @@ namespace Wink
         #region Serialization
         public Skill(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            SkillReach = info.GetInt32("SkillReach");
+            skillReach = info.GetInt32("SkillReach");
             ManaCost = info.GetInt32("ManaCost");
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            info.AddValue("SkillReach", SkillReach);
+            info.AddValue("SkillReach", skillReach);
             info.AddValue("ManaCost", ManaCost);
             base.GetObjectData(info, context);
         }
@@ -52,9 +54,9 @@ namespace Wink
                 bool AtH;
 
                 if (livingTarget != null)
-                { AtH = AttackEvent.AbleToHit(caster, livingTarget.Tile, SkillReach); }
+                { AtH = AttackEvent.AbleToHit(caster, livingTarget.Tile, skillReach); }
                 else if (TileTarget != null)
-                { AtH = AttackEvent.AbleToHit(caster, TileTarget, SkillReach); }
+                { AtH = AttackEvent.AbleToHit(caster, TileTarget, skillReach); }
                 else
                 { throw new Exception("invalid target"); }
 
@@ -67,7 +69,7 @@ namespace Wink
             base.ItemInfo(caller);
 
             TextGameObject SkillReachInfo = new TextGameObject("Arial12", 0, 0, "SkillReachInfo." + this);
-            SkillReachInfo.Text = "Reach: " + SkillReach.ToString();
+            SkillReachInfo.Text = "Reach: " + skillReach.ToString();
             SkillReachInfo.Color = Color.Red;
             SkillReachInfo.Parent = infoList;
             infoList.Add(SkillReachInfo);

@@ -11,9 +11,10 @@ namespace Wink
     [Serializable]
     class TestSkill : Skill
     {
-
+        int skillPower;
         public TestSkill() : base()
         {
+            skillPower = 250;
         }
 
         #region Serialization
@@ -32,7 +33,7 @@ namespace Wink
             if (livingTarget != null)
             {
                 caster.Mana -= ManaCost;
-                livingTarget.TakeDamage(100, DamageType.Magic);
+                livingTarget.TakeDamage(skillPower, DamageType.Magic);
             }
             else
             {
