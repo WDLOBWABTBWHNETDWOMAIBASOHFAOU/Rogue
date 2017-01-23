@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace Wink
@@ -28,9 +29,9 @@ namespace Wink
         }
         #endregion
 
-        public override bool GUIDSerialization
+        public override List<Guid> GetFullySerialized(Level level)
         {
-            get { return true; }
+            return null; //Irrelevant because client->server
         }
 
         protected override int Cost
@@ -49,10 +50,17 @@ namespace Wink
 
         protected override void DoAction(LocalServer server)
         {
-            server.ChangedObjects.Add(player.Tile);
-            server.ChangedObjects.Add(tile);
+            Tile oldTile = player.Tile;
+
             player.MoveTo(tile);
             player.ComputeVisibility();
+
+            List<GameObject> changed = server.Level.FindAll(obj => obj is Tile && (obj as Tile).SeenBy.ContainsKey(player));
+            if (!changed.Contains(oldTile))
+                changed.Add(oldTile);
+
+            changed.Add(player);
+            server.SendToAllClients(new LevelChangedEvent(changed));
         }
 
         protected override bool ValidateAction(Level level)

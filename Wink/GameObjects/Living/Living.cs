@@ -101,18 +101,8 @@ namespace Wink
             dieAnimation = info.GetString("dieAnimation");
             dieSound = info.GetString("dieSound");
 
-            //inventory = info.TryGUIDThenFull<InventoryBox>(context, "inventory");
-
-            if (context.GetVars().GUIDSerialization)
-            {
-                inventory = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("inventoryGUID"))) as InventoryBox;
-                equipmentSlots = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("equipmentSlotsGUID"))) as GameObjectList;
-            }
-            else
-            {
-                inventory = info.GetValue("inventory", typeof(InventoryBox)) as InventoryBox;
-                equipmentSlots = info.GetValue("equipmentSlots", typeof(GameObjectList)) as GameObjectList;
-            }
+            inventory = info.TryGUIDThenFull<InventoryBox>(context, "inventory");
+            equipmentSlots = info.TryGUIDThenFull<GameObjectList>(context, "equipmentSlots");
 
             manaPoints = info.GetInt32("manaPoints");
             healthPoints = info.GetInt32("healthPoints");
@@ -142,17 +132,17 @@ namespace Wink
             info.AddValue("moveAnimation", moveAnimation);
             info.AddValue("dieAnimation", dieAnimation);
             info.AddValue("dieSound", dieSound);
-            
-            if (context.GetVars().GUIDSerialization)
-            {
-                info.AddValue("inventoryGUID", inventory.GUID.ToString());
-                info.AddValue("equipmentSlotsGUID", equipmentSlots.GUID.ToString());
-            }
-            else
-            {
+
+            SerializationHelper.Variables v = context.GetVars();
+            if (v.FullySerializeEverything || v.FullySerialized.Contains(inventory.GUID))
                 info.AddValue("inventory", inventory);
-                info.AddValue("equipmentSlots", equipmentSlots);
-            }
+            else
+                info.AddValue("inventoryGUID", inventory.GUID.ToString());
+            
+            if (v.FullySerializeEverything || v.FullySerialized.Contains(equipmentSlots.GUID))
+                info.AddValue("equipmentSlots", equipmentSlots); 
+            else
+                info.AddValue("equipmentSlotsGUID", equipmentSlots.GUID.ToString());
 
             info.AddValue("manaPoints", manaPoints);
             info.AddValue("healthPoints", healthPoints);
@@ -297,8 +287,10 @@ namespace Wink
         public virtual List<GameObject> FindAll(Func<GameObject, bool> del)
         {
             List<GameObject> result = new List<GameObject>();
-            result.AddRange(inventory.FindAll(del));
-            result.AddRange(equipmentSlots.FindAll(del));
+            if (inventory != null)
+                result.AddRange(inventory.FindAll(del));
+            if (equipmentSlots != null)
+                result.AddRange(equipmentSlots.FindAll(del));
             return result;
         }
 
@@ -309,13 +301,23 @@ namespace Wink
         /// <returns></returns>
         public virtual GameObject Find(Func<GameObject, bool> del)
         {
-            if (del.Invoke(inventory)) // Check if the inventory fits "del"
-                return inventory;
-            if (del.Invoke(equipmentSlots)) // check if equipmentSlots fits "del"
-                return equipmentSlots;
-
-            // Find the object matching "del" among the children of inventory and equipmentSlots
-            return inventory.Find(del) ?? equipmentSlots.Find(del);
+            if (inventory != null)
+            {
+                if (del.Invoke(inventory)) // Check if the inventory fits "del"
+                    return inventory;
+                GameObject invResult = inventory.Find(del); // Find the object matching "del" among the children of inventory
+                if (invResult != null)
+                    return invResult;
+            }
+            if (equipmentSlots != null)
+            {
+                if (del.Invoke(equipmentSlots)) // Check if equipmentSlots fits "del"
+                    return equipmentSlots;
+                GameObject eqResult = equipmentSlots.Find(del); // Find the object matching "del" among the children of equipmentSlots
+                if (eqResult != null)
+                    return eqResult;
+            }
+            return null;
         }
     }
 }

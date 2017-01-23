@@ -52,7 +52,7 @@ namespace Wink
         /// <returns></returns>
         public GameObject GetGameObjectByGUID(Guid guid)
         {
-            if (guid == Guid.Empty)
+            if (guid == Guid.Empty || Level == null)
                 return null;
 
             if (new HashSet<GameObject>(Level.FindAll(o => o.GUID == guid)).Count > 1)
@@ -121,14 +121,14 @@ namespace Wink
 
         public override void Send(Event e)
         {
-            e = SerializationHelper.Clone(e, this, e.GUIDSerialization);
-            pendingEvents.Add(e);
+            //e = SerializationHelper.Clone(e, this, e.GUIDSerialization);
+            //pendingEvents.Add(e);
         }
 
         public override void SendPreSerialized(MemoryStream ms)
         {
             ms.Seek(0, SeekOrigin.Begin);
-            Event e = SerializationHelper.Deserialize(ms, this, false) as Event;
+            Event e = SerializationHelper.Deserialize(ms, this) as Event;
             pendingEvents.Add(e);
         }
 

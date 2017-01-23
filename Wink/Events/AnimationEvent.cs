@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace Wink
@@ -16,16 +17,11 @@ namespace Wink
         {
 
         }
-
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            base.GetObjectData(info, context);
-        }
         #endregion
 
-        public override bool GUIDSerialization
+        public override List<Guid> GetFullySerialized(Level level)
         {
-            get { return true; }
+            return new List<Guid>();
         }
 
         public override bool OnClientReceive(LocalClient client)

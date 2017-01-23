@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace Wink
@@ -16,6 +17,7 @@ namespace Wink
             this.player = player;
         }
 
+        #region Serialization
         public ActionEvent(SerializationInfo info, StreamingContext context)
         {
             player = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("playerGUID"))) as Player;
@@ -26,13 +28,17 @@ namespace Wink
             //This event can only be sent from client to server, therefore GUID based serialization is used.
             info.AddValue("playerGUID", player.GUID.ToString());
         }
+        #endregion
+
+        public override List<Guid> GetFullySerialized(Level level)
+        {
+            return null; //Irrelevant because client->server
+        }
 
         public sealed override bool OnServerReceive(LocalServer server)
         {
-            server.ChangedObjects.Add(player);
             DoAction(server);
             player.ActionPoints -= Cost;
-            //server.SendOutLevelChanges();
             return true;
         }
         

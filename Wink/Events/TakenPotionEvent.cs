@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace Wink
@@ -32,9 +33,9 @@ namespace Wink
             get { return Living.BaseActionCost/3; }
         }
 
-        public override bool GUIDSerialization
+        public override List<Guid> GetFullySerialized(Level level)
         {
-            get { return true; }
+            return null; //Irrelevant because client->server
         }
 
         protected override void DoAction(LocalServer server)

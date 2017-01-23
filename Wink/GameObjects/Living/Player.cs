@@ -105,18 +105,18 @@ namespace Wink
             exp = info.GetInt32("exp");
             freeStatPoints = info.GetInt32("freeStatPoints");
             playerNameTitle = info.GetValue("playerNameTitle", typeof(TextGameObject)) as TextGameObject;
-            if (context.GetVars().GUIDSerialization)
-                mouseSlot = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("mouseSlotGUID"))) as MouseSlot;
-            else
-                mouseSlot = info.GetValue("mouseSlot", typeof(MouseSlot)) as MouseSlot;
+
+            mouseSlot = info.TryGUIDThenFull<MouseSlot>(context, "mouseSlot");
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            if (context.GetVars().GUIDSerialization)
-                info.AddValue("mouseSlotGUID", mouseSlot.GUID.ToString());
+            SerializationHelper.Variables v = context.GetVars();
+            if (v.FullySerializeEverything || v.FullySerialized.Contains(mouseSlot.GUID))
+                info.AddValue("mouseSlot", mouseSlot); 
             else
-                info.AddValue("mouseSlot", mouseSlot);
+                info.AddValue("mouseSlotGUID", mouseSlot.GUID.ToString());
+
             info.AddValue("playerNameTitle",playerNameTitle);
             info.AddValue("exp", exp);
             info.AddValue("freeStatPoints", freeStatPoints);
@@ -293,7 +293,7 @@ namespace Wink
 
         public void CleanupGUI(Dictionary<string, object> guiState)
         {
-            if (Id == LocalPlayerName)
+            if (Id == LocalPlayerName && GameWorld != null)
             {
                 PlayingGUI gui = GameWorld.Find("PlayingGui") as PlayingGUI;
                 PlayerInventoryAndEquipment pIaE = gui.Find(obj => obj is PlayerInventoryAndEquipment) as PlayerInventoryAndEquipment;

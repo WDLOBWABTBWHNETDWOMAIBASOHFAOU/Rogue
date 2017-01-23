@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace Wink
@@ -17,6 +18,7 @@ namespace Wink
             this.target = target;
         }
 
+        #region Serialization
         public PickupEvent(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             item = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("itemGUID"))) as Item;
@@ -32,10 +34,11 @@ namespace Wink
             info.AddValue("targetGUID", target.GUID.ToString());
             base.GetObjectData(info, context);
         }
+        #endregion
 
-        public override bool GUIDSerialization
+        public override List<Guid> GetFullySerialized(Level level)
         {
-            get { return true; }
+            return null; //Irrelevant because client->server
         }
 
         public override bool OnClientReceive(LocalClient client)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 using Microsoft.Xna.Framework;
+using System.Collections.Generic;
 
 namespace Wink
 {
@@ -37,15 +38,14 @@ namespace Wink
             get { return Living.BaseActionCost; }
         }
 
-        public override bool GUIDSerialization
+        public override List<Guid> GetFullySerialized(Level level)
         {
-            get { return false; }
+            return null; //Irrelevant because client->server
         }
 
         protected override void DoAction(LocalServer server)
         {
             Attacker.Attack(Defender);
-            server.ChangedObjects.Add(Defender);
         }
 
         protected override bool ValidateAction(Level level)

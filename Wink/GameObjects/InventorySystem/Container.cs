@@ -38,28 +38,19 @@ namespace Wink
         #region Serialization
         public Container(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            if (context.GetVars().GUIDSerialization)
-            {
-                iBox = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("iBoxGUID"))) as InventoryBox; 
-            }
-            else
-            {
-                iBox = info.GetValue("iBox", typeof(InventoryBox)) as InventoryBox;
-            }
+            iBox = info.TryGUIDThenFull<InventoryBox>(context, "iBox");
             clickCount = info.GetInt32("clickCount");
             floorNumber = info.GetInt32("floorNumber");
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            if (context.GetVars().GUIDSerialization)
-            {
-                info.AddValue("iBoxGUID", iBox.GUID.ToString());
-            }
+            SerializationHelper.Variables v = context.GetVars();
+            if (v.FullySerializeEverything || v.FullySerialized.Contains(iBox.GUID))
+                info.AddValue("iBox", iBox);
             else
-            {
-                info.AddValue("iBox", iBox); 
-            }
+                info.AddValue("iBoxGUID", iBox.GUID.ToString()); 
+
             info.AddValue("clickCount", clickCount);
             info.AddValue("floorNumber", floorNumber);
 
@@ -88,11 +79,14 @@ namespace Wink
 
         public void CleanupGUI(Dictionary<string, object> guiState)
         {
-            PlayingGUI gui = GameWorld.Find("PlayingGui") as PlayingGUI;
-            gui.Remove(iWindow);
+            if (iWindow != null)
+            {
+                PlayingGUI gui = GameWorld.Find("PlayingGui") as PlayingGUI;
+                gui.Remove(iWindow);
 
-            guiState.Add("iWindowVisibility", iWindow.Visible);
-            guiState.Add("iWindowPosition", iWindow.Position);
+                guiState.Add("iWindowVisibility", iWindow.Visible);
+                guiState.Add("iWindowPosition", iWindow.Position);
+            }
         }
 
         public override void Update(GameTime gameTime)
@@ -179,12 +173,18 @@ namespace Wink
 
         public List<GameObject> FindAll(Func<GameObject, bool> del)
         {
-            return iBox.FindAll(del);
+            if (iBox != null)
+                return iBox.FindAll(del);
+            else
+                return new List<GameObject>();
         }
 
         public GameObject Find(Func<GameObject, bool> del)
         {
-            return iBox.Find(del);
+            if (iBox != null)
+                return iBox.Find(del);
+            else
+                return null;
         }
     }
 }

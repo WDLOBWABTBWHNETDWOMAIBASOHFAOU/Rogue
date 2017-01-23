@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace Wink
@@ -13,6 +14,7 @@ namespace Wink
             clientName = info.GetString("clientName");
         }
 
+        #region Serialization
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             info.AddValue("clientName", clientName);
@@ -23,10 +25,11 @@ namespace Wink
         {
             this.clientName = clientName;
         }
+        #endregion
 
-        public override bool GUIDSerialization
+        public override List<Guid> GetFullySerialized(Level level)
         {
-            get { return false; }
+            return null; //Irrelevant because client->server
         }
 
         public override bool OnClientReceive(LocalClient client)

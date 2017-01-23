@@ -27,10 +27,9 @@ namespace Wink
         }
         #endregion
 
-
-        public override bool GUIDSerialization
+        public override List<Guid> GetFullySerialized(Level level)
         {
-            get { return false; }
+            return null; //Irrelevant because client->server
         }
 
         protected override int Cost

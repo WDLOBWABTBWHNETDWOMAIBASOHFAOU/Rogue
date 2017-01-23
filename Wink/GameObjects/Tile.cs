@@ -116,8 +116,10 @@ namespace Wink
 
         public override void Replace(GameObject replacement)
         {
-            if (onTile != null && onTile.GUID == replacement.GUID)
+            if (onTile.GUID == replacement.GUID)
                 onTile = replacement as GameObjectList;
+
+            onTile.Replace(replacement);
 
             base.Replace(replacement);
         }
@@ -211,11 +213,19 @@ namespace Wink
 
         public List<GameObject> FindAll(Func<GameObject, bool> del)
         {
-            return onTile.FindAll(del);
+            List<GameObject> result = new List<GameObject>();
+            if (del.Invoke(onTile))
+                result.Add(onTile);
+
+            result.AddRange(onTile.FindAll(del));
+            return result;
         }
 
         public GameObject Find(Func<GameObject, bool> del)
         {
+            if (del.Invoke(onTile))
+                return onTile;
+
             return onTile.Find(del);
         }
 

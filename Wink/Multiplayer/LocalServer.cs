@@ -144,7 +144,7 @@ namespace Wink
         {
             if (e.Validate(Level))
             {
-                e = SerializationHelper.Clone(e, this, e.GUIDSerialization);
+                e = SerializationHelper.Clone(e, this);
                 IncomingEvent(Clients.Find(c => c is LocalClient), e);
             }
         }
@@ -163,7 +163,7 @@ namespace Wink
         {
             using (MemoryStream ms = new MemoryStream())
             {
-                SerializationHelper.Serialize(ms, e, this, e.GUIDSerialization);
+                SerializationHelper.Serialize(ms, e, this, e.GetFullySerialized(Level));
                 ms.Seek(0, SeekOrigin.Begin);
                 foreach (Client c in Clients) 
                     c.SendPreSerialized(ms); 
@@ -177,7 +177,7 @@ namespace Wink
                 LevelChangedEvent e = new LevelChangedEvent(changedObjects);
                 foreach (Client c in Clients)
                 {
-                    c.Send(e);
+                    //c.Send(e);
                 }
                 changedObjects.Clear();
             }

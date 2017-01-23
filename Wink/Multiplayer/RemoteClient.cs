@@ -56,7 +56,7 @@ namespace Wink
                 if (s.DataAvailable)
                 {
                     //Event e = (Event)binaryFormatter.Deserialize(s);
-                    Event e = Deserialize(s, Server, false) as Event;
+                    Event e = Deserialize(s, Server) as Event;
                     Server.IncomingEvent(this, e);
                 }
                 else
@@ -71,7 +71,7 @@ namespace Wink
             if (e.Validate((server as LocalServer).Level))
             {
                 //Serialize and send event over TCP connection.
-                StreamingContext c = new StreamingContext(StreamingContextStates.All, new Variables(Server, e.GUIDSerialization));
+                StreamingContext c = new StreamingContext(StreamingContextStates.All, new Variables(Server, e.GetFullySerialized((server as LocalServer).Level)));
                 binaryFormatter.Context = c;
                 binaryFormatter.Serialize(tcpClient.GetStream(), e);
             }

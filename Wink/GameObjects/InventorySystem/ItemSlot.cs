@@ -30,27 +30,21 @@ namespace Wink
         #region Serialization
         public ItemSlot(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            if (context.GetVars().GUIDSerialization)
-            {
-                slotItem = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("slotItemGUID"))) as Item;
-            }
-            else
-            {
-                slotItem = info.GetValue("slotItem", typeof(Item)) as Item;
-            }
+            slotItem = info.TryGUIDThenFull<Item>(context, "slotItem");
 
             containsPrev = info.GetBoolean("containsPrev");
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            if (context.GetVars().GUIDSerialization)
+            SerializationHelper.Variables v = context.GetVars();
+            if (v.FullySerializeEverything || v.FullySerialized.Contains(slotItem.GUID))
             {
-                info.AddValue("slotItemGUID", slotItem.GUID.ToString());
+                info.AddValue("slotItem", slotItem);
             }
             else
             {
-                info.AddValue("slotItem", slotItem);
+                info.AddValue("slotItemGUID", slotItem.GUID.ToString());
             }
 
             info.AddValue("containsPrev", containsPrev);

@@ -23,27 +23,16 @@ public class GameObjectList : GameObject, IGameObjectContainer
     public GameObjectList(SerializationInfo info, StreamingContext context) : base(info, context)
     {
         SerializationHelper.Variables vars = context.Context as SerializationHelper.Variables;
-        if (vars.GUIDSerialization)
-        {
-            children = (info.GetValue("childrenGUIDs", typeof(List<string>)) as List<string>).ConvertAll(s => vars.Local.GetGameObjectByGUID(Guid.Parse(s)));
-        }
-        else
-        {
-            children = (List<GameObject>)info.GetValue("children", typeof(List<GameObject>));
-        }
+        
+        children = (List<GameObject>)info.GetValue("children", typeof(List<GameObject>));
+
         toRemove = new List<GameObject>();
     }
 
     public override void GetObjectData(SerializationInfo info, StreamingContext context)
     {
-        if (context.GetVars().GUIDSerialization)
-        {
-            info.AddValue("childrenGUIDs", children.ConvertAll(go => go.GUID.ToString()));
-        }
-        else
-        {
-            info.AddValue("children", children);
-        }
+        info.AddValue("children", children);
+        
         base.GetObjectData(info, context);
     }
     #endregion

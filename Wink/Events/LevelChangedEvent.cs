@@ -14,6 +14,7 @@ namespace Wink
             this.changedObjects = changedObjects;
         }
 
+        #region Serialization
         public LevelChangedEvent(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             changedObjects = info.GetValue("changedObjects", typeof(List<GameObject>)) as List<GameObject>;
@@ -24,21 +25,28 @@ namespace Wink
             info.AddValue("changedObjects", changedObjects);
             base.GetObjectData(info, context);
         }
+        #endregion
 
-        public override bool GUIDSerialization
+        public override List<Guid> GetFullySerialized(Level level)
         {
-            get { return true; }
+            return changedObjects.ConvertAll(obj => obj.GUID);
         }
 
         public override bool OnClientReceive(LocalClient client)
         {
             foreach (GameObject go in changedObjects)
             {
+                Dictionary<string, object> guiState = new Dictionary<string, object>();
+                if (go is IGUIGameObject)
+                {
+                    IGUIGameObject gui = client.Level.Find(obj => obj.GUID == go.GUID) as IGUIGameObject;
+                    gui.CleanupGUI(guiState);
+                }
+
                 client.Replace(go);
 
-                //if (go is IGUIGameObject)
-                    //(go as IGUIGameObject).InitGUI();
-                    //TODO: enable this again but make replace return the 
+                if (go is IGUIGameObject)
+                    (go as IGUIGameObject).InitGUI(guiState);
             }
             return true;
         }

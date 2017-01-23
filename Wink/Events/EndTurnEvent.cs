@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace Wink
@@ -26,9 +27,9 @@ namespace Wink
         }
         #endregion
 
-        public override bool GUIDSerialization
+        public override List<Guid> GetFullySerialized(Level level)
         {
-            get { return false; }
+            return null; //Irrelevant because client->server
         }
 
         public override bool OnClientReceive(LocalClient client)
