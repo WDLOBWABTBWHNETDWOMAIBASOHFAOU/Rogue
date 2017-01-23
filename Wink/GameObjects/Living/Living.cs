@@ -124,6 +124,7 @@ namespace Wink
             vitality = info.GetInt32("vitality");
             creatureLevel = info.GetInt32("creatureLevel");
             baseReach = info.GetInt32("baseReach");
+            specialReach = info.GetInt32("specialReach");
             viewDistance = info.GetInt32("viewDistance");
         }
 
@@ -164,6 +165,7 @@ namespace Wink
             info.AddValue("wisdom", wisdom);
             info.AddValue("luck", luck);
             info.AddValue("baseReach", baseReach);
+            info.AddValue("specialReach", specialReach);
             info.AddValue("viewDistance", viewDistance);
         }
         #endregion

@@ -6,7 +6,7 @@
         public const int BaseActionCost = 10;
 
         #region stats
-        protected int manaPoints, healthPoints, actionPoints, baseAttack, baseArmor, vitality, strength, dexterity, wisdom, luck, intelligence, creatureLevel, baseReach;
+        protected int manaPoints, healthPoints, actionPoints, baseAttack, baseArmor, vitality, strength, dexterity, wisdom, luck, intelligence, creatureLevel, baseReach, specialReach;
 
         public int Dexterity { get { return Ringbonus(EffectType.Dexterity, dexterity); } }
         public int Intelligence { get { return Ringbonus(EffectType.Intelligence, intelligence); } }
@@ -167,6 +167,19 @@
         }
 
         /// <summary>
+        /// returns the special reach of the living object
+        /// </summary>
+        public int Special_Reach
+        {
+            get
+            {
+                int reach = specialReach;
+
+                return reach;
+            }
+        }
+
+        /// <summary>
         /// returns attackvalue based on the equiped weapon item (if unarmed, uses livingObject baseAttack)
         /// </summary>
         /// <returns></returns>
@@ -179,6 +192,29 @@
             double mod = 1;
             int attackValue;
             if (Weapon.SlotItem !=null)
+            {
+                WeaponEquipment weaponItem = Weapon.SlotItem as WeaponEquipment;
+                attackValue = weaponItem.Value(this);
+            }
+            else
+                attackValue = (int)CalculateValue(attack, Strength, mod);
+
+            return attackValue;
+        }
+
+        /// <summary>
+        /// returns special attackvalue based on the equiped weapon item (if unarmed, uses livingObject baseAttack)
+        /// </summary>
+        /// <returns></returns>
+        protected int Special_AttackValue(double mod = 1)
+        {
+            // get the baseattack value of the equiped weapon, if non equiped use baseattack of living
+            // min max base attack value for each weapon and random inbetween or random between 0.8 and 1.2 of base (for example)
+
+            int attack = baseAttack;
+            double modifier = mod;
+            int attackValue;
+            if (Weapon.SlotItem != null)
             {
                 WeaponEquipment weaponItem = Weapon.SlotItem as WeaponEquipment;
                 attackValue = weaponItem.Value(this);

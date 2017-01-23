@@ -1,19 +1,27 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System.Runtime.Serialization;
+using System.IO;
 
 namespace Wink
 {
-    public enum EnemyType {warrior,archer,mage,random}
     [Serializable]
-
-    public class Enemy : Living, IGUIGameObject
+    class Boss : Enemy
     {
-        private Bar<Enemy> hpBar;
+        private Bar<Boss> hpBar;
+        EnemyType type = EnemyType.random;
+        int floorNumber;
         string enemySprite;
-        
+        int actionpoints_cooldown;
+        int actionpoints_used = 0;
+        bool special_ableToHit;
+        double mod = 1;
+
         /// <summary>
         /// Return True if health > 0 meaning the enemy is blocking the tile it's standing on
         /// </summary>
@@ -22,23 +30,53 @@ namespace Wink
             get { return Health > 0; }
         }
 
-        /// <summary>
-        /// Create a new Enemy object
-        /// </summary>
-        /// <param name="layer">The layer for drawing the object</param>
-        /// <param name="floorNumber">The floor the Enemy is placed on</param>
-        /// <param name="type">The enemy type</param>
-        /// <param name="id">The (unique) object ID</param>
-        /// <param name="FOVlength">The view distance for the Enemy</param>
-        /// <param name="scale">The scale (multiplier) for the sprite size</param>
-        public Enemy(int layer, int floorNumber, EnemyType type = EnemyType.random, string id = "Enemy", float FOVlength = 8.5f) : base(layer, id, FOVlength)
+        public Boss(int levelIndex) : base(0, 5)
         {
-            if(floorNumber < 1)
+            floorNumber = levelIndex + 1;
+            string path = "Content/Bosses/Boss_" + floorNumber + ".txt";
+            if (File.Exists(path))
             {
-                floorNumber = 1;
+                StreamReader fileReader = new StreamReader(path);
+                string line = fileReader.ReadLine();
+
+                string[] splitline = line.Split(new char[] {','}, StringSplitOptions.None);
+
+                string string_type = splitline[0];
+                switch(string_type)
+                {
+                    case "warrior":
+                        type = EnemyType.warrior;
+                        break;
+                    case "archer":
+                        type = EnemyType.archer;
+                        break;
+                    case "mage":
+                        type = EnemyType.mage;
+                        break;
+                    case "random":
+                        type = EnemyType.random;
+                        break;
+                }
+
+                int actionpoints_cooldown_turns = Int32.Parse(splitline[1]);
+                actionpoints_cooldown = actionpoints_cooldown_turns * MaxActionPoints;
+                actionpoints_used = actionpoints_cooldown - MaxActionPoints;
+
+                specialReach = Int32.Parse(splitline[2]);
+                mod = Int32.Parse(splitline[3]);
+
+                SetupType(type, floorNumber);
+
+                baseReach = 1;
+
+                InitAnimation(enemySprite);
+
+                //TODO calculate creature level and set stats accordingly
             }
-            SetupType(type, floorNumber);
-            InitAnimation(enemySprite);
+            else
+            {
+                throw new NotImplementedException();
+            }
         }
 
         /// <summary>
@@ -55,22 +93,22 @@ namespace Wink
                 etype = (EnemyType)eTypeValues.GetValue(GameEnvironment.Random.Next(eTypeValues.Length - 1));
             }
             id += " : " + etype.ToString();
-            int eLvl = GameEnvironment.Random.Next(1,floorNumber);
+            int eLvl = GameEnvironment.Random.Next(floorNumber, floorNumber + 5);
             int weaponChance = 15 * floorNumber; // higher chance the deeper you go
-            int armorChance = 15  *floorNumber;  //
+            int armorChance = 15 * floorNumber;  //
 
             switch (etype)
             {
                 case EnemyType.warrior:
-                    if(weaponChance < GameEnvironment.Random.Next(100))
+                    if (weaponChance < GameEnvironment.Random.Next(100))
                     {
                         EquipmentSlot weaponslot = EquipmentSlots.Find("weaponSlot") as EquipmentSlot;
-                        weaponslot.ChangeItem(new WeaponEquipment(floorNumber,WeaponType.melee));
+                        weaponslot.ChangeItem(new WeaponEquipment(floorNumber, WeaponType.melee));
                     }
                     if (armorChance < GameEnvironment.Random.Next(100))
                     {
                         EquipmentSlot bodyslot = EquipmentSlots.Find("bodySlot") as EquipmentSlot;
-                       // bodyslot.ChangeItem(new BodyEquipment(floorNumber, 2, ArmorType.normal));
+                        // bodyslot.ChangeItem(new BodyEquipment(floorNumber, 2, ArmorType.normal));
                     }
                     SetStats(eLvl, 3 + (eLvl), 3 + (eLvl), 2 + (eLvl / 2), 1 + (eLvl / 2), 1 + (eLvl / 2), 2 + (eLvl / 2), 20 + eLvl * 3, 2, 1);
                     enemySprite = "empty:65:65:12:Brown";
@@ -87,7 +125,7 @@ namespace Wink
                         EquipmentSlot bodyslot = EquipmentSlots.Find("bodySlot") as EquipmentSlot;
                         //bodyslot.ChangeItem(new BodyEquipment(floorNumber, 2, ArmorType.normal));
                     }
-                    SetStats(eLvl, 2 + (eLvl/2), 1 + (eLvl/2), 3 + (eLvl), 1 + (eLvl / 2), 1 + (eLvl / 2), 3 + (eLvl), 20 + eLvl * 3, 2, 1);
+                    SetStats(eLvl, 2 + (eLvl / 2), 1 + (eLvl / 2), 3 + (eLvl), 1 + (eLvl / 2), 1 + (eLvl / 2), 3 + (eLvl), 20 + eLvl * 3, 2, 1);
                     enemySprite = "empty:65:65:12:Yellow";
                     break;
                 case EnemyType.mage:
@@ -101,7 +139,7 @@ namespace Wink
                         EquipmentSlot bodyslot = EquipmentSlots.Find("bodySlot") as EquipmentSlot;
                         //bodyslot.ChangeItem(new BodyEquipment(floorNumber, 2, ArmorType.robes));
                     }
-                    SetStats(eLvl, 1 + (eLvl/2), 1 + (eLvl/2), 1 + (eLvl / 2), 3 + (eLvl), 3 + (eLvl), 1 + (eLvl / 2), 20 + eLvl * 3, 2, 2);
+                    SetStats(eLvl, 1 + (eLvl / 2), 1 + (eLvl / 2), 1 + (eLvl / 2), 3 + (eLvl), 3 + (eLvl), 1 + (eLvl / 2), 20 + eLvl * 3, 2, 2);
                     enemySprite = "empty:65:65:12:CornflowerBlue";
                     break;
                 default:
@@ -109,16 +147,13 @@ namespace Wink
             }
         }
 
-
         #region Serialization
-        public Enemy(SerializationInfo info, StreamingContext context) : base(info, context)
+        public Boss(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            enemySprite = info.GetString("enemySprite");
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            info.AddValue("enemySprite", enemySprite);
             base.GetObjectData(info, context);
         }
         #endregion
@@ -138,27 +173,40 @@ namespace Wink
         protected override void DoBehaviour(List<GameObject> changedObjects)
         {
             GoTo(changedObjects, GameWorld.Find(Player.LocalPlayerName) as Player);
+            actionpoints_used = actionpoints_used + MaxActionPoints;
         }
 
         /// <summary>
         /// Pathfind towards a given player
         /// </summary>
         /// <param name="player">The player to target with Pathfinding</param>
-        public virtual void GoTo(List<GameObject> changedObjects, Player player)
+        public override void GoTo(List<GameObject> changedObjects, Player player)
         {
             TileField tf = GameWorld.Find("TileField") as TileField;
+
 
             if (player.Tile.SeenBy.ContainsKey(this))
             {
                 bool ableToHit = AttackEvent.AbleToHit(this, player);
-                if (ableToHit)
+
+                Special_AbleToHit(player);
+
+                if (special_ableToHit && actionpoints_used >= actionpoints_cooldown)
+                {
+                    Special_Attack(player, mod);
+
+                    actionpoints_used = 0;
+                    actionPoints = 0;
+                    changedObjects.Add(player);
+                }
+                else if (ableToHit)
                 {
                     Attack(player);
 
                     int cost = BaseActionCost;
-                    if((EquipmentSlots.Find("bodySlot") as EquipmentSlot).SlotItem != null)
+                    if ((EquipmentSlots.Find("bodySlot") as EquipmentSlot).SlotItem != null)
                     {
-                        cost =(int)(cost * ((EquipmentSlots.Find("bodySlot") as EquipmentSlot).SlotItem as BodyEquipment).WalkCostMod);
+                        cost = (int)(cost * ((EquipmentSlots.Find("bodySlot") as EquipmentSlot).SlotItem as BodyEquipment).WalkCostMod);
                     }
                     actionPoints -= cost;
                     changedObjects.Add(player);
@@ -190,12 +238,35 @@ namespace Wink
             }
         }
 
+
+        /// <summary>
+        /// Determines whether or not the selected player is within reach of the special.
+        /// </summary>
+        /// <param name="player">The player being targeted</param>
+        private void Special_AbleToHit(Player player)
+        {
+            if (player.Tile.SeenBy.ContainsKey(this))
+            {
+                Point delta = player.Tile.TilePosition - this.Tile.TilePosition;
+                double reach = this.Special_Reach + 0.5f;
+
+                double distance = Math.Sqrt(Math.Pow(delta.X, 2) + Math.Pow(delta.Y, 2));
+
+                bool result = distance <= reach;
+                special_ableToHit = result;
+            }
+            else
+            {
+                special_ableToHit = false;
+            }
+        }
+
         private void Idle()
         {
-            //TODO: implement idle behaviour (seeing the player part done)
-            actionPoints=0;//if this is reached the enemy has no other options than to skip its turn (reduces number of GoTo loops executed) compared to actionpoints--;
+            //TODO: implement idle behaviour (right now for if there is no path to the player, later for if it can't see the player.)
+            actionPoints--;
         }
-        
+
         public override void HandleInput(InputHelper inputHelper)
         {
             if (Health > 0)
@@ -206,16 +277,13 @@ namespace Wink
                     AttackEvent aE = new AttackEvent(player, this);
                     Server.Send(aE);
                 };
-            
+
                 inputHelper.IfMouseLeftButtonPressedOn(this, onClick);
 
                 base.HandleInput(inputHelper);
             }
         }
 
-        /// <summary>
-        /// Position the HP bar directly above the Enemy
-        /// </summary>
         private void PositionHPBar()
         {
             hpBar.Position = Tile.GlobalPosition - new Vector2(Math.Abs(Tile.Width - hpBar.Width) / 2, 0);
@@ -226,12 +294,12 @@ namespace Wink
             if (GameWorld.Find("HealthBar" + guid.ToString()) == null)
             {
                 SpriteFont textfieldFont = GameEnvironment.AssetManager.GetFont("Arial26");
-                hpBar = new Bar<Enemy>(this, e => e.Health, e => e.MaxHealth, textfieldFont, Color.Red, 2, "HealthBar" + guid.ToString(), 1.0f, 1f, false);
+                hpBar = new Bar<Boss>(this, e => e.Health, e => e.MaxHealth, textfieldFont, Color.Red, 2, "HealthBar" + guid.ToString(), 1.0f, 1f, false);
                 (GameWorld.Find("PlayingGui") as PlayingGUI).Add(hpBar);
             }
             else
             {
-                hpBar = GameWorld.Find("HealthBar" + guid.ToString()) as Bar<Enemy>;
+                hpBar = GameWorld.Find("HealthBar" + guid.ToString()) as Bar<Boss>;
                 hpBar.SetValueObject(this);
             }
             hpBar.Visible = !Tile.Visible ? false : Visible;
