@@ -64,12 +64,12 @@ namespace Wink
                 case EnemyType.warrior:
                     if(weaponChance < GameEnvironment.Random.Next(100))
                     {
-                        EquipmentSlot weaponslot = EquipmentSlots.Find("weaponSlot") as EquipmentSlot;
+                        RestrictedItemSlot weaponslot = EquipmentSlots.Find("weaponSlot") as RestrictedItemSlot;
                         weaponslot.ChangeItem(new WeaponEquipment(floorNumber,WeaponType.melee));
                     }
                     if (armorChance < GameEnvironment.Random.Next(100))
                     {
-                        EquipmentSlot bodyslot = EquipmentSlots.Find("bodySlot") as EquipmentSlot;
+                        RestrictedItemSlot bodyslot = EquipmentSlots.Find("bodySlot") as RestrictedItemSlot;
                        // bodyslot.ChangeItem(new BodyEquipment(floorNumber, 2, ArmorType.normal));
                     }
                     SetStats(eLvl, 3 + (eLvl), 3 + (eLvl), 2 + (eLvl / 2), 1 + (eLvl / 2), 1 + (eLvl / 2), 2 + (eLvl / 2), 20 + eLvl * 3, 2, 1);
@@ -79,12 +79,12 @@ namespace Wink
                 case EnemyType.archer:
                     if (weaponChance < GameEnvironment.Random.Next(100))
                     {
-                        EquipmentSlot weaponslot = EquipmentSlots.Find("weaponSlot") as EquipmentSlot;
+                        RestrictedItemSlot weaponslot = EquipmentSlots.Find("weaponSlot") as RestrictedItemSlot;
                         weaponslot.ChangeItem(new WeaponEquipment(floorNumber, WeaponType.bow));
                     }
                     if (armorChance < GameEnvironment.Random.Next(100))
                     {
-                        EquipmentSlot bodyslot = EquipmentSlots.Find("bodySlot") as EquipmentSlot;
+                        RestrictedItemSlot bodyslot = EquipmentSlots.Find("bodySlot") as RestrictedItemSlot;
                         //bodyslot.ChangeItem(new BodyEquipment(floorNumber, 2, ArmorType.normal));
                     }
                     SetStats(eLvl, 2 + (eLvl/2), 1 + (eLvl/2), 3 + (eLvl), 1 + (eLvl / 2), 1 + (eLvl / 2), 3 + (eLvl), 20 + eLvl * 3, 2, 1);
@@ -93,12 +93,12 @@ namespace Wink
                 case EnemyType.mage:
                     if (weaponChance < GameEnvironment.Random.Next(100))
                     {
-                        EquipmentSlot weaponslot = EquipmentSlots.Find("weaponSlot") as EquipmentSlot;
+                        RestrictedItemSlot weaponslot = EquipmentSlots.Find("weaponSlot") as RestrictedItemSlot;
                         weaponslot.ChangeItem(new WeaponEquipment(floorNumber, WeaponType.staff));
                     }
                     if (armorChance < GameEnvironment.Random.Next(100))
                     {
-                        EquipmentSlot bodyslot = EquipmentSlots.Find("bodySlot") as EquipmentSlot;
+                        RestrictedItemSlot bodyslot = EquipmentSlots.Find("bodySlot") as RestrictedItemSlot;
                         //bodyslot.ChangeItem(new BodyEquipment(floorNumber, 2, ArmorType.robes));
                     }
                     SetStats(eLvl, 1 + (eLvl/2), 1 + (eLvl/2), 1 + (eLvl / 2), 3 + (eLvl), 3 + (eLvl), 1 + (eLvl / 2), 20 + eLvl * 3, 2, 2);
@@ -150,15 +150,15 @@ namespace Wink
 
             if (player.Tile.SeenBy.ContainsKey(this))
             {
-                bool ableToHit = AttackEvent.AbleToHit(this, player);
+                bool ableToHit = AttackEvent.AbleToHit(this, player.Tile,this.Reach);
                 if (ableToHit)
                 {
                     Attack(player);
 
                     int cost = BaseActionCost;
-                    if((EquipmentSlots.Find("bodySlot") as EquipmentSlot).SlotItem != null)
+                    if((EquipmentSlots.Find("bodySlot") as RestrictedItemSlot).SlotItem != null)
                     {
-                        cost =(int)(cost * ((EquipmentSlots.Find("bodySlot") as EquipmentSlot).SlotItem as BodyEquipment).WalkCostMod);
+                        cost =(int)(cost * ((EquipmentSlots.Find("bodySlot") as RestrictedItemSlot).SlotItem as BodyEquipment).WalkCostMod);
                     }
                     actionPoints -= cost;
                     changedObjects.Add(player);
@@ -193,21 +193,32 @@ namespace Wink
         private void Idle()
         {
             //TODO: implement idle behaviour (seeing the player part done)
-            actionPoints=0;//if this is reached the enemy has no other options than to skip its turn (reduces number of GoTo loops executed) compared to actionpoints--;
+            actionPoints=0;//if this is reached the enemy has no other options than to skip its turn (reduces number of GoTo loops executed compared to actionpoints--;)
         }
         
         public override void HandleInput(InputHelper inputHelper)
         {
             if (Health > 0)
             {
-                Action onClick = () =>
+                Action onLeftClick = () =>
                 {
                     Player player = GameWorld.Find(Player.LocalPlayerName) as Player;
                     AttackEvent aE = new AttackEvent(player, this);
                     Server.Send(aE);
                 };
+
+                Action onRightClick = () =>
+                {
+                    Player player = GameWorld.Find(Player.LocalPlayerName) as Player;
+                    if (player.CurrentSkill != null)
+                    {
+                        SkillEvent sE = new SkillEvent(player, this);
+                        Server.Send(sE);
+                    }                    
+                };
             
-                inputHelper.IfMouseLeftButtonPressedOn(this, onClick);
+                inputHelper.IfMouseLeftButtonPressedOn(this, onLeftClick);
+                inputHelper.IfMouseRightButtonPressedOn(this, onRightClick);
 
                 base.HandleInput(inputHelper);
             }

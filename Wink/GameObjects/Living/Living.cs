@@ -18,6 +18,10 @@ namespace Wink
         
         public InventoryBox Inventory { get { return inventory; } }
         private InventoryBox inventory;
+        
+        public Skill CurrentSkill;
+        private GameObjectList skillList;
+        public GameObjectList SkillList { get { return skillList; } }
 
         #region EquipmentSlots
         // Accessors for all the different equipment slots
@@ -26,10 +30,10 @@ namespace Wink
         {
             get { return equipmentSlots; }
         }
-        private EquipmentSlot Weapon { get { return equipmentSlots.Find("weaponSlot") as EquipmentSlot; } }
-        private EquipmentSlot Body { get { return equipmentSlots.Find("bodySlot") as EquipmentSlot; } }
-        private EquipmentSlot Ring1 { get { return equipmentSlots.Find("ringSlot1") as EquipmentSlot; } }
-        private EquipmentSlot Ring2 { get { return equipmentSlots.Find("ringSlot2") as EquipmentSlot; } }
+        private RestrictedItemSlot Weapon { get { return equipmentSlots.Find("weaponSlot") as RestrictedItemSlot; } }
+        private RestrictedItemSlot Body { get { return equipmentSlots.Find("bodySlot") as RestrictedItemSlot; } }
+        private RestrictedItemSlot Ring1 { get { return equipmentSlots.Find("ringSlot1") as RestrictedItemSlot; } }
+        private RestrictedItemSlot Ring2 { get { return equipmentSlots.Find("ringSlot2") as RestrictedItemSlot; } }
         #endregion
 
         public float ViewDistance
@@ -78,14 +82,27 @@ namespace Wink
             timeleft = 1000;
             viewDistance = FOVlength;
 
+            skillList = new GameObjectList ();
+            for (int y = 0; y < 1; y++)
+            {
+                for (int x = 0; x < 10; x++)
+                {
+                    skillList.Add(new RestrictedItemSlot(typeof(Skill),id:"skillSlot"+x));
+                }
+            }
+
+            (skillList.Children[0] as RestrictedItemSlot).ChangeItem(new TestSkill());//testSkill (could be replaced by some default skill)
+            //selectedSkill = new Point(0, 0);
+
+
             GameObjectGrid itemGrid = new GameObjectGrid(3, 6, 0, "");
             inventory = new InventoryBox(itemGrid);
 
             equipmentSlots = new GameObjectList();
-            equipmentSlots.Add(new EquipmentSlot(typeof(WeaponEquipment), id: "weaponSlot"));
-            equipmentSlots.Add(new EquipmentSlot(typeof(BodyEquipment), id: "bodySlot"));
-            equipmentSlots.Add(new EquipmentSlot(typeof(RingEquipment), id: "ringSlot1"));
-            equipmentSlots.Add(new EquipmentSlot(typeof(RingEquipment), id: "ringSlot2"));
+            equipmentSlots.Add(new RestrictedItemSlot(typeof(WeaponEquipment), id: "weaponSlot"));
+            equipmentSlots.Add(new RestrictedItemSlot(typeof(BodyEquipment), id: "bodySlot"));
+            equipmentSlots.Add(new RestrictedItemSlot(typeof(RingEquipment), id: "ringSlot1"));
+            equipmentSlots.Add(new RestrictedItemSlot(typeof(RingEquipment), id: "ringSlot2"));
         }
 
         #region Serialization
@@ -105,13 +122,19 @@ namespace Wink
             {
                 inventory = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("inventoryGUID"))) as InventoryBox;
                 equipmentSlots = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("equipmentSlotsGUID"))) as GameObjectList;
+                skillList = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("skillListGUID"))) as GameObjectList;
+                CurrentSkill = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("CurrentSkillGUID"))) as Skill;
+
             }
             else
             {
                 inventory = info.GetValue("inventory", typeof(InventoryBox)) as InventoryBox;
                 equipmentSlots = info.GetValue("equipmentSlots", typeof(GameObjectList)) as GameObjectList;
+                skillList = info.GetValue("skills", typeof(GameObjectList)) as GameObjectList;
+                CurrentSkill = info.GetValue("CurrentSkill", typeof(Skill)) as Skill;
             }
 
+            //stats
             manaPoints = info.GetInt32("manaPoints");
             healthPoints = info.GetInt32("healthPoints");
             actionPoints = info.GetInt32("actionPoints");
@@ -145,13 +168,18 @@ namespace Wink
             {
                 info.AddValue("inventoryGUID", inventory.GUID.ToString());
                 info.AddValue("equipmentSlotsGUID", equipmentSlots.GUID.ToString());
+                info.AddValue("skillListGUID", skillList.GUID.ToString());
+                info.AddValue("CurrentSkillGUID", CurrentSkill.GUID.ToString());
             }
             else
             {
                 info.AddValue("inventory", inventory);
                 info.AddValue("equipmentSlots", equipmentSlots);
+                info.AddValue("skills", skillList);
+                info.AddValue("CurrentSkill", CurrentSkill);
             }
 
+            //stats
             info.AddValue("manaPoints", manaPoints);
             info.AddValue("healthPoints", healthPoints);
             info.AddValue("actionPoints", actionPoints);
@@ -297,6 +325,7 @@ namespace Wink
             List<GameObject> result = new List<GameObject>();
             result.AddRange(inventory.FindAll(del));
             result.AddRange(equipmentSlots.FindAll(del));
+            result.AddRange(skillList.FindAll(del));
             return result;
         }
 
@@ -311,9 +340,11 @@ namespace Wink
                 return inventory;
             if (del.Invoke(equipmentSlots)) // check if equipmentSlots fits "del"
                 return equipmentSlots;
+            if (del.Invoke(skillList)) // check if equipmentSlots fits "del"
+                return skillList;
 
             // Find the object matching "del" among the children of inventory and equipmentSlots
-            return inventory.Find(del) ?? equipmentSlots.Find(del);
+            return inventory.Find(del) ?? equipmentSlots.Find(del)?? skillList.Find(del);
         }
     }
 }
