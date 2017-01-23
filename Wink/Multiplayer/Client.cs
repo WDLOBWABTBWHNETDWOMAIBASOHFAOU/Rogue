@@ -7,7 +7,7 @@ namespace Wink
     public abstract class Client : Sender
     {
         protected Server server;
-
+        public PlayerType playerType;
         public string ClientName { get; set; }
 
         public Client(Server server)

@@ -7,6 +7,8 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Wink
 {
+
+    public enum PlayerType { warrior, archer, mage, random }
     [Serializable]
     public class Player : Living, IGameObjectContainer, IGUIGameObject
     {
@@ -17,6 +19,7 @@ namespace Wink
 
         protected int exp;
         public int freeStatPoints;
+        private TextGameObject playerNameTitle;
 
         private MouseSlot mouseSlot;
         public MouseSlot MouseSlot { get { return mouseSlot; } }
@@ -26,13 +29,63 @@ namespace Wink
             get { return new Point(Tile.TileWidth / 2, Tile.TileHeight / 2); }
         }
 
-        public Player(string clientName, int layer, float FOVlength = 8.5f) : base(layer, "player_" + clientName, FOVlength)
+        public Player(string clientName, int layer,PlayerType playerType, float FOVlength = 8.5f) : base(layer, "player_" + clientName, FOVlength)
         {
             //Inventory
-            mouseSlot = new MouseSlot(layer + 11, "mouseSlot");            
-            SetStats();
+            mouseSlot = new MouseSlot(layer + 11, "mouseSlot");  
+            SetupType(playerType);
             InitAnimation(); //not sure if overriden version gets played right without restating
-            
+        }
+
+        private void PlayerNameTitle()
+        {
+            playerNameTitle = new TextGameObject("Arial26",1,0,"playerName" + guid.ToString());
+            playerNameTitle.Text = Id.Split('_')[1];
+            playerNameTitle.Color = Color.Red;
+            playerNameTitle.Position = GlobalPosition - new Vector2((playerNameTitle.Size.X/2),64+ playerNameTitle.Size.Y );
+        }
+
+        private void SetupType(PlayerType ptype)
+        {
+            if (ptype == PlayerType.random)
+            {
+                //select random armorType
+                Array pTypeValues = Enum.GetValues(typeof(PlayerType));
+                ptype = (PlayerType)pTypeValues.GetValue(GameEnvironment.Random.Next(pTypeValues.Length - 1));
+            }
+
+            EquipmentSlot weaponslot = EquipmentSlots.Find("weaponSlot") as EquipmentSlot;
+            EquipmentSlot bodyslot = EquipmentSlots.Find("bodySlot") as EquipmentSlot;
+            int EquipmentStartingStenght = 3;
+
+            ItemSlot slot_0_0 = Inventory.ItemGrid[0, 0] as ItemSlot;
+            slot_0_0.ChangeItem(new Potion("empty:64:64:10:Red",PotionType.Health,PotionPower.minor,5));//some starting healt potions
+
+            switch (ptype)
+            {
+                case PlayerType.warrior:
+                    weaponslot.ChangeItem(new WeaponEquipment(EquipmentStartingStenght, WeaponType.melee));
+                    bodyslot.ChangeItem(new BodyEquipment(EquipmentStartingStenght, 2, ArmorType.heavy));
+                    SetStats(1, 4, 4, 1, 1, 1, 1);
+                    break;
+
+                case PlayerType.archer:
+                    weaponslot.ChangeItem(new WeaponEquipment(EquipmentStartingStenght, WeaponType.bow));
+                    bodyslot.ChangeItem(new BodyEquipment(EquipmentStartingStenght, 2, ArmorType.normal));
+                    SetStats(1, 1, 1, 4, 1, 1, 4);
+                    break;
+
+                case PlayerType.mage:
+                    weaponslot.ChangeItem(new WeaponEquipment(EquipmentStartingStenght, WeaponType.staff));
+                    bodyslot.ChangeItem(new BodyEquipment(EquipmentStartingStenght, 2, ArmorType.robes));
+                    SetStats(1, 1, 1, 1, 4, 4, 1);
+                    ItemSlot slot_1_0 = Inventory.ItemGrid[1, 0] as ItemSlot;
+                    slot_1_0.ChangeItem(new Potion("empty:64:64:10:Blue", PotionType.Mana, PotionPower.minor, 5));//some starting mana potions
+                    break;
+
+                default:
+                    throw new Exception("invalid enemy type");
+            }
         }
 
         protected override void DoBehaviour(List<GameObject> changedObjects)
@@ -45,6 +98,7 @@ namespace Wink
         {
             exp = info.GetInt32("exp");
             freeStatPoints = info.GetInt32("freeStatPoints");
+            playerNameTitle = info.GetValue("playerNameTitle", typeof(TextGameObject)) as TextGameObject;
             if (context.GetVars().GUIDSerialization)
                 mouseSlot = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("mouseSlotGUID"))) as MouseSlot;
             else
@@ -57,7 +111,7 @@ namespace Wink
                 info.AddValue("mouseSlotGUID", mouseSlot.GUID.ToString());
             else
                 info.AddValue("mouseSlot", mouseSlot);
-
+            info.AddValue("playerNameTitle",playerNameTitle);
             info.AddValue("exp", exp);
             info.AddValue("freeStatPoints", freeStatPoints);
             base.GetObjectData(info, context);
@@ -190,9 +244,12 @@ namespace Wink
 
         public void InitGUI(Dictionary<string, object> guiState)
         {
+            PlayingGUI gui = GameWorld.Find("PlayingGui") as PlayingGUI;
+            PlayerNameTitle();
+            gui.Add(playerNameTitle);
+
             if (Id == LocalPlayerName)
             {
-                PlayingGUI gui = GameWorld.Find("PlayingGui") as PlayingGUI;
                 SpriteFont textfieldFont = GameEnvironment.AssetManager.GetFont("Arial26");
 
                 const int barX = 150;
@@ -227,9 +284,10 @@ namespace Wink
 
         public void CleanupGUI(Dictionary<string, object> guiState)
         {
+            PlayingGUI gui = GameWorld.Find("PlayingGui") as PlayingGUI;
+            gui.Remove(gui.Find("playerName" + guid.ToString()));
             if (Id == LocalPlayerName)
             {
-                PlayingGUI gui = GameWorld.Find("PlayingGui") as PlayingGUI;
                 PlayerInventoryAndEquipment pIaE = gui.Find(obj => obj is PlayerInventoryAndEquipment) as PlayerInventoryAndEquipment;
                 guiState.Add("playerIaEVisibility", pIaE.Visible);
                 guiState.Add("playerIaEPosition", pIaE.Position);
