@@ -14,9 +14,53 @@
         public int Wisdom { get { return Ringbonus(EffectType.Wisdom, wisdom); } }
         public int Vitality { get { return Ringbonus(EffectType.Vitality, vitality); } }
         public int Luck { get { return Ringbonus(EffectType.Luck, luck); } }
-        public int ActionPoints { get { return actionPoints; } set { actionPoints = value; } }
-        public int Health { get { return healthPoints; } set { healthPoints = value; } }
-        public int Mana { get { return manaPoints; } set { manaPoints = value; } }
+        public int ActionPoints
+        {
+            get
+            {
+                return actionPoints;
+            }
+            set
+            {
+                if (value <= MaxActionPoints)
+                    actionPoints = value;
+                else
+                    actionPoints = MaxActionPoints;
+            }
+        }
+        public int Health {
+            get
+            {
+                return healthPoints;
+            }
+            set
+            {
+                if (value <= MaxHealth)
+                    healthPoints = value;
+                else
+                    healthPoints = MaxHealth;
+
+                if (healthPoints <= 0)
+                {
+                    LocalServer.SendToClients(new DeathAnimationEvent(this));
+                    Death();
+                }
+            }
+        }
+        public int Mana
+        {
+            get
+            {
+                return manaPoints;
+            }
+            set
+            {
+                if (value <= MaxMana)
+                    manaPoints = value;
+                else
+                    manaPoints = MaxMana;
+            }
+        }
         #endregion
 
         /// <summary>

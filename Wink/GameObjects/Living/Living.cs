@@ -8,15 +8,9 @@ namespace Wink
     [Serializable]
     public abstract partial class Living : AnimatedGameObject, ITileObject, IGameObjectContainer, IViewer
     {
-        private int timeleft;
-        private bool startTimer;
-
         protected string idleAnimation, moveAnimation, dieAnimation;
         private string dieSound;
-        
         protected float viewDistance;
-        
-        public InventoryBox Inventory { get { return inventory; } }
         private InventoryBox inventory;
 
         #region EquipmentSlots
@@ -32,11 +26,14 @@ namespace Wink
         private EquipmentSlot Ring2 { get { return equipmentSlots.Find("ringSlot2") as EquipmentSlot; } }
         #endregion
 
+        public InventoryBox Inventory
+        {
+            get { return inventory; }
+        }
         public float ViewDistance
         {
             get { return viewDistance; }
         }
-
         public Tile Tile
         {
             get
@@ -74,8 +71,6 @@ namespace Wink
         public Living(int layer = 0, string id = "", float FOVlength = 8.5f, float scale = 1.0f) : base(layer, id, scale)
         {
             SetStats();
-            //InitAnimation();
-            timeleft = 1000;
             viewDistance = FOVlength;
 
             GameObjectGrid itemGrid = new GameObjectGrid(3, 6, 0, "");
@@ -86,15 +81,15 @@ namespace Wink
             equipmentSlots.Add(new EquipmentSlot(typeof(BodyEquipment), id: "bodySlot"));
             equipmentSlots.Add(new EquipmentSlot(typeof(RingEquipment), id: "ringSlot1"));
             equipmentSlots.Add(new EquipmentSlot(typeof(RingEquipment), id: "ringSlot2"));
+
+            InitAnimationVariables();
+            LoadAnimations();
+            PlayAnimation("idle");
         }
 
         #region Serialization
         public Living(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            //timer and turn
-            timeleft = info.GetInt32("timeleft");
-            startTimer = info.GetBoolean("startTimer");
-
             //animations
             idleAnimation = info.GetString("idleAnimation");
             moveAnimation = info.GetString("moveAnimation");
@@ -130,11 +125,7 @@ namespace Wink
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             base.GetObjectData(info, context);
-
-            // time and turn
-            info.AddValue("timeleft", timeleft);
-            info.AddValue("startTimer", startTimer);
-
+            
             //animations
             info.AddValue("idleAnimation", idleAnimation);
             info.AddValue("moveAnimation", moveAnimation);
@@ -221,15 +212,10 @@ namespace Wink
 
         protected abstract void DoBehaviour(List<GameObject> changedObjects);
 
-        /// <summary>
-        /// Initializes the animations for the living object
-        /// </summary>
-        protected virtual void InitAnimation(string idleColor)
+        protected abstract void InitAnimationVariables();
+
+        public override void LoadAnimations()
         {
-            //General animations
-            idleAnimation = idleColor;
-            moveAnimation = "empty:64:64:10:DarkBlue";
-            dieAnimation = "empty:64:64:10:LightBlue";
             LoadAnimation(idleAnimation, "idle", true);
             LoadAnimation(moveAnimation, "move", true, 0.05f);
             LoadAnimation(dieAnimation, "die", false);
@@ -240,29 +226,7 @@ namespace Wink
         /// </summary>
         public override void Update(GameTime gameTime)
         {
-            // Call update for the inheritance
             base.Update(gameTime);
-            if (healthPoints <= 0)
-            {   // death
-                startTimer = true;
-                DeathFeedback("die", dieSound);
-                if (startTimer)
-                {
-                    if (timeleft <= 0)
-                        Death();
-                    else
-                        timeleft -= gameTime.TotalGameTime.Seconds;
-                }
-            }
-            else if (healthPoints >= MaxHealth)
-            {   // Make sure health can't exceed max health 
-                healthPoints = MaxHealth;
-            }
-
-            if (manaPoints >= MaxMana)
-            {   // Make sure mana can't exceed max mana
-                manaPoints = MaxMana;
-            }
         }
         
         /// <summary>
@@ -273,7 +237,7 @@ namespace Wink
         {
             Tile oldTile = Tile;
             if (oldTile != null)
-                oldTile.Remove(this);
+                oldTile.RemoveImmediatly(this);
 
             if (!t.PutOnTile(this))
             {
@@ -282,7 +246,7 @@ namespace Wink
             }
             else if (Visible)
             {   // Movement animation
-                // I have been told this has some issues and is therefore turned off
+                // This is oncomplete and therefore turned off
                 //LocalServer.SendToClients(new LivingMoveAnimationEvent(this, t));
             }
         }

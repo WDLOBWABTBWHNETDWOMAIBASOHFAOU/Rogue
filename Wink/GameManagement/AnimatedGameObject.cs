@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework;
 using System.Runtime.Serialization;
 
-public class AnimatedGameObject : SpriteGameObject
+public abstract class AnimatedGameObject : SpriteGameObject
 {
     protected Dictionary<string, Animation> animations;
 
@@ -31,6 +31,8 @@ public class AnimatedGameObject : SpriteGameObject
         Animation anim = new Animation(assetName, looping, frameTime);
         animations[id] = anim;
     }
+
+    public abstract void LoadAnimations();
 
     public void PlayAnimation(string id)
     {

@@ -6,14 +6,20 @@ using System.Runtime.Serialization;
 
 namespace Wink
 {
-    public enum EnemyType {warrior,archer,mage,random}
+    public enum EnemyType { warrior, archer, mage, random }
     [Serializable]
 
     public class Enemy : Living, IGUIGameObject
     {
         private Bar<Enemy> hpBar;
-        string enemySprite;
-        
+        private EnemyType type;
+        private int floorNumber;
+
+        public int FloorNumber
+        {
+            get { return floorNumber; }
+        }
+
         /// <summary>
         /// Return True if health > 0 meaning the enemy is blocking the tile it's standing on
         /// </summary>
@@ -33,12 +39,11 @@ namespace Wink
         /// <param name="scale">The scale (multiplier) for the sprite size</param>
         public Enemy(int layer, int floorNumber, EnemyType type = EnemyType.random, string id = "Enemy", float FOVlength = 8.5f) : base(layer, id, FOVlength)
         {
-            if(floorNumber < 1)
-            {
+            if (floorNumber < 1)
                 floorNumber = 1;
-            }
-            SetupType(type, floorNumber);
-            InitAnimation(enemySprite);
+
+            this.floorNumber = floorNumber;
+            type = SetupType(type, floorNumber);
         }
 
         /// <summary>
@@ -46,7 +51,7 @@ namespace Wink
         /// </summary>
         /// <param name="etype">The Enemy type</param>
         /// <param name="floorNumber">The floor the enemy is on</param>
-        private void SetupType(EnemyType etype, int floorNumber)
+        private EnemyType SetupType(EnemyType etype, int floorNumber)
         {
             if (etype == EnemyType.random)
             {
@@ -73,9 +78,7 @@ namespace Wink
                        // bodyslot.ChangeItem(new BodyEquipment(floorNumber, 2, ArmorType.normal));
                     }
                     SetStats(eLvl, 3 + (eLvl), 3 + (eLvl), 2 + (eLvl / 2), 1 + (eLvl / 2), 1 + (eLvl / 2), 2 + (eLvl / 2), 20 + eLvl * 3, 2, 1);
-                    enemySprite = "empty:65:65:12:Brown";
                     break;
-
                 case EnemyType.archer:
                     if (weaponChance < GameEnvironment.Random.Next(100))
                     {
@@ -88,7 +91,6 @@ namespace Wink
                         //bodyslot.ChangeItem(new BodyEquipment(floorNumber, 2, ArmorType.normal));
                     }
                     SetStats(eLvl, 2 + (eLvl/2), 1 + (eLvl/2), 3 + (eLvl), 1 + (eLvl / 2), 1 + (eLvl / 2), 3 + (eLvl), 20 + eLvl * 3, 2, 1);
-                    enemySprite = "empty:65:65:12:Yellow";
                     break;
                 case EnemyType.mage:
                     if (weaponChance < GameEnvironment.Random.Next(100))
@@ -102,36 +104,59 @@ namespace Wink
                         //bodyslot.ChangeItem(new BodyEquipment(floorNumber, 2, ArmorType.robes));
                     }
                     SetStats(eLvl, 1 + (eLvl/2), 1 + (eLvl/2), 1 + (eLvl / 2), 3 + (eLvl), 3 + (eLvl), 1 + (eLvl / 2), 20 + eLvl * 3, 2, 2);
-                    enemySprite = "empty:65:65:12:CornflowerBlue";
                     break;
                 default:
                     throw new Exception("invalid enemy type");
             }
+            return etype;
         }
 
 
         #region Serialization
         public Enemy(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            enemySprite = info.GetString("enemySprite");
+            type = (EnemyType)info.GetValue("type", typeof(EnemyType));
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            info.AddValue("enemySprite", enemySprite);
             base.GetObjectData(info, context);
+            info.AddValue("type", type);
         }
         #endregion
 
-        protected override void InitAnimation(string idleColor)
+        protected override void InitAnimationVariables()
         {
-            base.InitAnimation(idleColor);
-            PlayAnimation("idle");
+            switch (type)
+            {
+                case EnemyType.warrior:
+                    idleAnimation = "empty:64:64:12:Brown";
+                    moveAnimation = "empty:64:64:24:Brown";
+                    dieAnimation = "empty:64:64:48:Brown";
+                    break;
+                case EnemyType.archer:
+                    idleAnimation = "empty:64:64:12:Yellow";
+                    moveAnimation = "empty:64:64:24:Yellow";
+                    dieAnimation = "empty:64:64:48:Yellow";
+                    break;
+                case EnemyType.mage:
+                    idleAnimation = "empty:64:64:12:CornflowerBlue";
+                    moveAnimation = "empty:64:64:24:CornflowerBlue";
+                    dieAnimation = "empty:64:64:48:CornflowerBlue";
+                    break;
+            }
         }
 
-        protected override void Death()
+        public override void Death()
         {
-            // call recive exp for every player
+            //Drop equipment/loot, remove itself from world, etc
+            Tile tile = Tile;
+            if (tile != null)
+                tile.RemoveImmediatly(this);
+
+            LootSack ls = new LootSack(this);
+            tile.PutOnTile(ls);
+
             base.Death();
         }
 
@@ -156,9 +181,9 @@ namespace Wink
                     Attack(player);
 
                     int cost = BaseActionCost;
-                    if((EquipmentSlots.Find("bodySlot") as EquipmentSlot).SlotItem != null)
+                    if ((EquipmentSlots.Find("bodySlot") as EquipmentSlot).SlotItem != null)
                     {
-                        cost =(int)(cost * ((EquipmentSlots.Find("bodySlot") as EquipmentSlot).SlotItem as BodyEquipment).WalkCostMod);
+                        cost = (int)(cost * ((EquipmentSlots.Find("bodySlot") as EquipmentSlot).SlotItem as BodyEquipment).WalkCostMod);
                     }
                     actionPoints -= cost;
                     changedObjects.Add(player);
@@ -193,12 +218,12 @@ namespace Wink
         private void Idle()
         {
             //TODO: implement idle behaviour (seeing the player part done)
-            actionPoints=0;//if this is reached the enemy has no other options than to skip its turn (reduces number of GoTo loops executed) compared to actionpoints--;
+            actionPoints = 0;//if this is reached the enemy has no other options than to skip its turn.
         }
         
         public override void HandleInput(InputHelper inputHelper)
         {
-            if (Health > 0)
+            if (Health > 0 && animations["die"] != Current)
             {
                 Action onClick = () =>
                 {
@@ -206,41 +231,29 @@ namespace Wink
                     AttackEvent aE = new AttackEvent(player, this);
                     Server.Send(aE);
                 };
-            
+                
                 inputHelper.IfMouseLeftButtonPressedOn(this, onClick);
 
                 base.HandleInput(inputHelper);
             }
         }
 
-        /// <summary>
-        /// Position the HP bar directly above the Enemy
-        /// </summary>
-        private void PositionHPBar()
-        {
-            hpBar.Position = Tile.GlobalPosition - new Vector2(Math.Abs(Tile.Width - hpBar.Width) / 2, 0);
-        }
-
         public void InitGUI(Dictionary<string, object> guiState)
         {
-            if (GameWorld.Find("HealthBar" + guid.ToString()) == null)
-            {
-                SpriteFont textfieldFont = GameEnvironment.AssetManager.GetFont("Arial26");
-                hpBar = new Bar<Enemy>(this, e => e.Health, e => e.MaxHealth, textfieldFont, Color.Red, 2, "HealthBar" + guid.ToString(), 1.0f, 1f, false);
-                (GameWorld.Find("PlayingGui") as PlayingGUI).Add(hpBar);
-            }
-            else
-            {
-                hpBar = GameWorld.Find("HealthBar" + guid.ToString()) as Bar<Enemy>;
-                hpBar.SetValueObject(this);
-            }
+            SpriteFont textfieldFont = GameEnvironment.AssetManager.GetFont("Arial26");
+            hpBar = new Bar<Enemy>(this, e => e.Health, e => e.MaxHealth, textfieldFont, Color.Red, 2, "HealthBar" + guid.ToString(), 1.0f, 1f, false);
+            (GameWorld.Find("PlayingGui") as PlayingGUI).Add(hpBar);
             hpBar.Visible = !Tile.Visible ? false : Visible;
-            PositionHPBar();
+            hpBar.Position = Tile.GlobalPosition - new Vector2(Math.Abs(Tile.Width - hpBar.Width) / 2, 0);
         }
 
         public void CleanupGUI(Dictionary<string, object> guiState)
         {
-
+            if (hpBar != null && GameWorld != null)
+            {
+                PlayingGUI pg = GameWorld.Find("PlayingGui") as PlayingGUI;
+                pg.RemoveImmediatly(hpBar);
+            }
         }
     }
 }

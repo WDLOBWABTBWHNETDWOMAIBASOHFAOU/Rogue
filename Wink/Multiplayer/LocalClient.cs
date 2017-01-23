@@ -30,7 +30,8 @@ namespace Wink
                 gameObjects.Add(value);
             }
         }
-        public PlayingGUI GUI {
+        public PlayingGUI GUI
+        {
             get { return gameObjects.Find("PlayingGui") as PlayingGUI; }
         }
         public override Player Player
