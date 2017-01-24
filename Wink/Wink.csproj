@@ -66,6 +66,7 @@
     <Compile Include="GameObjects\InventorySystem\ItemSlot.cs" />
     <Compile Include="GameObjects\Items\BodyEquipment.cs" />
     <Compile Include="GameObjects\Items\Equipment.cs" />
+    <Compile Include="GameObjects\Items\HeadEquipment.cs" />
     <Compile Include="GameObjects\Items\Potion.cs" />
     <Compile Include="GameObjects\Items\RingEquipment.cs" />
     <Compile Include="GameObjects\Items\WeaponEquipment.cs" />
