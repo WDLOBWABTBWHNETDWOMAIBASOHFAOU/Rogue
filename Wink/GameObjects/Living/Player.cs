@@ -29,20 +29,19 @@ namespace Wink
             get { return new Point(Tile.TileWidth / 2, Tile.TileHeight / 2); }
         }
 
-        public Player(string clientName, int layer,PlayerType playerType, float FOVlength = 8.5f) : base(layer, "player_" + clientName, FOVlength)
+        public Player(string clientName, int layer, PlayerType playerType, float FOVlength = 8.5f) : base(layer, "player_" + clientName, FOVlength)
         {
             //Inventory
             mouseSlot = new MouseSlot(layer + 11, "mouseSlot");  
             SetupType(playerType);
-            InitAnimation(); //not sure if overriden version gets played right without restating
         }
 
         private void PlayerNameTitle()
         {
-            playerNameTitle = new TextGameObject("Arial26",1,0,"playerName" + guid.ToString());
+            playerNameTitle = new TextGameObject("Arial26", 1, 0, "playerName" + guid.ToString());
             playerNameTitle.Text = Id.Split('_')[1];
             playerNameTitle.Color = Color.Red;
-            playerNameTitle.Position = GlobalPosition - new Vector2((playerNameTitle.Size.X/2),64+ playerNameTitle.Size.Y );
+            playerNameTitle.Position = GlobalPosition - new Vector2((playerNameTitle.Size.X / 2), 64 + playerNameTitle.Size.Y);
         }
 
         private void SetupType(PlayerType ptype)
@@ -125,13 +124,7 @@ namespace Wink
 
             base.Replace(replacement);
         }
-
-        protected override void InitAnimation(string idleColor = "player")
-        {            
-            base.InitAnimation(idleColor);
-            PlayAnimation("idle");
-        }
-
+        
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
@@ -179,7 +172,13 @@ namespace Wink
             creatureLevel++;
             freeStatPoints = 3;
         }
-        
+
+        protected override void InitAnimationVariables()
+        {
+            idleAnimation = "player";
+            moveAnimation = "empty:64:64:10:DarkBlue";
+            dieAnimation = "empty:64:64:10:LightBlue";
+        }
 
         public override void HandleInput(InputHelper inputHelper)
         {

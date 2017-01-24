@@ -124,11 +124,14 @@ namespace Wink
             base.Replace(replacement);
         }
 
+        public void RemoveImmediatly(GameObject go)
+        {
+            onTile.RemoveImmediatly(go);
+        }
+
         public void Remove(GameObject go)
         {
-            onTile.Children.Remove(go);
-            if (go.Parent == onTile)
-                go.Parent = null;
+            onTile.Remove(go);
         }
 
         public bool IsEmpty()
@@ -215,9 +218,9 @@ namespace Wink
             onTile.HandleInput(inputHelper);
 
             if (inputHelper.IsKeyDown(Keys.Tab))
-            { ShowHittable = true; }
+                ShowHittable = true;
             else
-            { ShowHittable = false; }
+                ShowHittable = false;
 
             if (TileType == TileType.Floor)
             {

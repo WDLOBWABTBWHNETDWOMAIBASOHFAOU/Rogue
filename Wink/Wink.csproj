@@ -43,6 +43,7 @@
     <Compile Include="Events\AnimationEvent.cs" />
     <Compile Include="Events\AttackEvent.cs" />
     <Compile Include="Events\ClientPlayerType.cs" />
+    <Compile Include="Events\DeathAnimationEvent.cs" />
     <Compile Include="Events\DoorEvent.cs" />
     <Compile Include="Events\EndTurnEvent.cs" />
     <Compile Include="Events\Event.cs" />
@@ -68,6 +69,7 @@
     <Compile Include="GameObjects\Items\RingEquipment.cs" />
     <Compile Include="GameObjects\Items\WeaponEquipment.cs" />
     <Compile Include="GameObjects\Living\Boss.cs" />
+    <Compile Include="GameObjects\LootSack.cs" />
     <Compile Include="GUI\ShadowCasting\ICellGrid.cs" />
     <Compile Include="GUI\ShadowCasting\IViewer.cs" />
     <Compile Include="GUI\ShadowCasting\ShadowCasting.cs" />

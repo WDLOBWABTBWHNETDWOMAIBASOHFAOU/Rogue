@@ -77,7 +77,7 @@ namespace Wink
             for (int i = 0; i < Clients.Count; i++)
             {
                 Client c = Clients[i];
-                Player player = new Player(c.ClientName, Level.Layer,c.playerType);
+                Player player = new Player(c.ClientName, Level.Layer, c.playerType);
                 
                 (Level.Find("StartTile" + (i + 1)) as Tile).PutOnTile(player);
                 player.ComputeVisibility();
@@ -201,9 +201,8 @@ namespace Wink
                 changedObjects.AddRange(livingObjects[turnIndex].DoAllBehaviour());
                 livingObjects[turnIndex].ComputeVisibility();
             }
-
+            
             UpdateTurn();
-
             //SendOutLevelChanges();
         }
 
@@ -215,6 +214,10 @@ namespace Wink
 
         private void UpdateTurn()
         {
+            Living turn = livingObjects[turnIndex];
+            livingObjects.RemoveAll(l => l.Health <= 0); //Remove all the dead.
+            turnIndex = livingObjects.IndexOf(turn);
+
             if (livingObjects[turnIndex].ActionPoints <= 0)
             {
                 turnIndex = (turnIndex + 1) % livingObjects.Count;

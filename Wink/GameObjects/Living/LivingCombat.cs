@@ -25,7 +25,7 @@ namespace Wink
                 damageDealt = target.TakeDamage(attackValue, damageType);
             }
 
-            if (damageDealt > 0) processReflection(damageDealt, target);
+            if (damageDealt > 0) ProcessReflection(damageDealt, target);
             // Display attack missed (feedback on fail)
         }
 
@@ -48,7 +48,7 @@ namespace Wink
         /// </summary>
         /// <param name="damage">Damage taken</param>
         /// <param name="source">The living object that gave the damage</param>
-        public void processReflection(int damage, Living source)
+        public void ProcessReflection(int damage, Living source)
         {
             if (source.EquipmentSlots != null)                                      // 
                 foreach (ItemSlot slot in source.EquipmentSlots.Children)           // Looking up the ring(s) the living object has equipped
@@ -81,7 +81,7 @@ namespace Wink
                 double defenceValue = ArmorValue(damageType);
                 int damageTaken = (int)(attackValue / defenceValue);
 
-                healthPoints -= damageTaken;
+                Health -= damageTaken;
                 // Display damage taken
 
                 // Return damage taken for ring effect :D:D
@@ -106,20 +106,15 @@ namespace Wink
                 reflectAmount = 0; //     negative reflection damage
             int damageTaken = (int)(baseDamage * reflectAmount * power);
             
-            healthPoints -= damageTaken;
+            Health -= damageTaken;
             // TODO: Visual feedback of reflection
         }
 
         /// <summary>
         /// Kills the living object (at least... It should)
         /// </summary>
-        protected virtual void Death()
-
+        public virtual void Death()
         {
-            //What happens on death. Drop equipment/loot, remove itself from world, etc
-            //level.Remove(this);
-
-            // TODO: Handle more things here and remove the above comments
             visible = false;
         }
 
@@ -128,11 +123,15 @@ namespace Wink
         /// </summary>
         /// <param name="idA">Death animation</param>
         /// <param name="idS">Death sound</param>
-        private void DeathFeedback(string idA, string idS)
+        public void DeathFeedback(string idA = "die", string idS = "die")
         {
             PlayAnimation(idA);
             //PlaySound(idS);
-        }
 
+            if (this is IGUIGameObject)
+            {
+                (this as IGUIGameObject).CleanupGUI(new Dictionary<string, object>());
+            }
+        }
     }
 }
