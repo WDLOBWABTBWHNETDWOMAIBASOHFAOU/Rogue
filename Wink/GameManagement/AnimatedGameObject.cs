@@ -22,7 +22,7 @@ public abstract class AnimatedGameObject : SpriteGameObject
     {
         base.GetObjectData(info, context);
         info.AddValue("animations", animations);
-        info.AddValue("Current", Current);
+        info.AddValue("Current", CurrentAnimation);
     }
     #endregion
 
@@ -60,11 +60,11 @@ public abstract class AnimatedGameObject : SpriteGameObject
         {
             return;
         }
-        Current.Update(gameTime);
+        CurrentAnimation.Update(gameTime);
         base.Update(gameTime);
     }
 
-    public Animation Current
+    public Animation CurrentAnimation
     {
         get { return sprite as Animation; }
     }
