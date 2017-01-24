@@ -82,7 +82,7 @@ namespace Wink
             {
                 for (int x = 0; x < 10; x++)
                 {
-                    skillList.Add(new RestrictedItemSlot(typeof(Skill),id:"skillSlot"+x));
+                    skillList.Add(new RestrictedItemSlot(typeof(Skill), "inventory/slot", id:"skillSlot"+x));
                 }
             }
 
