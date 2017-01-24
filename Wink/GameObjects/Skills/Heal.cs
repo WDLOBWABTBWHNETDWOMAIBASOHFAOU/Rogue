@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -10,11 +11,10 @@ namespace Wink
     [Serializable]
     class Heal : Skill
     {
-        int skillStrenght;
-        public Heal(int skillStrenght = 15,int skillReach = 2, int ManaCost = 20, string assetName = "empty:64:64:10:White") : base(skillReach,ManaCost,assetName)
+        int skillPower;
+        public Heal(int skillPower = 15,int skillReach = 2, int ManaCost = 20, string assetName = "empty:64:64:10:White") : base(skillReach,ManaCost,assetName)
         {
-            this.skillStrenght = skillStrenght;
-            SetId();
+            this.skillPower = skillPower;
         }
 
         protected override void SetId()
@@ -25,12 +25,12 @@ namespace Wink
         #region Serialization
         public Heal(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            skillStrenght = info.GetInt32("skillStrenght");
+            skillPower = info.GetInt32("skillPower");
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            info.AddValue("skillStrenght", skillStrenght);
+            info.AddValue("skillPower", skillPower);
             base.GetObjectData(info, context);
         }
         #endregion
@@ -40,12 +40,24 @@ namespace Wink
             if(livingTarget != null)
             {
                 caster.Mana -= ManaCost;
-                livingTarget.Health += skillStrenght;
+                livingTarget.Health += skillPower;
                 if(livingTarget.Health > livingTarget.MaxHealth)
                 {
                     livingTarget.Health = livingTarget.MaxHealth;
                 }
             }
+        }
+
+        public override void ItemInfo(ItemSlot caller)
+        {
+            base.ItemInfo(caller);
+            
+            TextGameObject HealInfo = new TextGameObject("Arial12", 0, 0, "HealInfo." + this);
+            HealInfo.Text = "Heals the target for " + skillPower + " points";
+            HealInfo.Color = Color.Red;
+            HealInfo.Parent = infoList;
+            infoList.Add(HealInfo);
+
         }
 
         public override bool SkillValidation(Living caster, Living livingTarget, Tile TileTarget)

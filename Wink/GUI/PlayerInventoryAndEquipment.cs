@@ -8,7 +8,7 @@ namespace Wink
         public PlayerInventoryAndEquipment(InventoryBox inventory, GameObjectList equipmentslots) : base(576, 384)//base(inventory.ItemGrid.Columns * Tile.TileHeight, (2 + inventory.ItemGrid.Rows) * Tile.TileHeight)
         {
             //inventory.Position = new Vector2(0, 2 * inventory.ItemGrid.CellHeight);
-            inventory.Position = new Vector2(64, 64);
+            inventory.Position = new Vector2(inventory.ItemGrid.CellHeight, inventory.ItemGrid.CellWidth);
             Add(inventory);
 
             // set position of individual equipment slots
@@ -24,6 +24,7 @@ namespace Wink
             SpriteGameObject boxes = new SpriteGameObject("inventory/boxes", cameraSensitivity: 0);
             Add(background);
             Add(boxes);
+            //this is not ideal but works for now
         }
     }
 }

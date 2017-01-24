@@ -1,4 +1,5 @@
 ﻿
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,9 +13,9 @@ namespace Wink
     class MagicBolt : Skill
     {
         int skillPower;
-        public MagicBolt() : base()
+        public MagicBolt(int skillPower = 250, int skillReach = 3, int ManaCost = 20, string assetName = "empty:64:64:10:White") : base(skillReach, ManaCost, assetName)
         {
-            skillPower = 250;
+            this.skillPower = skillPower;
         }
         protected override void SetId()
         {
@@ -24,11 +25,13 @@ namespace Wink
         #region Serialization
         public MagicBolt(SerializationInfo info, StreamingContext context) : base(info, context)
         {
+            skillPower = info.GetInt32("skillPower");
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             base.GetObjectData(info, context);
+            info.AddValue("skillPower", skillPower);
         }
         #endregion
 
@@ -44,6 +47,15 @@ namespace Wink
                 throw new Exception("invalid target");
             }
         }
+        public override void ItemInfo(ItemSlot caller)
+        {
+            base.ItemInfo(caller);
 
+            TextGameObject MagicBoltInfo = new TextGameObject("Arial12", 0, 0, "MagicBoltInfo." + this);
+            MagicBoltInfo.Text = "A magic bolt with an attackvalue of " + skillPower;
+            MagicBoltInfo.Color = Color.Red;
+            MagicBoltInfo.Parent = infoList;
+            infoList.Add(MagicBoltInfo);
+        }
     }
 }
