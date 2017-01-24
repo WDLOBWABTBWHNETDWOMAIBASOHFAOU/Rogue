@@ -19,8 +19,11 @@ namespace Wink
             equipmentslots.Find("headSlot").Position = new Vector2(416, 64);
             Add(equipmentslots);
 
-            SpriteGameObject background = new SpriteGameObject("inventory/boxes", cameraSensitivity: 0);
+            SpriteGameObject background = new SpriteGameObject("inventory/background", -1, cameraSensitivity: 0);
+
+            SpriteGameObject boxes = new SpriteGameObject("inventory/boxes", cameraSensitivity: 0);
             Add(background);
+            Add(boxes);
         }
     }
 }
