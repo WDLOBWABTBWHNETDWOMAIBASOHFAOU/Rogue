@@ -67,8 +67,6 @@ namespace Wink
 
                 SetupType(type, floorNumber);
 
-                baseReach = 1;
-
                 InitAnimation(enemySprite);
 
                 //TODO calculate creature level and set stats accordingly
@@ -108,7 +106,7 @@ namespace Wink
                     if (armorChance < GameEnvironment.Random.Next(100))
                     {
                         EquipmentSlot bodyslot = EquipmentSlots.Find("bodySlot") as EquipmentSlot;
-                        // bodyslot.ChangeItem(new BodyEquipment(floorNumber, 2, ArmorType.normal));
+                        //bodyslot.ChangeItem(new BodyEquipment(floorNumber/10, 2, ArmorType.normal));
                     }
                     SetStats(eLvl, 3 + (eLvl), 3 + (eLvl), 2 + (eLvl / 2), 1 + (eLvl / 2), 1 + (eLvl / 2), 2 + (eLvl / 2), 20 + eLvl * 3, 2, 1);
                     enemySprite = "empty:65:65:12:Brown";
@@ -123,7 +121,7 @@ namespace Wink
                     if (armorChance < GameEnvironment.Random.Next(100))
                     {
                         EquipmentSlot bodyslot = EquipmentSlots.Find("bodySlot") as EquipmentSlot;
-                        //bodyslot.ChangeItem(new BodyEquipment(floorNumber, 2, ArmorType.normal));
+                        //bodyslot.ChangeItem(new BodyEquipment(floorNumber/10, 2, ArmorType.normal));
                     }
                     SetStats(eLvl, 2 + (eLvl / 2), 1 + (eLvl / 2), 3 + (eLvl), 1 + (eLvl / 2), 1 + (eLvl / 2), 3 + (eLvl), 20 + eLvl * 3, 2, 1);
                     enemySprite = "empty:65:65:12:Yellow";
@@ -137,7 +135,7 @@ namespace Wink
                     if (armorChance < GameEnvironment.Random.Next(100))
                     {
                         EquipmentSlot bodyslot = EquipmentSlots.Find("bodySlot") as EquipmentSlot;
-                        //bodyslot.ChangeItem(new BodyEquipment(floorNumber, 2, ArmorType.robes));
+                        //bodyslot.ChangeItem(new BodyEquipment(floorNumber/10, 2, ArmorType.robes));
                     }
                     SetStats(eLvl, 1 + (eLvl / 2), 1 + (eLvl / 2), 1 + (eLvl / 2), 3 + (eLvl), 3 + (eLvl), 1 + (eLvl / 2), 20 + eLvl * 3, 2, 2);
                     enemySprite = "empty:65:65:12:CornflowerBlue";
@@ -145,6 +143,8 @@ namespace Wink
                 default:
                     throw new Exception("invalid enemy type");
             }
+            ItemSlot slot_0_0 = Inventory.ItemGrid[0, 0] as ItemSlot;
+            slot_0_0.ChangeItem(new Potion(floorNumber, 10, PotionType.Health));
         }
 
         #region Serialization
@@ -173,7 +173,10 @@ namespace Wink
         protected override void DoBehaviour(List<GameObject> changedObjects)
         {
             GoTo(changedObjects, GameWorld.Find(Player.LocalPlayerName) as Player);
-            actionpoints_used = actionpoints_used + MaxActionPoints;
+            if (actionPoints <= 0)
+            {
+                actionpoints_used = actionpoints_used + MaxActionPoints;
+            }
         }
 
         /// <summary>
@@ -264,7 +267,7 @@ namespace Wink
         private void Idle()
         {
             //TODO: implement idle behaviour (right now for if there is no path to the player, later for if it can't see the player.)
-            actionPoints--;
+            actionPoints=0;
         }
 
         public override void HandleInput(InputHelper inputHelper)

@@ -1,1 +1,1 @@
-﻿archer,3,4,3
+﻿warrior,3,4,3
