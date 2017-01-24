@@ -10,9 +10,9 @@ namespace Wink
 {
     class Button : SpriteGameObject
     {
-        private string text;
-        private SpriteFont font;
-        private Color color;
+        protected string text;
+        protected SpriteFont font;
+        protected Color color;
         private Action action;
 
         public Action Action
