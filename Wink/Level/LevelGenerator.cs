@@ -489,7 +489,7 @@ namespace Wink
                 spawnLocation.PutOnTile(enemy);
             }
             //End test            
-
+           
             //Must be last statement, executed after the Tilefield is done.
             tf.InitSpriteSheetIndexation();
             return tf;

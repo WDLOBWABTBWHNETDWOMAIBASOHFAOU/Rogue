@@ -21,7 +21,7 @@ namespace Wink
             {
                 for (int y = 0; y < itemGrid.Rows; y++)
                 {
-                    itemGrid.Add(new ItemSlot(), x, y);
+                    itemGrid.Add(new ItemSlot("inventory/slot"), x, y);
                 }
             }
 
