@@ -111,7 +111,6 @@ namespace Wink
             return etype;
         }
 
-
         #region Serialization
         public Enemy(SerializationInfo info, StreamingContext context) : base(info, context)
         {

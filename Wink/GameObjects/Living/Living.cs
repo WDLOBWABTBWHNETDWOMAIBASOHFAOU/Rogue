@@ -110,6 +110,8 @@ namespace Wink
             dieAnimation = info.GetString("dieAnimation");
             dieSound = info.GetString("dieSound");
 
+            //inventory = info.TryGUIDThenFull<InventoryBox>(context, "inventory");
+
             if (context.GetVars().GUIDSerialization)
             {
                 inventory = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("inventoryGUID"))) as InventoryBox;
