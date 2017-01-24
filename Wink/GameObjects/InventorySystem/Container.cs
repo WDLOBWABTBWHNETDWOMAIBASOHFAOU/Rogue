@@ -10,28 +10,26 @@ namespace Wink
     {
         private InventoryBox iBox;
         private Window iWindow;
-        int clickCount;
-        int floorNumber;
+        private int clickCount;
+        private int floorNumber;
         public InventoryBox IBox { get { return iBox; } }
 
-        public Point PointInTile
+        public virtual Point PointInTile
         {
             get { return new Point(0, 0); }
         }
-        public bool BlocksTile
+        public virtual bool BlocksTile
         {
             get { return true; }
         }
         private Tile Tile
         {
-            get { return parent as Tile; }
+            get { return parent.Parent as Tile; }
         }
 
-        public Container(string asset, int floorNumber, GameObjectGrid itemGrid = null, int layer = 0, string id = "") : base(asset, layer, id)
+        public Container(string asset, int floorNumber, InventoryBox inv = null, int layer = 0, string id = "") : base(asset, layer, id)
         {
-            itemGrid = itemGrid ?? new GameObjectGrid(2, 4);
-            iBox = new InventoryBox(itemGrid, layer + 1, "", cameraSensitivity);
-            clickCount = 0;
+            iBox = inv ?? new InventoryBox(new GameObjectGrid(2, 4), layer + 1, "", cameraSensitivity);
             this.floorNumber = floorNumber;
         }
 
@@ -88,11 +86,14 @@ namespace Wink
 
         public void CleanupGUI(Dictionary<string, object> guiState)
         {
-            PlayingGUI gui = GameWorld.Find("PlayingGui") as PlayingGUI;
-            gui.Remove(iWindow);
+            if (iWindow != null)
+            {
+                PlayingGUI gui = GameWorld.Find("PlayingGui") as PlayingGUI;
+                gui.Remove(iWindow);
 
-            guiState.Add("iWindowVisibility", iWindow.Visible);
-            guiState.Add("iWindowPosition", iWindow.Position);
+                guiState.Add("iWindowVisibility", iWindow.Visible);
+                guiState.Add("iWindowPosition", iWindow.Position);
+            }
         }
 
         public override void Update(GameTime gameTime)
@@ -114,9 +115,9 @@ namespace Wink
 
         void InitContents(int floorNumber)
         {
-            for(int x = 0; x < IBox.ItemGrid.Columns; x++)
+            for (int x = 0; x < IBox.ItemGrid.Columns; x++)
             {
-                int i=x % 4;
+                int i = x % 4;
                 int spawnChance;
                 Item newItem;
                 switch (i)
@@ -132,7 +133,7 @@ namespace Wink
                         break;
                     case 2:
                         spawnChance = 30;
-                        newItem = new BodyEquipment(floorNumber,3);
+                        newItem = new BodyEquipment(floorNumber, 3);
                         break;
                     case 3:
                         spawnChance = 30;
@@ -144,9 +145,9 @@ namespace Wink
                 }
                 for (int y = 0; y < IBox.ItemGrid.Rows; y++)
                 {
-                    if(spawnChance > GameEnvironment.Random.Next(100))
+                    if (spawnChance > GameEnvironment.Random.Next(100))
                     {
-                        ItemSlot cS = IBox.ItemGrid.Get(x,y) as ItemSlot;
+                        ItemSlot cS = IBox.ItemGrid.Get(x, y) as ItemSlot;
                         cS.ChangeItem(newItem);
                     }
                 }
@@ -159,9 +160,10 @@ namespace Wink
             {
                 Player player = GameWorld.Find(p => p.Id == Player.LocalPlayerName) as Player;
 
-                int dx = (int)Math.Abs(player.Tile.Position.X - GlobalPosition.X);
-                int dy = (int)Math.Abs(player.Tile.Position.Y - GlobalPosition.Y);
-                if (dx <= Tile.TileWidth && dy <= Tile.TileHeight)
+                int dx = (int)Math.Abs(player.Tile.Position.X - Tile.Position.X);
+                int dy = (int)Math.Abs(player.Tile.Position.Y - Tile.Position.Y);
+                bool withinReach = dx <= Tile.TileWidth && dy <= Tile.TileHeight;
+                if (withinReach)
                 {
                     //if(clickCount == 0)
                     //{

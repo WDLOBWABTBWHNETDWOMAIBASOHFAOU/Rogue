@@ -17,11 +17,21 @@ namespace Wink
                 SpriteFont textFieldFont = GameEnvironment.AssetManager.GetFont("Arial26");
                 SelectField<SelectPlayer> SelectPlayer = new SelectField<SelectPlayer>(true, textFieldFont, Color.Red);
                 SelectPlayer.Options = new List<SelectPlayer>() { new SelectPlayer(PlayerType.warrior , client), new SelectPlayer(PlayerType.archer, client), new SelectPlayer(PlayerType.mage, client), new SelectPlayer(PlayerType.random, client) };
+                
                 Add(SelectPlayer);
+
+                Button setTypeButton = new Button("button", "Select Hero", textFieldFont, Color.Black);
+                setTypeButton.Position = SelectPlayer.Position + new Vector2(SelectPlayer.Width, 0);
+                setTypeButton.Action = () =>
+                {
+                    ClientPlayerType CPT = new ClientPlayerType(client.ClientName, client.playerType);
+                    Server.Send(CPT);
+                };
+                Add(setTypeButton);
 
                 TextGameObject name = new TrackingTextGameObject<Client>(client, c => nr + ". " + c.ClientName, "Arial26");
                 name.Color = Color.White;
-                name.Position = SelectPlayer.Position + new Vector2(SelectPlayer.Width, 0);               
+                name.Position = setTypeButton.Position + new Vector2(setTypeButton.Width, 0);               
                 Add(name);
             }
 
@@ -49,10 +59,6 @@ namespace Wink
                 public void execute()
                 {
                     c.playerType = pType;
-
-                    //send new player type to the server
-                    ClientPlayerType CPT= new ClientPlayerType(c.ClientName,c.playerType);
-                    Server.Send(CPT);
                 }
             }
         }
@@ -90,8 +96,15 @@ namespace Wink
             startButton = new Button("button", "Start Game", arial26, Color.Black);
             startButton.Action = () =>
             {
+                foreach (Client c in clients)
+                {
+                    //send player type to the server - extra check to make sure correct type is known
+                    ClientPlayerType CPT = new ClientPlayerType(c.ClientName, c.playerType);
+                    Server.Send(CPT);
+                }
                 LocalServer ls = (LocalServer)server;
                 ls.SetupLevel(1);
+
                 GameEnvironment.GameStateManager.SwitchTo("playingState");
             };
             startButton.Position = new Vector2(screen.X - startButton.Width - 50, screen.Y  - startButton.Height - 50);

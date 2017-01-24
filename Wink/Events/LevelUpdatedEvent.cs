@@ -56,6 +56,11 @@ namespace Wink
                 (obj as IGUIGameObject).InitGUI(guiState ?? new Dictionary<string, object>());
             }
 
+            foreach (GameObject obj in new HashSet<GameObject>(updatedLevel.FindAll(obj => obj is AnimatedGameObject)))
+            {
+                (obj as AnimatedGameObject).LoadAnimations();
+            }
+
             if (!client.Camera.BoundingBox.Intersects(client.Player.BoundingBox))
                 client.Camera.CenterOn(client.Player);
 

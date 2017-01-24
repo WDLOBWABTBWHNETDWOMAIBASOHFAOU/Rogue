@@ -168,7 +168,7 @@ namespace Wink
         {
             floorNumber++;
             Tile t = LoadFloorTile("", assetName);
-            Container chest = new Container("empty:64:64:10:Brown",levelIndex);
+            Container chest = new Container("empty:64:64:10:Brown", levelIndex);
             for (int x = 0; x < chest.IBox.ItemGrid.Columns; x++)
             {
                 for (int y = 0; y < chest.IBox.ItemGrid.Rows; y++)

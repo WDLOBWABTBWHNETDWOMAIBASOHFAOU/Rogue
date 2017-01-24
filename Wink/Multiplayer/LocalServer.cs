@@ -17,22 +17,19 @@ namespace Wink
         }
 
         private Dictionary<Client, List<Event>> clientEvents;
+        private List<Living> livingObjects;
+        private Level level;
+        private int turnIndex;
+        private List<GameObject> changedObjects;
+
         public List<Client> Clients
         {
             get { return new List<Client>(clientEvents.Keys); }
         }
-
-        private List<Living> livingObjects;
-        private Level level;
-        
-        private int turnIndex;
-
-        private List<GameObject> changedObjects;
         public List<GameObject> ChangedObjects
         {
             get { return changedObjects; }
         }
-
         public Level Level
         {
             get { return level; }
@@ -43,7 +40,6 @@ namespace Wink
                 SendOutUpdatedLevelIf();
             }
         }
-
         public int LevelIndex
         {
             get { return level.Index; }
@@ -81,7 +77,7 @@ namespace Wink
             for (int i = 0; i < Clients.Count; i++)
             {
                 Client c = Clients[i];
-                Player player = new Player(c.ClientName, Level.Layer,c.playerType);
+                Player player = new Player(c.ClientName, Level.Layer, c.playerType);
                 
                 (Level.Find("StartTile" + (i + 1)) as Tile).PutOnTile(player);
                 player.ComputeVisibility();
@@ -159,7 +155,7 @@ namespace Wink
             }
         }
 
-        public void SendToAllClients(Event e)
+        private void SendToAllClients(Event e)
         {
             using (MemoryStream ms = new MemoryStream())
             {
@@ -205,9 +201,8 @@ namespace Wink
                 changedObjects.AddRange(livingObjects[turnIndex].DoAllBehaviour());
                 livingObjects[turnIndex].ComputeVisibility();
             }
-
+            
             UpdateTurn();
-
             //SendOutLevelChanges();
         }
 
@@ -219,6 +214,10 @@ namespace Wink
 
         private void UpdateTurn()
         {
+            Living turn = livingObjects[turnIndex];
+            livingObjects.RemoveAll(l => l.Health <= 0); //Remove all the dead.
+            turnIndex = livingObjects.IndexOf(turn);
+
             if (livingObjects[turnIndex].ActionPoints <= 0)
             {
                 turnIndex = (turnIndex + 1) % livingObjects.Count;
@@ -226,19 +225,7 @@ namespace Wink
                 changedObjects.Add(livingObjects[turnIndex]);
             }
         }
-
-        private List<GameObject> GetSeenGameObjects()
-        {
-            List<Tile> seenTiles = new List<Tile>();
-            foreach (Living l in livingObjects)
-                if (l is Player)
-                    seenTiles.AddRange(Level.FindAll(obj => obj is Tile && (obj as Tile).SeenBy.ContainsKey(l)).Cast<Tile>());
-
-            HashSet<Tile> seenTilesSet = new HashSet<Tile>(seenTiles);
-            List<GameObject> seenObjects = seenTilesSet.SelectMany(t => t.OnTile.Children).ToList();
-            return seenObjects;
-        }
-
+        
         public void EndTurn(Player player)
         {
             if (livingObjects[turnIndex] == player)
@@ -252,9 +239,7 @@ namespace Wink
         public override void Reset()
         {
             foreach (Client client in Clients)
-            {
                 client.Reset();
-            }
         }
     }
 }
