@@ -75,6 +75,7 @@ namespace Wink
 
         public void InitGUI(Dictionary<string, object> guiState)
         {
+            //Make a Window to display the contents of this container in.
             iWindow = new Window(iBox.ItemGrid.Columns * Tile.TileWidth, iBox.ItemGrid.Rows * Tile.TileHeight);
             iWindow.Add(iBox);
             iWindow.Position = guiState.ContainsKey("iWindowPosition") ? (Vector2)guiState["iWindowPosition"] : new Vector2(300, 300);

@@ -53,6 +53,7 @@ namespace Wink
 
         protected override bool ValidateAction(Level level)
         {
+            //Check if player is within reach.
             int dx = (int)Math.Abs(player.Tile.Position.X - door.Tile.Position.X);
             int dy = (int)Math.Abs(player.Tile.Position.Y - door.Tile.Position.Y);
 

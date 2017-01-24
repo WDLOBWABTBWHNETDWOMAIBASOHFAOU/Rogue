@@ -14,6 +14,7 @@ namespace Wink
             this.changedObjects = changedObjects;
         }
 
+        #region Serialization
         public LevelChangedEvent(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             changedObjects = info.GetValue("changedObjects", typeof(List<GameObject>)) as List<GameObject>;
@@ -24,6 +25,7 @@ namespace Wink
             info.AddValue("changedObjects", changedObjects);
             base.GetObjectData(info, context);
         }
+        #endregion
 
         public override bool GUIDSerialization
         {
