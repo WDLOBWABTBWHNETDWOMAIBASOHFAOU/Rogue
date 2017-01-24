@@ -1,1 +1,1 @@
-﻿warrior,3,4,3
+﻿random,3,4,3

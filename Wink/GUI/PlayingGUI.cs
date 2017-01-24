@@ -34,7 +34,7 @@ namespace Wink
             playingMenu.Layer = 100;
             Add(playingMenu);
 
-            SpriteGameObject floor = new SpriteGameObject("empty:75:75:15:Orange", 1, "FloorBG", 0, 0);
+            SpriteGameObject floor = new SpriteGameObject("empty:75:75:75:Transparent", 1, "FloorBG", 0, 0);
             floor.Position = new Vector2((screen.X - floor.Width) / 2, 7.5f);
             Add(floor);
 

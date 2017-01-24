@@ -56,6 +56,8 @@ namespace Wink
                     case "random":
                         type = EnemyType.random;
                         break;
+                    default:
+                        throw new Exception("invalid type");
                 }
 
                 int actionpoints_cooldown_turns = Int32.Parse(splitline[1]);
@@ -100,7 +102,7 @@ namespace Wink
                         ItemSlot weaponslot = EquipmentSlots.Find("weaponSlot") as ItemSlot;
                         weaponslot.ChangeItem(new WeaponEquipment(floorNumber + 2, WeaponType.melee));
                         ItemSlot bodyslot = EquipmentSlots.Find("bodySlot") as ItemSlot;
-                        //bodyslot.ChangeItem(new BodyEquipment(floorNumber/10, 2, ArmorType.normal));
+                        bodyslot.ChangeItem(new BodyEquipment(floorNumber/10, 2, ArmorType.normal));
                     SetStats(eLvl, 3 + (eLvl), 3 + (eLvl), 2 + (eLvl / 2), 1 + (eLvl / 2), 1 + (eLvl / 2), 2 + (eLvl / 2), 20 + eLvl * 3, 2, 1);
                     enemySprite = "empty:65:65:12:Brown";
                     }
@@ -112,7 +114,7 @@ namespace Wink
                         ItemSlot weaponslot = EquipmentSlots.Find("weaponSlot") as ItemSlot;
                         weaponslot.ChangeItem(new WeaponEquipment(floorNumber + 2, WeaponType.bow));
                         ItemSlot bodyslot = EquipmentSlots.Find("bodySlot") as ItemSlot;
-                        //bodyslot.ChangeItem(new BodyEquipment(floorNumber/10, 2, ArmorType.normal));
+                        bodyslot.ChangeItem(new BodyEquipment(floorNumber/10, 2, ArmorType.normal));
                     SetStats(eLvl, 2 + (eLvl / 2), 1 + (eLvl / 2), 3 + (eLvl), 1 + (eLvl / 2), 1 + (eLvl / 2), 3 + (eLvl), 20 + eLvl * 3, 2, 1);
                     enemySprite = "empty:65:65:12:Yellow";
                     }
@@ -123,7 +125,7 @@ namespace Wink
                         ItemSlot weaponslot = EquipmentSlots.Find("weaponSlot") as ItemSlot;
                         weaponslot.ChangeItem(new WeaponEquipment(floorNumber + 2, WeaponType.staff));
                         ItemSlot bodyslot = EquipmentSlots.Find("bodySlot") as ItemSlot;
-                        //bodyslot.ChangeItem(new BodyEquipment(floorNumber/10, 2, ArmorType.robes));
+                        bodyslot.ChangeItem(new BodyEquipment(floorNumber/10, 2, ArmorType.robes));
                     SetStats(eLvl, 1 + (eLvl / 2), 1 + (eLvl / 2), 1 + (eLvl / 2), 3 + (eLvl), 3 + (eLvl), 1 + (eLvl / 2), 20 + eLvl * 3, 2, 2);
                     enemySprite = "empty:65:65:12:CornflowerBlue";
                     }

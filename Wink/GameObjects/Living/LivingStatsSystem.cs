@@ -2,7 +2,7 @@
 {
     public abstract partial class Living : AnimatedGameObject
     {
-        public const int MaxActionPoints = 35;
+        public const int MaxActionPoints = 40;
         public const int BaseActionCost = 10;
 
         #region stats

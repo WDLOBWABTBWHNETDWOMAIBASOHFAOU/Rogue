@@ -65,7 +65,7 @@ namespace Wink
             ItemSlot slot_2_2 = Inventory.ItemGrid[2, 2] as ItemSlot;
             slot_2_2.ChangeItem(new Heal());
             ItemSlot slot_3_2 = Inventory.ItemGrid[3, 2] as ItemSlot;
-            slot_3_2.ChangeItem(new TestSkill());
+            slot_3_2.ChangeItem(new MagicBolt());
 
             switch (ptype)
             {

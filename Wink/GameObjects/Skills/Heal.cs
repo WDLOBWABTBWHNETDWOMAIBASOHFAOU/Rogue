@@ -50,7 +50,7 @@ namespace Wink
 
         public override bool SkillValidation(Living caster, Living livingTarget, Tile TileTarget)
         {
-            if(livingTarget !=null && livingTarget.GetType() != typeof(Enemy))
+            if(livingTarget !=null)
             {
                 return base.SkillValidation(caster, livingTarget, TileTarget);
             }

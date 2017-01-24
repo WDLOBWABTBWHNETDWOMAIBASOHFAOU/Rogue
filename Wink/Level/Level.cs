@@ -18,7 +18,7 @@ namespace Wink
 
         public Level(int levelIndex) : base(0, "Level")
         {
-            if(levelIndex % 5 == 0)
+            if(levelIndex % 3 == 0)
             {
                 path = "Content/Levels/Boss.txt";
             }
@@ -82,7 +82,7 @@ namespace Wink
             //Putting the item one layer above the inventory box
             int inventoryLayer = layer + 1;
             int itemLayer = layer + 2;
-            /*
+
             #region ENEMY CODE (test)
             for (int i = 0; i < 2; i++)
             {
@@ -94,7 +94,6 @@ namespace Wink
                 startTile.PutOnTile(testEnemy);
             }
             #endregion
-            */
             tf.InitSpriteSheetIndexation();
     }
 

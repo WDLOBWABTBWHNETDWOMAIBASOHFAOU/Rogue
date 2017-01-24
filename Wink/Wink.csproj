@@ -60,7 +60,7 @@
     <Compile Include="Events\TakenPotionEvent.cs" />
     <Compile Include="GameObjects\Skills\Heal.cs" />
     <Compile Include="GameObjects\Skills\Skill.cs" />
-    <Compile Include="GameObjects\Skills\MagicBold.cs" />
+    <Compile Include="GameObjects\Skills\MagicBolt.cs" />
     <Compile Include="GameObjects\TileObjects\Door.cs" />
     <Compile Include="GameObjects\TileObjects\End.cs" />
     <Compile Include="GameManagement\IGameObjectContainer.cs" />
@@ -75,7 +75,7 @@
     <Compile Include="GameObjects\Items\RingEquipment.cs" />
     <Compile Include="GameObjects\Items\WeaponEquipment.cs" />
     <Compile Include="GameObjects\Living\Boss.cs" />
-    <Compile Include="GameObjects\LootSack.cs" />
+    <Compile Include="GameObjects\InventorySystem\LootSack.cs" />
     <Compile Include="GUI\ShadowCasting\ICellGrid.cs" />
     <Compile Include="GUI\ShadowCasting\IViewer.cs" />
     <Compile Include="GameObjects\TileObjects\Trap.cs" />
@@ -178,9 +178,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Levels\1.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\Levels\4.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Levels\Boss.txt">

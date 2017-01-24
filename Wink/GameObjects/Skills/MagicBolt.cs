@@ -9,16 +9,20 @@ using System.Threading.Tasks;
 namespace Wink
 {
     [Serializable]
-    class TestSkill : Skill
+    class MagicBolt : Skill
     {
         int skillPower;
-        public TestSkill() : base()
+        public MagicBolt() : base()
         {
             skillPower = 250;
         }
+        protected override void SetId()
+        {
+            id = "MagicBolt";
+        }
 
         #region Serialization
-        public TestSkill(SerializationInfo info, StreamingContext context) : base(info, context)
+        public MagicBolt(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
 

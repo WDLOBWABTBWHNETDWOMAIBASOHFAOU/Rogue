@@ -64,6 +64,8 @@ namespace Wink
             }
             return false;
         }
+
+
         public override void ItemInfo(ItemSlot caller)
         {
             base.ItemInfo(caller);
