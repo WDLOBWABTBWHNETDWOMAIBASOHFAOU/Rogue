@@ -39,7 +39,7 @@ namespace Wink
             double attackValue = Special_AttackValue(modifier);
             damageDealt = target.TakeDamage(attackValue, damageType);
 
-            if (damageDealt > 0) processReflection(damageDealt, target);
+            if (damageDealt > 0) ProcessReflection(damageDealt, target);
             // Display attack missed (feedback on fail)
         }
 

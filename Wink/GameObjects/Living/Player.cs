@@ -55,7 +55,7 @@ namespace Wink
 
             EquipmentSlot weaponslot = EquipmentSlots.Find("weaponSlot") as EquipmentSlot;
             EquipmentSlot bodyslot = EquipmentSlots.Find("bodySlot") as EquipmentSlot;
-            int EquipmentStartingStenght = 3;
+            int EquipmentStartingStrenght = 3;
 
             ItemSlot slot_0_0 = Inventory.ItemGrid[0, 0] as ItemSlot;
             slot_0_0.ChangeItem(new Potion("empty:64:64:10:Red",PotionType.Health,PotionPower.minor,5));//some starting healt potions
@@ -63,20 +63,20 @@ namespace Wink
             switch (ptype)
             {
                 case PlayerType.warrior:
-                    weaponslot.ChangeItem(new WeaponEquipment(EquipmentStartingStenght, WeaponType.melee));
-                    bodyslot.ChangeItem(new BodyEquipment(EquipmentStartingStenght, 2, ArmorType.heavy));
+                    weaponslot.ChangeItem(new WeaponEquipment(EquipmentStartingStrenght, WeaponType.melee));
+                    bodyslot.ChangeItem(new BodyEquipment(EquipmentStartingStrenght, 2, ArmorType.heavy));
                     SetStats(1, 4, 4, 1, 1, 1, 1);
                     break;
 
                 case PlayerType.archer:
-                    weaponslot.ChangeItem(new WeaponEquipment(EquipmentStartingStenght, WeaponType.bow));
-                    bodyslot.ChangeItem(new BodyEquipment(EquipmentStartingStenght, 2, ArmorType.normal));
+                    weaponslot.ChangeItem(new WeaponEquipment(EquipmentStartingStrenght, WeaponType.bow));
+                    bodyslot.ChangeItem(new BodyEquipment(EquipmentStartingStrenght, 2, ArmorType.normal));
                     SetStats(1, 1, 1, 4, 1, 1, 4);
                     break;
 
                 case PlayerType.mage:
-                    weaponslot.ChangeItem(new WeaponEquipment(EquipmentStartingStenght, WeaponType.staff));
-                    bodyslot.ChangeItem(new BodyEquipment(EquipmentStartingStenght, 2, ArmorType.robes));
+                    weaponslot.ChangeItem(new WeaponEquipment(EquipmentStartingStrenght, WeaponType.staff));
+                    bodyslot.ChangeItem(new BodyEquipment(EquipmentStartingStrenght, 2, ArmorType.robes));
                     SetStats(1, 1, 1, 1, 4, 4, 1);
                     ItemSlot slot_1_0 = Inventory.ItemGrid[1, 0] as ItemSlot;
                     slot_1_0.ChangeItem(new Potion("empty:64:64:10:Blue", PotionType.Mana, PotionPower.minor, 5));//some starting mana potions

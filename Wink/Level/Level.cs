@@ -10,6 +10,7 @@ namespace Wink
     public partial class Level : GameObjectList, IGUIGameObject
     {
         private int levelIndex;
+        string path;
         public int Index
         {
             get { return levelIndex; }
@@ -17,7 +18,15 @@ namespace Wink
 
         public Level(int levelIndex) : base(0, "Level")
         {
-            string path = "Content/Levels/Boss_1.txt";
+            if(levelIndex % 5 == 0)
+            {
+                path = "Content/Levels/Boss.txt";
+            }
+            else
+            {
+                path = "Content/Levels/" + levelIndex + ".txt";
+            }
+
             if (File.Exists(path))
             {
                 LoadTiles(path);
@@ -36,12 +45,14 @@ namespace Wink
         public Level(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             levelIndex = info.GetInt32("levelIndex");
+            path = info.GetString("path");
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             base.GetObjectData(info, context);
             info.AddValue("levelIndex", levelIndex);
+            info.AddValue("path", path);
         }
         #endregion
 

@@ -11,7 +11,7 @@ using System.IO;
 namespace Wink
 {
     [Serializable]
-    class Boss : Enemy
+    class Boss : Enemy, IGUIGameObject
     {
         private Bar<Boss> hpBar;
         EnemyType type = EnemyType.random;
@@ -33,7 +33,7 @@ namespace Wink
         public Boss(int levelIndex) : base(0, 5)
         {
             floorNumber = levelIndex + 1;
-            string path = "Content/Bosses/Boss_" + floorNumber + ".txt";
+            string path = "Content/Bosses/Boss.txt";
             if (File.Exists(path))
             {
                 StreamReader fileReader = new StreamReader(path);
@@ -67,7 +67,7 @@ namespace Wink
 
                 SetupType(type, floorNumber);
 
-                InitAnimation(enemySprite);
+                InitAnimationVariables();
 
                 //TODO calculate creature level and set stats accordingly
             }
@@ -92,59 +92,53 @@ namespace Wink
             }
             id += " : " + etype.ToString();
             int eLvl = GameEnvironment.Random.Next(floorNumber, floorNumber + 5);
-            int weaponChance = 15 * floorNumber; // higher chance the deeper you go
-            int armorChance = 15 * floorNumber;  //
 
             switch (etype)
             {
                 case EnemyType.warrior:
-                    if (weaponChance < GameEnvironment.Random.Next(100))
                     {
                         EquipmentSlot weaponslot = EquipmentSlots.Find("weaponSlot") as EquipmentSlot;
-                        weaponslot.ChangeItem(new WeaponEquipment(floorNumber, WeaponType.melee));
-                    }
-                    if (armorChance < GameEnvironment.Random.Next(100))
-                    {
+                        weaponslot.ChangeItem(new WeaponEquipment(floorNumber + 2, WeaponType.melee));
                         EquipmentSlot bodyslot = EquipmentSlots.Find("bodySlot") as EquipmentSlot;
                         //bodyslot.ChangeItem(new BodyEquipment(floorNumber/10, 2, ArmorType.normal));
-                    }
                     SetStats(eLvl, 3 + (eLvl), 3 + (eLvl), 2 + (eLvl / 2), 1 + (eLvl / 2), 1 + (eLvl / 2), 2 + (eLvl / 2), 20 + eLvl * 3, 2, 1);
                     enemySprite = "empty:65:65:12:Brown";
+                    }
+                    
                     break;
 
                 case EnemyType.archer:
-                    if (weaponChance < GameEnvironment.Random.Next(100))
                     {
                         EquipmentSlot weaponslot = EquipmentSlots.Find("weaponSlot") as EquipmentSlot;
-                        weaponslot.ChangeItem(new WeaponEquipment(floorNumber, WeaponType.bow));
-                    }
-                    if (armorChance < GameEnvironment.Random.Next(100))
-                    {
+                        weaponslot.ChangeItem(new WeaponEquipment(floorNumber + 2, WeaponType.bow));
                         EquipmentSlot bodyslot = EquipmentSlots.Find("bodySlot") as EquipmentSlot;
                         //bodyslot.ChangeItem(new BodyEquipment(floorNumber/10, 2, ArmorType.normal));
-                    }
                     SetStats(eLvl, 2 + (eLvl / 2), 1 + (eLvl / 2), 3 + (eLvl), 1 + (eLvl / 2), 1 + (eLvl / 2), 3 + (eLvl), 20 + eLvl * 3, 2, 1);
                     enemySprite = "empty:65:65:12:Yellow";
+                    }
+                        
                     break;
                 case EnemyType.mage:
-                    if (weaponChance < GameEnvironment.Random.Next(100))
                     {
                         EquipmentSlot weaponslot = EquipmentSlots.Find("weaponSlot") as EquipmentSlot;
-                        weaponslot.ChangeItem(new WeaponEquipment(floorNumber, WeaponType.staff));
-                    }
-                    if (armorChance < GameEnvironment.Random.Next(100))
-                    {
+                        weaponslot.ChangeItem(new WeaponEquipment(floorNumber + 2, WeaponType.staff));
                         EquipmentSlot bodyslot = EquipmentSlots.Find("bodySlot") as EquipmentSlot;
                         //bodyslot.ChangeItem(new BodyEquipment(floorNumber/10, 2, ArmorType.robes));
-                    }
                     SetStats(eLvl, 1 + (eLvl / 2), 1 + (eLvl / 2), 1 + (eLvl / 2), 3 + (eLvl), 3 + (eLvl), 1 + (eLvl / 2), 20 + eLvl * 3, 2, 2);
                     enemySprite = "empty:65:65:12:CornflowerBlue";
+                    }
+                    
+                        
                     break;
                 default:
                     throw new Exception("invalid enemy type");
             }
-            ItemSlot slot_0_0 = Inventory.ItemGrid[0, 0] as ItemSlot;
-            slot_0_0.ChangeItem(new Potion(floorNumber, 10, PotionType.Health));
+            ItemSlot slot_0_1 = Inventory.ItemGrid[0, 1] as ItemSlot;
+            slot_0_1.ChangeItem(new Potion(floorNumber + 5, 10, PotionType.Health));
+            ItemSlot slot_1_1 = Inventory.ItemGrid[1, 1] as ItemSlot;
+            slot_1_1.ChangeItem(new WeaponEquipment(floorNumber + 2));
+            ItemSlot slot_2_1 = Inventory.ItemGrid[2, 1] as ItemSlot;
+            slot_2_1.ChangeItem(new BodyEquipment(floorNumber + 2, 3));
         }
 
         #region Serialization
@@ -158,13 +152,12 @@ namespace Wink
         }
         #endregion
 
-        protected override void InitAnimation(string idleColor)
+        protected override void InitAnimationVariables()
         {
-            base.InitAnimation(idleColor);
-            PlayAnimation("idle");
+            base.InitAnimationVariables();
         }
 
-        protected override void Death()
+        public override void Death()
         {
             // call recive exp for every player
             base.Death();
@@ -272,7 +265,7 @@ namespace Wink
 
         public override void HandleInput(InputHelper inputHelper)
         {
-            if (Health > 0)
+            if (Health > 0 && animations["die"] != Current)
             {
                 Action onClick = () =>
                 {
@@ -290,28 +283,6 @@ namespace Wink
         private void PositionHPBar()
         {
             hpBar.Position = Tile.GlobalPosition - new Vector2(Math.Abs(Tile.Width - hpBar.Width) / 2, 0);
-        }
-
-        public void InitGUI(Dictionary<string, object> guiState)
-        {
-            if (GameWorld.Find("HealthBar" + guid.ToString()) == null)
-            {
-                SpriteFont textfieldFont = GameEnvironment.AssetManager.GetFont("Arial26");
-                hpBar = new Bar<Boss>(this, e => e.Health, e => e.MaxHealth, textfieldFont, Color.Red, 2, "HealthBar" + guid.ToString(), 1.0f, 1f, false);
-                (GameWorld.Find("PlayingGui") as PlayingGUI).Add(hpBar);
-            }
-            else
-            {
-                hpBar = GameWorld.Find("HealthBar" + guid.ToString()) as Bar<Boss>;
-                hpBar.SetValueObject(this);
-            }
-            hpBar.Visible = !Tile.Visible ? false : Visible;
-            PositionHPBar();
-        }
-
-        public void CleanupGUI(Dictionary<string, object> guiState)
-        {
-
         }
     }
 }
