@@ -90,11 +90,11 @@ namespace Wink
             inventory = new InventoryBox(itemGrid);
 
             equipmentSlots = new GameObjectList();
-            equipmentSlots.Add(new EquipmentSlot(typeof(WeaponEquipment), "inventory/weaponSlot", id: "weaponSlot"));
-            equipmentSlots.Add(new EquipmentSlot(typeof(BodyEquipment), "inventory/bodySlot", id: "bodySlot"));
-            equipmentSlots.Add(new EquipmentSlot(typeof(RingEquipment), "inventory/ringSlot", id: "ringSlot1"));
-            equipmentSlots.Add(new EquipmentSlot(typeof(RingEquipment), "inventory/ringSlot", id: "ringSlot2"));
-            equipmentSlots.Add(new EquipmentSlot(typeof(HeadEquipment), "inventory/headSlot", id: "headSlot"));
+            equipmentSlots.Add(new RestrictedItemSlot(typeof(WeaponEquipment), "inventory/weaponSlot", id: "weaponSlot"));
+            equipmentSlots.Add(new RestrictedItemSlot(typeof(BodyEquipment), "inventory/bodySlot", id: "bodySlot"));
+            equipmentSlots.Add(new RestrictedItemSlot(typeof(RingEquipment), "inventory/ringSlot", id: "ringSlot1"));
+            equipmentSlots.Add(new RestrictedItemSlot(typeof(RingEquipment), "inventory/ringSlot", id: "ringSlot2"));
+            equipmentSlots.Add(new RestrictedItemSlot(typeof(HeadEquipment), "inventory/headSlot", id: "headSlot"));
 
             InitAnimationVariables();
             LoadAnimations();

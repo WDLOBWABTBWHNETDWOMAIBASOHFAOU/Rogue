@@ -223,7 +223,7 @@ namespace Wink
         
         public override void HandleInput(InputHelper inputHelper)
         {
-            if (Health > 0 && animations["die"] != Current)
+            if (Health > 0 && animations["die"] != CurrentAnimation)
             {
                 Action onLeftClick = () =>
                 {

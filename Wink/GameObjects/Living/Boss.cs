@@ -97,9 +97,9 @@ namespace Wink
             {
                 case EnemyType.warrior:
                     {
-                        EquipmentSlot weaponslot = EquipmentSlots.Find("weaponSlot") as EquipmentSlot;
+                        ItemSlot weaponslot = EquipmentSlots.Find("weaponSlot") as ItemSlot;
                         weaponslot.ChangeItem(new WeaponEquipment(floorNumber + 2, WeaponType.melee));
-                        EquipmentSlot bodyslot = EquipmentSlots.Find("bodySlot") as EquipmentSlot;
+                        ItemSlot bodyslot = EquipmentSlots.Find("bodySlot") as ItemSlot;
                         //bodyslot.ChangeItem(new BodyEquipment(floorNumber/10, 2, ArmorType.normal));
                     SetStats(eLvl, 3 + (eLvl), 3 + (eLvl), 2 + (eLvl / 2), 1 + (eLvl / 2), 1 + (eLvl / 2), 2 + (eLvl / 2), 20 + eLvl * 3, 2, 1);
                     enemySprite = "empty:65:65:12:Brown";
@@ -109,9 +109,9 @@ namespace Wink
 
                 case EnemyType.archer:
                     {
-                        EquipmentSlot weaponslot = EquipmentSlots.Find("weaponSlot") as EquipmentSlot;
+                        ItemSlot weaponslot = EquipmentSlots.Find("weaponSlot") as ItemSlot;
                         weaponslot.ChangeItem(new WeaponEquipment(floorNumber + 2, WeaponType.bow));
-                        EquipmentSlot bodyslot = EquipmentSlots.Find("bodySlot") as EquipmentSlot;
+                        ItemSlot bodyslot = EquipmentSlots.Find("bodySlot") as ItemSlot;
                         //bodyslot.ChangeItem(new BodyEquipment(floorNumber/10, 2, ArmorType.normal));
                     SetStats(eLvl, 2 + (eLvl / 2), 1 + (eLvl / 2), 3 + (eLvl), 1 + (eLvl / 2), 1 + (eLvl / 2), 3 + (eLvl), 20 + eLvl * 3, 2, 1);
                     enemySprite = "empty:65:65:12:Yellow";
@@ -120,9 +120,9 @@ namespace Wink
                     break;
                 case EnemyType.mage:
                     {
-                        EquipmentSlot weaponslot = EquipmentSlots.Find("weaponSlot") as EquipmentSlot;
+                        ItemSlot weaponslot = EquipmentSlots.Find("weaponSlot") as ItemSlot;
                         weaponslot.ChangeItem(new WeaponEquipment(floorNumber + 2, WeaponType.staff));
-                        EquipmentSlot bodyslot = EquipmentSlots.Find("bodySlot") as EquipmentSlot;
+                        ItemSlot bodyslot = EquipmentSlots.Find("bodySlot") as ItemSlot;
                         //bodyslot.ChangeItem(new BodyEquipment(floorNumber/10, 2, ArmorType.robes));
                     SetStats(eLvl, 1 + (eLvl / 2), 1 + (eLvl / 2), 1 + (eLvl / 2), 3 + (eLvl), 3 + (eLvl), 1 + (eLvl / 2), 20 + eLvl * 3, 2, 2);
                     enemySprite = "empty:65:65:12:CornflowerBlue";
@@ -183,7 +183,7 @@ namespace Wink
 
             if (player.Tile.SeenBy.ContainsKey(this))
             {
-                bool ableToHit = AttackEvent.AbleToHit(this, player);
+                bool ableToHit = AttackEvent.AbleToHit(this, player.Tile, this.Reach);
 
                 Special_AbleToHit(player);
 
@@ -200,9 +200,9 @@ namespace Wink
                     Attack(player);
 
                     int cost = BaseActionCost;
-                    if ((EquipmentSlots.Find("bodySlot") as EquipmentSlot).SlotItem != null)
+                    if ((EquipmentSlots.Find("bodySlot") as ItemSlot).SlotItem != null)
                     {
-                        cost = (int)(cost * ((EquipmentSlots.Find("bodySlot") as EquipmentSlot).SlotItem as BodyEquipment).WalkCostMod);
+                        cost = (int)(cost * ((EquipmentSlots.Find("bodySlot") as ItemSlot).SlotItem as BodyEquipment).WalkCostMod);
                     }
                     actionPoints -= cost;
                     changedObjects.Add(player);
@@ -265,7 +265,7 @@ namespace Wink
 
         public override void HandleInput(InputHelper inputHelper)
         {
-            if (Health > 0 && animations["die"] != Current)
+            if (Health > 0 && animations["die"] != CurrentAnimation)
             {
                 Action onClick = () =>
                 {

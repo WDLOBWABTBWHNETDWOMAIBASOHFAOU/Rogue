@@ -56,7 +56,7 @@ namespace Wink
 
             RestrictedItemSlot weaponslot = EquipmentSlots.Find("weaponSlot") as RestrictedItemSlot;
             RestrictedItemSlot bodyslot = EquipmentSlots.Find("bodySlot") as RestrictedItemSlot;
-            int EquipmentStartingStenght = 3;
+            int EquipmentStartingStrenght = 3;
 
             ItemSlot slot_0_0 = Inventory.ItemGrid[0, 0] as ItemSlot;
             slot_0_0.ChangeItem(new Potion("empty:64:64:10:Red",PotionType.Health,PotionPower.minor,5));//some starting healt potions
