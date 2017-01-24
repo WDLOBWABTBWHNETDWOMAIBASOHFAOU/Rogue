@@ -57,8 +57,9 @@
     <Compile Include="Events\PlayerMoveEvent.cs" />
     <Compile Include="Events\SkillEvent.cs" />
     <Compile Include="Events\TakenPotionEvent.cs" />
+    <Compile Include="GameObjects\Skills\Heal.cs" />
     <Compile Include="GameObjects\Skills\Skill.cs" />
-    <Compile Include="GameObjects\Skills\TestSkill.cs" />
+    <Compile Include="GameObjects\Skills\MagicBold.cs" />
     <Compile Include="GameObjects\TileObjects\Door.cs" />
     <Compile Include="GameObjects\TileObjects\End.cs" />
     <Compile Include="GameManagement\IGameObjectContainer.cs" />

@@ -64,8 +64,6 @@ namespace Wink
                     }
                     break;
                 case PotionType.Mana:
-                    player.Mana += potion.PotionValue;
-
                     if (!(player.Mana >= player.MaxMana))
                     {
                         return true;

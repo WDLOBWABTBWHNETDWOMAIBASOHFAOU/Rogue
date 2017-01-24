@@ -237,14 +237,22 @@ namespace Wink
 
             if (TileType == TileType.Floor)
             {
-                Action onClick = () =>
+                Action onLeftClick = () =>
                 {
                     Player player = GameWorld.Find(Player.LocalPlayerName) as Player;
                     PlayerMoveEvent pme = new PlayerMoveEvent(player, this);
                     Server.Send(pme);
                 };
 
-                inputHelper.IfMouseLeftButtonPressedOn(this, onClick);
+                Action onRightClick = () =>
+                {
+                    Player player = GameWorld.Find(Player.LocalPlayerName) as Player;
+                    SkillEvent SkE = new SkillEvent(player, this);
+                    Server.Send(SkE);
+                };
+
+
+                inputHelper.IfMouseLeftButtonPressedOn(this, onLeftClick);
             }
 
             base.HandleInput(inputHelper);

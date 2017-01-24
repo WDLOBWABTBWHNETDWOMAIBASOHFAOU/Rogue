@@ -210,11 +210,8 @@ namespace Wink
                 Action onRightClick = () =>
                 {
                     Player player = GameWorld.Find(Player.LocalPlayerName) as Player;
-                    if (player.CurrentSkill != null)
-                    {
-                        SkillEvent sE = new SkillEvent(player, this);
-                        Server.Send(sE);
-                    }                    
+                    SkillEvent sE = new SkillEvent(player, this);
+                    Server.Send(sE);                
                 };
             
                 inputHelper.IfMouseLeftButtonPressedOn(this, onLeftClick);

@@ -64,7 +64,9 @@ namespace Wink
 
 
             ItemSlot slot_2_2 = Inventory.ItemGrid[2, 2] as ItemSlot;
-            slot_2_2.ChangeItem(new TestSkill());
+            slot_2_2.ChangeItem(new Heal());
+            ItemSlot slot_3_2 = Inventory.ItemGrid[3, 2] as ItemSlot;
+            slot_3_2.ChangeItem(new TestSkill());
 
             switch (ptype)
             {
@@ -196,6 +198,13 @@ namespace Wink
             };
             if (Tile != null)
                 inputHelper.IfMouseLeftButtonPressedOn(Tile, onLeftClick);
+
+            Action onRightClick = () =>
+            {
+                SkillEvent SkE = new SkillEvent((GameWorld.Find(Player.LocalPlayerName) as Player), this);
+                Server.Send(SkE);
+            };
+            inputHelper.IfMouseRightButtonPressedOn(this, onRightClick);
 
             #region SkillSelection
             if (inputHelper.KeyPressed(Keys.D1))

@@ -54,7 +54,11 @@ namespace Wink
 
         protected override bool ValidateAction(Level level)
         {
-            return player.CurrentSkill.SkillValidation(player,target as Living,target as Tile);//also handles whithin reach
+            if (player.CurrentSkill != null)
+            {
+                return player.CurrentSkill.SkillValidation(player,target as Living,target as Tile);//also handles whithin reach
+            }
+            return false;
         }
     }
 }

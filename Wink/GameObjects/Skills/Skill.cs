@@ -17,16 +17,16 @@ namespace Wink
 
         protected int ManaCost;
 
-        public Skill(int SkillReach = 2, int ManaCost = 20, string assetName = "empty:64:64:10:White") : base(assetName)
+        public Skill(int skillReach = 2, int ManaCost = 20, string assetName = "empty:64:64:10:White") : base(assetName)
         {
-            this.skillReach = SkillReach;
+            this.skillReach = skillReach;
             this.ManaCost = ManaCost;
             SetId();
         }
 
         protected virtual void SetId()
         {
-            id = "TestSkill";
+            id = "Skill";
         }
 
         #region Serialization
@@ -46,7 +46,7 @@ namespace Wink
 
         public abstract void DoSkill(Living caster, Living livingTarget, Tile TileTarget);
 
-        public bool SkillValidation(Living caster, Living livingTarget, Tile TileTarget)
+        public virtual bool SkillValidation(Living caster, Living livingTarget, Tile TileTarget)
         {
             if(caster.CurrentSkill!=null)
             { 
