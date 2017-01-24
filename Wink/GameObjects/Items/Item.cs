@@ -75,7 +75,7 @@ namespace Wink
         public virtual void ItemInfo(ItemSlot caller)
         {
             infoList = new GameObjectList();
-            TextGameObject IDinfo = new TextGameObject("Arial26", 0, 0, "IDinfo." + this);
+            TextGameObject IDinfo = new TextGameObject("Arial26", cameraSensitivity: 0, layer: 0, id: "IDinfo." + this);
             IDinfo.Text = Id.Split(':')[0];//only show first part of the id
             IDinfo.Color = Color.Red;
             infoList.Add(IDinfo);

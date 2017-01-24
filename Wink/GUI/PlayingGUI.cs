@@ -39,7 +39,7 @@ namespace Wink
             floor.Position = new Vector2((screen.X - floor.Width) / 2, 7.5f);
             Add(floor);
 
-            TextGameObject floorNumber = new TextGameObject("Arial36", 0, 2, "FloorNumber");
+            TextGameObject floorNumber = new TextGameObject("Arial36", cameraSensitivity: 0, layer: 2, id: "FloorNumber");
             Add(floorNumber);
         }
 

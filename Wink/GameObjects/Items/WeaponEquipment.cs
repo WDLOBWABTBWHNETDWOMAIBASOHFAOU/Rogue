@@ -191,13 +191,13 @@ namespace Wink
             base.ItemInfo(caller);
 
             Player player = caller.GameWorld.Find(Player.LocalPlayerName) as Player;
-            TextGameObject dType = new TextGameObject("Arial12", 0, 0, "DamageTypeInfo." + this);
+            TextGameObject dType = new TextGameObject("Arial12", cameraSensitivity: 0, layer: 0, id: "DamageTypeInfo." + this);
             dType.Text = GetDamageType + " Damage: " + baseValue + " + " + (Value(player) -baseValue);
             dType.Color = Color.Red;
             dType.Parent = infoList;
             infoList.Children.Insert(1, dType);
 
-            TextGameObject scalingText = new TextGameObject("Arial12", 0, 0, "scalingInfoText." + this);
+            TextGameObject scalingText = new TextGameObject("Arial12", cameraSensitivity: 0, layer: 0, id: "scalingInfoText." + this);
             scalingText.Text = "DamageBonus:";
             switch (damageType)
             {
@@ -215,7 +215,7 @@ namespace Wink
             infoList.Children.Insert(2, scalingText);
 
 
-            TextGameObject scalingStatText = new TextGameObject("Arial12", 0, 0, "scalingStatInfoText." + this);
+            TextGameObject scalingStatText = new TextGameObject("Arial12", cameraSensitivity: 0, layer: 0, id: "scalingStatInfoText." + this);
             scalingStatText.Text = "Statbonus:";
             switch (damageType)
             {
@@ -232,7 +232,7 @@ namespace Wink
             scalingStatText.Parent = infoList;
             infoList.Children.Insert(3, scalingStatText);
 
-            TextGameObject reachText = new TextGameObject("Arial12", 0, 0, "ReachInfoText." + this);
+            TextGameObject reachText = new TextGameObject("Arial12", cameraSensitivity: 0, layer: 0, id: "ReachInfoText." + this);
             reachText.Text = "Reach: " + reach;
             reachText.Color = Color.Red;
             reachText.Parent = infoList;
