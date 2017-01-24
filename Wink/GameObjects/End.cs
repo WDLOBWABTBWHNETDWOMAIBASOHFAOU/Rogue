@@ -30,7 +30,7 @@ namespace Wink
             get { return false; }
         }
 
-        public End(Tile pTile, int levelIndex, Level level, string asset = "empty:64:64:10:Yellow", int layer = 0, string id = "") : base(asset, layer, id)
+        public End(Tile pTile, int levelIndex, Level level, string asset = "spr_finish", int layer = 0, string id = "") : base(asset, layer, id)
         {
             parentTile = pTile;
             this.levelIndex = levelIndex;
