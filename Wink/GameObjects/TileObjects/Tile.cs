@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using System;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -22,13 +23,18 @@ namespace Wink
 
         protected TileType type;
         protected bool passable;
+        protected bool ShowNormalReach;
+        protected bool ShowSKillReach;
 
         protected GameObjectList onTile;
 
         //Dictionary containing what Living objects saw this tile this tick and at what distance;
         protected Dictionary<Living, float> seenBy;
 
-        public Dictionary<Living, float> GetSeenBy { get { return seenBy; } }
+        public Dictionary<Living, float> SeenBy
+        {
+            get { return seenBy; }
+        }
 
         public GameObjectList OnTile
         {
@@ -92,7 +98,7 @@ namespace Wink
         }
         #endregion
 
-        public void SeenBy(Living viewer, float distance)
+        public void IsSeenBy(Living viewer, float distance)
         {
             if (seenBy.ContainsKey(viewer))
                 seenBy[viewer] = distance;
@@ -119,11 +125,14 @@ namespace Wink
             base.Replace(replacement);
         }
 
+        public void RemoveImmediatly(GameObject go)
+        {
+            onTile.RemoveImmediatly(go);
+        }
+
         public void Remove(GameObject go)
         {
-            onTile.Children.Remove(go);
-            if (go.Parent == onTile)
-                go.Parent = null;
+            onTile.Remove(go);
         }
 
         public bool IsEmpty()
@@ -159,18 +168,48 @@ namespace Wink
                 onTile.Draw(gameTime, spriteBatch, camera);
 
                 Texture2D blackTex = GameEnvironment.AssetManager.GetSingleColorPixel(Color.Black);
-                float min = 0.75f;
+                float bmin = 0.75f;
+
                 foreach (KeyValuePair<Living, float> kvp in seenBy)
                 {
                     if (kvp.Key is Player)
                     {
                         float p = kvp.Value / kvp.Key.ViewDistance;
-                        min = p < min ? p : min;
+                        bmin = p < bmin ? p : bmin;
+                        #region HighlightReach
+                        //highlight tiles that are whithin reach for the local player
+                        //current key is the localplayer and the tile is not a wall or the key's tile
+                        if ( kvp.Key.Id == Player.LocalPlayerName && !(TileType == TileType.Wall || kvp.Key.Tile == this))
+                        {
+
+                            // whithin normal attack reach of the local player
+                            if (ShowNormalReach  && kvp.Value <= kvp.Key.Reach + 0.5f)
+                            {
+                                //draw highlight
+                                float highlightStrenght = 0.2f;
+                                Texture2D redTex = GameEnvironment.AssetManager.GetSingleColorPixel(Color.Red);
+                                Rectangle drawhBox = new Rectangle(camera.CalculateScreenPosition(this).ToPoint(), new Point(sprite.Width, sprite.Width));
+                                Color drawRColor = new Color(Color.White, highlightStrenght);
+                                spriteBatch.Draw(redTex, null, drawhBox, sprite.SourceRectangle, origin, 0.0f, new Vector2(scale), drawRColor, SpriteEffects.None, 0.0f);
+                            }
+
+                            // whithin skillreach of the local player
+                            if (ShowSKillReach && kvp.Key.CurrentSkill!=null && kvp.Value <= kvp.Key.CurrentSkill.SkillReach + 0.5f)
+                            {
+                                //draw highlight
+                                float highlightStrenght = 0.2f;
+                                Texture2D redTex = GameEnvironment.AssetManager.GetSingleColorPixel(Color.Blue);
+                                Rectangle drawhBox = new Rectangle(camera.CalculateScreenPosition(this).ToPoint(), new Point(sprite.Width, sprite.Width));
+                                Color drawRColor = new Color(Color.White, highlightStrenght);
+                                spriteBatch.Draw(redTex, null, drawhBox, sprite.SourceRectangle, origin, 0.0f, new Vector2(scale), drawRColor, SpriteEffects.None, 0.0f);
+                            }
+                        }
+                        #endregion
                     }
                 }
                 Rectangle drawBox = new Rectangle(camera.CalculateScreenPosition(this).ToPoint(), new Point(sprite.Width, sprite.Height));
-                Color drawColor = new Color(Color.White, min);
-                spriteBatch.Draw(blackTex, null, drawBox, sprite.SourceRectangle, origin, 0.0f, new Vector2(scale), drawColor, SpriteEffects.None, 0.0f);
+                Color drawBColor = new Color(Color.White, bmin);
+                spriteBatch.Draw(blackTex, null, drawBox, sprite.SourceRectangle, origin, 0.0f, new Vector2(scale), drawBColor, SpriteEffects.None, 0.0f);                
             }
         }
 
@@ -191,16 +230,32 @@ namespace Wink
         {
             onTile.HandleInput(inputHelper);
 
+            ShowNormalReach = false;
+            ShowSKillReach = false;
+
+            if (inputHelper.IsKeyDown(Keys.Q))
+                ShowNormalReach = true;
+            if (inputHelper.IsKeyDown(Keys.E))
+                ShowSKillReach = true;
+
             if (TileType == TileType.Floor)
             {
-                Action onClick = () =>
+                Action onLeftClick = () =>
                 {
                     Player player = GameWorld.Find(Player.LocalPlayerName) as Player;
                     PlayerMoveEvent pme = new PlayerMoveEvent(player, this);
                     Server.Send(pme);
                 };
 
-                inputHelper.IfMouseLeftButtonPressedOn(this, onClick);
+                Action onRightClick = () =>
+                {
+                    Player player = GameWorld.Find(Player.LocalPlayerName) as Player;
+                    SkillEvent SkE = new SkillEvent(player, this);
+                    Server.Send(SkE);
+                };
+
+
+                inputHelper.IfMouseLeftButtonPressedOn(this, onLeftClick);
             }
 
             base.HandleInput(inputHelper);

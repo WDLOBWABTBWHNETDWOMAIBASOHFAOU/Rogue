@@ -135,7 +135,7 @@ namespace Wink
                     dexRequirement = GameEnvironment.Random.Next(baseValue) / highPriority;
                     intRequirement = 0;
 
-                    spriteAssetName = "empty:64:64:10:Honeydew";//TODO: replace by correct spritename
+                    spriteAssetName = "spr_bow";//TODO: replace by correct spritename
                     break;
                 case WeaponType.staff:
                     //base values

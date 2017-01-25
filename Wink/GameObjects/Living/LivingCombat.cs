@@ -25,33 +25,48 @@ namespace Wink
                 damageDealt = target.TakeDamage(attackValue, damageType);
             }
 
-            if (damageDealt > 0) processReflection(damageDealt, target);
+            if (damageDealt > 0) ProcessReflection(damageDealt, target);
             // Display attack missed (feedback on fail)
         }
 
-        public void processReflection(int damage, Living source)
+        public void Special_Attack(Living target, double mod)
         {
-            if (source.EquipmentSlots != null)
-                foreach (ItemSlot slot in source.EquipmentSlots.Children)
-                {
-                    if (slot.SlotItem != null && slot.Id.Contains("ringSlot"))
+            int damageDealt = 0;
+            DamageType damageType = DamageType.Magic;
+
+            double modifier = mod;
+
+            double attackValue = Special_AttackValue(modifier);
+            damageDealt = target.TakeDamage(attackValue, damageType);
+
+            if (damageDealt > 0) ProcessReflection(damageDealt, target);
+            // Display attack missed (feedback on fail)
+        }
+
+        /// <summary>
+        /// Check if damage should be reflected
+        /// </summary>
+        /// <param name="damage">Damage taken</param>
+        /// <param name="source">The living object that gave the damage</param>
+        public void ProcessReflection(int damage, Living source)
+        {
+            if (source.EquipmentSlots != null)                                      // 
+                foreach (ItemSlot slot in source.EquipmentSlots.Children)           // Looking up the ring(s) the living object has equipped
+                    if (slot.SlotItem != null && slot.Id.Contains("ringSlot"))      // 
                     {
                         RingEquipment ring = slot.SlotItem as RingEquipment;
                         foreach (RingEffect effect in ring.RingEffects)
-                        {
-                            if (effect.EffectType == RingType.Reflection)
+                            if (effect.EffectType == EffectType.Reflection)           // Check if the ring is a Ring of Reflection
                             {
                                 ReflectionEffect rEffect = effect as ReflectionEffect;
                                 double randomNumber = GameEnvironment.Random.NextDouble();
-                                double reflectChance = rEffect["chance"] - 1 / source.luck;
+                                double reflectChance = rEffect["chance"] - 1 / source.luck; // Calculate reflection chance
                                 if (randomNumber <= reflectChance)
                                 {
-                                    TakeReflectionDamage(source, damage, rEffect["power"]);
+                                    TakeReflectionDamage(source, damage, rEffect["power"]); // Deal Reflection Damage
                                 }
                             }
-                        }
                     }
-                }
         }
 
         /// <summary>
@@ -66,10 +81,10 @@ namespace Wink
                 double defenceValue = ArmorValue(damageType);
                 int damageTaken = (int)(attackValue / defenceValue);
 
-                healthPoints -= damageTaken;
-                //Display damage taken
+                Health -= damageTaken;
+                // Display damage taken
 
-                // Return damage taken for ring effect <3
+                // Return damage taken for ring effect :D:D
                 return damageTaken;
             }
             // Display attack dodged (feedback on succes)
@@ -78,27 +93,45 @@ namespace Wink
             return 0;
         }
 
+        /// <summary>
+        /// Take reflection damage based on Ring power and Base damage
+        /// </summary>
+        /// <param name="source">The living object giving the reflection damage</param>
+        /// <param name="baseDamage">The damage the reflection is based on</param>
+        /// <param name="power">The power multiplier of the reflection</param>
         protected void TakeReflectionDamage(Living source, int baseDamage, double power = 1)
         {
             double reflectAmount = 0.8 - 2 / source.Intelligence;
-            if (reflectAmount < 0) reflectAmount = 0;
+            if (reflectAmount < 0) // makes sure you can never heal the opponent by dealing 
+                reflectAmount = 0; //     negative reflection damage
             int damageTaken = (int)(baseDamage * reflectAmount * power);
             
-            healthPoints -= damageTaken;
+            Health -= damageTaken;
+            // TODO: Visual feedback of reflection
         }
 
-        protected void Death()
+        /// <summary>
+        /// Kills the living object (at least... It should)
+        /// </summary>
+        public virtual void Death()
         {
-            //What happens on death. Drop equipment/loot, remove itself from world, etc
-            //level.Remove(this);
-            //visible = false;
+            visible = false;
         }
 
-        private void DeathFeedback(string idA, string idS)
+        /// <summary>
+        /// Give visual feedback of death
+        /// </summary>
+        /// <param name="idA">Death animation</param>
+        /// <param name="idS">Death sound</param>
+        public void DeathFeedback(string idA = "die", string idS = "die")
         {
             PlayAnimation(idA);
             //PlaySound(idS);
-        }
 
+            if (this is IGUIGameObject)
+            {
+                (this as IGUIGameObject).CleanupGUI(new Dictionary<string, object>());
+            }
+        }
     }
 }

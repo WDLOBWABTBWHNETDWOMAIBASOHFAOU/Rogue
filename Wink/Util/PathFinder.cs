@@ -219,6 +219,16 @@ namespace Wink
                                 openNodes.Add(surroundingNode);
                                 surroundingNode.originNode = currentNode;
                                 surroundingNode.gCost = currentNode.gCost + CalculateCost(currentNode, surroundingNode);
+                                int xDiff = Math.Abs(surroundingNode.X - endingNode.X);
+                                int yDiff = Math.Abs(surroundingNode.Y - endingNode.Y);
+                                if (xDiff > yDiff)
+                                {
+                                    surroundingNode.hCost = (xDiff - yDiff) * 10 + yDiff * 14;
+                                }
+                                else
+                                {
+                                    surroundingNode.hCost = (yDiff - xDiff) * 10 + xDiff * 14;
+                                }
                             }
                         }
                     }

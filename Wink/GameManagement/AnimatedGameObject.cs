@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework;
 using System.Runtime.Serialization;
 
-public class AnimatedGameObject : SpriteGameObject
+public abstract class AnimatedGameObject : SpriteGameObject
 {
     protected Dictionary<string, Animation> animations;
 
@@ -22,7 +22,7 @@ public class AnimatedGameObject : SpriteGameObject
     {
         base.GetObjectData(info, context);
         info.AddValue("animations", animations);
-        info.AddValue("Current", Current);
+        info.AddValue("Current", CurrentAnimation);
     }
     #endregion
 
@@ -31,6 +31,8 @@ public class AnimatedGameObject : SpriteGameObject
         Animation anim = new Animation(assetName, looping, frameTime);
         animations[id] = anim;
     }
+
+    public abstract void LoadAnimations();
 
     public void PlayAnimation(string id)
     {
@@ -58,11 +60,11 @@ public class AnimatedGameObject : SpriteGameObject
         {
             return;
         }
-        Current.Update(gameTime);
+        CurrentAnimation.Update(gameTime);
         base.Update(gameTime);
     }
 
-    public Animation Current
+    public Animation CurrentAnimation
     {
         get { return sprite as Animation; }
     }

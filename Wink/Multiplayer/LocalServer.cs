@@ -17,22 +17,19 @@ namespace Wink
         }
 
         private Dictionary<Client, List<Event>> clientEvents;
+        private List<Living> livingObjects;
+        private Level level;
+        private int turnIndex;
+        private List<GameObject> changedObjects;
+
         public List<Client> Clients
         {
             get { return new List<Client>(clientEvents.Keys); }
         }
-
-        private List<Living> livingObjects;
-        private Level level;
-        
-        private int turnIndex;
-
-        private List<GameObject> changedObjects;
         public List<GameObject> ChangedObjects
         {
             get { return changedObjects; }
         }
-
         public Level Level
         {
             get { return level; }
@@ -40,10 +37,9 @@ namespace Wink
             {
                 level = value;
                 InitLivingObjects();
-                SendOutUpdatedLevel();
+                SendOutUpdatedLevelIf();
             }
         }
-
         public int LevelIndex
         {
             get { return level.Index; }
@@ -76,52 +72,22 @@ namespace Wink
 
         public void SetupLevel(int levelIndex)
         {
+            //Make the level.
             level = new Level(levelIndex);
             
+            //Create a player for each connected client.
             for (int i = 0; i < Clients.Count; i++)
             {
                 Client c = Clients[i];
-                Player player = new Player(c.ClientName, Level.Layer);
-
-                /*TEST PLAYER SET UP, REPLACE WHITH SELECTED HERO*/
-
-                //armor
-                ItemSlot slot_0_0 =player.Inventory.ItemGrid[0, 0] as ItemSlot;
-                slot_0_0.ChangeItem(new BodyEquipment(2, 3, ArmorType.heavy));
-                ItemSlot slot_1_0 = player.Inventory.ItemGrid[1, 0] as ItemSlot;
-                slot_1_0.ChangeItem(new BodyEquipment(2, 3, ArmorType.normal));
-                ItemSlot slot_2_0 = player.Inventory.ItemGrid[2, 0] as ItemSlot;
-                slot_2_0.ChangeItem(new BodyEquipment(2, 3, ArmorType.light));
-                ItemSlot slot_3_0 = player.Inventory.ItemGrid[3, 0] as ItemSlot;
-                slot_3_0.ChangeItem(new BodyEquipment(2, 3, ArmorType.robes));
-
-                //weapons
-                ItemSlot slot_0_1 = player.Inventory.ItemGrid[0, 1] as ItemSlot;
-                slot_0_1.ChangeItem(new WeaponEquipment(2,WeaponType.melee));
-                ItemSlot slot_1_1 = player.Inventory.ItemGrid[1, 1] as ItemSlot;
-                slot_1_1.ChangeItem(new WeaponEquipment(2, WeaponType.bow));
-                ItemSlot slot_2_1 = player.Inventory.ItemGrid[2, 1] as ItemSlot;
-                slot_2_1.ChangeItem(new WeaponEquipment(2, WeaponType.staff));
-
-                //potions and rings
-                ItemSlot slot_0_2 = player.Inventory.ItemGrid[0, 2] as ItemSlot;
-                slot_0_2.ChangeItem(new Potion(2,10,PotionType.Health));
-                ItemSlot slot_1_2 = player.Inventory.ItemGrid[1, 2] as ItemSlot;
-                slot_1_2.ChangeItem(new Potion(2, 10, PotionType.Mana));
-                ItemSlot slot_2_2 = player.Inventory.ItemGrid[2, 2] as ItemSlot;
-                slot_2_2.ChangeItem(new RingEquipment("empty:64:64:10:Pink"));
-
-                //player stats
-                player.SetStats(2, 3, 3, 3, 3, 3, 3, 20, 5, 1);
-
-                /*END PLAYER SETUP*/
-
+                Player player = new Player(c.ClientName, Level.Layer, c.playerType);
+                
+                //Put the player on a startTile.
                 (Level.Find("StartTile" + (i + 1)) as Tile).PutOnTile(player);
                 player.ComputeVisibility();
             }
 
             InitLivingObjects();
-            SendOutUpdatedLevel(true);
+            SendOutUpdatedLevelIf(true);
         }
         
         public void ProcessAllNonActionEvents()
@@ -149,11 +115,14 @@ namespace Wink
             if (clientEvents[c].Count > 0)
             {
                 Event e = clientEvents[c][0];
-                if (e is ActionEvent && e.Validate(Level))
+                if (e is ActionEvent)
                 {
-                    e.Sender = c;
-                    if (e.OnServerReceive(this))
-                        clientEvents[c].Remove(e);
+                    if (e.Validate(Level))
+                    {
+                        e.Sender = c;
+                        e.OnServerReceive(this);
+                    }
+                    clientEvents[c].Remove(e);
                 }
             }
         }
@@ -179,13 +148,17 @@ namespace Wink
             }
         }
 
-        private void SendOutUpdatedLevel(bool first = false)
+        private void SendOutUpdatedLevelIf(bool first = false)
         {
-            LevelUpdatedEvent e = first ? new JoinedServerEvent(Level) : new LevelUpdatedEvent(Level);
-            SendToAllClients(e);
+            if (changedObjects.Count > 0 || first)
+            {
+                LevelUpdatedEvent e = first ? new JoinedServerEvent(Level) : new LevelUpdatedEvent(Level);
+                SendToAllClients(e);
+                changedObjects.Clear();
+            }
         }
 
-        public void SendToAllClients(Event e)
+        private void SendToAllClients(Event e)
         {
             using (MemoryStream ms = new MemoryStream())
             {
@@ -211,32 +184,28 @@ namespace Wink
 
         public override void Update(GameTime gameTime)
         {
+            //First we update the level so all update methods in all gameobjects get called.
+            //This also empties the seenBy in Tile.
             Level.Update(gameTime);
+            //Then we let every Living object calculate what tiles it can see, that object is then added to these Tiles' seenBy list.
+            ComputeVisibilities();
 
             ProcessAllNonActionEvents();
-
-            if (!(livingObjects[turnIndex] is Player))
+            
+            if (livingObjects[turnIndex] is Player)
             {
-                while (!(livingObjects[turnIndex] is Player))
-                {
-                    ComputeVisibilities();
-                    changedObjects.AddRange(livingObjects[turnIndex].DoAllBehaviour());
-                    UpdateTurn();
-                }
+                Client currentClient = Clients.Find(client => client.Player.GUID == livingObjects[turnIndex].GUID);
+                ProcessActionEvents(currentClient);
+                livingObjects[turnIndex].ComputeVisibility();
+                SendOutUpdatedLevelIf();
             }
             else
             {
-                Client currentClient = Clients.Find(client => client.Player.GUID == livingObjects[turnIndex].GUID);
-                ComputeVisibilities();
-                ProcessActionEvents(currentClient);
-                UpdateTurn();
+                changedObjects.AddRange(livingObjects[turnIndex].DoAllBehaviour());
+                livingObjects[turnIndex].ComputeVisibility();
             }
             
-            if (changedObjects.Count > 0)
-            {
-                SendOutUpdatedLevel();
-                changedObjects.Clear();
-            }
+            UpdateTurn();
             //SendOutLevelChanges();
         }
 
@@ -248,15 +217,18 @@ namespace Wink
 
         private void UpdateTurn()
         {
+            Living turn = livingObjects[turnIndex];
+            livingObjects.RemoveAll(l => l.Health <= 0); //Remove all the dead.
+            turnIndex = livingObjects.IndexOf(turn);
+
             if (livingObjects[turnIndex].ActionPoints <= 0)
             {
                 turnIndex = (turnIndex + 1) % livingObjects.Count;
                 livingObjects[turnIndex].ActionPoints = Living.MaxActionPoints;
-                //changedObjects.Add(livingObjects[turnIndex]);
-                SendOutUpdatedLevel();
+                changedObjects.Add(livingObjects[turnIndex]);
             }
         }
-
+        
         public void EndTurn(Player player)
         {
             if (livingObjects[turnIndex] == player)
@@ -270,9 +242,7 @@ namespace Wink
         public override void Reset()
         {
             foreach (Client client in Clients)
-            {
                 client.Reset();
-            }
         }
     }
 }

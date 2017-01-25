@@ -1,11 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Wink
 {
+    /// <summary>
+    /// Subclass of regular TextGameObject that overrides the property used to retrieve the contents. 
+    /// Instead of a prespecified variable it uses a Func to retrieve a value from a different variable.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     class TrackingTextGameObject<T> : TextGameObject
     {
         Func<T, string> textFunc;

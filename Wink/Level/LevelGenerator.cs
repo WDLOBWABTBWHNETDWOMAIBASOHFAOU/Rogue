@@ -378,7 +378,7 @@ namespace Wink
                 List<Tile> path = pf.ShortestPath(tf[pair.Item1.X, pair.Item1.Y] as Tile, tf[pair.Item2.X, pair.Item2.Y] as Tile, tile => true);
 
                 Tile t = tf[pair.Item1.X, pair.Item1.Y] as Tile;
-                t.AddDebugTag("ExitConnectionPoint", ":" + pair.Item2.X + "," + pair.Item2.Y);
+                t.AddDebugTag("ExitConnectionPoint", pair.Item2.X + "," + pair.Item2.Y);
                 path.Add(t);
 
                 //Add a floor tile for every tile in the path.
@@ -483,19 +483,13 @@ namespace Wink
             int numberOfEnemys = 8;
             for (int n = 0; n < numberOfEnemys; n++)
             {
-                Enemy enemy = new Enemy(0);
-                int floorNumber = levelIndex;
-                if (floorNumber < 1)
-                {
-                    floorNumber = 1;
-                }
+                Enemy enemy = new Enemy(0, Index, EnemyType.random, "Enemy");
                 List<GameObject> spawnLocations = tf.FindAll(obj => obj is Tile && (obj as Tile).Passable && !(obj as Tile).Blocked);
                 Tile spawnLocation = spawnLocations[GameEnvironment.Random.Next(spawnLocations.Count)] as Tile;
                 spawnLocation.PutOnTile(enemy);
-                enemy.SetStats(1*floorNumber, 2 + (floorNumber/2), 2 + (floorNumber / 2), 2 + (floorNumber / 2), 2 + (floorNumber / 2), 2 + (floorNumber / 2), 2 + (floorNumber / 2), 20 + floorNumber*3, 2, GameEnvironment.Random.Next(1,3));
             }
             //End test            
-
+           
             //Must be last statement, executed after the Tilefield is done.
             tf.InitSpriteSheetIndexation();
             return tf;

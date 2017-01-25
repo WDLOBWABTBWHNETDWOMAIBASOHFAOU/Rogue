@@ -1,7 +1,6 @@
 ﻿using System.Runtime.Serialization;
 using Microsoft.Xna.Framework;
 using System;
-using System.Diagnostics;
 
 namespace Wink
 {
@@ -52,7 +51,7 @@ namespace Wink
                 Tile trueOrigin = client.Level.Find(obj => obj != origin && obj is Tile && (obj as Tile).TilePosition == origin.TilePosition) as Tile;
                 trueOrigin.OnTile.Children.Clear();
             }
-            origin.Remove(toMove);
+            origin.RemoveImmediatly(toMove);
         }
 
         public override void Animate()

@@ -50,22 +50,21 @@ namespace Wink
 
         protected override bool ValidateAction(Level level)
         {
-            return AbleToHit(Attacker, Defender);
+            return AbleToHit(Attacker, Defender.Tile,Attacker.Reach);
         }
-
-        public static bool AbleToHit(Living att, Living def)
+        /// <summary>
+        /// Checks if the Attacker is able to attackt the Defender. 
+        /// This means the Defenders tile is whithin reach of and visible to the Attacker.
+        /// </summary>
+        /// <param name="att"> Attacking living object</param>
+        /// <param name="def">Defending living object</param>
+        /// <returns>Returns true when both conditions are met</returns>
+        public static bool AbleToHit(Living att, Tile def,int attReach)
         {
-            if (def.Tile.GetSeenBy.ContainsKey(att))
-            {
-                //plus a half tile to get the more natural reach area we discussed (melee can also attack 1 tile diagonaly) 
-
-                // GlobalPositon based
-                //Vector2 delta = Defender.Tile.GlobalPosition - Attacker.Tile.GlobalPosition;
-                //double reach = Tile.TileWidth * Attacker.Reach + Tile.TileWidth/2; 
-
-                //TilePosition based
-                Point delta = def.Tile.TilePosition - att.Tile.TilePosition;
-                double reach = att.Reach + 0.5f;
+            if (def.SeenBy.ContainsKey(att))
+            {                                
+                Point delta = def.TilePosition - att.Tile.TilePosition;
+                double reach = attReach + 0.5f; //plus a half tile to get the more natural reach area we discussed (melee can also attack 1 tile diagonaly)
 
                 double distance = Math.Sqrt(Math.Pow(delta.X, 2) + Math.Pow(delta.Y, 2));
 
