@@ -95,10 +95,6 @@ namespace Wink
             equipmentSlots.Add(new RestrictedItemSlot(typeof(RingEquipment), "inventory/ringSlot", id: "ringSlot1"));
             equipmentSlots.Add(new RestrictedItemSlot(typeof(RingEquipment), "inventory/ringSlot", id: "ringSlot2"));
             equipmentSlots.Add(new RestrictedItemSlot(typeof(HeadEquipment), "inventory/headSlot", id: "headSlot"));
-
-            InitAnimationVariables();
-            LoadAnimations();
-            PlayAnimation("idle");
         }
 
         #region Serialization
@@ -245,9 +241,11 @@ namespace Wink
 
         public override void LoadAnimations()
         {
+            InitAnimationVariables();
             LoadAnimation(idleAnimation, "idle", true);
             LoadAnimation(moveAnimation, "move", true, 0.05f);
             LoadAnimation(dieAnimation, "die", false);
+            PlayAnimation("idle");
         }
 
         /// <summary>
