@@ -10,6 +10,7 @@ namespace Wink
 {
 
     public enum PlayerType { warrior, archer, mage, random }
+    public enum Stat { vitality, strength, dexterity, wisdom, luck, intelligence }
     [Serializable]
     public class Player : Living, IGameObjectContainer, IGUIGameObject
     {
@@ -35,6 +36,7 @@ namespace Wink
             //Inventory
             mouseSlot = new MouseSlot(layer + 11, "mouseSlot");  
             SetupType(playerType);
+            freeStatPoints = 3;
         }
 
         private void PlayerNameTitle()
@@ -289,7 +291,6 @@ namespace Wink
             return mouseSlot.Find(del) ?? base.Find(del);
         }
         
-        public enum Stat { vitality, strength, dexterity, wisdom, luck, intelligence }
 
         public void AddStatPoint(Stat stat)
         {
@@ -387,11 +388,9 @@ namespace Wink
             gui.Remove(gui.Find("playerName" + guid.ToString()));
             if (Id == LocalPlayerName)
             {
-                PlayingGUI gui = GameWorld.Find("PlayingGui") as PlayingGUI;
                 PlayerInventoryAndEquipment pIaE = gui.Inventory;
                 StatScreen pSs = gui.CharacterScreen;
 
-                PlayerInventoryAndEquipment pIaE = gui.Find(obj => obj is PlayerInventoryAndEquipment) as PlayerInventoryAndEquipment;
                 guiState.Add("playerIaEVisibility", pIaE.Visible);
                 guiState.Add("playerIaEPosition", pIaE.Position);
                 guiState.Add("playerSsVisibility", pSs.Visible);

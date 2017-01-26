@@ -72,6 +72,7 @@
     <Compile Include="Events\PickupEvent.cs" />
     <Compile Include="Events\PlayerMoveEvent.cs" />
     <Compile Include="Events\SkillEvent.cs" />
+    <Compile Include="Events\StatIncreaseEvent.cs" />
     <Compile Include="Events\TakenPotionEvent.cs" />
     <Compile Include="GameObjects\Skills\Heal.cs" />
     <Compile Include="GameObjects\Skills\Skill.cs" />
