@@ -8,16 +8,14 @@ namespace Wink
     [Serializable]
     public abstract partial class Living : AnimatedGameObject, ITileObject, IGameObjectContainer, IViewer
     {
-        private int timeleft;
-        private bool startTimer;
-
         protected string idleAnimation, moveAnimation, dieAnimation;
         private string dieSound;
-        
         protected float viewDistance;
-        
-        public InventoryBox Inventory { get { return inventory; } }
         private InventoryBox inventory;
+        
+        public Skill CurrentSkill;
+        private GameObjectList skillList;
+        public GameObjectList SkillList { get { return skillList; } }
 
         #region EquipmentSlots
         // Accessors for all the different equipment slots
@@ -26,17 +24,20 @@ namespace Wink
         {
             get { return equipmentSlots; }
         }
-        private EquipmentSlot Weapon { get { return equipmentSlots.Find("weaponSlot") as EquipmentSlot; } }
-        private EquipmentSlot Body { get { return equipmentSlots.Find("bodySlot") as EquipmentSlot; } }
-        private EquipmentSlot Ring1 { get { return equipmentSlots.Find("ringSlot1") as EquipmentSlot; } }
-        private EquipmentSlot Ring2 { get { return equipmentSlots.Find("ringSlot2") as EquipmentSlot; } }
+        private RestrictedItemSlot Weapon { get { return equipmentSlots.Find("weaponSlot") as RestrictedItemSlot; } }
+        private RestrictedItemSlot Body { get { return equipmentSlots.Find("bodySlot") as RestrictedItemSlot; } }
+        private RestrictedItemSlot Ring1 { get { return equipmentSlots.Find("ringSlot1") as RestrictedItemSlot; } }
+        private RestrictedItemSlot Ring2 { get { return equipmentSlots.Find("ringSlot2") as RestrictedItemSlot; } }
         #endregion
 
+        public InventoryBox Inventory
+        {
+            get { return inventory; }
+        }
         public float ViewDistance
         {
             get { return viewDistance; }
         }
-
         public Tile Tile
         {
             get
@@ -74,27 +75,35 @@ namespace Wink
         public Living(int layer = 0, string id = "", float FOVlength = 8.5f, float scale = 1.0f) : base(layer, id, scale)
         {
             SetStats();
-            //InitAnimation();
-            timeleft = 1000;
             viewDistance = FOVlength;
 
-            GameObjectGrid itemGrid = new GameObjectGrid(3, 6, 0, "");
+            skillList = new GameObjectList ();
+            for (int y = 0; y < 1; y++)
+            {
+                for (int x = 0; x < 10; x++)
+                {
+                    skillList.Add(new RestrictedItemSlot(typeof(Skill), "inventory/slot", id:"skillSlot"+x));
+                }
+            }
+
+            GameObjectGrid itemGrid = new GameObjectGrid(4, 4, 0, "");
             inventory = new InventoryBox(itemGrid);
 
             equipmentSlots = new GameObjectList();
-            equipmentSlots.Add(new EquipmentSlot(typeof(WeaponEquipment), id: "weaponSlot"));
-            equipmentSlots.Add(new EquipmentSlot(typeof(BodyEquipment), id: "bodySlot"));
-            equipmentSlots.Add(new EquipmentSlot(typeof(RingEquipment), id: "ringSlot1"));
-            equipmentSlots.Add(new EquipmentSlot(typeof(RingEquipment), id: "ringSlot2"));
+            equipmentSlots.Add(new RestrictedItemSlot(typeof(WeaponEquipment), "inventory/weaponSlot", id: "weaponSlot"));
+            equipmentSlots.Add(new RestrictedItemSlot(typeof(BodyEquipment), "inventory/bodySlot", id: "bodySlot"));
+            equipmentSlots.Add(new RestrictedItemSlot(typeof(RingEquipment), "inventory/ringSlot", id: "ringSlot1"));
+            equipmentSlots.Add(new RestrictedItemSlot(typeof(RingEquipment), "inventory/ringSlot", id: "ringSlot2"));
+            equipmentSlots.Add(new RestrictedItemSlot(typeof(HeadEquipment), "inventory/headSlot", id: "headSlot"));
+
+            InitAnimationVariables();
+            LoadAnimations();
+            PlayAnimation("idle");
         }
 
         #region Serialization
         public Living(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            //timer and turn
-            timeleft = info.GetInt32("timeleft");
-            startTimer = info.GetBoolean("startTimer");
-
             //animations
             idleAnimation = info.GetString("idleAnimation");
             moveAnimation = info.GetString("moveAnimation");
@@ -104,6 +113,23 @@ namespace Wink
             inventory = info.TryGUIDThenFull<InventoryBox>(context, "inventory");
             equipmentSlots = info.TryGUIDThenFull<GameObjectList>(context, "equipmentSlots");
 
+            if (context.GetVars().GUIDSerialization)
+            {
+                inventory = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("inventoryGUID"))) as InventoryBox;
+                equipmentSlots = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("equipmentSlotsGUID"))) as GameObjectList;
+                skillList = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("skillListGUID"))) as GameObjectList;
+                CurrentSkill = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("CurrentSkillGUID"))) as Skill;
+
+            }
+            else
+            {
+                inventory = info.GetValue("inventory", typeof(InventoryBox)) as InventoryBox;
+                equipmentSlots = info.GetValue("equipmentSlots", typeof(GameObjectList)) as GameObjectList;
+                skillList = info.GetValue("skills", typeof(GameObjectList)) as GameObjectList;
+                CurrentSkill = info.GetValue("CurrentSkill", typeof(Skill)) as Skill;
+            }
+
+            //stats
             manaPoints = info.GetInt32("manaPoints");
             healthPoints = info.GetInt32("healthPoints");
             actionPoints = info.GetInt32("actionPoints");
@@ -116,17 +142,14 @@ namespace Wink
             vitality = info.GetInt32("vitality");
             creatureLevel = info.GetInt32("creatureLevel");
             baseReach = info.GetInt32("baseReach");
+            specialReach = info.GetInt32("specialReach");
             viewDistance = info.GetInt32("viewDistance");
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             base.GetObjectData(info, context);
-
-            // time and turn
-            info.AddValue("timeleft", timeleft);
-            info.AddValue("startTimer", startTimer);
-
+            
             //animations
             info.AddValue("idleAnimation", idleAnimation);
             info.AddValue("moveAnimation", moveAnimation);
@@ -143,7 +166,18 @@ namespace Wink
                 info.AddValue("equipmentSlots", equipmentSlots); 
             else
                 info.AddValue("equipmentSlotsGUID", equipmentSlots.GUID.ToString());
+                info.AddValue("skillListGUID", skillList.GUID.ToString());
+                info.AddValue("CurrentSkillGUID", CurrentSkill.GUID.ToString());
+            }
+            else
+            {
+                info.AddValue("inventory", inventory);
+                info.AddValue("equipmentSlots", equipmentSlots);
+                info.AddValue("skills", skillList);
+                info.AddValue("CurrentSkill", CurrentSkill);
+            }
 
+            //stats
             info.AddValue("manaPoints", manaPoints);
             info.AddValue("healthPoints", healthPoints);
             info.AddValue("actionPoints", actionPoints);
@@ -156,6 +190,7 @@ namespace Wink
             info.AddValue("wisdom", wisdom);
             info.AddValue("luck", luck);
             info.AddValue("baseReach", baseReach);
+            info.AddValue("specialReach", specialReach);
             info.AddValue("viewDistance", viewDistance);
         }
         #endregion
@@ -213,15 +248,10 @@ namespace Wink
 
         protected abstract void DoBehaviour(List<GameObject> changedObjects);
 
-        /// <summary>
-        /// Initializes the animations for the living object
-        /// </summary>
-        protected virtual void InitAnimation(string idleColor)
+        protected abstract void InitAnimationVariables();
+
+        public override void LoadAnimations()
         {
-            //General animations
-            idleAnimation = idleColor;
-            moveAnimation = "empty:64:64:10:DarkBlue";
-            dieAnimation = "empty:64:64:10:LightBlue";
             LoadAnimation(idleAnimation, "idle", true);
             LoadAnimation(moveAnimation, "move", true, 0.05f);
             LoadAnimation(dieAnimation, "die", false);
@@ -232,29 +262,7 @@ namespace Wink
         /// </summary>
         public override void Update(GameTime gameTime)
         {
-            // Call update for the inheritance
             base.Update(gameTime);
-            if (healthPoints <= 0)
-            {   // death
-                startTimer = true;
-                DeathFeedback("die", dieSound);
-                if (startTimer)
-                {
-                    if (timeleft <= 0)
-                        Death();
-                    else
-                        timeleft -= gameTime.TotalGameTime.Seconds;
-                }
-            }
-            else if (healthPoints >= MaxHealth)
-            {   // Make sure health can't exceed max health 
-                healthPoints = MaxHealth;
-            }
-
-            if (manaPoints >= MaxMana)
-            {   // Make sure mana can't exceed max mana
-                manaPoints = MaxMana;
-            }
         }
         
         /// <summary>
@@ -265,7 +273,7 @@ namespace Wink
         {
             Tile oldTile = Tile;
             if (oldTile != null)
-                oldTile.Remove(this);
+                oldTile.RemoveImmediatly(this);
 
             if (!t.PutOnTile(this))
             {
@@ -274,7 +282,7 @@ namespace Wink
             }
             else if (Visible)
             {   // Movement animation
-                // I have been told this has some issues and is therefore turned off
+                // This is oncomplete and therefore turned off
                 //LocalServer.SendToClients(new LivingMoveAnimationEvent(this, t));
             }
         }
@@ -291,6 +299,8 @@ namespace Wink
                 result.AddRange(inventory.FindAll(del));
             if (equipmentSlots != null)
                 result.AddRange(equipmentSlots.FindAll(del));
+            if (skillList != null)
+                result.AddRange(skillList.FindAll(del));
             return result;
         }
 
@@ -316,6 +326,14 @@ namespace Wink
                 GameObject eqResult = equipmentSlots.Find(del); // Find the object matching "del" among the children of equipmentSlots
                 if (eqResult != null)
                     return eqResult;
+            }
+            if (skillList != null)
+            {
+                if (del.Invoke(skillList)) // Check if equipmentSlots fits "del"
+                    return skillList;
+                GameObject slResult = skillList.Find(del); // Find the object matching "del" among the children of equipmentSlots
+                if (slResult != null)
+                    return slResult;
             }
             return null;
         }

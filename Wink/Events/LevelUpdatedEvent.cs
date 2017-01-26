@@ -36,6 +36,7 @@ namespace Wink
 
         public override bool OnClientReceive(LocalClient client)
         {
+            //First, make gui elements store their state in a dictionary.
             Dictionary<Guid, Dictionary<string, object>> guiStates = new Dictionary<Guid, Dictionary<string, object>>();
             if (client.Level != null)
             {
@@ -48,8 +49,11 @@ namespace Wink
                 }
             }
             
+            //Actually update the level.
             client.Level = updatedLevel;
             updatedLevel.InitGUI(null);
+
+            //Now initialise the gui again using the state stored in the dictionaries.
             foreach (GameObject obj in new HashSet<GameObject>(updatedLevel.FindAll(obj => obj is IGUIGameObject)))
             {
                 Dictionary<string, object> guiState;
@@ -58,6 +62,13 @@ namespace Wink
                 (obj as IGUIGameObject).InitGUI(guiState ?? new Dictionary<string, object>());
             }
 
+            //Finally load animations.
+            foreach (GameObject obj in new HashSet<GameObject>(updatedLevel.FindAll(obj => obj is AnimatedGameObject)))
+            {
+                (obj as AnimatedGameObject).LoadAnimations();
+            }
+
+            //And center the camera on the player.
             if (!client.Camera.BoundingBox.Intersects(client.Player.BoundingBox))
                 client.Camera.CenterOn(client.Player);
 

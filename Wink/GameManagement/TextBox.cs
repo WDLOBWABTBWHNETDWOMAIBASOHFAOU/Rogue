@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using Microsoft.Xna.Framework;
 
-class TextBox : GameObjectList
+class TextBox : GameObjectList//questionable is class is usefull, redoing it might be beter than addapting to it
 {
     Random r = new Random();
     Vector2 objPosition;
     Vector2 center;
     Rectangle limitBB;
+
     /// <summary>
     /// Creates a textbox that draws a (small) background box and text string above it. I has a build in streamReader that selects a line out of a txt file.
     /// </summary>
@@ -20,7 +21,6 @@ class TextBox : GameObjectList
     /// <param name="objPositionY">y position of the target object</param>
     /// <param name="textPosition"> the text offset compared to the overlay</param>
     /// <param name="cameraSensitivity"> weather or not the textbox should be sensitive to camera movement</param>
-
     public TextBox(string path, int textPlace, string overlay, string font, float objPositionX, float objPositionY, Vector2 textPosition, int cameraSensitivity) : base(100, "")
     {
         visible = true;

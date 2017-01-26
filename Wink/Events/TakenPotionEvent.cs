@@ -30,7 +30,7 @@ namespace Wink
 
         protected override int Cost
         {
-            get { return Living.BaseActionCost/3; }
+            get { return Living.BaseActionCost / 3; }
         }
 
         public override List<Guid> GetFullySerialized(Level level)
@@ -59,14 +59,10 @@ namespace Wink
             switch (potion.GetPotionType)
             {
                 case PotionType.Health:
-                    if(!(player.Health >= player.MaxHealth))
-                    {
+                    if (player.Health < player.MaxHealth)
                         return true;
-                    }
                     break;
                 case PotionType.Mana:
-                    player.Mana += potion.PotionValue;
-
                     if (!(player.Mana >= player.MaxMana))
                     {
                         return true;

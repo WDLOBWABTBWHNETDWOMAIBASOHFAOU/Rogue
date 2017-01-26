@@ -4,6 +4,7 @@ using System.Runtime.Serialization;
 using System.Diagnostics;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace Wink
 {
@@ -29,26 +30,19 @@ namespace Wink
             get { return new Point(Tile.TileWidth / 2, Tile.TileHeight / 2); }
         }
 
-        public Player(string clientName, int layer,PlayerType playerType, float FOVlength = 8.5f) : base(layer, "player_" + clientName, FOVlength)
+        public Player(string clientName, int layer, PlayerType playerType, float FOVlength = 8.5f) : base(layer, "player_" + clientName, FOVlength)
         {
             //Inventory
             mouseSlot = new MouseSlot(layer + 11, "mouseSlot");  
             SetupType(playerType);
-            InitAnimation(); //not sure if overriden version gets played right without restating
-            PlayerNameTitle();
         }
 
         private void PlayerNameTitle()
         {
-            playerNameTitle = new TextGameObject("Arial26");
+            playerNameTitle = new TextGameObject("Arial26", 1, 0, "playerName" + guid.ToString());
             playerNameTitle.Text = Id.Split('_')[1];
             playerNameTitle.Color = Color.Red;
-            playerNameTitle.Parent = this;
-            int tileWidth = 64;//tiles are not compiled when this is called
-            if (tileWidth < playerNameTitle.Size.X)//anything overlapping the tiles on the right gets cut off, therefore correct so it is size.x is no larget than a tile size
-                { playerNameTitle.scale= tileWidth / playerNameTitle.Size.X; }
-            Vector2 size = playerNameTitle.Size * playerNameTitle.scale;
-            playerNameTitle.Position = position - new Vector2((size.X/2),64+size.Y );
+            playerNameTitle.Position = GlobalPosition - new Vector2((playerNameTitle.Size.X / 2), 64 + playerNameTitle.Size.Y);
         }
 
         private void SetupType(PlayerType ptype)
@@ -60,30 +54,36 @@ namespace Wink
                 ptype = (PlayerType)pTypeValues.GetValue(GameEnvironment.Random.Next(pTypeValues.Length - 1));
             }
 
-            EquipmentSlot weaponslot = EquipmentSlots.Find("weaponSlot") as EquipmentSlot;
-            EquipmentSlot bodyslot = EquipmentSlots.Find("bodySlot") as EquipmentSlot;
-            int EquipmentStartingStenght = 3;
+            RestrictedItemSlot weaponslot = EquipmentSlots.Find("weaponSlot") as RestrictedItemSlot;
+            RestrictedItemSlot bodyslot = EquipmentSlots.Find("bodySlot") as RestrictedItemSlot;
+            int EquipmentStartingStrenght = 3;
 
             ItemSlot slot_0_0 = Inventory.ItemGrid[0, 0] as ItemSlot;
             slot_0_0.ChangeItem(new Potion("empty:64:64:10:Red",PotionType.Health,PotionPower.minor,5));//some starting healt potions
 
+
+            ItemSlot slot_2_2 = Inventory.ItemGrid[2, 2] as ItemSlot;
+            slot_2_2.ChangeItem(new Heal());
+            ItemSlot slot_3_2 = Inventory.ItemGrid[3, 2] as ItemSlot;
+            slot_3_2.ChangeItem(new MagicBolt());
+
             switch (ptype)
             {
                 case PlayerType.warrior:
-                    weaponslot.ChangeItem(new WeaponEquipment(EquipmentStartingStenght, WeaponType.melee));
-                    bodyslot.ChangeItem(new BodyEquipment(EquipmentStartingStenght, 2, ArmorType.heavy));
+                    weaponslot.ChangeItem(new WeaponEquipment(EquipmentStartingStrenght, WeaponType.melee));
+                    bodyslot.ChangeItem(new BodyEquipment(EquipmentStartingStrenght, 2, ArmorType.heavy));
                     SetStats(1, 4, 4, 1, 1, 1, 1);
                     break;
 
                 case PlayerType.archer:
-                    weaponslot.ChangeItem(new WeaponEquipment(EquipmentStartingStenght, WeaponType.bow));
-                    bodyslot.ChangeItem(new BodyEquipment(EquipmentStartingStenght, 2, ArmorType.normal));
+                    weaponslot.ChangeItem(new WeaponEquipment(EquipmentStartingStrenght, WeaponType.bow));
+                    bodyslot.ChangeItem(new BodyEquipment(EquipmentStartingStrenght, 2, ArmorType.normal));
                     SetStats(1, 1, 1, 4, 1, 1, 4);
                     break;
 
                 case PlayerType.mage:
-                    weaponslot.ChangeItem(new WeaponEquipment(EquipmentStartingStenght, WeaponType.staff));
-                    bodyslot.ChangeItem(new BodyEquipment(EquipmentStartingStenght, 2, ArmorType.robes));
+                    weaponslot.ChangeItem(new WeaponEquipment(EquipmentStartingStrenght, WeaponType.staff));
+                    bodyslot.ChangeItem(new BodyEquipment(EquipmentStartingStrenght, 2, ArmorType.robes));
                     SetStats(1, 1, 1, 1, 4, 4, 1);
                     ItemSlot slot_1_0 = Inventory.ItemGrid[1, 0] as ItemSlot;
                     slot_1_0.ChangeItem(new Potion("empty:64:64:10:Blue", PotionType.Mana, PotionPower.minor, 5));//some starting mana potions
@@ -131,13 +131,7 @@ namespace Wink
 
             base.Replace(replacement);
         }
-
-        protected override void InitAnimation(string idleColor = "player")
-        {            
-            base.InitAnimation(idleColor);
-            PlayAnimation("idle");
-        }
-
+        
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
@@ -185,17 +179,104 @@ namespace Wink
             creatureLevel++;
             freeStatPoints = 3;
         }
-        
+
+        protected override void InitAnimationVariables()
+        {
+            idleAnimation = "player";
+            moveAnimation = "empty:64:64:10:DarkBlue";
+            dieAnimation = "empty:64:64:10:LightBlue";
+        }
 
         public override void HandleInput(InputHelper inputHelper)
         {
-            Action onClick = () =>
+            Action onLeftClick = () =>
             {
                 Event e = new EndTurnEvent(this);
                 Server.Send(e);
             };
             if (Tile != null)
-                inputHelper.IfMouseLeftButtonPressedOn(Tile, onClick);
+                inputHelper.IfMouseLeftButtonPressedOn(Tile, onLeftClick);
+
+            Action onRightClick = () =>
+            {
+                SkillEvent SkE = new SkillEvent((GameWorld.Find(Player.LocalPlayerName) as Player), this);
+                Server.Send(SkE);
+            };
+            inputHelper.IfMouseRightButtonPressedOn(this, onRightClick);
+
+            #region SkillSelection
+            if (inputHelper.KeyPressed(Keys.D1))
+            {
+                CurrentSkill = (SkillList.Find("skillSlot0") as RestrictedItemSlot).SlotItem as Skill;
+                ChangedSkillEvent CSK = new ChangedSkillEvent(this, CurrentSkill);
+                Server.Send(CSK);
+            }
+
+            if (inputHelper.KeyPressed(Keys.D2))
+            {
+                CurrentSkill = (SkillList.Find("skillSlot1") as RestrictedItemSlot).SlotItem as Skill;
+                ChangedSkillEvent CSK = new ChangedSkillEvent(this, CurrentSkill);
+                Server.Send(CSK);
+            }
+
+            if (inputHelper.KeyPressed(Keys.D3))
+            {
+                CurrentSkill = (SkillList.Find("skillSlot2") as RestrictedItemSlot).SlotItem as Skill;
+                ChangedSkillEvent CSK = new ChangedSkillEvent(this, CurrentSkill);
+                Server.Send(CSK);
+            }
+
+            if (inputHelper.KeyPressed(Keys.D4))
+            {
+                CurrentSkill = (SkillList.Find("skillSlot3") as RestrictedItemSlot).SlotItem as Skill;
+                ChangedSkillEvent CSK = new ChangedSkillEvent(this, CurrentSkill);
+                Server.Send(CSK);
+            }
+
+            if (inputHelper.KeyPressed(Keys.D5))
+            {
+                CurrentSkill = (SkillList.Find("skillSlot4") as RestrictedItemSlot).SlotItem as Skill;
+                ChangedSkillEvent CSK = new ChangedSkillEvent(this, CurrentSkill);
+                Server.Send(CSK);
+            }
+
+            if (inputHelper.KeyPressed(Keys.D6))
+            {
+                CurrentSkill = (SkillList.Find("skillSlot5") as RestrictedItemSlot).SlotItem as Skill;
+                ChangedSkillEvent CSK = new ChangedSkillEvent(this, CurrentSkill);
+                Server.Send(CSK);
+            }
+
+            if (inputHelper.KeyPressed(Keys.D7))
+            {
+                CurrentSkill = (SkillList.Find("skillSlot6") as RestrictedItemSlot).SlotItem as Skill;
+                ChangedSkillEvent CSK = new ChangedSkillEvent(this, CurrentSkill);
+                Server.Send(CSK);
+            }
+
+            if (inputHelper.KeyPressed(Keys.D8))
+            {
+                CurrentSkill = (SkillList.Find("skillSlot7") as RestrictedItemSlot).SlotItem as Skill;
+                ChangedSkillEvent CSK = new ChangedSkillEvent(this, CurrentSkill);
+                Server.Send(CSK);
+            }
+
+            if (inputHelper.KeyPressed(Keys.D9))
+            {
+                CurrentSkill = (SkillList.Find("skillSlot8") as RestrictedItemSlot).SlotItem as Skill;
+                ChangedSkillEvent CSK = new ChangedSkillEvent(this, CurrentSkill);
+                Server.Send(CSK);
+            }
+
+            if (inputHelper.KeyPressed(Keys.D0))
+            {
+                CurrentSkill = (SkillList.Find("skillSlot9") as RestrictedItemSlot).SlotItem as Skill;
+                ChangedSkillEvent CSK = new ChangedSkillEvent(this, CurrentSkill);
+                Server.Send(CSK);
+            }
+
+            #endregion
+
             base.HandleInput(inputHelper);
         }
 
@@ -248,17 +329,16 @@ namespace Wink
             return result;
         }
 
-        public override void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
-        {
-            base.Draw(gameTime, spriteBatch, camera);
-            playerNameTitle.Draw(gameTime, spriteBatch, camera);   
-        }
-
         public void InitGUI(Dictionary<string, object> guiState)
         {
+            PlayingGUI gui = GameWorld.Find("PlayingGui") as PlayingGUI;
+            PlayerNameTitle();
+            gui.Add(playerNameTitle);
+            int screenWidth = GameEnvironment.Screen.X;
+            int screenHeight = GameEnvironment.Screen.Y;
+
             if (Id == LocalPlayerName)
             {
-                PlayingGUI gui = GameWorld.Find("PlayingGui") as PlayingGUI;
                 SpriteFont textfieldFont = GameEnvironment.AssetManager.GetFont("Arial26");
 
                 const int barX = 150;
@@ -277,7 +357,6 @@ namespace Wink
 
                 //Action Points
                 Bar<Player> apBar = new Bar<Player>(this, p => p.ActionPoints, p => MaxActionPoints, textfieldFont, Color.Yellow, 2, "ActionBar", 0, 2.5f);
-                int screenWidth = GameEnvironment.Screen.X;
                 Vector2 APBarPosition = new Vector2(screenWidth - barX - apBar.Width, HPBarPosition.Y);
                 apBar.Position = new Vector2(APBarPosition.X, APBarPosition.Y);
                 gui.Add(apBar);
@@ -287,24 +366,35 @@ namespace Wink
                 pie.Visible = guiState.ContainsKey("playerIaEVisibility") ? (bool)guiState["playerIaEVisibility"] : false;
                 gui.Add(pie);
 
+                SkillBar skillBar = new SkillBar(SkillList);
+                skillBar.Position = guiState.ContainsKey("skillbarPosition") ? (Vector2)guiState["skillbarPosition"] : new Vector2((screenWidth-skillBar.Width)/2,(gui.Find("TopBar")as SpriteGameObject).Sprite.Height);
+                skillBar.Visible = guiState.ContainsKey("skillBarVisibility") ? (bool)guiState["skillBarVisibility"] : true;
+                gui.Add(skillBar);
+
                 gui.Add(mouseSlot);
             }
         }
 
         public void CleanupGUI(Dictionary<string, object> guiState)
         {
+            PlayingGUI gui = GameWorld.Find("PlayingGui") as PlayingGUI;
+            gui.Remove(gui.Find("playerName" + guid.ToString()));
             if (Id == LocalPlayerName && GameWorld != null)
             {
-                PlayingGUI gui = GameWorld.Find("PlayingGui") as PlayingGUI;
                 PlayerInventoryAndEquipment pIaE = gui.Find(obj => obj is PlayerInventoryAndEquipment) as PlayerInventoryAndEquipment;
                 guiState.Add("playerIaEVisibility", pIaE.Visible);
                 guiState.Add("playerIaEPosition", pIaE.Position);
+
+                SkillBar skillbar = gui.Find(obj=> obj is SkillBar) as SkillBar;
+                guiState.Add("skillBarVisibility", skillbar.Visible);
+                guiState.Add("skillbarPosition", skillbar.Position);
 
                 gui.RemoveImmediatly(gui.Find("HealthBar"));
                 gui.RemoveImmediatly(gui.Find("ManaBar"));
                 gui.RemoveImmediatly(gui.Find("ActionBar"));
                 gui.RemoveImmediatly(pIaE);
                 gui.RemoveImmediatly(mouseSlot);
+                gui.RemoveImmediatly(skillbar);
             }
         }
     }

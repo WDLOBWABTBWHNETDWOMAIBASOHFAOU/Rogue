@@ -14,13 +14,6 @@ public class GameObjectGrid : GameObject, IGameObjectContainer
     public GameObjectGrid(int rows, int columns, int layer = 0, string id = "") : base(layer, id)
     {
         grid = new GameObject[columns, rows];
-        for (int x = 0; x < columns; x++)
-        {
-            for (int y = 0; y < rows; y++)
-            {
-                grid[x, y] = null; //TODO: does this do anything?!
-            }
-        }
     }
 
     #region Serialization

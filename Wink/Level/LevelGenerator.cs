@@ -378,7 +378,7 @@ namespace Wink
                 List<Tile> path = pf.ShortestPath(tf[pair.Item1.X, pair.Item1.Y] as Tile, tf[pair.Item2.X, pair.Item2.Y] as Tile, tile => true);
 
                 Tile t = tf[pair.Item1.X, pair.Item1.Y] as Tile;
-                t.AddDebugTag("ExitConnectionPoint", ":" + pair.Item2.X + "," + pair.Item2.Y);
+                t.AddDebugTag("ExitConnectionPoint", pair.Item2.X + "," + pair.Item2.Y);
                 path.Add(t);
 
                 //Add a floor tile for every tile in the path.
@@ -489,7 +489,7 @@ namespace Wink
                 spawnLocation.PutOnTile(enemy);
             }
             //End test            
-
+           
             //Must be last statement, executed after the Tilefield is done.
             tf.InitSpriteSheetIndexation();
             return tf;

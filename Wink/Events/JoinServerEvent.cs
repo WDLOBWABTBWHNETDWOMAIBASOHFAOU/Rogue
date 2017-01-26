@@ -45,7 +45,7 @@ namespace Wink
 
         public override bool Validate(Level level)
         {
-            //TODO: Implement Validation.
+            //TODO: Implement Validation, whether or not clientName is taken.
             return true;
         }
     }

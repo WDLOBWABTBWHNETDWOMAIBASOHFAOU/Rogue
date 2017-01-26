@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace Wink
 {
     [Serializable]
-    public class EquipmentSlot : ItemSlot
+    public class RestrictedItemSlot : ItemSlot
     {
         private Type equipmentRestriction;
 
@@ -17,7 +17,7 @@ namespace Wink
         /// ItemSlots specificly for items that can be equipped, items that do not match the equipment restriction won't be equipped.
         /// </summary>
         /// <param name="equipmentRestriction"> Specify what type of equipment this slot can hold</param>
-        public EquipmentSlot(Type equipmentRestriction, string assetName = "empty:65:65:10:Green", int layer = 0, string id = "", int sheetIndex = 0, float cameraSensitivity = 0, float scale = 1) : base(assetName, layer, id, sheetIndex, cameraSensitivity, scale)
+        public RestrictedItemSlot(Type equipmentRestriction, string assetName = "empty:65:65:10:Green", int layer = 0, string id = "", int sheetIndex = 0, float cameraSensitivity = 0, float scale = 1) : base(assetName, layer, id, sheetIndex, cameraSensitivity, scale)
         {
             this.equipmentRestriction = equipmentRestriction;
         }

@@ -10,6 +10,7 @@ namespace Wink
     public partial class Level : GameObjectList, IGUIGameObject
     {
         private int levelIndex;
+        string path;
         public int Index
         {
             get { return levelIndex; }
@@ -17,7 +18,15 @@ namespace Wink
 
         public Level(int levelIndex) : base(0, "Level")
         {
-            string path = "Content/Levels/" + levelIndex + ".txt";
+            if(levelIndex % 3 == 0)
+            {
+                path = "Content/Levels/Boss.txt";
+            }
+            else
+            {
+                path = "Content/Levels/" + levelIndex + ".txt";
+            }
+
             if (File.Exists(path))
             {
                 LoadTiles(path);
@@ -36,12 +45,14 @@ namespace Wink
         public Level(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             levelIndex = info.GetInt32("levelIndex");
+            path = info.GetString("path");
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             base.GetObjectData(info, context);
             info.AddValue("levelIndex", levelIndex);
+            info.AddValue("path", path);
         }
         #endregion
 
@@ -71,7 +82,7 @@ namespace Wink
             //Putting the item one layer above the inventory box
             int inventoryLayer = layer + 1;
             int itemLayer = layer + 2;
-            
+
             #region ENEMY CODE (test)
             for (int i = 0; i < 2; i++)
             {
@@ -83,7 +94,6 @@ namespace Wink
                 startTile.PutOnTile(testEnemy);
             }
             #endregion
-
             tf.InitSpriteSheetIndexation();
     }
 
@@ -110,6 +120,8 @@ namespace Wink
                     return LoadEndTile();
                 case 't':
                     return LoadTrapTile("spr_trap", TileType.Floor, x, y);
+                case 'B':
+                    return LoadBossTile();
                 default:
                     return LoadWTFTile();
             }
@@ -168,7 +180,7 @@ namespace Wink
         {
             floorNumber++;
             Tile t = LoadFloorTile("", assetName);
-            Container chest = new Container("empty:64:64:10:Brown",levelIndex);
+            Container chest = new Container("empty:64:64:10:Brown", levelIndex);
             for (int x = 0; x < chest.IBox.ItemGrid.Columns; x++)
             {
                 for (int y = 0; y < chest.IBox.ItemGrid.Rows; y++)
@@ -222,6 +234,14 @@ namespace Wink
             Tile t = LoadFloorTile();
             End end = new End(t, levelIndex, this);
             t.PutOnTile(end);
+            return t;
+        }
+
+        private Tile LoadBossTile()
+        {
+            Tile t = LoadFloorTile();
+            Boss boss = new Boss(levelIndex);
+            t.PutOnTile(boss);
             return t;
         }
 

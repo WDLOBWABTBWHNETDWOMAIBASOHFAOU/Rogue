@@ -45,6 +45,7 @@ namespace Wink
 
         public override bool Validate(Level level)
         {
+            //If player's action points are already 0, manually ending turn is not necessary.
             return player.ActionPoints > 0;
         }
     }
