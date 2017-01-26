@@ -4,7 +4,6 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
 using Microsoft.Xna.Framework;
 using System.Runtime.Serialization;
-using System;
 
 namespace Wink
 {

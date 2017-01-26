@@ -25,28 +25,6 @@ namespace Wink
                 }
             }
 
-            ////TODO: test items REMOVE BEFORE RELEASE!!!
-            //ItemSlot testItem = itemGrid.Get(0, 0) as ItemSlot;
-            //testItem.ChangeItem( new TestItem());
-            //ItemSlot testItem2 = itemGrid.Get(0, 1) as ItemSlot;
-            //testItem2.ChangeItem(new TestItem());
-
-            //ItemSlot testItem3 = itemGrid.Get(1, 1) as ItemSlot;
-            //testItem3.ChangeItem(new WeaponEquipment(2));
-
-            //ItemSlot testItem4 = itemGrid.Get(2, 1) as ItemSlot;
-            //testItem4.ChangeItem(new BodyEquipment(2,5));
-
-            //ItemSlot testItem5 = itemGrid[2, 0] as ItemSlot;
-            //testItem5.ChangeItem(new RingEquipment(200, EffectType.Intelligence, "empty:65:65:10:Purple", id: "Intelligence Test Ring"));
-
-            //ItemSlot testItem6 = itemGrid[1, 0] as ItemSlot;
-            //testItem6.ChangeItem(new RingEquipment("empty:65:65:10:Green", 0, reflectEffect: true, id: "Reflecting Test Ring"));
-
-            //ItemSlot testItem7 = itemGrid[3, 0] as ItemSlot;
-            //testItem7.ChangeItem(new Potion(5,25));
-            //// end test items
-
             Add(itemGrid);
         }
 

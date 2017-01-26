@@ -38,6 +38,20 @@ namespace Wink
             return (0.5 * hitChance / dodgeChance) > GameEnvironment.Random.NextDouble();
         }
 
+        public void Special_Attack(Living target, double mod)
+        {
+            int damageDealt = 0;
+            DamageType damageType = DamageType.Magic;
+
+            double modifier = mod;
+
+            double attackValue = Special_AttackValue(modifier);
+            damageDealt = target.TakeDamage(attackValue, damageType);
+
+            if (damageDealt > 0) ProcessReflection(damageDealt, target);
+            // Display attack missed (feedback on fail)
+        }
+
         /// <summary>
         /// Check if damage should be reflected
         /// </summary>

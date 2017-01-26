@@ -62,8 +62,10 @@ namespace Wink
                         return true;
                     break;
                 case PotionType.Mana:
-                    if (player.Mana < player.MaxMana)
+                    if (!(player.Mana >= player.MaxMana))
+                    {
                         return true;
+                    }
                     break;
                 default:
                     throw new Exception("invalid potionType");

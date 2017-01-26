@@ -70,6 +70,7 @@
     <Compile Include="Events\ActionEvent.cs" />
     <Compile Include="Events\AnimationEvent.cs" />
     <Compile Include="Events\AttackEvent.cs" />
+    <Compile Include="Events\ChangedSkillEvent.cs" />
     <Compile Include="Events\ClientPlayerType.cs" />
     <Compile Include="Events\DeathAnimationEvent.cs" />
     <Compile Include="Events\DoorEvent.cs" />
@@ -83,11 +84,15 @@
     <Compile Include="Events\NextLevelEvent.cs" />
     <Compile Include="Events\PickupEvent.cs" />
     <Compile Include="Events\PlayerMoveEvent.cs" />
+    <Compile Include="Events\SkillEvent.cs" />
     <Compile Include="Events\TakenPotionEvent.cs" />
-    <Compile Include="GameObjects\Door.cs" />
-    <Compile Include="GameObjects\End.cs" />
+    <Compile Include="GameObjects\Skills\Heal.cs" />
+    <Compile Include="GameObjects\Skills\Skill.cs" />
+    <Compile Include="GameObjects\Skills\MagicBolt.cs" />
+    <Compile Include="GameObjects\TileObjects\Door.cs" />
+    <Compile Include="GameObjects\TileObjects\End.cs" />
     <Compile Include="GameManagement\IGameObjectContainer.cs" />
-    <Compile Include="GameObjects\IGUIGameObject.cs" />
+    <Compile Include="GameObjects\TileObjects\IGUIGameObject.cs" />
     <Compile Include="GameObjects\InventorySystem\Container.cs" />
     <Compile Include="GameObjects\InventorySystem\EquipmentSlot.cs" />
     <Compile Include="GameObjects\InventorySystem\ItemSlot.cs" />
@@ -97,13 +102,15 @@
     <Compile Include="GameObjects\Items\Potion.cs" />
     <Compile Include="GameObjects\Items\RingEquipment.cs" />
     <Compile Include="GameObjects\Items\WeaponEquipment.cs" />
-    <Compile Include="GameObjects\LootSack.cs" />
+    <Compile Include="GameObjects\Living\Boss.cs" />
+    <Compile Include="GameObjects\InventorySystem\LootSack.cs" />
     <Compile Include="GUI\ShadowCasting\ICellGrid.cs" />
     <Compile Include="GUI\ShadowCasting\IViewer.cs" />
-    <Compile Include="GUI\ShadowCasting\ShadowCasting.cs" />
-    <Compile Include="GameObjects\Trap.cs" />
+    <Compile Include="GameObjects\TileObjects\Trap.cs" />
     <Compile Include="GUI\PlayerInventoryAndEquipment.cs" />
-    <Compile Include="GameObjects\ITileObject.cs" />
+    <Compile Include="GameObjects\TileObjects\ITileObject.cs" />
+    <Compile Include="GUI\ShadowCasting\ShadowCasting.cs" />
+    <Compile Include="GUI\SkillBar.cs" />
     <Compile Include="GUI\TrackingTextGameObject.cs" />
     <Compile Include="GUI\Window.cs" />
     <Compile Include="Level\LevelGenerator.cs" />
@@ -124,8 +131,8 @@
     <Compile Include="GameObjects\Living\LivingStatsSystem.cs" />
     <Compile Include="GameObjects\Living\Player.cs" />
     <Compile Include="GameObjects\InventorySystem\MouseSlot.cs" />
-    <Compile Include="GameObjects\Tile.cs" />
-    <Compile Include="GameObjects\TileField.cs" />
+    <Compile Include="GameObjects\TileObjects\Tile.cs" />
+    <Compile Include="GameObjects\TileObjects\TileField.cs" />
     <Compile Include="GUI\Bar.cs" />
     <Compile Include="GUI\PlayingGUI.cs" />
     <Compile Include="GUI\PlayingMenu.cs" />
@@ -195,10 +202,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\Bosses\Boss.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\Levels\1.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\Levels\4.txt">
+    <Content Include="Content\Levels\Boss.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Icon.ico" />

@@ -6,8 +6,12 @@ namespace Wink
 {
     class Bar<T> : GameObjectList where T : GameObject
     {
+        /// <summary>
+        /// This class represents the inside of the bar that changes size depending on a value.
+        /// </summary>
         private class InnerBar : SpriteGameObject 
         {
+            //The object that the value is retrieved from and the Func that retrieves it.
             private Tuple<T, Func<T, int>> valueTuple;
             private Tuple<T, Func<T, int>> maxValue;
             
@@ -38,6 +42,7 @@ namespace Wink
             public override void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
             {
                 float w = Value / (float)MaxValue;
+                //Draw the innerbar with the width corresponding to the value.
                 sprite.Draw(spriteBatch, origin, scale, DrawColor, new Rectangle(GlobalPosition.ToPoint() - (cameraSensitivity * camera.GlobalPosition).ToPoint(), new Point((int)(w * Width), (int)(8 * scale))));
             }
         }

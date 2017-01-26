@@ -4,6 +4,7 @@ using System.Runtime.Serialization;
 using System.Diagnostics;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace Wink
 {
@@ -53,30 +54,36 @@ namespace Wink
                 ptype = (PlayerType)pTypeValues.GetValue(GameEnvironment.Random.Next(pTypeValues.Length - 1));
             }
 
-            EquipmentSlot weaponslot = EquipmentSlots.Find("weaponSlot") as EquipmentSlot;
-            EquipmentSlot bodyslot = EquipmentSlots.Find("bodySlot") as EquipmentSlot;
-            int EquipmentStartingStenght = 3;
+            RestrictedItemSlot weaponslot = EquipmentSlots.Find("weaponSlot") as RestrictedItemSlot;
+            RestrictedItemSlot bodyslot = EquipmentSlots.Find("bodySlot") as RestrictedItemSlot;
+            int EquipmentStartingStrenght = 3;
 
             ItemSlot slot_0_0 = Inventory.ItemGrid[0, 0] as ItemSlot;
             slot_0_0.ChangeItem(new Potion("empty:64:64:10:Red",PotionType.Health,PotionPower.minor,5));//some starting healt potions
 
+
+            ItemSlot slot_2_2 = Inventory.ItemGrid[2, 2] as ItemSlot;
+            slot_2_2.ChangeItem(new Heal());
+            ItemSlot slot_3_2 = Inventory.ItemGrid[3, 2] as ItemSlot;
+            slot_3_2.ChangeItem(new MagicBolt());
+
             switch (ptype)
             {
                 case PlayerType.warrior:
-                    weaponslot.ChangeItem(new WeaponEquipment(EquipmentStartingStenght, WeaponType.melee));
-                    bodyslot.ChangeItem(new BodyEquipment(EquipmentStartingStenght, 2, ArmorType.heavy));
+                    weaponslot.ChangeItem(new WeaponEquipment(EquipmentStartingStrenght, WeaponType.melee));
+                    bodyslot.ChangeItem(new BodyEquipment(EquipmentStartingStrenght, 2, ArmorType.heavy));
                     SetStats(1, 4, 4, 1, 1, 1, 1);
                     break;
 
                 case PlayerType.archer:
-                    weaponslot.ChangeItem(new WeaponEquipment(EquipmentStartingStenght, WeaponType.bow));
-                    bodyslot.ChangeItem(new BodyEquipment(EquipmentStartingStenght, 2, ArmorType.normal));
+                    weaponslot.ChangeItem(new WeaponEquipment(EquipmentStartingStrenght, WeaponType.bow));
+                    bodyslot.ChangeItem(new BodyEquipment(EquipmentStartingStrenght, 2, ArmorType.normal));
                     SetStats(1, 1, 1, 4, 1, 1, 4);
                     break;
 
                 case PlayerType.mage:
-                    weaponslot.ChangeItem(new WeaponEquipment(EquipmentStartingStenght, WeaponType.staff));
-                    bodyslot.ChangeItem(new BodyEquipment(EquipmentStartingStenght, 2, ArmorType.robes));
+                    weaponslot.ChangeItem(new WeaponEquipment(EquipmentStartingStrenght, WeaponType.staff));
+                    bodyslot.ChangeItem(new BodyEquipment(EquipmentStartingStrenght, 2, ArmorType.robes));
                     SetStats(1, 1, 1, 1, 4, 4, 1);
                     ItemSlot slot_1_0 = Inventory.ItemGrid[1, 0] as ItemSlot;
                     slot_1_0.ChangeItem(new Potion("empty:64:64:10:Blue", PotionType.Mana, PotionPower.minor, 5));//some starting mana potions
@@ -110,6 +117,7 @@ namespace Wink
                 info.AddValue("mouseSlotGUID", mouseSlot.GUID.ToString());
             else
                 info.AddValue("mouseSlot", mouseSlot);
+
             info.AddValue("playerNameTitle",playerNameTitle);
             info.AddValue("exp", exp);
             info.AddValue("freeStatPoints", freeStatPoints);
@@ -182,13 +190,94 @@ namespace Wink
 
         public override void HandleInput(InputHelper inputHelper)
         {
-            Action onClick = () =>
+            Action onLeftClick = () =>
             {
                 Event e = new EndTurnEvent(this);
                 Server.Send(e);
             };
             if (Tile != null)
-                inputHelper.IfMouseLeftButtonPressedOn(Tile, onClick);
+                inputHelper.IfMouseLeftButtonPressedOn(Tile, onLeftClick);
+
+            Action onRightClick = () =>
+            {
+                SkillEvent SkE = new SkillEvent((GameWorld.Find(Player.LocalPlayerName) as Player), this);
+                Server.Send(SkE);
+            };
+            inputHelper.IfMouseRightButtonPressedOn(this, onRightClick);
+
+            #region SkillSelection
+            if (inputHelper.KeyPressed(Keys.D1))
+            {
+                CurrentSkill = (SkillList.Find("skillSlot0") as RestrictedItemSlot).SlotItem as Skill;
+                ChangedSkillEvent CSK = new ChangedSkillEvent(this, CurrentSkill);
+                Server.Send(CSK);
+            }
+
+            if (inputHelper.KeyPressed(Keys.D2))
+            {
+                CurrentSkill = (SkillList.Find("skillSlot1") as RestrictedItemSlot).SlotItem as Skill;
+                ChangedSkillEvent CSK = new ChangedSkillEvent(this, CurrentSkill);
+                Server.Send(CSK);
+            }
+
+            if (inputHelper.KeyPressed(Keys.D3))
+            {
+                CurrentSkill = (SkillList.Find("skillSlot2") as RestrictedItemSlot).SlotItem as Skill;
+                ChangedSkillEvent CSK = new ChangedSkillEvent(this, CurrentSkill);
+                Server.Send(CSK);
+            }
+
+            if (inputHelper.KeyPressed(Keys.D4))
+            {
+                CurrentSkill = (SkillList.Find("skillSlot3") as RestrictedItemSlot).SlotItem as Skill;
+                ChangedSkillEvent CSK = new ChangedSkillEvent(this, CurrentSkill);
+                Server.Send(CSK);
+            }
+
+            if (inputHelper.KeyPressed(Keys.D5))
+            {
+                CurrentSkill = (SkillList.Find("skillSlot4") as RestrictedItemSlot).SlotItem as Skill;
+                ChangedSkillEvent CSK = new ChangedSkillEvent(this, CurrentSkill);
+                Server.Send(CSK);
+            }
+
+            if (inputHelper.KeyPressed(Keys.D6))
+            {
+                CurrentSkill = (SkillList.Find("skillSlot5") as RestrictedItemSlot).SlotItem as Skill;
+                ChangedSkillEvent CSK = new ChangedSkillEvent(this, CurrentSkill);
+                Server.Send(CSK);
+            }
+
+            if (inputHelper.KeyPressed(Keys.D7))
+            {
+                CurrentSkill = (SkillList.Find("skillSlot6") as RestrictedItemSlot).SlotItem as Skill;
+                ChangedSkillEvent CSK = new ChangedSkillEvent(this, CurrentSkill);
+                Server.Send(CSK);
+            }
+
+            if (inputHelper.KeyPressed(Keys.D8))
+            {
+                CurrentSkill = (SkillList.Find("skillSlot7") as RestrictedItemSlot).SlotItem as Skill;
+                ChangedSkillEvent CSK = new ChangedSkillEvent(this, CurrentSkill);
+                Server.Send(CSK);
+            }
+
+            if (inputHelper.KeyPressed(Keys.D9))
+            {
+                CurrentSkill = (SkillList.Find("skillSlot8") as RestrictedItemSlot).SlotItem as Skill;
+                ChangedSkillEvent CSK = new ChangedSkillEvent(this, CurrentSkill);
+                Server.Send(CSK);
+            }
+
+            if (inputHelper.KeyPressed(Keys.D0))
+            {
+                CurrentSkill = (SkillList.Find("skillSlot9") as RestrictedItemSlot).SlotItem as Skill;
+                ChangedSkillEvent CSK = new ChangedSkillEvent(this, CurrentSkill);
+                Server.Send(CSK);
+            }
+
+            #endregion
+
             base.HandleInput(inputHelper);
         }
 
@@ -246,6 +335,8 @@ namespace Wink
             PlayingGUI gui = GameWorld.Find("PlayingGui") as PlayingGUI;
             PlayerNameTitle();
             gui.Add(playerNameTitle);
+            int screenWidth = GameEnvironment.Screen.X;
+            int screenHeight = GameEnvironment.Screen.Y;
 
             if (Id == LocalPlayerName)
             {
@@ -267,7 +358,6 @@ namespace Wink
 
                 //Action Points
                 Bar<Player> apBar = new Bar<Player>(this, p => p.ActionPoints, p => MaxActionPoints, textfieldFont, Color.Yellow, 2, "ActionBar", 0, 2.5f);
-                int screenWidth = GameEnvironment.Screen.X;
                 Vector2 APBarPosition = new Vector2(screenWidth - barX - apBar.Width, HPBarPosition.Y);
                 apBar.Position = new Vector2(APBarPosition.X, APBarPosition.Y);
                 gui.Add(apBar);
@@ -276,6 +366,11 @@ namespace Wink
                 pie.Position = guiState.ContainsKey("playerIaEPosition") ? (Vector2)guiState["playerIaEPosition"] : new Vector2(screenWidth - pie.Width, 300);
                 pie.Visible = guiState.ContainsKey("playerIaEVisibility") ? (bool)guiState["playerIaEVisibility"] : false;
                 gui.Add(pie);
+
+                SkillBar skillBar = new SkillBar(SkillList);
+                skillBar.Position = guiState.ContainsKey("skillbarPosition") ? (Vector2)guiState["skillbarPosition"] : new Vector2((screenWidth-skillBar.Width)/2,(gui.Find("TopBar")as SpriteGameObject).Sprite.Height);
+                skillBar.Visible = guiState.ContainsKey("skillBarVisibility") ? (bool)guiState["skillBarVisibility"] : true;
+                gui.Add(skillBar);
 
                 gui.Add(mouseSlot);
             }
@@ -291,11 +386,16 @@ namespace Wink
                 guiState.Add("playerIaEVisibility", pIaE.Visible);
                 guiState.Add("playerIaEPosition", pIaE.Position);
 
+                SkillBar skillbar = gui.Find(obj=> obj is SkillBar) as SkillBar;
+                guiState.Add("skillBarVisibility", skillbar.Visible);
+                guiState.Add("skillbarPosition", skillbar.Position);
+
                 gui.RemoveImmediatly(gui.Find("HealthBar"));
                 gui.RemoveImmediatly(gui.Find("ManaBar"));
                 gui.RemoveImmediatly(gui.Find("ActionBar"));
                 gui.RemoveImmediatly(pIaE);
                 gui.RemoveImmediatly(mouseSlot);
+                gui.RemoveImmediatly(skillbar);
             }
         }
     }

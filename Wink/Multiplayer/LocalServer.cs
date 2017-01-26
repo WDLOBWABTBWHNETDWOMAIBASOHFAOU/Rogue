@@ -72,13 +72,16 @@ namespace Wink
 
         public void SetupLevel(int levelIndex)
         {
+            //Make the level.
             level = new Level(levelIndex);
             
+            //Create a player for each connected client.
             for (int i = 0; i < Clients.Count; i++)
             {
                 Client c = Clients[i];
                 Player player = new Player(c.ClientName, Level.Layer, c.playerType);
                 
+                //Put the player on a startTile.
                 (Level.Find("StartTile" + (i + 1)) as Tile).PutOnTile(player);
                 player.ComputeVisibility();
             }
