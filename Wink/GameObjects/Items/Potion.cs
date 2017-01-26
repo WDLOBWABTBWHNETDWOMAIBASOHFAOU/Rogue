@@ -146,7 +146,7 @@ namespace Wink
         {
             base.ItemInfo(caller);
 
-            TextGameObject PotionText = new TextGameObject("Arial12", 0, 0, "PotionText." + this);
+            TextGameObject PotionText = new TextGameObject("Arial12", cameraSensitivity: 0, layer: 0, id: "PotionText." + this);
 
             PotionText.Text = "Restores " + potionValue + " points of ";
             switch (potionType)

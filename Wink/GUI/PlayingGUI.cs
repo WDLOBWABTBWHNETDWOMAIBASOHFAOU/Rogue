@@ -7,15 +7,18 @@ namespace Wink
     public class PlayingGUI : GameObjectList
     {
         private PlayingMenu playingMenu;
-        private PlayerInventoryAndEquipment Inventory
+        public PlayerInventoryAndEquipment Inventory
         {
             get { return Find(obj => obj is PlayerInventoryAndEquipment) as PlayerInventoryAndEquipment; }
         }
-        private SkillBar SkillBar
-        {
-            get { return Find(obj => obj is SkillBar) as SkillBar; }
-        }
+        private SkillBar SkillBar { get { return Find(obj => obj is SkillBar) as SkillBar; } }
 
+        public StatScreen CharacterScreen
+        {
+            
+            get { return Find(obj => obj is StatScreen) as StatScreen; }
+        }
+        
         public PlayingGUI()
         {
             Layer = 1;
@@ -38,7 +41,7 @@ namespace Wink
             floor.Position = new Vector2((screen.X - floor.Width) / 2, 7.5f);
             Add(floor);
 
-            TextGameObject floorNumber = new TextGameObject("Arial36", 0, 2, "FloorNumber");
+            TextGameObject floorNumber = new TextGameObject("Arial36", cameraSensitivity: 0, layer: 2, id: "FloorNumber");
             Add(floorNumber);
         }
 
@@ -54,6 +57,11 @@ namespace Wink
             if (inputHelper.KeyPressed(Keys.I))
             {
                 Inventory.Visible = !Inventory.Visible;
+            }
+
+            if (inputHelper.KeyPressed(Keys.C))
+            {
+                CharacterScreen.Visible = !CharacterScreen.Visible;
             }
 
             if (inputHelper.KeyPressed(Keys.V))

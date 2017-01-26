@@ -44,7 +44,7 @@ class TextBox : GameObjectList//questionable is class is usefull, redoing it mig
         center = new Vector2(textFrame.Width / 2, textFrame.Height);
         Position = objPosition - center;
         
-        TextGameObject text = new TextGameObject(font, cameraSensitivity, 2);
+        TextGameObject text = new TextGameObject(font, cameraSensitivity: cameraSensitivity, layer: 2);
 
         text.Text = textLines[textLines.Count - textPlace];
         text.Position = textPosition;

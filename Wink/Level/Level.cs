@@ -18,13 +18,11 @@ namespace Wink
 
         public Level(int levelIndex) : base(0, "Level")
         {
-            if(levelIndex % 3 == 0)
+            path = "Content/Levels/" + levelIndex + ".txt";
+
+            if(levelIndex % 3 == 0)//for now to repeat boss
             {
-                path = "Content/Levels/Boss.txt";
-            }
-            else
-            {
-                path = "Content/Levels/" + levelIndex + ".txt";
+                path = "Content/Levels/3.txt";
             }
 
             if (File.Exists(path))
@@ -167,12 +165,8 @@ namespace Wink
 
         private Tile LoadTrapTile(string name, TileType tileType, int x, int y)
         {
-            Tile t = new Tile("empty:65:65:10:DarkGreen", tileType);
+            Tile t = new Trap("spr_floor");
             t.Passable = true;
-
-            //DarkRed for development testing, should have same or simular sprite as the tile in final version
-            Trap trap = new Trap("empty:65:65:10:DarkRed");
-            t.PutOnTile(trap);
             return t;
         }
         
