@@ -38,6 +38,7 @@ namespace Wink
         {
             get { return viewDistance; }
         }
+
         public Tile Tile
         {
             get
