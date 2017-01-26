@@ -52,6 +52,7 @@ namespace Wink
         {
             return AbleToHit(Attacker, Defender.Tile,Attacker.Reach);
         }
+
         /// <summary>
         /// Checks if the Attacker is able to attackt the Defender. 
         /// This means the Defenders tile is whithin reach of and visible to the Attacker.

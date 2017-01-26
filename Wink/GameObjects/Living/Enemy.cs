@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 
 namespace Wink
@@ -59,6 +60,7 @@ namespace Wink
                 Array eTypeValues = Enum.GetValues(typeof(EnemyType));
                 etype = (EnemyType)eTypeValues.GetValue(GameEnvironment.Random.Next(eTypeValues.Length - 1));
             }
+
             id += " : " + etype.ToString();
             int eLvl = GameEnvironment.Random.Next(1,floorNumber);
             int weaponChance = 15 * floorNumber; // higher chance the deeper you go
@@ -148,6 +150,12 @@ namespace Wink
 
         public override void Death()
         {
+            List<Player> playerList = (GameWorld.FindAll(p => p is Player).Cast<Player>().ToList());
+            foreach (Player p in playerList)
+            {
+                p.ReciveExp(0, this);
+            }
+
             //Drop equipment/loot, remove itself from world, etc
             Tile tile = Tile;
             if (tile != null)
@@ -155,6 +163,7 @@ namespace Wink
 
             LootSack ls = new LootSack(this);
             tile.PutOnTile(ls);
+
 
             base.Death();
         }
@@ -248,7 +257,7 @@ namespace Wink
         public void InitGUI(Dictionary<string, object> guiState)
         {
             SpriteFont textfieldFont = GameEnvironment.AssetManager.GetFont("Arial26");
-            hpBar = new Bar<Enemy>(this, e => e.Health, e => e.MaxHealth, textfieldFont, Color.Red, 2, "HealthBar" + guid.ToString(), 1.0f, 1f, false);
+            hpBar = new Bar<Enemy>(this, e => e.Health, e => e.MaxHealth, textfieldFont, Color.Red, "", 2, "HealthBar" + guid.ToString(), 1.0f, 1f, false);
             (GameWorld.Find("PlayingGui") as PlayingGUI).Add(hpBar);
             hpBar.Visible = !Tile.Visible ? false : Visible;
             hpBar.Position = Tile.GlobalPosition - new Vector2(Math.Abs(Tile.Width - hpBar.Width) / 2, 0);

@@ -16,6 +16,7 @@ namespace Wink
             this.player = player;
         }
 
+        #region Serialization
         public ActionEvent(SerializationInfo info, StreamingContext context)
         {
             player = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("playerGUID"))) as Player;
@@ -26,6 +27,7 @@ namespace Wink
             //This event can only be sent from client to server, therefore GUID based serialization is used.
             info.AddValue("playerGUID", player.GUID.ToString());
         }
+        #endregion
 
         public sealed override bool OnServerReceive(LocalServer server)
         {

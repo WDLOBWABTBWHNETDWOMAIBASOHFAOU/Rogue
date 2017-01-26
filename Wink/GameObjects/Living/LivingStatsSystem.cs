@@ -8,12 +8,14 @@
         #region stats
         protected int manaPoints, healthPoints, actionPoints, baseAttack, baseArmor, vitality, strength, dexterity, wisdom, luck, intelligence, creatureLevel, baseReach, specialReach;
 
+        public int CreatureLevel { get { return creatureLevel; } }
         public int Dexterity { get { return Ringbonus(EffectType.Dexterity, dexterity); } }
         public int Intelligence { get { return Ringbonus(EffectType.Intelligence, intelligence); } }
         public int Strength { get { return Ringbonus(EffectType.Strength, strength); } }
         public int Wisdom { get { return Ringbonus(EffectType.Wisdom, wisdom); } }
         public int Vitality { get { return Ringbonus(EffectType.Vitality, vitality); } }
         public int Luck { get { return Ringbonus(EffectType.Luck, luck); } }
+        public float statAverige { get { return (Strength + Dexterity + Intelligence + Wisdom + Vitality + Luck) / 6; } }
         public int ActionPoints
         {
             get
@@ -184,7 +186,7 @@
         /// returns DodgeChance based on stats
         /// </summary>
         /// <returns></returns>
-        protected double DodgeChance()
+        public double DodgeChance()
         {
             double dodgeChance = CalculateValue(0.3, Luck, 0.01);
             return dodgeChance;
