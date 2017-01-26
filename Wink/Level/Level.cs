@@ -165,7 +165,7 @@ namespace Wink
 
         private Tile LoadTrapTile(string name, TileType tileType, int x, int y)
         {
-            Tile t = new Trap("spr_floor");
+            Tile t = new Trap("empty:64:64:10:Red");
             t.Passable = true;
             return t;
         }
