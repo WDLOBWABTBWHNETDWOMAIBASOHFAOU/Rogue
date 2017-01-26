@@ -34,8 +34,8 @@ namespace Wink
         {
             double hitChance = HitChance(); // Example: 0.7
             double dodgeChance = target.DodgeChance(); // Example: 0.7
-            System.Console.WriteLine(0.5 * hitChance / dodgeChance);
-            return (0.5 * hitChance / dodgeChance) > GameEnvironment.Random.NextDouble();
+            System.Console.WriteLine((0.5/(System.Math.Sqrt(creatureLevel+target.creatureLevel))) * (hitChance / dodgeChance));
+            return (0.5 / (System.Math.Sqrt(creatureLevel + target.creatureLevel))) * (hitChance / dodgeChance) > GameEnvironment.Random.NextDouble();
         }
 
         public void Special_Attack(Living target, double mod)
