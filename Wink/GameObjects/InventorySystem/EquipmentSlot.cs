@@ -23,7 +23,7 @@ namespace Wink
         }
 
         #region Serialization
-        public EquipmentSlot(SerializationInfo info, StreamingContext context) : base(info, context)
+        public RestrictedItemSlot(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             equipmentRestriction = Type.GetType(info.GetString("equipmentRestriction"));
         }

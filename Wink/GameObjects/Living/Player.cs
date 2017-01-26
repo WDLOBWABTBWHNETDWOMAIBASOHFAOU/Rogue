@@ -204,73 +204,74 @@ namespace Wink
             };
             inputHelper.IfMouseRightButtonPressedOn(this, onRightClick);
 
+            //TODO: make this less copypasty
             #region SkillSelection
             if (inputHelper.KeyPressed(Keys.D1))
             {
-                CurrentSkill = (SkillList.Find("skillSlot0") as RestrictedItemSlot).SlotItem as Skill;
+                currentSkill = (SkillList.Find("skillSlot0") as RestrictedItemSlot).SlotItem as Skill;
                 ChangedSkillEvent CSK = new ChangedSkillEvent(this, CurrentSkill);
                 Server.Send(CSK);
             }
 
             if (inputHelper.KeyPressed(Keys.D2))
             {
-                CurrentSkill = (SkillList.Find("skillSlot1") as RestrictedItemSlot).SlotItem as Skill;
+                currentSkill = (SkillList.Find("skillSlot1") as RestrictedItemSlot).SlotItem as Skill;
                 ChangedSkillEvent CSK = new ChangedSkillEvent(this, CurrentSkill);
                 Server.Send(CSK);
             }
 
             if (inputHelper.KeyPressed(Keys.D3))
             {
-                CurrentSkill = (SkillList.Find("skillSlot2") as RestrictedItemSlot).SlotItem as Skill;
+                currentSkill = (SkillList.Find("skillSlot2") as RestrictedItemSlot).SlotItem as Skill;
                 ChangedSkillEvent CSK = new ChangedSkillEvent(this, CurrentSkill);
                 Server.Send(CSK);
             }
 
             if (inputHelper.KeyPressed(Keys.D4))
             {
-                CurrentSkill = (SkillList.Find("skillSlot3") as RestrictedItemSlot).SlotItem as Skill;
+                currentSkill = (SkillList.Find("skillSlot3") as RestrictedItemSlot).SlotItem as Skill;
                 ChangedSkillEvent CSK = new ChangedSkillEvent(this, CurrentSkill);
                 Server.Send(CSK);
             }
 
             if (inputHelper.KeyPressed(Keys.D5))
             {
-                CurrentSkill = (SkillList.Find("skillSlot4") as RestrictedItemSlot).SlotItem as Skill;
+                currentSkill = (SkillList.Find("skillSlot4") as RestrictedItemSlot).SlotItem as Skill;
                 ChangedSkillEvent CSK = new ChangedSkillEvent(this, CurrentSkill);
                 Server.Send(CSK);
             }
 
             if (inputHelper.KeyPressed(Keys.D6))
             {
-                CurrentSkill = (SkillList.Find("skillSlot5") as RestrictedItemSlot).SlotItem as Skill;
+                currentSkill = (SkillList.Find("skillSlot5") as RestrictedItemSlot).SlotItem as Skill;
                 ChangedSkillEvent CSK = new ChangedSkillEvent(this, CurrentSkill);
                 Server.Send(CSK);
             }
 
             if (inputHelper.KeyPressed(Keys.D7))
             {
-                CurrentSkill = (SkillList.Find("skillSlot6") as RestrictedItemSlot).SlotItem as Skill;
+                currentSkill = (SkillList.Find("skillSlot6") as RestrictedItemSlot).SlotItem as Skill;
                 ChangedSkillEvent CSK = new ChangedSkillEvent(this, CurrentSkill);
                 Server.Send(CSK);
             }
 
             if (inputHelper.KeyPressed(Keys.D8))
             {
-                CurrentSkill = (SkillList.Find("skillSlot7") as RestrictedItemSlot).SlotItem as Skill;
+                currentSkill = (SkillList.Find("skillSlot7") as RestrictedItemSlot).SlotItem as Skill;
                 ChangedSkillEvent CSK = new ChangedSkillEvent(this, CurrentSkill);
                 Server.Send(CSK);
             }
 
             if (inputHelper.KeyPressed(Keys.D9))
             {
-                CurrentSkill = (SkillList.Find("skillSlot8") as RestrictedItemSlot).SlotItem as Skill;
+                currentSkill = (SkillList.Find("skillSlot8") as RestrictedItemSlot).SlotItem as Skill;
                 ChangedSkillEvent CSK = new ChangedSkillEvent(this, CurrentSkill);
                 Server.Send(CSK);
             }
 
             if (inputHelper.KeyPressed(Keys.D0))
             {
-                CurrentSkill = (SkillList.Find("skillSlot9") as RestrictedItemSlot).SlotItem as Skill;
+                currentSkill = (SkillList.Find("skillSlot9") as RestrictedItemSlot).SlotItem as Skill;
                 ChangedSkillEvent CSK = new ChangedSkillEvent(this, CurrentSkill);
                 Server.Send(CSK);
             }

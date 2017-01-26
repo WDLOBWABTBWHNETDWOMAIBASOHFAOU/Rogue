@@ -60,7 +60,7 @@ namespace Wink
                 changed.Add(oldTile);
 
             changed.Add(player);
-            server.SendToAllClients(new LevelChangedEvent(changed));
+            LocalServer.SendToClients(new LevelChangedEvent(changed));
         }
 
         protected override bool ValidateAction(Level level)

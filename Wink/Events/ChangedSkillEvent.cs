@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Wink
 {
@@ -33,12 +30,9 @@ namespace Wink
         }
         #endregion
 
-        public override bool GUIDSerialization
+        public override List<Guid> GetFullySerialized(Level level)
         {
-            get
-            {
-                return true;
-            }
+            return null; //Irrelevant because client->server
         }
 
         public override bool OnClientReceive(LocalClient client)
@@ -48,13 +42,13 @@ namespace Wink
 
         public override bool OnServerReceive(LocalServer server)
         {
-            if(player.CurrentSkill != newSelectedSkill)
+            if (player.CurrentSkill != newSelectedSkill)
             {
-                player.CurrentSkill = newSelectedSkill;
+                //player.CurrentSkill = newSelectedSkill;
             }
             else
             {
-                player.CurrentSkill = null;
+                //player.CurrentSkill = null;
             }
 
             return true;
@@ -62,7 +56,7 @@ namespace Wink
 
         public override bool Validate(Level level)
         {
-            if(newSelectedSkill != null)
+            if (newSelectedSkill != null)
             {
                 return true;
             }

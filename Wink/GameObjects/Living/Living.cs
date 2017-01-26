@@ -12,10 +12,17 @@ namespace Wink
         private string dieSound;
         protected float viewDistance;
         private InventoryBox inventory;
-        
-        public Skill CurrentSkill;
+
+        protected Skill currentSkill;
+        public Skill CurrentSkill
+        {
+            get { return currentSkill;  }
+        }
+
         private GameObjectList skillList;
-        public GameObjectList SkillList { get { return skillList; } }
+        public GameObjectList SkillList {
+            get { return skillList; }
+        }
 
         #region EquipmentSlots
         // Accessors for all the different equipment slots
@@ -112,23 +119,9 @@ namespace Wink
 
             inventory = info.TryGUIDThenFull<InventoryBox>(context, "inventory");
             equipmentSlots = info.TryGUIDThenFull<GameObjectList>(context, "equipmentSlots");
-
-            if (context.GetVars().GUIDSerialization)
-            {
-                inventory = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("inventoryGUID"))) as InventoryBox;
-                equipmentSlots = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("equipmentSlotsGUID"))) as GameObjectList;
-                skillList = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("skillListGUID"))) as GameObjectList;
-                CurrentSkill = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("CurrentSkillGUID"))) as Skill;
-
-            }
-            else
-            {
-                inventory = info.GetValue("inventory", typeof(InventoryBox)) as InventoryBox;
-                equipmentSlots = info.GetValue("equipmentSlots", typeof(GameObjectList)) as GameObjectList;
-                skillList = info.GetValue("skills", typeof(GameObjectList)) as GameObjectList;
-                CurrentSkill = info.GetValue("CurrentSkill", typeof(Skill)) as Skill;
-            }
-
+            skillList = info.TryGUIDThenFull<GameObjectList>(context, "skillList");
+            currentSkill = info.TryGUIDThenFull<Skill>(context, "currentSkill");
+            
             //stats
             manaPoints = info.GetInt32("manaPoints");
             healthPoints = info.GetInt32("healthPoints");
@@ -166,16 +159,16 @@ namespace Wink
                 info.AddValue("equipmentSlots", equipmentSlots); 
             else
                 info.AddValue("equipmentSlotsGUID", equipmentSlots.GUID.ToString());
-                info.AddValue("skillListGUID", skillList.GUID.ToString());
-                info.AddValue("CurrentSkillGUID", CurrentSkill.GUID.ToString());
-            }
+
+            if (v.FullySerializeEverything || v.FullySerialized.Contains(skillList.GUID))
+                info.AddValue("skillList", skillList);
             else
-            {
-                info.AddValue("inventory", inventory);
-                info.AddValue("equipmentSlots", equipmentSlots);
-                info.AddValue("skills", skillList);
-                info.AddValue("CurrentSkill", CurrentSkill);
-            }
+                info.AddValue("skillListGUID", skillList.GUID.ToString());
+
+            if (currentSkill == null || v.FullySerializeEverything || v.FullySerialized.Contains(currentSkill.GUID))
+                info.AddValue("currentSkill", currentSkill);
+            else
+                info.AddValue("currentSkillGUID", currentSkill.GUID.ToString());
 
             //stats
             info.AddValue("manaPoints", manaPoints);
