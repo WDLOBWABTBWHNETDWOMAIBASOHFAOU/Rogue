@@ -200,7 +200,10 @@ namespace Wink
 
         public void ComputeVisibilities()
         {
-            foreach (Living l in livingObjects)
+            foreach (Player p in Players)
+                p.ComputeVisibility();
+
+            foreach (Living l in livingObjects.Where(l => !(l is Player)))
             {
                 bool seenByPlayer = false;
                 foreach (Player p in Players)
