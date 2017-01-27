@@ -44,6 +44,10 @@ namespace Wink
             get { return level.Index; }
         }
 
+        private List<Player> Players
+        {
+            get { return livingObjects.Where(l => l is Player).Cast<Player>().ToList(); }
+        }
         public LocalServer ()
         {
             changedObjects = new List<GameObject>();
@@ -197,7 +201,19 @@ namespace Wink
         public void ComputeVisibilities()
         {
             foreach (Living l in livingObjects)
-                l.ComputeVisibility();
+            {
+                bool seenByPlayer = false;
+                foreach (Player p in Players)
+                {
+                    if (l.Tile.SeenBy.ContainsKey(p))
+                    {
+                        seenByPlayer = true;
+                        break;
+                    }
+                }
+                if (seenByPlayer)
+                    l.ComputeVisibility();
+            }
         }
 
         private void UpdateTurn()
