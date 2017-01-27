@@ -37,7 +37,6 @@ namespace Wink
             {
                 level = value;
                 InitLivingObjects();
-                SendOutUpdatedLevelIf();
             }
         }
         public int LevelIndex
@@ -184,7 +183,7 @@ namespace Wink
                 Client currentClient = Clients.Find(client => client.Player.GUID == livingObjects[turnIndex].GUID);
                 ProcessActionEvents(currentClient);
                 livingObjects[turnIndex].ComputeVisibility();
-                SendOutUpdatedLevelIf();
+                //SendOutUpdatedLevelIf();
             }
             else
             {
@@ -211,7 +210,8 @@ namespace Wink
             {
                 turnIndex = (turnIndex + 1) % livingObjects.Count;
                 livingObjects[turnIndex].ActionPoints = Living.MaxActionPoints;
-                changedObjects.Add(livingObjects[turnIndex]);
+                if (livingObjects[turnIndex] is Player)
+                    SendToAllClients(new LevelChangedEvent(new List<GameObject>() { livingObjects[turnIndex] }));
             }
         }
         

@@ -16,7 +16,7 @@ namespace Wink
     }
 
     [Serializable]
-    public class Tile : SpriteGameObject, IGameObjectContainer
+    public class Tile : SpriteGameObject, IGameObjectContainer, IDeserializationCallback
     {
         public const int TileWidth = 64;
         public const int TileHeight = 64;
@@ -79,31 +79,57 @@ namespace Wink
         }
 
         #region Serialization
+        private Dictionary<string, float> tempSeenBy;
+        private ILocal tempLocal;
         public Tile(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             type = (TileType)info.GetValue("type", typeof(TileType));
             passable = info.GetBoolean("passable");
-            onTile = info.GetValue("onTile", typeof(GameObjectList)) as GameObjectList;
+            onTile = info.TryGUIDThenFull<GameObjectList>(context, "onTile");
 
-            seenBy = new Dictionary<Living, float>();
-            ILocal local = context.GetVars().Local;
-            Dictionary<string, float> seenByGUIDBased = info.GetValue("seenBy", typeof(Dictionary<string, float>)) as Dictionary<string, float>;
-            foreach (KeyValuePair<string, float> kvp in seenByGUIDBased)
-                seenBy.Add(local.GetGameObjectByGUID(Guid.Parse(kvp.Key)) as Living, kvp.Value);
+            tempLocal = context.GetVars().Local;
+            tempSeenBy = info.GetValue("seenByGUIDs", typeof(Dictionary<string, float>)) as Dictionary<string, float>;
+            seenBy = info.GetValue("seenBy", typeof(Dictionary<Living, float>)) as Dictionary<Living, float>;
+        }
 
+        public void OnDeserialization(object sender)
+        {
+            tempSeenBy.OnDeserialization(sender);
+            seenBy.OnDeserialization(sender);
+            foreach (KeyValuePair<string, float> kvp in tempSeenBy)
+            {
+                Living l = (tempLocal.GetGameObjectByGUID(Guid.Parse(kvp.Key)) ??
+                    onTile.Find(obj => obj.GUID == Guid.Parse(kvp.Key))) as Living;
+                seenBy.Add(l, kvp.Value);
+            }
+            
+            tempSeenBy = null;
+            tempLocal = null;
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
+            SerializationHelper.Variables v = context.GetVars();
             info.AddValue("type", type);
             info.AddValue("passable", passable);
-            info.AddValue("onTile", onTile);
 
+            if (v.FullySerializeEverything || v.FullySerialized.Contains(onTile.GUID))
+                info.AddValue("onTile", onTile);
+            else
+                info.AddValue("onTileGUID", OnTile.GUID.ToString());
+
+            //Serialization of seenBy is split up so only Living objects that need to be fully serialized are.
             Dictionary<string, float> guidBasedSeenBy = new Dictionary<string, float>();
+            Dictionary<Living, float> fullSeenBy = new Dictionary<Living, float>();
             foreach (KeyValuePair<Living, float> kvp in seenBy)
-                guidBasedSeenBy.Add(kvp.Key.GUID.ToString(), kvp.Value);
-
-            info.AddValue("seenBy", guidBasedSeenBy);
+            {
+                if (v.FullySerializeEverything || v.FullySerialized.Contains(kvp.Key.GUID))
+                    fullSeenBy.Add(kvp.Key, kvp.Value);
+                else
+                    guidBasedSeenBy.Add(kvp.Key.GUID.ToString(), kvp.Value);
+            }
+            info.AddValue("seenBy", fullSeenBy);
+            info.AddValue("seenByGUIDs", guidBasedSeenBy);
             base.GetObjectData(info, context);
         }
         #endregion

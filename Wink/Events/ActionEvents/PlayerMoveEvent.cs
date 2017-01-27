@@ -52,8 +52,8 @@ namespace Wink
             player.ComputeVisibility();
             AddVisibleTiles(server.Level, changedObjects);
 
-            changedObjects.Add(oldTile);
-            changedObjects.Add(player);
+            changedObjects.Add(oldTile.OnTile);
+            changedObjects.Add(player.Tile.OnTile);
         }
 
         protected override bool ValidateAction(Level level)
