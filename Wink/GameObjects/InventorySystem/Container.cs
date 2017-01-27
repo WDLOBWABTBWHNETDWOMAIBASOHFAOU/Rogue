@@ -157,7 +157,7 @@ namespace Wink
                 bool withinReach = dx <= Tile.TileWidth && dy <= Tile.TileHeight;
                 if (withinReach)
                 {
-                    //if(clickCount == 0)
+                    //if (clickCount == 0)
                     //{
                     //    InitContents(floorNumber);
                     //}

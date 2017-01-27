@@ -48,9 +48,18 @@ namespace Wink
 
         public override bool OnServerReceive(LocalServer server)
         {
+            List<GameObject> changed = new List<GameObject>();
+
+            if (item != null)
+                changed.Add(item);
+            if (player.MouseSlot.Item != null)
+                changed.Add(player.MouseSlot.Item);
+
             player.MouseSlot.AddTo(item, target);
-            server.ChangedObjects.Add(item);
-            server.ChangedObjects.Add(target);
+
+            changed.Add(target);
+            changed.Add(player.MouseSlot);
+            LocalServer.SendToClients(new LevelChangedEvent(changed));
             return true;
         }
 

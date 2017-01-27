@@ -35,10 +35,26 @@ namespace Wink
             return null; //Irrelevant because client->server
         }
 
+        protected void AddVisibleTiles(Level level, Living living, HashSet<GameObject> changedObjects)
+        {
+            List<GameObject> vision = level.FindAll(obj => obj is Tile && (obj as Tile).SeenBy.ContainsKey(living));
+            foreach (GameObject go in vision)
+                changedObjects.Add(go);
+        }
+
+        protected void AddVisibleTiles(Level level, HashSet<GameObject> changedObjects)
+        {
+            AddVisibleTiles(level, player, changedObjects);
+        }
+
         public sealed override bool OnServerReceive(LocalServer server)
         {
-            DoAction(server);
+            HashSet<GameObject> changed = new HashSet<GameObject>();
+            DoAction(server, changed);
             player.ActionPoints -= Cost;
+
+            changed.Add(player);
+            LocalServer.SendToClients(new LevelChangedEvent(changed));
             return true;
         }
         
@@ -53,6 +69,6 @@ namespace Wink
         }
 
         protected abstract bool ValidateAction(Level level);
-        protected abstract void DoAction(LocalServer server);
+        protected abstract void DoAction(LocalServer server, HashSet<GameObject> changedObjects);
     }
 }

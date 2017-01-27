@@ -38,20 +38,17 @@ namespace Wink
             get { return Living.BaseActionCost; }
         }
 
-        public override List<Guid> GetFullySerialized(Level level)
-        {
-            return null; //Irrelevant because client->server
-        }
-
-        protected override void DoAction(LocalServer server)
+        protected override void DoAction(LocalServer server, HashSet<GameObject> changedObjects)
         {
             Attacker.Attack(Defender);
+            changedObjects.Add(Defender);
         }
 
         protected override bool ValidateAction(Level level)
         {
-            return AbleToHit(Attacker, Defender.Tile,Attacker.Reach);
+            return AbleToHit(Attacker, Defender.Tile, Attacker.Reach);
         }
+
         /// <summary>
         /// Checks if the Attacker is able to attackt the Defender. 
         /// This means the Defenders tile is whithin reach of and visible to the Attacker.
@@ -59,7 +56,7 @@ namespace Wink
         /// <param name="att"> Attacking living object</param>
         /// <param name="def">Defending living object</param>
         /// <returns>Returns true when both conditions are met</returns>
-        public static bool AbleToHit(Living att, Tile def,int attReach)
+        public static bool AbleToHit(Living att, Tile def, int attReach)
         {
             if (def.SeenBy.ContainsKey(att))
             {                                

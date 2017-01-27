@@ -20,7 +20,8 @@ namespace Wink
         }
 
         private GameObjectList skillList;
-        public GameObjectList SkillList {
+        public GameObjectList SkillList
+        {
             get { return skillList; }
         }
 

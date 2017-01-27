@@ -39,13 +39,13 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Events\ActionEvent.cs" />
+    <Compile Include="Events\ActionEvents\ActionEvent.cs" />
     <Compile Include="Events\AnimationEvent.cs" />
-    <Compile Include="Events\AttackEvent.cs" />
+    <Compile Include="Events\ActionEvents\AttackEvent.cs" />
     <Compile Include="Events\ChangedSkillEvent.cs" />
     <Compile Include="Events\ClientPlayerType.cs" />
     <Compile Include="Events\DeathAnimationEvent.cs" />
-    <Compile Include="Events\DoorEvent.cs" />
+    <Compile Include="Events\ActionEvents\DoorEvent.cs" />
     <Compile Include="Events\EndTurnEvent.cs" />
     <Compile Include="Events\Event.cs" />
     <Compile Include="Events\JoinedServerEvent.cs" />
@@ -55,9 +55,9 @@
     <Compile Include="Events\LivingMoveAnimationEvent.cs" />
     <Compile Include="Events\NextLevelEvent.cs" />
     <Compile Include="Events\PickupEvent.cs" />
-    <Compile Include="Events\PlayerMoveEvent.cs" />
-    <Compile Include="Events\SkillEvent.cs" />
-    <Compile Include="Events\TakenPotionEvent.cs" />
+    <Compile Include="Events\ActionEvents\PlayerMoveEvent.cs" />
+    <Compile Include="Events\ActionEvents\SkillEvent.cs" />
+    <Compile Include="Events\ActionEvents\TakenPotionEvent.cs" />
     <Compile Include="GameObjects\Skills\Heal.cs" />
     <Compile Include="GameObjects\Skills\Skill.cs" />
     <Compile Include="GameObjects\Skills\MagicBolt.cs" />
@@ -66,7 +66,7 @@
     <Compile Include="GameManagement\IGameObjectContainer.cs" />
     <Compile Include="GameObjects\TileObjects\IGUIGameObject.cs" />
     <Compile Include="GameObjects\InventorySystem\Container.cs" />
-    <Compile Include="GameObjects\InventorySystem\EquipmentSlot.cs" />
+    <Compile Include="GameObjects\InventorySystem\RestrictedItemSlot.cs" />
     <Compile Include="GameObjects\InventorySystem\ItemSlot.cs" />
     <Compile Include="GameObjects\Items\BodyEquipment.cs" />
     <Compile Include="GameObjects\Items\Equipment.cs" />

@@ -30,11 +30,6 @@ namespace Wink
         }
         #endregion
 
-        public override List<Guid> GetFullySerialized(Level level)
-        {
-            return null; //Irrelevant because client->server
-        }
-
         protected override int Cost
         {
             get
@@ -43,7 +38,7 @@ namespace Wink
             }
         }
 
-        protected override void DoAction(LocalServer server)
+        protected override void DoAction(LocalServer server, HashSet<GameObject> changedObjects)
         {
             player.CurrentSkill.DoSkill(player, target as Living, target as Tile);
         }

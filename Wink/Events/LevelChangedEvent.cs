@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 
 namespace Wink
@@ -12,6 +13,11 @@ namespace Wink
         public LevelChangedEvent(List<GameObject> changedObjects) : base()
         {
             this.changedObjects = changedObjects;
+        }
+
+        public LevelChangedEvent(HashSet<GameObject> changedObjects) : base()
+        {
+            this.changedObjects = changedObjects.ToList();
         }
 
         #region Serialization

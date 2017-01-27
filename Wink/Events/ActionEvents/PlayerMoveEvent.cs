@@ -29,11 +29,6 @@ namespace Wink
         }
         #endregion
 
-        public override List<Guid> GetFullySerialized(Level level)
-        {
-            return null; //Irrelevant because client->server
-        }
-
         protected override int Cost
         {
             get
@@ -48,25 +43,24 @@ namespace Wink
             }
         }
 
-        protected override void DoAction(LocalServer server)
+        protected override void DoAction(LocalServer server, HashSet<GameObject> changedObjects)
         {
             Tile oldTile = player.Tile;
 
+            AddVisibleTiles(server.Level, changedObjects);
             player.MoveTo(tile);
             player.ComputeVisibility();
+            AddVisibleTiles(server.Level, changedObjects);
 
-            List<GameObject> changed = server.Level.FindAll(obj => obj is Tile && (obj as Tile).SeenBy.ContainsKey(player));
-            if (!changed.Contains(oldTile))
-                changed.Add(oldTile);
-
-            changed.Add(player);
-            LocalServer.SendToClients(new LevelChangedEvent(changed));
+            changedObjects.Add(oldTile);
+            changedObjects.Add(player);
         }
 
         protected override bool ValidateAction(Level level)
         {
             if (player.Tile == null)
                 return false;
+
             int dx = (int)Math.Abs(player.Tile.Position.X - tile.Position.X);
             int dy = (int)Math.Abs(player.Tile.Position.Y - tile.Position.Y);
 

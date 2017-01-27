@@ -38,14 +38,10 @@ namespace Wink
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             SerializationHelper.Variables v = context.GetVars();
-            if (v.FullySerializeEverything || v.FullySerialized.Contains(slotItem.GUID))
-            {
+            if (slotItem == null || v.FullySerializeEverything || v.FullySerialized.Contains(slotItem.GUID))
                 info.AddValue("slotItem", slotItem);
-            }
             else
-            {
                 info.AddValue("slotItemGUID", slotItem.GUID.ToString());
-            }
 
             info.AddValue("containsPrev", containsPrev);
             base.GetObjectData(info, context);
@@ -62,20 +58,15 @@ namespace Wink
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
-            if (slotItem != null)
-            {
-                if (slotItem.stackCount <= 0)
-                    slotItem = null;
-            }
+            if (slotItem != null && slotItem.stackCount <= 0)
+                slotItem = null;
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
         {
             base.Draw(gameTime, spriteBatch, camera);
             if (slotItem != null)
-            {
                 slotItem.Draw(gameTime, spriteBatch, camera);
-            }
         }
 
         public override void HandleInput(InputHelper inputHelper)

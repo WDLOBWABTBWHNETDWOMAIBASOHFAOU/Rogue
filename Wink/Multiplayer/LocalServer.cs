@@ -169,19 +169,6 @@ namespace Wink
             }
         }
 
-        public void SendOutLevelChanges()
-        {
-            if (changedObjects.Count > 0)
-            {
-                LevelChangedEvent e = new LevelChangedEvent(changedObjects);
-                foreach (Client c in Clients)
-                {
-                    //c.Send(e);
-                }
-                changedObjects.Clear();
-            }
-        }
-
         public override void Update(GameTime gameTime)
         {
             //First we update the level so all update methods in all gameobjects get called.
@@ -206,7 +193,6 @@ namespace Wink
             }
             
             UpdateTurn();
-            //SendOutLevelChanges();
         }
 
         public void ComputeVisibilities()

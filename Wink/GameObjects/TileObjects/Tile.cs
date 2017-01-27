@@ -35,7 +35,6 @@ namespace Wink
         {
             get { return seenBy; }
         }
-
         public GameObjectList OnTile
         {
             get { return onTile; }
@@ -85,7 +84,13 @@ namespace Wink
             type = (TileType)info.GetValue("type", typeof(TileType));
             passable = info.GetBoolean("passable");
             onTile = info.GetValue("onTile", typeof(GameObjectList)) as GameObjectList;
-            seenBy = info.GetValue("seenBy", typeof(Dictionary<Living, float>)) as Dictionary<Living, float>;
+
+            seenBy = new Dictionary<Living, float>();
+            ILocal local = context.GetVars().Local;
+            Dictionary<string, float> seenByGUIDBased = info.GetValue("seenBy", typeof(Dictionary<string, float>)) as Dictionary<string, float>;
+            foreach (KeyValuePair<string, float> kvp in seenByGUIDBased)
+                seenBy.Add(local.GetGameObjectByGUID(Guid.Parse(kvp.Key)) as Living, kvp.Value);
+
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
@@ -93,7 +98,12 @@ namespace Wink
             info.AddValue("type", type);
             info.AddValue("passable", passable);
             info.AddValue("onTile", onTile);
-            info.AddValue("seenBy", seenBy);
+
+            Dictionary<string, float> guidBasedSeenBy = new Dictionary<string, float>();
+            foreach (KeyValuePair<Living, float> kvp in seenBy)
+                guidBasedSeenBy.Add(kvp.Key.GUID.ToString(), kvp.Value);
+
+            info.AddValue("seenBy", guidBasedSeenBy);
             base.GetObjectData(info, context);
         }
         #endregion
@@ -255,8 +265,7 @@ namespace Wink
                     SkillEvent SkE = new SkillEvent(player, this);
                     Server.Send(SkE);
                 };
-
-
+                
                 inputHelper.IfMouseLeftButtonPressedOn(this, onLeftClick);
             }
 

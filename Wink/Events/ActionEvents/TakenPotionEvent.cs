@@ -33,12 +33,7 @@ namespace Wink
             get { return Living.BaseActionCost / 3; }
         }
 
-        public override List<Guid> GetFullySerialized(Level level)
-        {
-            return null; //Irrelevant because client->server
-        }
-
-        protected override void DoAction(LocalServer server)
+        protected override void DoAction(LocalServer server, HashSet<GameObject> changedObjects)
         {
             potion.stackCount--;
             switch (potion.GetPotionType)

@@ -23,7 +23,10 @@ namespace Wink
         private TextGameObject playerNameTitle;
 
         private MouseSlot mouseSlot;
-        public MouseSlot MouseSlot { get { return mouseSlot; } }
+        public MouseSlot MouseSlot
+        {
+            get { return mouseSlot; }
+        }
         
         public override Point PointInTile
         {
@@ -59,7 +62,7 @@ namespace Wink
             int EquipmentStartingStrenght = 3;
 
             ItemSlot slot_0_0 = Inventory.ItemGrid[0, 0] as ItemSlot;
-            slot_0_0.ChangeItem(new Potion("empty:64:64:10:Red",PotionType.Health,PotionPower.minor,5));//some starting healt potions
+            slot_0_0.ChangeItem(new Potion("empty:64:64:10:Red", PotionType.Health, PotionPower.minor, 5));//some starting healt potions
 
 
             ItemSlot slot_2_2 = Inventory.ItemGrid[2, 2] as ItemSlot;
@@ -127,8 +130,11 @@ namespace Wink
         public override void Replace(GameObject replacement)
         {
             if (mouseSlot != null && mouseSlot.GUID == replacement.GUID)
+            {
                 mouseSlot = replacement as MouseSlot;
-
+                InitMouseSlot();
+            }
+            
             base.Replace(replacement);
         }
         
@@ -148,9 +154,9 @@ namespace Wink
         /// </summary>
         /// <param name="expGained"></param>
         /// <param name="killedEnemy"></param>
-        public void ReciveExp(int expGained, Enemy killedEnemy = null)
+        public void ReceiveExp(int expGained, Enemy killedEnemy = null)
         {
-            if(killedEnemy != null)
+            if (killedEnemy != null)
             {
                 int expmod = 100;
                 float statAverige = (killedEnemy.Strength + killedEnemy.Dexterity + killedEnemy.Intelligence + killedEnemy.Wisdom + killedEnemy.Vitality + killedEnemy.Luck) / 6;
@@ -330,6 +336,12 @@ namespace Wink
             return result;
         }
 
+        private void InitMouseSlot()
+        {
+            PlayingGUI gui = GameWorld.Find("PlayingGui") as PlayingGUI;
+            gui.Add(mouseSlot);
+        }
+
         public void InitGUI(Dictionary<string, object> guiState)
         {
             PlayingGUI gui = GameWorld.Find("PlayingGui") as PlayingGUI;
@@ -372,7 +384,7 @@ namespace Wink
                 skillBar.Visible = guiState.ContainsKey("skillBarVisibility") ? (bool)guiState["skillBarVisibility"] : true;
                 gui.Add(skillBar);
 
-                gui.Add(mouseSlot);
+                InitMouseSlot();
             }
         }
 
