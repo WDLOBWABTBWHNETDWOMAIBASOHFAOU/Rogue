@@ -56,8 +56,8 @@ namespace Wink
             if (guid == Guid.Empty || Level == null)
                 return null;
 
-            if (new HashSet<GameObject>(Level.FindAll(o => o.GUID == guid)).Count > 1)
-                throw new Exception("!");
+            //if (new HashSet<GameObject>(Level.FindAll(o => o.GUID == guid)).Count > 1)
+            //    throw new Exception("!");
 
             GameObject obj = Level.Find(o => o.GUID == guid);
             return obj;
