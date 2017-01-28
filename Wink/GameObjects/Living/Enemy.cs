@@ -159,53 +159,29 @@ namespace Wink
             base.Death();
         }
 
-        protected override void DoBehaviour(List<GameObject> changedObjects)
+        protected override void DoBehaviour(HashSet<GameObject> changedObjects)
         {
-            GoTo(changedObjects, GameWorld.Find(Player.LocalPlayerName) as Player);
-        }
-
-        /// <summary>
-        /// Pathfind towards a given player
-        /// </summary>
-        /// <param name="player">The player to target with Pathfinding</param>
-        public virtual void GoTo(List<GameObject> changedObjects, Player player)
-        {
-            TileField tf = GameWorld.Find("TileField") as TileField;
+            //TODO: replace by closest player.
+            Player player = GameWorld.Find(Player.LocalPlayerName) as Player;
 
             if (player.Tile.SeenBy.ContainsKey(this))
             {
-                bool ableToHit = AttackEvent.AbleToHit(this, player.Tile,this.Reach);
+                bool ableToHit = AttackEvent.AbleToHit(this, player.Tile, Reach);
                 if (ableToHit)
                 {
                     Attack(player);
+                    changedObjects.Add(player);
 
                     int cost = BaseActionCost;
-                    if((EquipmentSlots.Find("bodySlot") as RestrictedItemSlot).SlotItem != null)
+                    if ((EquipmentSlots.Find("bodySlot") as RestrictedItemSlot).SlotItem != null)
                     {
-                        cost =(int)(cost * ((EquipmentSlots.Find("bodySlot") as RestrictedItemSlot).SlotItem as BodyEquipment).WalkCostMod);
+                        cost = (int)(cost * ((EquipmentSlots.Find("bodySlot") as RestrictedItemSlot).SlotItem as BodyEquipment).WalkCostMod);
                     }
                     actionPoints -= cost;
-                    changedObjects.Add(player);
                 }
                 else
                 {
-                    PathFinder pf = new PathFinder(tf);
-                    List<Tile> path = pf.ShortestPath(Tile, player.Tile);
-                    // TODO?:(assuming there are tiles that cannot be walked over but can be fired over)
-                    // check if there is a path to a spot that can hit the player (move closer water to fire over it)
-                    if (path.Count > 0)
-                    {
-                        changedObjects.Add(this);
-                        changedObjects.Add(Tile);
-                        changedObjects.Add(path[0]);
-
-                        MoveTo(path[0]);
-                        actionPoints -= BaseActionCost;
-                    }
-                    else
-                    {
-                        Idle();
-                    }
+                    GoTo(changedObjects, player);
                 }
             }
             else
@@ -214,10 +190,38 @@ namespace Wink
             }
         }
 
+        /// <summary>
+        /// Pathfind towards a given player
+        /// </summary>
+        /// <param name="player">The player to target with Pathfinding</param>
+        public virtual void GoTo(HashSet<GameObject> changedObjects, Player player)
+        {
+            TileField tf = GameWorld.Find("TileField") as TileField;
+            PathFinder pf = new PathFinder(tf);
+
+            List<Tile> path = pf.ShortestPath(Tile, player.Tile);
+            // TODO?:(assuming there are tiles that cannot be walked over but can be fired over)
+            // check if there is a path to a spot that can hit the player (move closer water to fire over it)
+            if (path.Count > 0)
+            {
+                changedObjects.Add(this);
+                changedObjects.Add(Tile.OnTile);
+                changedObjects.Add(path[0].OnTile);
+
+                MoveTo(path[0]);
+                actionPoints -= BaseActionCost;
+            }
+            else
+            {//No path possible.
+                Idle();
+            }
+        }
+
         private void Idle()
         {
             //TODO: implement idle behaviour (seeing the player part done)
-            actionPoints=0;//if this is reached the enemy has no other options than to skip its turn (reduces number of GoTo loops executed compared to actionpoints--;)
+            //If this is reached the enemy has no other options than to skip its turn.
+            actionPoints = 0;
         }
         
         public override void HandleInput(InputHelper inputHelper)

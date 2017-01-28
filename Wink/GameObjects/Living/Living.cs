@@ -222,9 +222,9 @@ namespace Wink
         /// Do behavior until action points run out
         /// </summary>
         /// <returns>All objects that changed</returns>
-        public List<GameObject> DoAllBehaviour()
+        public HashSet<GameObject> DoAllBehaviour()
         {
-            List<GameObject> changedObjects = new List<GameObject>();
+            HashSet<GameObject> changedObjects = new HashSet<GameObject>();
             if (Health > 0)
             {
                 int previousActionPoints = int.MinValue;
@@ -240,7 +240,7 @@ namespace Wink
             return changedObjects;
         }
 
-        protected abstract void DoBehaviour(List<GameObject> changedObjects);
+        protected abstract void DoBehaviour(HashSet<GameObject> changedObjects);
 
         protected abstract void InitAnimationVariables();
 

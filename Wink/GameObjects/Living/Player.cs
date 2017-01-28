@@ -97,7 +97,7 @@ namespace Wink
             }
         }
 
-        protected override void DoBehaviour(List<GameObject> changedObjects)
+        protected override void DoBehaviour(HashSet<GameObject> changedObjects)
         {
             Debug.WriteLine("Called Player.DoBehaviour, but players don't have automated behaviour.");
         }

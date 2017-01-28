@@ -76,7 +76,6 @@ public class InputHelper
             leftMousePressedHandlers.Add(handler);
         }
     }
-
     public void IfMouseLeftButtonPressedOn(GameObject handler, Action action, bool doAswell = false)
     {
         IfMouseLeftButtonPressedOn(handler, action, handler.BoundingBox, doAswell);
@@ -96,7 +95,6 @@ public class InputHelper
             rightMousePressedHandlers.Add(handler);
         }
     }
-
     public void IfMouseRightButtonPressedOn(GameObject handler, Action action, bool doAswell = false)
     {
         IfMouseRightButtonPressedOn(handler, action, handler.BoundingBox, doAswell);
@@ -106,7 +104,6 @@ public class InputHelper
     {
         return currentMouseState.LeftButton == ButtonState.Pressed && previousMouseState.LeftButton == ButtonState.Released;
     }
-
     public bool IsMouseRightButtonPressed()
     {
         return currentMouseState.RightButton == ButtonState.Pressed && previousMouseState.RightButton == ButtonState.Released;
@@ -116,10 +113,14 @@ public class InputHelper
     {
         return currentMouseState.LeftButton == ButtonState.Released && previousMouseState.LeftButton == ButtonState.Pressed;
     }
-
     public bool MouseLeftButtonDown()
     {
         return currentMouseState.LeftButton == ButtonState.Pressed;
+    }
+
+    public bool MouseMiddleButtonDown()
+    {
+        return currentMouseState.MiddleButton == ButtonState.Pressed;
     }
 
     public bool KeyPressed(Keys k)
@@ -148,5 +149,13 @@ public class InputHelper
     public int ScrollWheelDelta
     {
         get { return currentMouseState.ScrollWheelValue - previousMouseState.ScrollWheelValue; }
+    }
+
+    /// <summary>
+    /// Returns amount the mouse moved since last tick
+    /// </summary>
+    public Point MouseDelta
+    {
+        get { return previousMouseState.Position - currentMouseState.Position; }
     }
 }

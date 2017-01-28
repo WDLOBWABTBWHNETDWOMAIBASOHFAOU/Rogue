@@ -161,11 +161,11 @@ namespace Wink
 
         public override void Death()
         {
-            // call recive exp for every player
+            // call receive exp for every player
             base.Death();
         }
 
-        protected override void DoBehaviour(List<GameObject> changedObjects)
+        protected override void DoBehaviour(HashSet<GameObject> changedObjects)
         {
             GoTo(changedObjects, GameWorld.Find(Player.LocalPlayerName) as Player);
             if (actionPoints <= 0)
@@ -178,7 +178,7 @@ namespace Wink
         /// Pathfind towards a given player
         /// </summary>
         /// <param name="player">The player to target with Pathfinding</param>
-        public override void GoTo(List<GameObject> changedObjects, Player player)
+        public override void GoTo(HashSet<GameObject> changedObjects, Player player)
         {
             TileField tf = GameWorld.Find("TileField") as TileField;
 

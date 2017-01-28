@@ -27,6 +27,7 @@ namespace Wink
         {
             //This event can only be sent from client to server, therefore GUID based serialization is used.
             info.AddValue("playerGUID", player.GUID.ToString());
+            base.GetObjectData(info, context);
         }
         #endregion
 

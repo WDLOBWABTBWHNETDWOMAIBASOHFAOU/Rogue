@@ -20,15 +20,10 @@ namespace Wink
         private List<Living> livingObjects;
         private Level level;
         private int turnIndex;
-        private List<GameObject> changedObjects;
 
         public List<Client> Clients
         {
             get { return new List<Client>(clientEvents.Keys); }
-        }
-        public List<GameObject> ChangedObjects
-        {
-            get { return changedObjects; }
         }
         public Level Level
         {
@@ -50,7 +45,6 @@ namespace Wink
         }
         public LocalServer ()
         {
-            changedObjects = new List<GameObject>();
             clientEvents = new Dictionary<Client, List<Event>>();
         }
 
@@ -90,7 +84,7 @@ namespace Wink
             }
 
             InitLivingObjects();
-            SendOutUpdatedLevelIf(true);
+            SendOutUpdatedLevel(true);
         }
         
         public void ProcessAllNonActionEvents()
@@ -151,14 +145,10 @@ namespace Wink
             }
         }
 
-        private void SendOutUpdatedLevelIf(bool first = false)
+        private void SendOutUpdatedLevel(bool first = false)
         {
-            if (changedObjects.Count > 0 || first)
-            {
-                LevelUpdatedEvent e = first ? new JoinedServerEvent(Level) : new LevelUpdatedEvent(Level);
-                SendToAllClients(e);
-                changedObjects.Clear();
-            }
+            LevelUpdatedEvent e = first ? new JoinedServerEvent(Level) : new LevelUpdatedEvent(Level);
+            SendToAllClients(e);
         }
 
         private void SendToAllClients(Event e)
@@ -187,11 +177,11 @@ namespace Wink
                 Client currentClient = Clients.Find(client => client.Player.GUID == livingObjects[turnIndex].GUID);
                 ProcessActionEvents(currentClient);
                 livingObjects[turnIndex].ComputeVisibility();
-                //SendOutUpdatedLevelIf();
             }
             else
             {
-                changedObjects.AddRange(livingObjects[turnIndex].DoAllBehaviour());
+                HashSet<GameObject> changedObjects = livingObjects[turnIndex].DoAllBehaviour();
+                SendToAllClients(new LevelChangedEvent(changedObjects));
                 livingObjects[turnIndex].ComputeVisibility();
             }
             

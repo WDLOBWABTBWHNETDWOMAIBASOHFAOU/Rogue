@@ -47,19 +47,13 @@ namespace Wink
             base.HandleInput(inputHelper);
 
             if (inputHelper.KeyPressed(Keys.Escape))
-            {
                 playingMenu.Visible = !playingMenu.Visible;
-            }
 
             if (inputHelper.KeyPressed(Keys.I))
-            {
                 Inventory.Visible = !Inventory.Visible;
-            }
 
             if (inputHelper.KeyPressed(Keys.V))
-            {
                 SkillBar.Visible = !SkillBar.Visible;
-            }
         }
     }
 }

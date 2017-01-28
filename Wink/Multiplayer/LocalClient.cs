@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.IO;
 using System.Collections.Generic;
+using Microsoft.Xna.Framework.Input;
 
 namespace Wink
 {
@@ -95,6 +96,9 @@ namespace Wink
         {
             newCamera.HandleInput(inputHelper);
             gameObjects.HandleInput(inputHelper);
+            
+            if (inputHelper.KeyPressed(Keys.Space))
+                Server.Send(new EndTurnEvent(Player));
         }
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
