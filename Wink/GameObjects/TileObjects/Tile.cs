@@ -160,6 +160,20 @@ namespace Wink
 
             onTile.Replace(replacement);
 
+            Living toRemove = null;
+            foreach (Living l in seenBy.Keys)
+            {
+                if (l != replacement && l.GUID == replacement.GUID)
+                {
+                    toRemove = l;
+                    seenBy.Add(replacement as Living, seenBy[l]);
+                    break;
+                }
+            }
+
+            if (toRemove != null)
+                seenBy.Remove(toRemove);
+
             base.Replace(replacement);
         }
 
