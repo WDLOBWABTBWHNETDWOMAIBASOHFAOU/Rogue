@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
 
@@ -10,20 +11,20 @@ namespace Wink
     {
         private List<GameObject> changedObjects;
 
-        public LevelChangedEvent(List<GameObject> changedObjects) : base()
-        {
+        public LevelChangedEvent(List<GameObject> changedObjects)
+        { 
             this.changedObjects = changedObjects;
         }
 
-        public LevelChangedEvent(HashSet<GameObject> changedObjects) : base()
-        {
-            this.changedObjects = changedObjects.ToList();
-        }
+        public LevelChangedEvent(HashSet<GameObject> changedObjects) : this(changedObjects.ToList())
+        { }
 
         #region Serialization
         public LevelChangedEvent(SerializationInfo info, StreamingContext context) : base(info, context)
         {
+            Debug.WriteLine("Starting deserialization changed objects.");
             changedObjects = info.GetValue("changedObjects", typeof(List<GameObject>)) as List<GameObject>;
+            Debug.WriteLine("Done deserialization changed objects.");
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)

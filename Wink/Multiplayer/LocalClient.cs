@@ -4,6 +4,7 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Input;
+using System.Linq;
 
 namespace Wink
 {
@@ -18,14 +19,11 @@ namespace Wink
 
         public Level Level
         {
-            get
-            {
-                return gameObjects.Find("Level") as Level;
-            }
+            get { return gameObjects.Find("Level") as Level; }
             set
             {
                 Level lvl = Level;
-                if(lvl != null)
+                if (lvl != null)
                     gameObjects.Children.Remove(lvl); //Needs to remove from children directly because nothing gets updated on clientside.
 
                 gameObjects.Add(value);
@@ -133,8 +131,15 @@ namespace Wink
         public override void SendPreSerialized(MemoryStream ms)
         {
             ms.Seek(0, SeekOrigin.Begin);
-            Event e = SerializationHelper.Deserialize(ms, this) as Event;
-            pendingEvents.Add(e);
+            if (pendingEvents.Where(obj => obj is LevelUpdatedEvent).Count() == 0)
+            {
+                Event e = SerializationHelper.Deserialize(ms, this) as Event;
+                pendingEvents.Add(e);
+            }
+            else
+            {
+                throw new Exception("Event sent in same tick as LevelUpdatedEvent, this causes issues when deserializing because new level has not yet been put in place.");
+            }
         }
 
         private void ExecuteIfValid(Event e)

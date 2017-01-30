@@ -48,7 +48,8 @@ namespace Wink
             for (int p = 1; p <= playerlist.Count; p++)
             {
                 Player player = playerlist[p - 1] as Player;
-                player.MoveTo(level.Find("StartTile" + p) as Tile);
+                (level.Find("StartTile" + p) as Tile).PutOnTile(player);
+                player.ActionPoints = Player.MaxActionPoints;
             }
             foreach (Player p in playerlist)
                 p.ComputeVisibility();
