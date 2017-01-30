@@ -310,3 +310,177 @@
 /processorParam:TextureFormat=Color
 /build:spr_mainmenu1.png
 
+#begin ../../../../../Downloads/WinkSounds/Traveler.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:../../../../../Downloads/WinkSounds/Traveler.wav
+
+#begin Sounds/Arrow.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Arrow.wav
+
+#begin Sounds/Arrow_Swoosh.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Arrow_Swoosh.wav
+
+#begin Sounds/Arrow_Swoosh2.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Arrow_Swoosh2.wav
+
+#begin Sounds/CLICK10A.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/CLICK10A.mp3
+
+#begin Sounds/CLICK10B.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/CLICK10B.mp3
+
+#begin Sounds/CLICK14A.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/CLICK14A.mp3
+
+#begin Sounds/creaking-door-2.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/creaking-door-2.mp3
+
+#begin Sounds/donnerre2.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/donnerre2.mp3
+
+#begin Sounds/door-1-open.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/door-1-open.mp3
+
+#begin Sounds/door-2-close.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/door-2-close.mp3
+
+#begin Sounds/fire-04-loop.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/fire-04-loop.mp3
+
+#begin Sounds/Fireball.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Fireball.wav
+
+#begin Sounds/Fireball2.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Fireball2.wav
+
+#begin Sounds/Fireball3.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Fireball3.wav
+
+#begin Sounds/FireIgnite.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/FireIgnite.mp3
+
+#begin Sounds/flamestrike.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/flamestrike.mp3
+
+#begin Sounds/footsteps-4.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/footsteps-4.mp3
+
+#begin Sounds/Game Over Sound Effect For Free.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Game Over Sound Effect For Free.mp3
+
+#begin Sounds/muted_metallic_crash_impact.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/muted_metallic_crash_impact.mp3
+
+#begin Sounds/steelsword.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/steelsword.mp3
+
+#begin Sounds/Storm_exclamation.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Storm_exclamation.mp3
+
+#begin Sounds/Sword1.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Sword1.mp3
+
+#begin Sounds/Taiko_Drum_1.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Taiko_Drum_1.mp3
+
+#begin Sounds/Traveler.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Traveler.wav
+
+#begin Sounds/video_game_announcer_grunt.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/video_game_announcer_grunt.mp3
+
+#begin Sounds/Welcome Screen.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Welcome Screen.mp3
+
+#begin Sounds/wooden-stairs-1.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/wooden-stairs-1.mp3
+
+#begin Sounds\SwordHit.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds\SwordHit.mp3
+
