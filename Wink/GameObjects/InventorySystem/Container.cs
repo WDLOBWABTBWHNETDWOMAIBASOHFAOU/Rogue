@@ -170,7 +170,7 @@ namespace Wink
                     {
                         //InitContents(floorNumber);
                         NonAnimationSoundEvent OpenedChestEvent = new NonAnimationSoundEvent("Sounds/creaking-door-2");
-                        LocalServer.SendToClients(OpenedChestEvent);
+                        Server.Send(OpenedChestEvent);
                     }
                     clickCount++;
                     iWindow.Visible = !iWindow.Visible;
