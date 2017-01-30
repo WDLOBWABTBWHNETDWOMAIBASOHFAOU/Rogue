@@ -81,7 +81,6 @@ namespace Wink
                 }
             }
             target.ChangeItem(oldItem);
-            GameEnvironment.AssetManager.PlaySound("Sounds/CLICK10B");
             item = newItem;
             if (item != null)
                 item.Parent = this;

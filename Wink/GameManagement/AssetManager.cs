@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -167,6 +168,11 @@ public class AssetManager
 
         textures.Add(emptyString, emptyTexture);
         return emptyTexture;
+    }
+
+    public TimeSpan Duration(string assetName)
+    {
+        return contentManager.Load<SoundEffect>(assetName).Duration;
     }
 
     public void PlaySound(string assetName)
