@@ -310,23 +310,11 @@
 /processorParam:TextureFormat=Color
 /build:spr_mainmenu1.png
 
-#begin ../../../../../Downloads/WinkSounds/Traveler.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:../../../../../Downloads/WinkSounds/Traveler.wav
-
 #begin Sounds/Arrow.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:Sounds/Arrow.wav
-
-#begin Sounds/Arrow_Swoosh.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:Sounds/Arrow_Swoosh.wav
 
 #begin Sounds/Arrow_Swoosh2.wav
 /importer:WavImporter
@@ -483,4 +471,10 @@
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:Sounds\SwordHit.mp3
+
+#begin Sounds\Dodge.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds\Dodge.wav
 
