@@ -56,7 +56,7 @@ namespace Wink
             while (receiving)
             {
                 NetworkStream s = tcp.GetStream();
-                if (s.DataAvailable)
+                if (s.DataAvailable && !client.LevelBeingUpdated)
                 {
                     Event e = SerializationHelper.Deserialize(s, client) as Event;
                     client.IncomingEvent(e);

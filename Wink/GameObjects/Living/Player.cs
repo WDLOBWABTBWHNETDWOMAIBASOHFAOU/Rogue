@@ -8,8 +8,8 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Wink
 {
-
     public enum PlayerType { warrior, archer, mage, random }
+
     [Serializable]
     public class Player : Living, IGameObjectContainer, IGUIGameObject
     {

@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Net.Sockets;
-using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
 using Microsoft.Xna.Framework;
@@ -55,7 +52,6 @@ namespace Wink
                 NetworkStream s = tcpClient.GetStream();
                 if (s.DataAvailable)
                 {
-                    //Event e = (Event)binaryFormatter.Deserialize(s);
                     Event e = Deserialize(s, Server) as Event;
                     Server.IncomingEvent(this, e);
                 }
@@ -63,17 +59,6 @@ namespace Wink
                 {
                     Thread.Sleep(10);
                 }
-            }
-        }
-
-        public override void Send(Event e)
-        {
-            if (e.Validate((server as LocalServer).Level))
-            {
-                //Serialize and send event over TCP connection.
-                StreamingContext c = new StreamingContext(StreamingContextStates.All, new Variables(Server, e.GetFullySerialized((server as LocalServer).Level)));
-                binaryFormatter.Context = c;
-                binaryFormatter.Serialize(tcpClient.GetStream(), e);
             }
         }
 

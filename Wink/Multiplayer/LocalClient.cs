@@ -38,7 +38,10 @@ namespace Wink
             get { return gameObjects.Find(Player.LocalPlayerName) as Player; }
         }
 
-        public bool IsMyTurn { set; get; }
+        public bool LevelBeingUpdated
+        {
+            get { return pendingEvents.Where(obj => obj is LevelUpdatedEvent).Count() > 0; }
+        }
 
         public Camera Camera
         {
@@ -54,9 +57,6 @@ namespace Wink
         {
             if (guid == Guid.Empty || Level == null)
                 return null;
-
-            //if (new HashSet<GameObject>(Level.FindAll(o => o.GUID == guid)).Count > 1)
-            //    throw new Exception("!");
 
             GameObject obj = Level.Find(o => o.GUID == guid);
             return obj;
@@ -85,6 +85,16 @@ namespace Wink
         public override void Update(GameTime gameTime)
         {
             GUI.Update(gameTime);
+            
+            if (LevelBeingUpdated)
+            {
+                LevelUpdatedEvent e = pendingEvents.Where(obj => obj is LevelUpdatedEvent).First() as LevelUpdatedEvent;
+                int luIndex = pendingEvents.IndexOf(e);
+                for (int i = 0; i < luIndex; i++)
+                {
+                    pendingEvents.RemoveAt(0);
+                }
+            }
 
             if (pendingEvents.Count > 0)
                 ExecuteIfValid(pendingEvents[0]);
@@ -120,12 +130,6 @@ namespace Wink
         public void IncomingEvent(Event e)
         {
             pendingEvents.Add(e);
-        }
-
-        public override void Send(Event e)
-        {
-            //e = SerializationHelper.Clone(e, this, e.GUIDSerialization);
-            //pendingEvents.Add(e);
         }
 
         public override void SendPreSerialized(MemoryStream ms)
