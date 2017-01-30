@@ -28,7 +28,7 @@ namespace Wink
                 damageDealt = target.TakeDamage(attackValue, damageType);
                 NonAnimationSoundEvent hitSoundEvent = new NonAnimationSoundEvent(hitSound);
                 //no annimation for attacks (hit or miss) yet. when inplementing that, include sound effect there and remove this.
-                Server.Send(hitSoundEvent);
+                LocalServer.SendToClients(hitSoundEvent);
 
             }
             else
@@ -37,7 +37,7 @@ namespace Wink
 
                 NonAnimationSoundEvent missSoundEvent = new NonAnimationSoundEvent("Sounds/Dodge");
                 //no annimation for attacks (hit or miss) yet. when inplementing that, include sound effect there and remove this.
-                Server.Send(missSoundEvent);
+                LocalServer.SendToClients(missSoundEvent);
             }
 
             if (damageDealt > 0) ProcessReflection(damageDealt, target);

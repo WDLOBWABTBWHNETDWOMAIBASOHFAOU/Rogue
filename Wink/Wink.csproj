@@ -55,6 +55,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Events\ActionEvents\ActionEvent.cs" />
+    <Compile Include="Events\ActionEvents\OpenedChestEvent.cs" />
     <Compile Include="Events\AnimationEvents\AnimationEvent.cs" />
     <Compile Include="Events\ActionEvents\AttackEvent.cs" />
     <Compile Include="Events\AnimationEvents\NonAnimationSoundEvent.cs" />

@@ -167,7 +167,7 @@ namespace Wink
             {
                 LevelUp();
                 NonAnimationSoundEvent LevelUpSound = new NonAnimationSoundEvent("Sounds/Taiko_Drum_1",true,Id);
-                Server.Send(LevelUpSound);
+                LocalServer.SendToClients(LevelUpSound);
             }
         }
 

@@ -51,12 +51,6 @@ namespace Wink
         {
         }
 
-        public override bool OnServerReceive(LocalServer server)
-        {
-            LocalServer.SendToClients(this);
-            return true;
-        }
-
         public override void PreAnimate(LocalClient client)
         {
             if (playerSpecific && LocalPlayerName == "")
