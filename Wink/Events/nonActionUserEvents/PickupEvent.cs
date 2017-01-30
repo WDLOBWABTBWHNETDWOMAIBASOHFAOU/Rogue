@@ -48,8 +48,8 @@ namespace Wink
             player.MouseSlot.AddTo(item, target);
             server.ChangedObjects.Add(item);
             server.ChangedObjects.Add(target);
-            PickupSound PuS = new PickupSound("Sounds/CLICK10B", 1, true, player.Id);
-            LocalServer.SendToClients(PuS);
+            NonAnimationSoundEvent pickupSound = new NonAnimationSoundEvent("Sounds/CLICK10B", 1, true, player.Id);
+            LocalServer.SendToClients(pickupSound);
             return true;
         }
 

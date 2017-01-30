@@ -8,14 +8,21 @@ using System.Threading.Tasks;
 namespace Wink
 {
     [Serializable]
-    class PickupSound : AnimationEvent
+    class NonAnimationSoundEvent : AnimationEvent
     {
         string assetName;
         int soundLength;
         bool playerSpecific;
         string LocalPlayerName;
 
-        public PickupSound(string assetName, int soundLength, bool playerSpecific=false, string LocalPlayerName ="")
+        /// <summary>
+        /// Event for playing sounds that are not included within an animation. If sound sould be played during animation, inplement PlaySound method within that animation event
+        /// </summary>
+        /// <param name="assetName"></param>
+        /// <param name="soundLength"></param>
+        /// <param name="playerSpecific">True if only a specific user should hear the soundeffect</param>
+        /// <param name="LocalPlayerName">if playerSpecific, id of player that should hear the sound</param>
+        public NonAnimationSoundEvent(string assetName, int soundLength, bool playerSpecific=false, string LocalPlayerName ="")
         {
             this.assetName=assetName;
             this.soundLength = soundLength;
@@ -24,7 +31,7 @@ namespace Wink
         }
 
         #region Serialization
-        public PickupSound(SerializationInfo info, StreamingContext context)
+        public NonAnimationSoundEvent(SerializationInfo info, StreamingContext context)
         {
             assetName = info.GetString("assetName");
             soundLength = info.GetInt32("soundLength");
@@ -39,8 +46,6 @@ namespace Wink
             info.AddValue("soundLength", soundLength);
             info.AddValue("playerSpecific", playerSpecific);
             info.AddValue("LocalPlayerName", LocalPlayerName);
-
-
         }
         #endregion
 
@@ -48,17 +53,28 @@ namespace Wink
         {
             get
             {
-                return soundLength;
+                return soundLength + 10;
             }
         }
 
         public override void Animate()
         {
+            if (playerSpecific && LocalPlayerName == "")
+            {
+                throw new Exception("forgot to specify specific player");
+            }
+
+            if (!assetName.Contains("Sounds/"))
+            {
+                assetName = "Sounds/" + assetName;//forgot to specify the sound folder
+                throw new Exception("forgot to specify the sound folder");//exeption for now to show the programmer forgot the sound folder
+            }
+
             if (!playerSpecific)
             {
                 GameEnvironment.AssetManager.PlaySound(assetName);
             }
-            else if(Player.LocalPlayerName == LocalPlayerName)
+            else if (Player.LocalPlayerName == LocalPlayerName)
             {
                 GameEnvironment.AssetManager.PlaySound(assetName);
             }

@@ -57,7 +57,7 @@
     <Compile Include="Events\ActionEvents\ActionEvent.cs" />
     <Compile Include="Events\AnimationEvents\AnimationEvent.cs" />
     <Compile Include="Events\ActionEvents\AttackEvent.cs" />
-    <Compile Include="Events\AnimationEvents\PickupSound.cs" />
+    <Compile Include="Events\AnimationEvents\NonAnimationSoundEvent.cs" />
     <Compile Include="Events\nonActionUserEvents\ChangedSkillEvent.cs" />
     <Compile Include="Events\nonActionUserEvents\ClientPlayerType.cs" />
     <Compile Include="Events\AnimationEvents\DeathAnimationEvent.cs" />

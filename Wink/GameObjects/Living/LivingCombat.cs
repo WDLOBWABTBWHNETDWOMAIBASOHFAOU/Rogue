@@ -10,7 +10,7 @@ namespace Wink
         /// <param name="target"></param>
         public void Attack(Living target)
         {
-            string hitSound = "muted_metallic_crash_impact";
+            string hitSound = "Sounds/muted_metallic_crash_impact";
             int damageDealt = 0;
             DamageType damageType = DamageType.Physical;
             if (Weapon.SlotItem != null)
@@ -26,12 +26,18 @@ namespace Wink
             {
                 double attackValue = AttackValue();
                 damageDealt = target.TakeDamage(attackValue, damageType);
-                PlaySound(hitSound);
+                NonAnimationSoundEvent hitSoundEvent = new NonAnimationSoundEvent(hitSound, 1);
+                //no annimation for attacks (hit or miss) yet. when inplementing that, include sound effect there and remove this.
+                LocalServer.SendToClients(hitSoundEvent);
+
             }
             else
             {
-                // Display attack missed (visual feedback on fail)
-                PlaySound("Sounds/Dodge");
+                //TODO: Display attack missed (visual feedback on fail)
+
+                NonAnimationSoundEvent missSoundEvent = new NonAnimationSoundEvent("Sounds/Dodge", 1);
+                //no annimation for attacks (hit or miss) yet. when inplementing that, include sound effect there and remove this.
+                LocalServer.SendToClients(missSoundEvent);
             }
 
             if (damageDealt > 0) ProcessReflection(damageDealt, target);
