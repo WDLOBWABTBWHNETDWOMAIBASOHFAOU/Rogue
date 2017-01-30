@@ -46,7 +46,8 @@ namespace Wink
                 if (go is IGUIGameObject)
                 {
                     IGUIGameObject gui = client.Level.Find(obj => obj.GUID == go.GUID) as IGUIGameObject;
-                    gui.CleanupGUI(guiState);
+                    if (gui != null)
+                        gui.CleanupGUI(guiState);
                 }
 
                 client.Replace(go);

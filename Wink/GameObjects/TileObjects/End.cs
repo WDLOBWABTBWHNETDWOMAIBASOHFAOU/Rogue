@@ -70,12 +70,12 @@ namespace Wink
         public override void HandleInput(InputHelper inputHelper)
         {
             Action onClick = () =>
-                {
-                    Player player = GameWorld.Find(p => p.Id == Player.LocalPlayerName) as Player;
+            {
+                Player player = GameWorld.Find(p => p.Id == Player.LocalPlayerName) as Player;
 
-                    Event e = new NextLevelEvent(this, player);
-                    Server.Send(e);
-                };
+                Event e = new NextLevelEvent(this, player);
+                Server.Send(e);
+            };
             inputHelper.IfMouseLeftButtonPressedOn(this, onClick);
             base.HandleInput(inputHelper);
         }

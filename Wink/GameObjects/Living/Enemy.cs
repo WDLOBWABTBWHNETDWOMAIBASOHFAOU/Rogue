@@ -156,6 +156,8 @@ namespace Wink
             LootSack ls = new LootSack(this);
             tile.PutOnTile(ls);
 
+            LocalServer.SendToClients(new LevelChangedEvent(new List<GameObject>() { ls, tile.OnTile } ));
+
             base.Death();
         }
 
@@ -251,11 +253,14 @@ namespace Wink
 
         public void InitGUI(Dictionary<string, object> guiState)
         {
-            SpriteFont textfieldFont = GameEnvironment.AssetManager.GetFont("Arial26");
-            hpBar = new Bar<Enemy>(this, e => e.Health, e => e.MaxHealth, textfieldFont, Color.Red, 2, "HealthBar" + guid.ToString(), 1.0f, 1f, false);
-            (GameWorld.Find("PlayingGui") as PlayingGUI).Add(hpBar);
-            hpBar.Visible = !Tile.Visible ? false : Visible;
-            hpBar.Position = Tile.GlobalPosition - new Vector2(Math.Abs(Tile.Width - hpBar.Width) / 2, 0);
+            if (Health > 0)
+            {
+                SpriteFont textfieldFont = GameEnvironment.AssetManager.GetFont("Arial26");
+                hpBar = new Bar<Enemy>(this, e => e.Health, e => e.MaxHealth, textfieldFont, Color.Red, 2, "HealthBar" + guid.ToString(), 1.0f, 1f, false);
+                (GameWorld.Find("PlayingGui") as PlayingGUI).Add(hpBar);
+                hpBar.Visible = !Tile.Visible ? false : Visible;
+                hpBar.Position = Tile.GlobalPosition - new Vector2(Math.Abs(Tile.Width - hpBar.Width) / 2, 0);
+            }
         }
 
         public void CleanupGUI(Dictionary<string, object> guiState)

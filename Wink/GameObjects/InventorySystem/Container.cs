@@ -93,6 +93,7 @@ namespace Wink
             base.Update(gameTime);
             iBox.Update(gameTime);
 
+            //TODO: move to a piece of code that actually gets called client-side.
             if (iWindow != null && iWindow.Visible)
             {
                 Player player = GameWorld.Find(Player.LocalPlayerName) as Player;

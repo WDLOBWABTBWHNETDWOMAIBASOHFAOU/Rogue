@@ -41,7 +41,9 @@ namespace Wink
         protected override void DoAction(LocalServer server, HashSet<GameObject> changedObjects)
         {
             Attacker.Attack(Defender);
-            changedObjects.Add(Defender);
+
+            if (Defender.Health > 0)
+                changedObjects.Add(Defender);
         }
 
         protected override bool ValidateAction(Level level)
