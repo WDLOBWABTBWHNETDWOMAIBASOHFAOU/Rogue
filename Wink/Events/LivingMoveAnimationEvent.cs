@@ -1,6 +1,7 @@
 ﻿using System.Runtime.Serialization;
 using Microsoft.Xna.Framework;
 using System;
+using System.Diagnostics;
 
 namespace Wink
 {
@@ -40,18 +41,24 @@ namespace Wink
         {
             get { return origin.GlobalPosition - destination.GlobalPosition; }
         }
-        
+        private Point Delta
+        {
+            get { return new Point(1, 1) + destination.TilePosition - origin.TilePosition; }
+        }
+        private bool Before //Whether or not the destinatino is drawn before the origin.
+        {
+            get { return Delta.X * 3 + Delta.Y < 4; }
+        }
+
         public override void PreAnimate(LocalClient client)
         {
             origin = toMove.Tile;
-            toMove.Position = toMove.GlobalPosition;
-            client.Level.Add(toMove);
-            if (toMove is Enemy)
-            { //TODO: This shouldn't be necessary at all! Fix the problem where there is multiple tilefields...
-                Tile trueOrigin = client.Level.Find(obj => obj != origin && obj is Tile && (obj as Tile).TilePosition == origin.TilePosition) as Tile;
-                trueOrigin.OnTile.Children.Clear();
+            if (!Before)
+            { //The destination is drawn after the origin so we move the Living object to the tile here, before the animation.
+                origin.RemoveImmediatly(toMove);
+                destination.PutOnTile(toMove);
+                toMove.Position += origin.Position - destination.Position;
             }
-            origin.RemoveImmediatly(toMove);
         }
 
         public override void Animate()
@@ -61,8 +68,12 @@ namespace Wink
         
         public override void PostAnimate()
         {
-            (toMove.Parent as GameObjectList).RemoveImmediatly(toMove);
-            destination.PutOnTile(toMove);
+            int z = Delta.X * 3 + Delta.Y;
+            if (Before)
+            { //The destination is drawn before the origin so we move the Living object to the tile here, after the animation.
+                origin.RemoveImmediatly(toMove);
+                destination.PutOnTile(toMove);
+            }
         }
     }
 }
