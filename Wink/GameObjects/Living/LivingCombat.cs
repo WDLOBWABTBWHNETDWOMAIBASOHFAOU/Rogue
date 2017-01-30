@@ -30,7 +30,7 @@ namespace Wink
             }
             else
             {
-                // Display attack missed (feedback on fail)
+                // Display attack missed (visual feedback on fail)
                 PlaySound("Sounds/Dodge");
             }
 
