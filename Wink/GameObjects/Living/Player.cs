@@ -166,6 +166,8 @@ namespace Wink
             while (exp >= RequiredExperience())
             {
                 LevelUp();
+                NonAnimationSoundEvent LevelUpSound = new NonAnimationSoundEvent("Sounds/Taiko_Drum_1",true,Id);
+                LocalServer.SendToClients(LevelUpSound);
             }
         }
 

@@ -456,7 +456,7 @@
 
 #begin Sounds/Welcome Screen.mp3
 /importer:Mp3Importer
-/processor:SoundEffectProcessor
+/processor:SongProcessor
 /processorParam:Quality=Best
 /build:Sounds/Welcome Screen.mp3
 

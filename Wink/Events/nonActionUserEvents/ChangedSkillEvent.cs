@@ -56,7 +56,8 @@ namespace Wink
             {
                 player.CurrentSkill = null;
             }
-
+            NonAnimationSoundEvent selectSkillSound = new NonAnimationSoundEvent("Sounds/CLICK14A",true,player.Id);
+            LocalServer.SendToClients(selectSkillSound);
             return true;
         }
 

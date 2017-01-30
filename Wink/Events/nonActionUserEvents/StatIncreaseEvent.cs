@@ -52,6 +52,9 @@ namespace Wink
         {
             player.AddStatPoint(stat);
             server.ChangedObjects.Add(player);
+
+            NonAnimationSoundEvent statSoundEvent = new NonAnimationSoundEvent("Sounds/CLICK10A",true,player.Id);
+            LocalServer.SendToClients(statSoundEvent);
             return true;
         }
 

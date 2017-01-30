@@ -40,6 +40,8 @@ namespace Wink
             if (livingTarget != null)
             {
                 caster.Mana -= ManaCost;
+                NonAnimationSoundEvent MagicBoldSound = new NonAnimationSoundEvent("Sounds/donnerre2");
+                LocalServer.SendToClients(MagicBoldSound);
                 livingTarget.TakeDamage(skillPower, DamageType.Magic);
             }
             else

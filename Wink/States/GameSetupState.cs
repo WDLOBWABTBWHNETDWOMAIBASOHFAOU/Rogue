@@ -106,6 +106,7 @@ namespace Wink
                 ls.SetupLevel(1);
 
                 GameEnvironment.GameStateManager.SwitchTo("playingState");
+                GameEnvironment.AssetManager.StopMusic();
             };
             startButton.Position = new Vector2(screen.X - startButton.Width - 50, screen.Y  - startButton.Height - 50);
             Add(startButton);

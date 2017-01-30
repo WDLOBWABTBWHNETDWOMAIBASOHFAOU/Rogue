@@ -53,6 +53,7 @@ namespace Wink
             gameStateManager.AddGameState("multiplayerMenu", new MultiplayerMenu());
             gameStateManager.AddGameState("optionsMenu", new OptionsMenu());
             gameStateManager.SwitchTo("mainMenuState");
+            AssetManager.PlayMusic("Sounds/Welcome Screen");
 
             /* 
              * Since deserialization happens on a separate thread we need to

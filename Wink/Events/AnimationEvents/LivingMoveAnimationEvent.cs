@@ -9,20 +9,28 @@ namespace Wink
     {
         protected override int Length
         {
-            get { return 30; }
+            get
+            {
+                //return 30;
+                //for now as sound effect is longer than 30 frames
+                int delay = 6;//ensure there is a delay between sounds
+                float miliseconds = GameEnvironment.AssetManager.Duration(assetName).Milliseconds;
+                float frames = ((miliseconds / 1000) * 60) + delay;
+                return (int)frames;
+            }
         }
 
         private Living toMove;
         private Tile origin, destination;
 
-        public LivingMoveAnimationEvent(Living toMove, Tile destination)
+        public LivingMoveAnimationEvent(Living toMove, Tile destination, string soundAssetName, bool playerSpecific = false, string LocalPlayerName = "") : base(soundAssetName, playerSpecific, LocalPlayerName)
         {
             this.toMove = toMove;
             this.destination = destination;
         }
 
         #region Serialization
-        public LivingMoveAnimationEvent(SerializationInfo info, StreamingContext context)
+        public LivingMoveAnimationEvent(SerializationInfo info, StreamingContext context):base(info,context)
         {
             toMove = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("toMoveGUID"))) as Living;
             destination = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("destinationGUID"))) as Tile;
@@ -52,6 +60,15 @@ namespace Wink
                 trueOrigin.OnTile.Children.Clear();
             }
             origin.RemoveImmediatly(toMove);
+
+            if (!playerSpecific)
+            {
+                GameEnvironment.AssetManager.PlaySound(assetName);
+            }
+            else if (Player.LocalPlayerName == LocalPlayerName)
+            {
+                GameEnvironment.AssetManager.PlaySound(assetName);
+            }
         }
 
         public override void Animate()

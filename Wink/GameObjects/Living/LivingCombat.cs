@@ -26,7 +26,7 @@ namespace Wink
             {
                 double attackValue = AttackValue();
                 damageDealt = target.TakeDamage(attackValue, damageType);
-                NonAnimationSoundEvent hitSoundEvent = new NonAnimationSoundEvent(hitSound, 1);
+                NonAnimationSoundEvent hitSoundEvent = new NonAnimationSoundEvent(hitSound);
                 //no annimation for attacks (hit or miss) yet. when inplementing that, include sound effect there and remove this.
                 LocalServer.SendToClients(hitSoundEvent);
 
@@ -35,7 +35,7 @@ namespace Wink
             {
                 //TODO: Display attack missed (visual feedback on fail)
 
-                NonAnimationSoundEvent missSoundEvent = new NonAnimationSoundEvent("Sounds/Dodge", 1);
+                NonAnimationSoundEvent missSoundEvent = new NonAnimationSoundEvent("Sounds/Dodge");
                 //no annimation for attacks (hit or miss) yet. when inplementing that, include sound effect there and remove this.
                 LocalServer.SendToClients(missSoundEvent);
             }
@@ -148,8 +148,8 @@ namespace Wink
         /// <param name="idS">Death sound</param>
         public void DeathFeedback(string idA = "die", string idS = "Sounds/video_game_announcer_grunt")
         {
-            PlayAnimation(idA);
-            PlaySound(idS);
+            //PlayAnimation(idA);
+            //PlaySound(idS);
 
             if (this is IGUIGameObject)
             {

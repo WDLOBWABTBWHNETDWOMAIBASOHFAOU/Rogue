@@ -10,11 +10,6 @@ namespace Wink
     [Serializable]
     class NonAnimationSoundEvent : AnimationEvent
     {
-        string assetName;
-        int soundLength;
-        bool playerSpecific;
-        string LocalPlayerName;
-
         /// <summary>
         /// Event for playing sounds that are not included within an animation. If sound sould be played during animation, inplement PlaySound method within that animation event
         /// </summary>
@@ -22,30 +17,18 @@ namespace Wink
         /// <param name="soundLength"></param>
         /// <param name="playerSpecific">True if only a specific user should hear the soundeffect</param>
         /// <param name="LocalPlayerName">if playerSpecific, id of player that should hear the sound</param>
-        public NonAnimationSoundEvent(string assetName, int soundLength, bool playerSpecific=false, string LocalPlayerName ="")
+        public NonAnimationSoundEvent(string assetName, bool playerSpecific=false, string LocalPlayerName =""):base(assetName,playerSpecific,LocalPlayerName)
         {
-            this.assetName=assetName;
-            this.soundLength = soundLength;
-            this.playerSpecific = playerSpecific;
-            this.LocalPlayerName = LocalPlayerName ;
         }
 
         #region Serialization
-        public NonAnimationSoundEvent(SerializationInfo info, StreamingContext context)
+        public NonAnimationSoundEvent(SerializationInfo info, StreamingContext context):base(info,context)
         {
-            assetName = info.GetString("assetName");
-            soundLength = info.GetInt32("soundLength");
-            playerSpecific = info.GetBoolean("playerSpecific");
-            LocalPlayerName = info.GetString("LocalPlayerName");
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             base.GetObjectData(info, context);
-            info.AddValue("assetName", assetName);
-            info.AddValue("soundLength", soundLength);
-            info.AddValue("playerSpecific", playerSpecific);
-            info.AddValue("LocalPlayerName", LocalPlayerName);
         }
         #endregion
 
@@ -53,11 +36,22 @@ namespace Wink
         {
             get
             {
-                return soundLength + 10;
+                int delay = 6;//ensure there is a delay between sounds
+                float miliseconds = GameEnvironment.AssetManager.Duration(assetName).Milliseconds;
+                float frames = ((miliseconds / 1000) * 60) + delay;
+                return (int)frames;
             }
         }
 
         public override void Animate()
+        {
+        }
+
+        public override void PostAnimate()
+        {
+        }
+
+        public override void PreAnimate(LocalClient client)
         {
             if (playerSpecific && LocalPlayerName == "")
             {
@@ -78,14 +72,6 @@ namespace Wink
             {
                 GameEnvironment.AssetManager.PlaySound(assetName);
             }
-        }
-
-        public override void PostAnimate()
-        {
-        }
-
-        public override void PreAnimate(LocalClient client)
-        {
         }
     }
 }

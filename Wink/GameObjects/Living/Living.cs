@@ -275,7 +275,7 @@ namespace Wink
             else if (Visible)
             {   // Movement animation
                 // This is oncomplete and therefore turned off
-                //LocalServer.SendToClients(new LivingMoveAnimationEvent(this, t));
+                LocalServer.SendToClients(new LivingMoveAnimationEvent(this, t,"Sounds/footsteps-4"));
             }
         }
 

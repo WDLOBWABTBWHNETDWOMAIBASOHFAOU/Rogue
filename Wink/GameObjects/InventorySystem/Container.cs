@@ -166,11 +166,13 @@ namespace Wink
                 bool withinReach = dx <= Tile.TileWidth && dy <= Tile.TileHeight;
                 if (withinReach)
                 {
-                    //if(clickCount == 0)
-                    //{
-                    //    InitContents(floorNumber);
-                    //}
-                    //clickCount++;
+                    if (clickCount == 0)
+                    {
+                        //InitContents(floorNumber);
+                        NonAnimationSoundEvent OpenedChestEvent = new NonAnimationSoundEvent("Sounds/creaking-door-2");
+                        LocalServer.SendToClients(OpenedChestEvent);
+                    }
+                    clickCount++;
                     iWindow.Visible = !iWindow.Visible;
                 }
                 //possibly generate items here on first click instead of at floor generation (possible to take specific players luck in to account)

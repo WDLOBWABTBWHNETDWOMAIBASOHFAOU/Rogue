@@ -49,6 +49,8 @@ namespace Wink
             door.Open();
             player.ComputeVisibility();
             server.ChangedObjects.Add(door);
+            NonAnimationSoundEvent DoorSoundEvent = new NonAnimationSoundEvent("Sounds/door-1-open");
+            LocalServer.SendToClients(DoorSoundEvent);
         }
 
         protected override bool ValidateAction(Level level)

@@ -19,6 +19,7 @@ namespace Wink
             backButton.Action = () =>
             {
                 GameEnvironment.GameStateManager.SwitchTo("mainMenuState");
+                GameEnvironment.AssetManager.PlayMusic("Sounds/Welcome Screen");
             };
             Add(backButton);
 

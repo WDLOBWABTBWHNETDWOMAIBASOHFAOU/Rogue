@@ -187,6 +187,11 @@ public class AssetManager
         MediaPlayer.Play(contentManager.Load<Song>(assetName));
     }
 
+    public void StopMusic()
+    {
+        MediaPlayer.Stop();
+    }
+
     public ContentManager Content
     {
         get { return contentManager; }
