@@ -45,7 +45,7 @@ namespace Wink
         {
             get { return new Point(1, 1) + destination.TilePosition - origin.TilePosition; }
         }
-        private bool Before //Whether or not the destinatino is drawn before the origin.
+        private bool Before //Whether or not the destination is drawn before the origin.
         {
             get { return Delta.X * 3 + Delta.Y < 4; }
         }
