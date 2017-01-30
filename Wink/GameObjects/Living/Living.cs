@@ -16,7 +16,8 @@ namespace Wink
         protected Skill currentSkill;
         public Skill CurrentSkill
         {
-            get { return currentSkill;  }
+            get { return currentSkill; }
+            set { currentSkill = value; }
         }
 
         private GameObjectList skillList;
