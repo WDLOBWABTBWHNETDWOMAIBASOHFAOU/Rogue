@@ -61,13 +61,13 @@ namespace Wink
             RestrictedItemSlot bodyslot = EquipmentSlots.Find("bodySlot") as RestrictedItemSlot;
             int EquipmentStartingStrenght = 3;
 
-            ItemSlot slot_0_0 = Inventory.ItemGrid[0, 0] as ItemSlot;
+            ItemSlot slot_0_0 = Inventory[0, 0] as ItemSlot;
             slot_0_0.ChangeItem(new Potion("empty:64:64:10:Red", PotionType.Health, PotionPower.minor, 5));//some starting healt potions
 
 
-            ItemSlot slot_2_2 = Inventory.ItemGrid[2, 2] as ItemSlot;
+            ItemSlot slot_2_2 = Inventory[2, 2] as ItemSlot;
             slot_2_2.ChangeItem(new Heal());
-            ItemSlot slot_3_2 = Inventory.ItemGrid[3, 2] as ItemSlot;
+            ItemSlot slot_3_2 = Inventory[3, 2] as ItemSlot;
             slot_3_2.ChangeItem(new MagicBolt());
 
             switch (ptype)
@@ -88,7 +88,7 @@ namespace Wink
                     weaponslot.ChangeItem(new WeaponEquipment(EquipmentStartingStrenght, WeaponType.staff));
                     bodyslot.ChangeItem(new BodyEquipment(EquipmentStartingStrenght, 2, ArmorType.robes));
                     SetStats(1, 1, 1, 1, 4, 4, 1);
-                    ItemSlot slot_1_0 = Inventory.ItemGrid[1, 0] as ItemSlot;
+                    ItemSlot slot_1_0 = Inventory[1, 0] as ItemSlot;
                     slot_1_0.ChangeItem(new Potion("empty:64:64:10:Blue", PotionType.Mana, PotionPower.minor, 5));//some starting mana potions
                     break;
 

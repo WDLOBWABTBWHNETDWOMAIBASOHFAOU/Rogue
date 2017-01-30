@@ -135,11 +135,11 @@ namespace Wink
                 default:
                     throw new Exception("invalid enemy type");
             }
-            ItemSlot slot_0_1 = Inventory.ItemGrid[0, 1] as ItemSlot;
+            ItemSlot slot_0_1 = Inventory[0, 1] as ItemSlot;
             slot_0_1.ChangeItem(new Potion(floorNumber + 5, 10, PotionType.Health));
-            ItemSlot slot_1_1 = Inventory.ItemGrid[1, 1] as ItemSlot;
+            ItemSlot slot_1_1 = Inventory[1, 1] as ItemSlot;
             slot_1_1.ChangeItem(new WeaponEquipment(floorNumber + 2));
-            ItemSlot slot_2_1 = Inventory.ItemGrid[2, 1] as ItemSlot;
+            ItemSlot slot_2_1 = Inventory[2, 1] as ItemSlot;
             slot_2_1.ChangeItem(new BodyEquipment(floorNumber + 2, 3));
         }
 

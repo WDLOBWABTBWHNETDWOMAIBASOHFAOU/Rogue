@@ -55,6 +55,14 @@ namespace Wink
                 slotItem.Parent = this;
         }
 
+        public override void Replace(GameObject go)
+        {
+            if (slotItem != null && slotItem.GUID == go.GUID)
+                slotItem = go as Item;
+
+            base.Replace(go);
+        }
+
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);

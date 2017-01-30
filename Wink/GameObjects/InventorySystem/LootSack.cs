@@ -22,7 +22,7 @@ namespace Wink
             for (int i = 0; i < enemy.EquipmentSlots.Children.Count-1; i++)
             {
                 RestrictedItemSlot equipSlot = enemy.EquipmentSlots.Children[i] as RestrictedItemSlot;
-                ItemSlot slot = enemy.Inventory.ItemGrid[i, 0] as ItemSlot;
+                ItemSlot slot = enemy.Inventory[i, 0] as ItemSlot;
                 slot.ChangeItem(equipSlot.SlotItem);
             }
         }

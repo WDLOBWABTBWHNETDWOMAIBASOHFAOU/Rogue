@@ -93,9 +93,8 @@ namespace Wink
                     skillList.Add(new RestrictedItemSlot(typeof(Skill), "inventory/slot", id:"skillSlot"+x));
                 }
             }
-
-            GameObjectGrid itemGrid = new GameObjectGrid(4, 4, 0, "");
-            inventory = new InventoryBox(itemGrid);
+            
+            inventory = new InventoryBox(4, 4, 0, "");
 
             equipmentSlots = new GameObjectList();
             equipmentSlots.Add(new RestrictedItemSlot(typeof(WeaponEquipment), "inventory/weaponSlot", id: "weaponSlot"));

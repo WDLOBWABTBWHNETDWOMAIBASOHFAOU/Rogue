@@ -22,9 +22,7 @@ namespace Wink
         #region Serialization
         public LevelChangedEvent(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            Debug.WriteLine("Starting deserialization changed objects.");
             changedObjects = info.GetValue("changedObjects", typeof(List<GameObject>)) as List<GameObject>;
-            Debug.WriteLine("Done deserialization changed objects.");
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)

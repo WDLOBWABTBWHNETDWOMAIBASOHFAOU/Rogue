@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 
 namespace Wink
@@ -156,7 +157,10 @@ namespace Wink
             LootSack ls = new LootSack(this);
             tile.PutOnTile(ls);
 
-            LocalServer.SendToClients(new LevelChangedEvent(new List<GameObject>() { ls, tile.OnTile } ));
+            List<GameObject> changes = new List<GameObject>() { ls, Inventory, tile.OnTile };
+            changes.AddRange(Inventory.Objects.Cast<GameObject>().ToList());
+            changes.AddRange(Inventory.Items);
+            LocalServer.SendToClients(new LevelChangedEvent(changes));
 
             base.Death();
         }

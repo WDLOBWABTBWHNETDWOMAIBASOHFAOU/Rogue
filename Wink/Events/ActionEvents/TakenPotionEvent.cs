@@ -47,6 +47,7 @@ namespace Wink
                 default:
                     throw new Exception("invalid potionType");
             }
+            changedObjects.Add(potion);
         }
 
         protected override bool ValidateAction(Level level)
