@@ -101,12 +101,12 @@ namespace Wink
                     //send player type to the server - extra check to make sure correct type is known
                     ClientPlayerType CPT = new ClientPlayerType(c.ClientName, c.playerType);
                     Server.Send(CPT);
-                    GameEnvironment.AssetManager.StopMusic();
                 }
                 LocalServer ls = (LocalServer)server;
                 ls.SetupLevel(1);
 
                 GameEnvironment.GameStateManager.SwitchTo("playingState");
+                GameEnvironment.AssetManager.StopMusic();
             };
             startButton.Position = new Vector2(screen.X - startButton.Width - 50, screen.Y  - startButton.Height - 50);
             Add(startButton);
