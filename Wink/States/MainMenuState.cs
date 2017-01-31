@@ -9,7 +9,7 @@ namespace Wink
         Button multiPlayerButton;
         Button helpButton;
         Button optionsButton;
-        Button highscoreButton;
+        Button creditsButton;
         Button quitButton;
 
         public MainMenuState()
@@ -41,6 +41,10 @@ namespace Wink
             Add(multiPlayerButton);
 
             helpButton = new Button("button", "Help", textfieldFont, Color.Black);
+            helpButton.Action = () =>
+            {
+                GameEnvironment.GameStateManager.SwitchTo("helpMenu");
+            };
             helpButton.Position = new Vector2(leftx, 375);
             Add(helpButton);
 
@@ -52,9 +56,13 @@ namespace Wink
             optionsButton.Position = new Vector2(rightx, 375);
             Add(optionsButton);
 
-            highscoreButton = new Button("button", "High Scores", textfieldFont, Color.Black);
-            highscoreButton.Position = new Vector2(leftx, 450);
-            Add(highscoreButton);
+            creditsButton = new Button("button", "Credits", textfieldFont, Color.Black);
+            creditsButton.Action = () =>
+            {
+                GameEnvironment.GameStateManager.SwitchTo("creditsMenu");
+            };
+            creditsButton.Position = new Vector2(leftx, 450);
+            Add(creditsButton);
 
             quitButton = new Button("button", "Quit", textfieldFont, Color.Black);
             quitButton.Action = () =>

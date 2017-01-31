@@ -111,6 +111,8 @@
     <Compile Include="GameManagement\Animation.cs" />
     <Compile Include="GameManagement\AssetManager.cs" />
     <Compile Include="GameManagement\Camera.cs" />
+    <Compile Include="States\CreditsMenu.cs" />
+    <Compile Include="States\HelpMenu.cs" />
     <Compile Include="Util\FrameCounter.cs" />
     <Compile Include="Util\MultiArray.cs" />
     <Compile Include="Util\PathFinder.cs" />

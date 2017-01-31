@@ -52,8 +52,10 @@ namespace Wink
             gameStateManager.AddGameState("mainMenuState", new MainMenuState());
             gameStateManager.AddGameState("multiplayerMenu", new MultiplayerMenu());
             gameStateManager.AddGameState("optionsMenu", new OptionsMenu());
+            gameStateManager.AddGameState("helpMenu", new HelpMenu());
+            gameStateManager.AddGameState("creditsMenu", new CreditsMenu());
             gameStateManager.SwitchTo("mainMenuState");
-
+            
             /* 
              * Since deserialization happens on a separate thread we need to
              * pre-load the transparent sprites, so concurrent drawing doesn't overwrite the sprite.
