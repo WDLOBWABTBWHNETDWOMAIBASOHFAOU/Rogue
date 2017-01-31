@@ -29,6 +29,17 @@ namespace Wink
             get { return Health > 0; }
         }
 
+        public override Vector2 Position
+        {
+            get { return base.Position; }
+            set
+            {
+                base.Position = value;
+                if (hpBar != null)
+                    hpBar.Position = GlobalPosition - new Vector2(Math.Abs(64 - hpBar.Width) / 2, 0) - origin;
+            }
+        }
+
         /// <summary>
         /// Create a new Enemy object
         /// </summary>
