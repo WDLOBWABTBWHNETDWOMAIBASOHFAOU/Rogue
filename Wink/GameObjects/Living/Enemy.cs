@@ -44,7 +44,7 @@ namespace Wink
                 floorNumber = 1;
 
             this.floorNumber = floorNumber;
-            this.type = SetupType(type, floorNumber);
+            type = SetupType(type, floorNumber);
         }
 
         /// <summary>
