@@ -64,64 +64,39 @@ namespace Wink
         void SetSprite()
         {
             spriteAssetName = "Sprites/Rings/";//set folder refrence
-            switch (GameEnvironment.Random.Next(6))
+            if (ringEffects.Count == 0)
             {
-                case 0:
-                    spriteAssetName += "agate";
-                    break;
-                case 1:
-                    spriteAssetName += "brass";
-                    break;
-                case 2:
-                    spriteAssetName += "bronze";
-                    break;
-                case 3:
-                    spriteAssetName += "clay";
-                    break;
-                case 4:
-                    spriteAssetName += "copper";
-                    break;
-                case 5:
-                    spriteAssetName += "coral";
-                    break;
-                default:
-                    break;
+                spriteAssetName += "brass";
             }
-
-            //for if you want to make sprite specific to first effect
-            //if (ringEffects.Count == 0)
-            //{
-            //    spriteAssetName += "brass";
-            //}
-            //else
-            //{
-            //    switch (ringEffects[0].EffectType)
-            //    {
-            //        case EffectType.Vitality:
-            //            spriteAssetName += "agate";
-            //            break;
-            //        case EffectType.Strength:
-            //            spriteAssetName += "bronze";
-            //            break;
-            //        case EffectType.Dexterity:
-            //            spriteAssetName += "clay";
-            //            break;
-            //        case EffectType.Luck:
-            //            spriteAssetName += "copper";
-            //            break;
-            //        case EffectType.Intelligence:
-            //            spriteAssetName += "coral";
-            //            break;
-            //        case EffectType.Wisdom:
-            //            spriteAssetName += "";
-            //            break;
-            //        case EffectType.Reflection:
-            //            spriteAssetName += "";
-            //            break;
-            //        default:
-            //            break;
-            //    }
-            //}
+            else
+            {
+                switch (ringEffects[0].EffectType)
+                {
+                    case EffectType.Vitality:
+                        spriteAssetName += "agate";
+                        break;
+                    case EffectType.Strength:
+                        spriteAssetName += "bronze";
+                        break;
+                    case EffectType.Dexterity:
+                        spriteAssetName += "clay";
+                        break;
+                    case EffectType.Luck:
+                        spriteAssetName += "copper";
+                        break;
+                    case EffectType.Intelligence:
+                        spriteAssetName += "coral";
+                        break;
+                    case EffectType.Wisdom:
+                        spriteAssetName += "diamond";
+                        break;
+                    case EffectType.Reflection:
+                        spriteAssetName += "emerald";
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
 
         void SetId()
