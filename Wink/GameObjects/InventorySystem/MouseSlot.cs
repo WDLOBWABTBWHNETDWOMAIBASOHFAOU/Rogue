@@ -19,35 +19,32 @@ namespace Wink
         }
 
         public MouseSlot(int layer = 0, string id = "") : base(layer, id)
-        {
-        }
+        { }
 
         #region Serialization
         public MouseSlot(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            if (context.GetVars().GUIDSerialization)
-            {
-                item = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("oldItemGUID"))) as Item; 
-            }
-            else
-            {
-                item = info.GetValue("oldItem", typeof(Item)) as Item;
-            }
+            item = info.TryGUIDThenFull<Item>(context, "item");
+
+            UpdatePosition();
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            if (context.GetVars().GUIDSerialization)
-            {
-                info.AddValue("oldItemGUID", item.GUID.ToString()); 
-            }
+            SerializationHelper.Variables v = context.GetVars();
+            if (item == null || v.FullySerializeEverything || v.FullySerialized.Contains(item.GUID))
+                info.AddValue("item", item);
             else
-            {
-                info.AddValue("oldItem", item);
-            }
+                info.AddValue("itemGUID", item.GUID.ToString()); 
+
             base.GetObjectData(info, context);
         }
         #endregion
+
+        private void UpdatePosition()
+        {
+            Position = GameEnvironment.InputHelper.MousePosition + new Vector2(10, 10);
+        }
 
         public override void Replace(GameObject replacement)
         {
@@ -162,7 +159,8 @@ namespace Wink
         public override void HandleInput(InputHelper inputHelper)
         {
             base.HandleInput(inputHelper);
-            Position = inputHelper.MousePosition + new Vector2(10, 10);
+            UpdatePosition();
+
             if (caller != null)
             {
                 // check if mouse is still above the caller, if not dissable infoWindow

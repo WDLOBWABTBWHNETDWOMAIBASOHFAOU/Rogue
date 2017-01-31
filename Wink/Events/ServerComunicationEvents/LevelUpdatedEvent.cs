@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.Serialization;
 
 namespace Wink
@@ -22,14 +23,16 @@ namespace Wink
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
+            context.GetVars().FullySerializeEverything = true;
+
             info.AddValue("updatedLevel", updatedLevel);
             base.GetObjectData(info, context);
         }
         #endregion
 
-        public override bool GUIDSerialization
+        public override List<Guid> GetFullySerialized(Level level)
         {
-            get { return false; }
+            return level.FindAll(obj => true).ConvertAll(obj => obj.GUID); //All
         }
 
         public override bool OnClientReceive(LocalClient client)
@@ -46,7 +49,7 @@ namespace Wink
                     guiStates.Add(obj.GUID, guiState);
                 }
             }
-            
+
             //Actually update the level.
             client.Level = updatedLevel;
             updatedLevel.InitGUI(null);

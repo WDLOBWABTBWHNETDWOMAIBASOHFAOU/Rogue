@@ -12,8 +12,11 @@ namespace Wink
         private Window iWindow;
         public bool Closed;
         private int floorNumber;
-        public InventoryBox IBox { get { return iBox; } }
 
+        public InventoryBox IBox
+        {
+            get { return iBox; }
+        }
         public virtual Point PointInTile
         {
             get { return new Point(0, 0); }
@@ -29,7 +32,7 @@ namespace Wink
 
         public Container(string asset, int floorNumber, InventoryBox inv = null, int layer = 0, string id = "") : base(asset, layer, id)
         {
-            iBox = inv ?? new InventoryBox(new GameObjectGrid(2, 4), layer + 1, "", cameraSensitivity);
+            iBox = inv ?? new InventoryBox(2, 4, layer + 1, "", cameraSensitivity);
             this.floorNumber = floorNumber;
             Closed = true;
         }
@@ -37,28 +40,21 @@ namespace Wink
         #region Serialization
         public Container(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            if (context.GetVars().GUIDSerialization)
-            {
-                iBox = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("iBoxGUID"))) as InventoryBox; 
-            }
-            else
-            {
-                iBox = info.GetValue("iBox", typeof(InventoryBox)) as InventoryBox;
-            }
+            iBox = info.TryGUIDThenFull<InventoryBox>(context, "iBox");
+            clickCount = info.GetInt32("clickCount");
             Closed = info.GetBoolean("Closed");
             floorNumber = info.GetInt32("floorNumber");
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            if (context.GetVars().GUIDSerialization)
-            {
-                info.AddValue("iBoxGUID", iBox.GUID.ToString());
-            }
+            SerializationHelper.Variables v = context.GetVars();
+            if (v.FullySerializeEverything || v.FullySerialized.Contains(iBox.GUID))
+                info.AddValue("iBox", iBox);
             else
-            {
-                info.AddValue("iBox", iBox); 
-            }
+                info.AddValue("iBoxGUID", iBox.GUID.ToString()); 
+
+            info.AddValue("clickCount", clickCount);
             info.AddValue("Closed", Closed);
             info.AddValue("floorNumber", floorNumber);
 
@@ -77,7 +73,7 @@ namespace Wink
         public void InitGUI(Dictionary<string, object> guiState)
         {
             //Make a Window to display the contents of this container in.
-            iWindow = new Window(iBox.ItemGrid.Columns * Tile.TileWidth, iBox.ItemGrid.Rows * Tile.TileHeight);
+            iWindow = new Window(iBox.Columns * Tile.TileWidth, iBox.Rows * Tile.TileHeight);
             iWindow.Add(iBox);
             iWindow.Position = guiState.ContainsKey("iWindowPosition") ? (Vector2)guiState["iWindowPosition"] : new Vector2(300, 300);
             iWindow.Visible = guiState.ContainsKey("iWindowVisibility") ? (bool)guiState["iWindowVisibility"] : false;
@@ -103,6 +99,7 @@ namespace Wink
             base.Update(gameTime);
             iBox.Update(gameTime);
 
+            //TODO: move to a piece of code that actually gets called client-side.
             if (iWindow != null && iWindow.Visible)
             {
                 //TODO: fix, doen't work at the moment
@@ -118,7 +115,7 @@ namespace Wink
 
         void InitContents(int floorNumber)
         {
-            for (int x = 0; x < IBox.ItemGrid.Columns; x++)
+            for (int x = 0; x < IBox.Columns; x++)
             {
                 int i = x % 4;
                 int spawnChance;
@@ -146,11 +143,11 @@ namespace Wink
                         throw new Exception("wtf");
                         #endregion
                 }
-                for (int y = 0; y < IBox.ItemGrid.Rows; y++)
+                for (int y = 0; y < IBox.Rows; y++)
                 {
                     if (spawnChance > GameEnvironment.Random.Next(100))
                     {
-                        ItemSlot cS = IBox.ItemGrid.Get(x, y) as ItemSlot;
+                        ItemSlot cS = IBox.Get(x, y) as ItemSlot;
                         cS.ChangeItem(newItem);
                     }
                 }
@@ -181,12 +178,25 @@ namespace Wink
 
         public List<GameObject> FindAll(Func<GameObject, bool> del)
         {
-            return iBox.FindAll(del);
+            List<GameObject> result = new List<GameObject>();
+            if (iBox != null)
+            {
+                if (del.Invoke(IBox))
+                    result.Add(IBox);
+                result.AddRange(iBox.FindAll(del));
+            }
+            return result;
         }
 
         public GameObject Find(Func<GameObject, bool> del)
         {
-            return iBox.Find(del);
+            if (iBox != null)
+            {
+                if (del.Invoke(IBox))
+                    return IBox;
+                return iBox.Find(del);
+            }
+            return null;
         }
     }
 }

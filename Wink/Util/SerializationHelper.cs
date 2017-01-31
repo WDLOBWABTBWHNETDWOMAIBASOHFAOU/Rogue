@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -12,13 +13,23 @@ namespace Wink
             return sc.Context as SerializationHelper.Variables;
         }
 
+        public static bool ContainsKey(this SerializationInfo info, string key)
+        {
+            foreach (SerializationEntry e in info)
+            {
+                if (e.Name == key)
+                    return true;
+            }
+            return false;
+        }
+
         public static T TryGUIDThenFull<T>(this SerializationInfo info, StreamingContext context, string variableName) where T : GameObject
         {
-            try
+            if (!context.GetVars().FullySerializeEverything && info.ContainsKey(variableName + "GUID"))
             {
                 return context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString(variableName + "GUID"))) as T;
             }
-            catch (SerializationException se)
+            else
             {
                 return info.GetValue(variableName, typeof(T)) as T;
             }
@@ -29,52 +40,46 @@ namespace Wink
     {
         public class Variables
         {
-            public bool GUIDSerialization { set; get; }
+            public List<Guid> FullySerialized { private set; get; }
+            public bool FullySerializeEverything { set; get; }
             public ILocal Local { private set; get; }
 
-            public Variables(ILocal local, bool guidSerialization = false)
+            public Variables(ILocal local, List<Guid> fullySerialized = null, bool fullySerializeEverything = false)
             {
-                GUIDSerialization = guidSerialization;
+                FullySerialized = fullySerialized;
                 Local = local;
+                FullySerializeEverything = fullySerializeEverything;
             }
         }
 
-        public static void Serialize(Stream s, object toSerialize, ILocal local, bool guidSerialization)
+        public static void Serialize(Stream s, object toSerialize, ILocal local, List<Guid> fullySerialized, bool fullySerializeEverything = false)
         {
             BinaryFormatter binaryFormatter = new BinaryFormatter();
-            StreamingContext c = new StreamingContext(StreamingContextStates.All, new Variables(local, guidSerialization));
+            StreamingContext c = new StreamingContext(StreamingContextStates.All, new Variables(local, fullySerialized, fullySerializeEverything));
             binaryFormatter.Context = c;
 
             binaryFormatter.Serialize(s, toSerialize);
         }
 
-        public static object Deserialize(Stream s, ILocal local, bool guidSerialization)
+        public static object Deserialize(Stream s, ILocal local)
         {
             BinaryFormatter binaryFormatter = new BinaryFormatter();
-            StreamingContext c = new StreamingContext(StreamingContextStates.All, new Variables(local, guidSerialization));
+            StreamingContext c = new StreamingContext(StreamingContextStates.All, new Variables(local));
             binaryFormatter.Context = c;
             object result = null;
-            try
-            {
-                result = binaryFormatter.Deserialize(s);
-            }
-            catch (SerializationException se)
-            {
-                c.GetVars().GUIDSerialization = !c.GetVars().GUIDSerialization;
-                s.Seek(0, SeekOrigin.Begin);
-                result = binaryFormatter.Deserialize(s);
-            }
+
+            result = binaryFormatter.Deserialize(s);
 
             return result;
         }
 
-        public static T Clone<T>(T toClone, ILocal local, bool guidSerialization) where T : class
+        public static T Clone<T>(T toClone, ILocal local) where T : class
         {
             using (MemoryStream ms = new MemoryStream())
             {
-                Serialize(ms, toClone, local, guidSerialization);
+                Serialize(ms, toClone, local, null, true);
                 ms.Seek(0, SeekOrigin.Begin);
-                return Deserialize(ms, local, guidSerialization) as T;
+                return Deserialize(ms, local) as T;
             }
         }
     }

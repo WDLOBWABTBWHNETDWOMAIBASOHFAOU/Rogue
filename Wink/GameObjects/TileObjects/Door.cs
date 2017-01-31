@@ -26,26 +26,20 @@ namespace Wink
         #region Serialization
         public Door(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            if (context.GetVars().GUIDSerialization)
-            {
-                parentTile = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("parentTileGUID"))) as Tile; 
-            }
-            else
-            {
-                parentTile = info.GetValue("parentTile", typeof(Tile)) as Tile;
-            }
+            parentTile = info.TryGUIDThenFull<Tile>(context, "parentTile");
             open = info.GetBoolean("open");
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            if (context.GetVars().GUIDSerialization)
+            SerializationHelper.Variables v = context.GetVars();
+            if (v.FullySerializeEverything || v.FullySerialized.Contains(parentTile.GUID))
             {
-                info.AddValue("parentTileGUID", parentTile.GUID.ToString()); 
+                info.AddValue("parentTile", parentTile);
             }
             else
             {
-                info.AddValue("parentTile", parentTile);
+                info.AddValue("parentTileGUID", parentTile.GUID.ToString()); 
             }
             info.AddValue("open", open);
             base.GetObjectData(info, context);

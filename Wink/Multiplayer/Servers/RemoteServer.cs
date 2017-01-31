@@ -56,10 +56,9 @@ namespace Wink
             while (receiving)
             {
                 NetworkStream s = tcp.GetStream();
-                if (s.DataAvailable)
+                if (s.DataAvailable && !client.LevelBeingUpdated)
                 {
-                    System.Diagnostics.Debug.WriteLine("data is available");
-                    Event e = SerializationHelper.Deserialize(s, client, false) as Event;
+                    Event e = SerializationHelper.Deserialize(s, client) as Event;
                     client.IncomingEvent(e);
                 }
                 else
@@ -74,7 +73,7 @@ namespace Wink
             if (e.Validate(client.Level))
             {
                 //Serialize and send the event over TCP connection.
-                StreamingContext c = new StreamingContext(StreamingContextStates.All, new SerializationHelper.Variables(client, e.GUIDSerialization));
+                StreamingContext c = new StreamingContext(StreamingContextStates.All, new SerializationHelper.Variables(client, e.GetFullySerialized(client.Level)));
                 binaryFormatter.Context = c;
                 binaryFormatter.Serialize(tcp.GetStream(), e);
             }

@@ -25,14 +25,14 @@ namespace Wink
 
         public float WalkCostMod { get { return walkCostMod; } }
 
-        public BodyEquipment(int floorNumber, int reqPenalty = 0,ArmorType genType = ArmorType.gen, int stackSize = 1,int layer = 0) : base(floorNumber, layer, stackSize)
+        public BodyEquipment(int floorNumber, int reqPenalty = 0, ArmorType genType = ArmorType.gen, int stackSize = 1, int layer = 0) : base(floorNumber, layer, stackSize)
         {
             this.reqPenalty = reqPenalty;
             SetRandomBodyAmor(floorNumber,genType);
             SetID();
         }
 
-        public BodyEquipment(string assetName, string id, ArmorType armorType, int physicalValue=0, int magicValue=0,int reqPenalty=0, int strRequirement = 0, int dexRequirement = 0, int intRequirement = 0, int layer = 0, int stackSize = 1) : base(assetName, id, layer, stackSize, strRequirement, dexRequirement, intRequirement)
+        public BodyEquipment(string assetName, string id, ArmorType armorType, int physicalValue = 0, int magicValue = 0, int reqPenalty = 0, int strRequirement = 0, int dexRequirement = 0, int intRequirement = 0, int layer = 0, int stackSize = 1) : base(assetName, id, layer, stackSize, strRequirement, dexRequirement, intRequirement)
         {
             this.physicalValue = physicalValue;
             this.magicValue = magicValue;

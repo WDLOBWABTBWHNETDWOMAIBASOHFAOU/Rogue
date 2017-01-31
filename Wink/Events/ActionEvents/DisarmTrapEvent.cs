@@ -30,27 +30,20 @@ namespace Wink
         }
         #endregion
 
-
-        public override bool GUIDSerialization
+        public override List<Guid> GetFullySerialized(Level level)
         {
-            get
-            {
-                return true;
-            }
+            return null; //
         }
 
         protected override int Cost
         {
-            get
-            {
-                return Living.BaseActionCost;
-            }
+            get { return Living.BaseActionCost; }
         }
 
-        protected override void DoAction(LocalServer server)
+        protected override void DoAction(LocalServer server, HashSet<GameObject> changedObjects)
         {
-            server.ChangedObjects.Add(player);
-            server.ChangedObjects.Add(trap);
+            changedObjects.Add(player);
+            changedObjects.Add(trap);
             trap.disarmTrap(player);
         }
 

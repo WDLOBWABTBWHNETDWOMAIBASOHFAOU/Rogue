@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace Wink
@@ -28,11 +29,6 @@ namespace Wink
         }
         #endregion
 
-        public override bool GUIDSerialization
-        {
-            get { return true; }
-        }
-
         protected override int Cost
         {
             get
@@ -47,18 +43,24 @@ namespace Wink
             }
         }
 
-        protected override void DoAction(LocalServer server)
+        protected override void DoAction(LocalServer server, HashSet<GameObject> changedObjects)
         {
-            server.ChangedObjects.Add(player.Tile);
-            server.ChangedObjects.Add(tile);
+            Tile oldTile = player.Tile;
+
+            AddVisibleTiles(server.Level, changedObjects);
             player.MoveTo(tile);
             player.ComputeVisibility();
+            AddVisibleTiles(server.Level, changedObjects);
+
+            changedObjects.Add(oldTile.OnTile);
+            changedObjects.Add(player.Tile.OnTile);
         }
 
         protected override bool ValidateAction(Level level)
         {
             if (player.Tile == null)
                 return false;
+
             int dx = (int)Math.Abs(player.Tile.Position.X - tile.Position.X);
             int dy = (int)Math.Abs(player.Tile.Position.Y - tile.Position.Y);
 

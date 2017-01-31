@@ -10,11 +10,11 @@ namespace Wink
     [Serializable]
     class SkillEvent : ActionEvent
     {
-        protected GameObject target;//can be anything form an enemy reciving a powerfull attack, a friendly reciving a heal/buff or a tile as center for an EoA spell, etc.
-        public SkillEvent(Player player,GameObject target) : base(player)
+        protected GameObject target; //can be anything form an enemy reciving a powerfull attack, a friendly reciving a heal/buff or a tile as center for an EoA spell, etc.
+
+        public SkillEvent(Player player, GameObject target) : base(player)
         {
             this.target = target;
-
         }
 
         #region Serialization
@@ -31,33 +31,21 @@ namespace Wink
         }
         #endregion
 
-        public override bool GUIDSerialization
-        {
-            get
-            {
-                return false;
-            }
-        }
-
         protected override int Cost
         {
-            get
-            {
-                return Living.BaseActionCost;
-            }
+            get { return Living.BaseActionCost; }
         }
 
-        protected override void DoAction(LocalServer server)
+        protected override void DoAction(LocalServer server, HashSet<GameObject> changedObjects)
         {
             player.CurrentSkill.DoSkill(player, target as Living, target as Tile);
         }
 
         protected override bool ValidateAction(Level level)
         {
-            if (player.CurrentSkill != null)
-            {
-                return player.CurrentSkill.SkillValidation(player,target as Living,target as Tile);//also handles whithin reach
-            }
+            if (player.CurrentSkill != null) 
+                return player.CurrentSkill.SkillValidation(player, target as Living, target as Tile); //also handles whithin reach 
+
             return false;
         }
     }

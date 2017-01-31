@@ -20,15 +20,10 @@ namespace Wink
         private List<Living> livingObjects;
         private Level level;
         private int turnIndex;
-        private List<GameObject> changedObjects;
 
         public List<Client> Clients
         {
             get { return new List<Client>(clientEvents.Keys); }
-        }
-        public List<GameObject> ChangedObjects
-        {
-            get { return changedObjects; }
         }
         public Level Level
         {
@@ -37,17 +32,19 @@ namespace Wink
             {
                 level = value;
                 InitLivingObjects();
-                SendOutUpdatedLevelIf();
             }
         }
         public int LevelIndex
         {
             get { return level.Index; }
         }
+        private List<Player> Players
+        {
+            get { return livingObjects.Where(l => l is Player).Cast<Player>().ToList(); }
+        }
 
         public LocalServer ()
         {
-            changedObjects = new List<GameObject>();
             clientEvents = new Dictionary<Client, List<Event>>();
         }
 
@@ -87,7 +84,7 @@ namespace Wink
             }
 
             InitLivingObjects();
-            SendOutUpdatedLevelIf(true);
+            SendOutUpdatedLevel(true);
         }
         
         public void ProcessAllNonActionEvents()
@@ -143,76 +140,81 @@ namespace Wink
         {
             if (e.Validate(Level))
             {
-                e = SerializationHelper.Clone(e, this, e.GUIDSerialization);
+                e = SerializationHelper.Clone(e, this);
                 IncomingEvent(Clients.Find(c => c is LocalClient), e);
             }
         }
 
-        private void SendOutUpdatedLevelIf(bool first = false)
+        private void SendOutUpdatedLevel(bool first = false)
         {
-            if (changedObjects.Count > 0 || first)
-            {
-                LevelUpdatedEvent e = first ? new JoinedServerEvent(Level) : new LevelUpdatedEvent(Level);
-                SendToAllClients(e);
-                changedObjects.Clear();
-            }
+            LevelUpdatedEvent e = first ? new JoinedServerEvent(Level) : new LevelUpdatedEvent(Level);
+            SendToAllClients(e);
         }
 
+        private bool updatedLevelSent;
         private void SendToAllClients(Event e)
         {
-            using (MemoryStream ms = new MemoryStream())
+            if (!updatedLevelSent) //After a LevelUpdatedEvent nothing else should be sent, because during deserialization the old level will still be used.
             {
-                SerializationHelper.Serialize(ms, e, this, e.GUIDSerialization);
-                ms.Seek(0, SeekOrigin.Begin);
-                foreach (Client c in Clients) 
-                    c.SendPreSerialized(ms); 
-            }
-        }
-
-        public void SendOutLevelChanges()
-        {
-            if (changedObjects.Count > 0)
-            {
-                LevelChangedEvent e = new LevelChangedEvent(changedObjects);
-                foreach (Client c in Clients)
+                using (MemoryStream ms = new MemoryStream())
                 {
-                    c.Send(e);
+                    SerializationHelper.Serialize(ms, e, this, e.GetFullySerialized(Level));
+                    ms.Seek(0, SeekOrigin.Begin);
+                    foreach (Client c in Clients)
+                        c.SendPreSerialized(ms);
                 }
-                changedObjects.Clear();
+
+                if (e is LevelUpdatedEvent)
+                    updatedLevelSent = true;
             }
         }
 
         public override void Update(GameTime gameTime)
         {
+            updatedLevelSent = false;
             //First we update the level so all update methods in all gameobjects get called.
             //This also empties the seenBy in Tile.
             Level.Update(gameTime);
             //Then we let every Living object calculate what tiles it can see, that object is then added to these Tiles' seenBy list.
             ComputeVisibilities();
-
+            
             ProcessAllNonActionEvents();
             
             if (livingObjects[turnIndex] is Player)
             {
                 Client currentClient = Clients.Find(client => client.Player.GUID == livingObjects[turnIndex].GUID);
                 ProcessActionEvents(currentClient);
-                livingObjects[turnIndex].ComputeVisibility();
-                SendOutUpdatedLevelIf();
             }
             else
             {
-                changedObjects.AddRange(livingObjects[turnIndex].DoAllBehaviour());
-                livingObjects[turnIndex].ComputeVisibility();
+                HashSet<GameObject> changedObjects = livingObjects[turnIndex].DoAllBehaviour();
+                if (changedObjects.Count > 0)
+                    SendToAllClients(new LevelChangedEvent(changedObjects));    
             }
-            
+
+            livingObjects[turnIndex].ComputeVisibility();
             UpdateTurn();
-            //SendOutLevelChanges();
         }
 
         public void ComputeVisibilities()
         {
-            foreach (Living l in livingObjects)
-                l.ComputeVisibility();
+            foreach (Player p in Players)
+                p.ComputeVisibility();
+
+            foreach (Living l in livingObjects.Where(l => !(l is Player)))
+            {
+                bool seenByPlayer = false;
+                foreach (Player p in Players)
+                {
+                    if (l.Tile.SeenBy.ContainsKey(p))
+                    {
+                        seenByPlayer = true;
+                        break;
+                    }
+                }
+                if (seenByPlayer)
+                    l.ComputeVisibility();
+            }
         }
 
         private void UpdateTurn()
@@ -225,7 +227,8 @@ namespace Wink
             {
                 turnIndex = (turnIndex + 1) % livingObjects.Count;
                 livingObjects[turnIndex].ActionPoints = Living.MaxActionPoints;
-                changedObjects.Add(livingObjects[turnIndex]);
+                if (livingObjects[turnIndex] is Player && !updatedLevelSent)
+                    SendToAllClients(new LevelChangedEvent(new List<GameObject>() { livingObjects[turnIndex] }));
             }
         }
         
@@ -234,6 +237,7 @@ namespace Wink
             if (livingObjects[turnIndex] == player)
             {
                 player.ActionPoints = 0;
+                SendToAllClients(new LevelChangedEvent(new List<GameObject>() { player }));
                 ComputeVisibilities();
                 UpdateTurn();
             }

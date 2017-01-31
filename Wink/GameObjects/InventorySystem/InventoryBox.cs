@@ -1,43 +1,45 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace Wink
 {
     [Serializable]
-    public class InventoryBox : GameObjectList
+    public class InventoryBox : GameObjectGrid
     {
-        public GameObjectGrid ItemGrid
+        public List<Item> Items
         {
-            get { return Find(obj => obj is GameObjectGrid) as GameObjectGrid; }
-        }
-        
-        public InventoryBox(GameObjectGrid itemGrid, int layer = 0, string id = "", float cameraSensitivity = 0) : base(layer, id)
-        {
-            itemGrid.CellHeight = Tile.TileHeight;
-            itemGrid.CellWidth = Tile.TileWidth;
-
-            for (int x = 0; x < itemGrid.Columns; x++)
+            get
             {
-                for (int y = 0; y < itemGrid.Rows; y++)
+                List<Item> items = new List<Item>();
+                foreach (ItemSlot itemSlot in Objects)
                 {
-                    itemGrid.Add(new ItemSlot("inventory/slot"), x, y);
+                    if (itemSlot.SlotItem != null)
+                        items.Add(itemSlot.SlotItem);
+                }
+                return items;
+            }
+        }
+
+        public InventoryBox(int rows, int columns, int layer = 0, string id = "", float cameraSensitivity = 0) : base(rows, columns, layer, id)
+        {
+            CellHeight = Tile.TileHeight;
+            CellWidth = Tile.TileWidth;
+
+            for (int x = 0; x < Columns; x++)
+            {
+                for (int y = 0; y < Rows; y++)
+                {
+                    Add(new ItemSlot("inventory/slot"), x, y);
                 }
             }
-
-            Add(itemGrid);
         }
 
         #region Serialization
         public InventoryBox(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
-
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            base.GetObjectData(info, context);
-        }
         #endregion
-        
     } 
 }

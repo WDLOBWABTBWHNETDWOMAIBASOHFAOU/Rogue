@@ -12,10 +12,19 @@ namespace Wink
         private string dieSound;
         protected float viewDistance;
         private InventoryBox inventory;
-        
-        public Skill CurrentSkill;
+
+        protected Skill currentSkill;
+        public Skill CurrentSkill
+        {
+            get { return currentSkill; }
+            set { currentSkill = value; }
+        }
+
         private GameObjectList skillList;
-        public GameObjectList SkillList { get { return skillList; } }
+        public GameObjectList SkillList
+        {
+            get { return skillList; }
+        }
 
         #region EquipmentSlots
         // Accessors for all the different equipment slots
@@ -86,9 +95,8 @@ namespace Wink
                     skillList.Add(new RestrictedItemSlot(typeof(Skill), "inventory/slot", id:"skillSlot"+x));
                 }
             }
-
-            GameObjectGrid itemGrid = new GameObjectGrid(4, 4, 0, "");
-            inventory = new InventoryBox(itemGrid);
+            
+            inventory = new InventoryBox(4, 4, 0, "");
 
             equipmentSlots = new GameObjectList();
             equipmentSlots.Add(new RestrictedItemSlot(typeof(WeaponEquipment), "inventory/weaponSlot", id: "weaponSlot"));
@@ -96,6 +104,10 @@ namespace Wink
             equipmentSlots.Add(new RestrictedItemSlot(typeof(RingEquipment), "inventory/ringSlot", id: "ringSlot1"));
             equipmentSlots.Add(new RestrictedItemSlot(typeof(RingEquipment), "inventory/ringSlot", id: "ringSlot2"));
             equipmentSlots.Add(new RestrictedItemSlot(typeof(HeadEquipment), "inventory/headSlot", id: "headSlot"));
+
+            InitAnimationVariables();
+            LoadAnimations();
+            PlayAnimation("idle");
         }
 
         #region Serialization
@@ -107,24 +119,11 @@ namespace Wink
             dieAnimation = info.GetString("dieAnimation");
             dieSound = info.GetString("dieSound");
 
-            //inventory = info.TryGUIDThenFull<InventoryBox>(context, "inventory");
-
-            if (context.GetVars().GUIDSerialization)
-            {
-                inventory = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("inventoryGUID"))) as InventoryBox;
-                equipmentSlots = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("equipmentSlotsGUID"))) as GameObjectList;
-                skillList = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("skillListGUID"))) as GameObjectList;
-                CurrentSkill = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("CurrentSkillGUID"))) as Skill;
-
-            }
-            else
-            {
-                inventory = info.GetValue("inventory", typeof(InventoryBox)) as InventoryBox;
-                equipmentSlots = info.GetValue("equipmentSlots", typeof(GameObjectList)) as GameObjectList;
-                skillList = info.GetValue("skills", typeof(GameObjectList)) as GameObjectList;
-                CurrentSkill = info.GetValue("CurrentSkill", typeof(Skill)) as Skill;
-            }
-
+            inventory = info.TryGUIDThenFull<InventoryBox>(context, "inventory");
+            equipmentSlots = info.TryGUIDThenFull<GameObjectList>(context, "equipmentSlots");
+            skillList = info.TryGUIDThenFull<GameObjectList>(context, "skillList");
+            currentSkill = info.TryGUIDThenFull<Skill>(context, "currentSkill");
+            
             //stats
             manaPoints = info.GetInt32("manaPoints");
             healthPoints = info.GetInt32("healthPoints");
@@ -151,21 +150,27 @@ namespace Wink
             info.AddValue("moveAnimation", moveAnimation);
             info.AddValue("dieAnimation", dieAnimation);
             info.AddValue("dieSound", dieSound);
-            
-            if (context.GetVars().GUIDSerialization)
-            {
-                info.AddValue("inventoryGUID", inventory.GUID.ToString());
-                info.AddValue("equipmentSlotsGUID", equipmentSlots.GUID.ToString());
-                info.AddValue("skillListGUID", skillList.GUID.ToString());
-                info.AddValue("CurrentSkillGUID", CurrentSkill.GUID.ToString());
-            }
-            else
-            {
+
+            SerializationHelper.Variables v = context.GetVars();
+            if (v.FullySerializeEverything || v.FullySerialized.Contains(inventory.GUID))
                 info.AddValue("inventory", inventory);
-                info.AddValue("equipmentSlots", equipmentSlots);
-                info.AddValue("skills", skillList);
-                info.AddValue("CurrentSkill", CurrentSkill);
-            }
+            else
+                info.AddValue("inventoryGUID", inventory.GUID.ToString());
+            
+            if (v.FullySerializeEverything || v.FullySerialized.Contains(equipmentSlots.GUID))
+                info.AddValue("equipmentSlots", equipmentSlots); 
+            else
+                info.AddValue("equipmentSlotsGUID", equipmentSlots.GUID.ToString());
+
+            if (v.FullySerializeEverything || v.FullySerialized.Contains(skillList.GUID))
+                info.AddValue("skillList", skillList);
+            else
+                info.AddValue("skillListGUID", skillList.GUID.ToString());
+
+            if (currentSkill == null || v.FullySerializeEverything || v.FullySerialized.Contains(currentSkill.GUID))
+                info.AddValue("currentSkill", currentSkill);
+            else
+                info.AddValue("currentSkillGUID", currentSkill.GUID.ToString());
 
             //stats
             info.AddValue("manaPoints", manaPoints);
@@ -218,9 +223,9 @@ namespace Wink
         /// Do behavior until action points run out
         /// </summary>
         /// <returns>All objects that changed</returns>
-        public List<GameObject> DoAllBehaviour()
+        public HashSet<GameObject> DoAllBehaviour()
         {
-            List<GameObject> changedObjects = new List<GameObject>();
+            HashSet<GameObject> changedObjects = new HashSet<GameObject>();
             if (Health > 0)
             {
                 int previousActionPoints = int.MinValue;
@@ -236,17 +241,15 @@ namespace Wink
             return changedObjects;
         }
 
-        protected abstract void DoBehaviour(List<GameObject> changedObjects);
+        protected abstract void DoBehaviour(HashSet<GameObject> changedObjects);
 
         protected abstract void InitAnimationVariables();
 
         public override void LoadAnimations()
         {
-            InitAnimationVariables();
             LoadAnimation(idleAnimation, "idle", true);
             LoadAnimation(moveAnimation, "move", true, 0.05f);
             LoadAnimation(dieAnimation, "die", false);
-            PlayAnimation("idle");
         }
 
         /// <summary>
@@ -287,9 +290,12 @@ namespace Wink
         public virtual List<GameObject> FindAll(Func<GameObject, bool> del)
         {
             List<GameObject> result = new List<GameObject>();
-            result.AddRange(inventory.FindAll(del));
-            result.AddRange(equipmentSlots.FindAll(del));
-            result.AddRange(skillList.FindAll(del));
+            if (inventory != null)
+                result.AddRange(inventory.FindAll(del));
+            if (equipmentSlots != null)
+                result.AddRange(equipmentSlots.FindAll(del));
+            if (skillList != null)
+                result.AddRange(skillList.FindAll(del));
             return result;
         }
 
@@ -300,15 +306,31 @@ namespace Wink
         /// <returns></returns>
         public virtual GameObject Find(Func<GameObject, bool> del)
         {
-            if (del.Invoke(inventory)) // Check if the inventory fits "del"
-                return inventory;
-            if (del.Invoke(equipmentSlots)) // check if equipmentSlots fits "del"
-                return equipmentSlots;
-            if (del.Invoke(skillList)) // check if equipmentSlots fits "del"
-                return skillList;
-
-            // Find the object matching "del" among the children of inventory and equipmentSlots
-            return inventory.Find(del) ?? equipmentSlots.Find(del)?? skillList.Find(del);
+            if (inventory != null)
+            {
+                if (del.Invoke(inventory)) // Check if the inventory fits "del"
+                    return inventory;
+                GameObject invResult = inventory.Find(del); // Find the object matching "del" among the children of inventory
+                if (invResult != null)
+                    return invResult;
+            }
+            if (equipmentSlots != null)
+            {
+                if (del.Invoke(equipmentSlots)) // Check if equipmentSlots fits "del"
+                    return equipmentSlots;
+                GameObject eqResult = equipmentSlots.Find(del); // Find the object matching "del" among the children of equipmentSlots
+                if (eqResult != null)
+                    return eqResult;
+            }
+            if (skillList != null)
+            {
+                if (del.Invoke(skillList)) // Check if equipmentSlots fits "del"
+                    return skillList;
+                GameObject slResult = skillList.Find(del); // Find the object matching "del" among the children of equipmentSlots
+                if (slResult != null)
+                    return slResult;
+            }
+            return null;
         }
     }
 }

@@ -175,9 +175,9 @@ namespace Wink
             floorNumber++;
             Tile t = LoadFloorTile("", assetName);
             Container chest = new Container("empty:64:64:10:Brown", levelIndex);
-            for (int x = 0; x < chest.IBox.ItemGrid.Columns; x++)
+            for (int x = 0; x < chest.IBox.Columns; x++)
             {
-                for (int y = 0; y < chest.IBox.ItemGrid.Rows; y++)
+                for (int y = 0; y < chest.IBox.Rows; y++)
                 {
                     int i = x % 4;
                     int spawnChance;
@@ -207,7 +207,7 @@ namespace Wink
                     }
                     if (spawnChance > GameEnvironment.Random.Next(100))
                     {
-                        ItemSlot cS = chest.IBox.ItemGrid.Get(x, y) as ItemSlot;
+                        ItemSlot cS = chest.IBox.Get(x, y) as ItemSlot;
                         cS.ChangeItem(newItem);
                     }
                 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 using Microsoft.Xna.Framework;
+using System.Collections.Generic;
 
 namespace Wink
 {
@@ -37,20 +38,17 @@ namespace Wink
             get { return Living.BaseActionCost; }
         }
 
-        public override bool GUIDSerialization
-        {
-            get { return false; }
-        }
-
-        protected override void DoAction(LocalServer server)
+        protected override void DoAction(LocalServer server, HashSet<GameObject> changedObjects)
         {
             Attacker.Attack(Defender);
-            server.ChangedObjects.Add(Defender);
+
+            if (Defender.Health > 0)
+                changedObjects.Add(Defender);
         }
 
         protected override bool ValidateAction(Level level)
         {
-            return AbleToHit(Attacker, Defender.Tile,Attacker.Reach);
+            return AbleToHit(Attacker, Defender.Tile, Attacker.Reach);
         }
 
         /// <summary>
@@ -60,7 +58,7 @@ namespace Wink
         /// <param name="att"> Attacking living object</param>
         /// <param name="def">Defending living object</param>
         /// <returns>Returns true when both conditions are met</returns>
-        public static bool AbleToHit(Living att, Tile def,int attReach)
+        public static bool AbleToHit(Living att, Tile def, int attReach)
         {
             if (def.SeenBy.ContainsKey(att))
             {                                

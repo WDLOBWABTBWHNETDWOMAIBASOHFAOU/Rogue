@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Wink
 {
@@ -47,8 +48,10 @@ namespace Wink
         public bool TryHit(Living target) //is there still a distinction between dodge and miss?
         {
             double hitChance = HitChance(); // Example: 0.7
-            double dodgeChance = target.DodgeChance(); // Example: 0.7
-            System.Console.WriteLine((0.5/(System.Math.Sqrt(creatureLevel+target.creatureLevel))) * (hitChance / dodgeChance));
+            double dodgeChance = target.DodgeChance(); // Example: 0.3
+            Debug.WriteLine("(2.5 / (System.Math.Sqrt(36 + creatureLevel + target.creatureLevel))) * (hitChance / dodgeChance)");
+            Debug.WriteLine("2.5 / sqrt(36 +" + creatureLevel + " + " + target.creatureLevel + ") * (" + hitChance + " / " + dodgeChance + ")");
+            Debug.WriteLine((2.5/(System.Math.Sqrt(36 + creatureLevel+target.creatureLevel))) * (hitChance / dodgeChance)); // example: (0.5/(sqrt(1+1)) * (0.7/0.3) = 0.82
             return (0.5 / (System.Math.Sqrt(creatureLevel + target.creatureLevel))) * (hitChance / dodgeChance) > GameEnvironment.Random.NextDouble();
         }
 

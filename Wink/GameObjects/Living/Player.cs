@@ -8,7 +8,6 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Wink
 {
-
     public enum PlayerType { warrior, archer, mage, random }
     public enum Stat { vitality, strength, dexterity, wisdom, luck, intelligence }
     [Serializable]
@@ -37,7 +36,7 @@ namespace Wink
         {
             //Inventory
             this.playerType = playerType;
-            mouseSlot = new MouseSlot(layer + 11, "mouseSlot");  
+            mouseSlot = new MouseSlot(layer + 11, clientName + "_mouseSlot");  
             SetupType();
         }
 
@@ -62,13 +61,13 @@ namespace Wink
             RestrictedItemSlot bodyslot = EquipmentSlots.Find("bodySlot") as RestrictedItemSlot;
             int EquipmentStartingStrenght = 3;
 
-            ItemSlot slot_0_0 = Inventory.ItemGrid[0, 0] as ItemSlot;
-            slot_0_0.ChangeItem(new Potion("empty:64:64:10:Red",PotionType.Health,PotionPower.minor,5));//some starting healt potions
+            ItemSlot slot_0_0 = Inventory[0, 0] as ItemSlot;
+            slot_0_0.ChangeItem(new Potion("empty:64:64:10:Red", PotionType.Health, PotionPower.minor, 5));//some starting healt potions
 
 
-            ItemSlot slot_2_2 = Inventory.ItemGrid[2, 2] as ItemSlot;
+            ItemSlot slot_2_2 = Inventory[2, 2] as ItemSlot;
             slot_2_2.ChangeItem(new Heal());
-            ItemSlot slot_3_2 = Inventory.ItemGrid[3, 2] as ItemSlot;
+            ItemSlot slot_3_2 = Inventory[3, 2] as ItemSlot;
             slot_3_2.ChangeItem(new MagicBolt());
 
             switch (playerType)
@@ -89,7 +88,7 @@ namespace Wink
                     weaponslot.ChangeItem(new WeaponEquipment(EquipmentStartingStrenght, WeaponType.staff));
                     bodyslot.ChangeItem(new BodyEquipment(EquipmentStartingStrenght, 2, ArmorType.robes));
                     SetStats(1, 1, 1, 1, 4, 4, 1);
-                    ItemSlot slot_1_0 = Inventory.ItemGrid[1, 0] as ItemSlot;
+                    ItemSlot slot_1_0 = Inventory[1, 0] as ItemSlot;
                     slot_1_0.ChangeItem(new Potion("empty:64:64:10:Blue", PotionType.Mana, PotionPower.minor, 5));//some starting mana potions
                     break;
 
@@ -98,7 +97,7 @@ namespace Wink
             }
         }
 
-        protected override void DoBehaviour(List<GameObject> changedObjects)
+        protected override void DoBehaviour(HashSet<GameObject> changedObjects)
         {
             Debug.WriteLine("Called Player.DoBehaviour, but players don't have automated behaviour.");
         }
@@ -110,18 +109,17 @@ namespace Wink
             freeStatPoints = info.GetInt32("freeStatPoints");
             playerNameTitle = info.GetValue("playerNameTitle", typeof(TextGameObject)) as TextGameObject;
             playerType = (PlayerType)info.GetValue("playerType", typeof(PlayerType));
-            if (context.GetVars().GUIDSerialization)
-                mouseSlot = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("mouseSlotGUID"))) as MouseSlot;
-            else
-                mouseSlot = info.GetValue("mouseSlot", typeof(MouseSlot)) as MouseSlot;
+            
+            mouseSlot = info.TryGUIDThenFull<MouseSlot>(context, "mouseSlot");
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            if (context.GetVars().GUIDSerialization)
-                info.AddValue("mouseSlotGUID", mouseSlot.GUID.ToString());
+            SerializationHelper.Variables v = context.GetVars();
+            if (v.FullySerializeEverything || v.FullySerialized.Contains(mouseSlot.GUID))
+                info.AddValue("mouseSlot", mouseSlot); 
             else
-                info.AddValue("mouseSlot", mouseSlot);
+                info.AddValue("mouseSlotGUID", mouseSlot.GUID.ToString());
 
             info.AddValue("playerType", playerType);
             info.AddValue("playerNameTitle",playerNameTitle);
@@ -134,8 +132,11 @@ namespace Wink
         public override void Replace(GameObject replacement)
         {
             if (mouseSlot != null && mouseSlot.GUID == replacement.GUID)
+            {
                 mouseSlot = replacement as MouseSlot;
-
+                InitMouseSlot();
+            }
+            
             base.Replace(replacement);
         }
         
@@ -152,9 +153,9 @@ namespace Wink
         /// </summary>
         /// <param name="expGained"></param>
         /// <param name="killedEnemy"></param>
-        public void ReciveExp(int expGained, Enemy killedEnemy = null)
+        public void ReceiveExp(int expGained, Enemy killedEnemy = null)
         {
-            if(killedEnemy != null)
+            if (killedEnemy != null)
             {
                 int expmod = 50;
                 float diffulcityMod = killedEnemy.statAverige / statAverige;
@@ -218,73 +219,74 @@ namespace Wink
             };
             inputHelper.IfMouseRightButtonPressedOn(this, onRightClick);
 
+            //TODO: make this less copypasty
             #region SkillSelection
             if (inputHelper.KeyPressed(Keys.D1))
             {
-                CurrentSkill = (SkillList.Find("skillSlot0") as RestrictedItemSlot).SlotItem as Skill;
+                currentSkill = (SkillList.Find("skillSlot0") as RestrictedItemSlot).SlotItem as Skill;
                 ChangedSkillEvent CSK = new ChangedSkillEvent(this, CurrentSkill);
                 Server.Send(CSK);
             }
 
             if (inputHelper.KeyPressed(Keys.D2))
             {
-                CurrentSkill = (SkillList.Find("skillSlot1") as RestrictedItemSlot).SlotItem as Skill;
+                currentSkill = (SkillList.Find("skillSlot1") as RestrictedItemSlot).SlotItem as Skill;
                 ChangedSkillEvent CSK = new ChangedSkillEvent(this, CurrentSkill);
                 Server.Send(CSK);
             }
 
             if (inputHelper.KeyPressed(Keys.D3))
             {
-                CurrentSkill = (SkillList.Find("skillSlot2") as RestrictedItemSlot).SlotItem as Skill;
+                currentSkill = (SkillList.Find("skillSlot2") as RestrictedItemSlot).SlotItem as Skill;
                 ChangedSkillEvent CSK = new ChangedSkillEvent(this, CurrentSkill);
                 Server.Send(CSK);
             }
 
             if (inputHelper.KeyPressed(Keys.D4))
             {
-                CurrentSkill = (SkillList.Find("skillSlot3") as RestrictedItemSlot).SlotItem as Skill;
+                currentSkill = (SkillList.Find("skillSlot3") as RestrictedItemSlot).SlotItem as Skill;
                 ChangedSkillEvent CSK = new ChangedSkillEvent(this, CurrentSkill);
                 Server.Send(CSK);
             }
 
             if (inputHelper.KeyPressed(Keys.D5))
             {
-                CurrentSkill = (SkillList.Find("skillSlot4") as RestrictedItemSlot).SlotItem as Skill;
+                currentSkill = (SkillList.Find("skillSlot4") as RestrictedItemSlot).SlotItem as Skill;
                 ChangedSkillEvent CSK = new ChangedSkillEvent(this, CurrentSkill);
                 Server.Send(CSK);
             }
 
             if (inputHelper.KeyPressed(Keys.D6))
             {
-                CurrentSkill = (SkillList.Find("skillSlot5") as RestrictedItemSlot).SlotItem as Skill;
+                currentSkill = (SkillList.Find("skillSlot5") as RestrictedItemSlot).SlotItem as Skill;
                 ChangedSkillEvent CSK = new ChangedSkillEvent(this, CurrentSkill);
                 Server.Send(CSK);
             }
 
             if (inputHelper.KeyPressed(Keys.D7))
             {
-                CurrentSkill = (SkillList.Find("skillSlot6") as RestrictedItemSlot).SlotItem as Skill;
+                currentSkill = (SkillList.Find("skillSlot6") as RestrictedItemSlot).SlotItem as Skill;
                 ChangedSkillEvent CSK = new ChangedSkillEvent(this, CurrentSkill);
                 Server.Send(CSK);
             }
 
             if (inputHelper.KeyPressed(Keys.D8))
             {
-                CurrentSkill = (SkillList.Find("skillSlot7") as RestrictedItemSlot).SlotItem as Skill;
+                currentSkill = (SkillList.Find("skillSlot7") as RestrictedItemSlot).SlotItem as Skill;
                 ChangedSkillEvent CSK = new ChangedSkillEvent(this, CurrentSkill);
                 Server.Send(CSK);
             }
 
             if (inputHelper.KeyPressed(Keys.D9))
             {
-                CurrentSkill = (SkillList.Find("skillSlot8") as RestrictedItemSlot).SlotItem as Skill;
+                currentSkill = (SkillList.Find("skillSlot8") as RestrictedItemSlot).SlotItem as Skill;
                 ChangedSkillEvent CSK = new ChangedSkillEvent(this, CurrentSkill);
                 Server.Send(CSK);
             }
 
             if (inputHelper.KeyPressed(Keys.D0))
             {
-                CurrentSkill = (SkillList.Find("skillSlot9") as RestrictedItemSlot).SlotItem as Skill;
+                currentSkill = (SkillList.Find("skillSlot9") as RestrictedItemSlot).SlotItem as Skill;
                 ChangedSkillEvent CSK = new ChangedSkillEvent(this, CurrentSkill);
                 Server.Send(CSK);
             }
@@ -344,6 +346,12 @@ namespace Wink
             return result;
         }
 
+        private void InitMouseSlot()
+        {
+            PlayingGUI gui = GameWorld.Find("PlayingGui") as PlayingGUI;
+            gui.Add(mouseSlot);
+        }
+
         public void InitGUI(Dictionary<string, object> guiState)
         {
             PlayingGUI gui = GameWorld.Find("PlayingGui") as PlayingGUI;
@@ -393,7 +401,7 @@ namespace Wink
                 skillBar.Visible = guiState.ContainsKey("skillBarVisibility") ? (bool)guiState["skillBarVisibility"] : true;
                 gui.Add(skillBar);
 
-                gui.Add(mouseSlot);
+                InitMouseSlot();
             }
         }
 
@@ -401,7 +409,7 @@ namespace Wink
         {
             PlayingGUI gui = GameWorld.Find("PlayingGui") as PlayingGUI;
             gui.Remove(gui.Find("playerName" + guid.ToString()));
-            if (Id == LocalPlayerName)
+            if (Id == LocalPlayerName && GameWorld != null)
             {
                 PlayerInventoryAndEquipment pIaE = gui.Inventory;
                 StatScreen pSs = gui.CharacterScreen;

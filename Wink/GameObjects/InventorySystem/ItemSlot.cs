@@ -30,28 +30,18 @@ namespace Wink
         #region Serialization
         public ItemSlot(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            if (context.GetVars().GUIDSerialization)
-            {
-                slotItem = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("slotItemGUID"))) as Item;
-            }
-            else
-            {
-                slotItem = info.GetValue("slotItem", typeof(Item)) as Item;
-            }
+            slotItem = info.TryGUIDThenFull<Item>(context, "slotItem");
 
             containsPrev = info.GetBoolean("containsPrev");
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            if (context.GetVars().GUIDSerialization)
-            {
-                info.AddValue("slotItemGUID", slotItem.GUID.ToString());
-            }
-            else
-            {
+            SerializationHelper.Variables v = context.GetVars();
+            if (slotItem == null || v.FullySerializeEverything || v.FullySerialized.Contains(slotItem.GUID))
                 info.AddValue("slotItem", slotItem);
-            }
+            else
+                info.AddValue("slotItemGUID", slotItem.GUID.ToString());
 
             info.AddValue("containsPrev", containsPrev);
             base.GetObjectData(info, context);
@@ -65,23 +55,26 @@ namespace Wink
                 slotItem.Parent = this;
         }
 
+        public override void Replace(GameObject go)
+        {
+            if (slotItem != null && slotItem.GUID == go.GUID)
+                slotItem = go as Item;
+
+            base.Replace(go);
+        }
+
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
-            if (slotItem != null)
-            {
-                if (slotItem.stackCount <= 0)
-                    slotItem = null;
-            }
+            if (slotItem != null && slotItem.stackCount <= 0)
+                slotItem = null;
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
         {
             base.Draw(gameTime, spriteBatch, camera);
             if (slotItem != null)
-            {
                 slotItem.Draw(gameTime, spriteBatch, camera);
-            }
         }
 
         public override void HandleInput(InputHelper inputHelper)

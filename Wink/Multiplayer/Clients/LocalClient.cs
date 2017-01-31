@@ -3,6 +3,8 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.IO;
 using System.Collections.Generic;
+using Microsoft.Xna.Framework.Input;
+using System.Linq;
 
 namespace Wink
 {
@@ -17,14 +19,11 @@ namespace Wink
 
         public Level Level
         {
-            get
-            {
-                return gameObjects.Find("Level") as Level;
-            }
+            get { return gameObjects.Find("Level") as Level; }
             set
             {
                 Level lvl = Level;
-                if(lvl != null)
+                if (lvl != null)
                     gameObjects.Children.Remove(lvl); //Needs to remove from children directly because nothing gets updated on clientside.
 
                 gameObjects.Add(value);
@@ -39,7 +38,10 @@ namespace Wink
             get { return gameObjects.Find(Player.LocalPlayerName) as Player; }
         }
 
-        public bool IsMyTurn { set; get; }
+        public bool LevelBeingUpdated
+        {
+            get { return pendingEvents.Where(obj => obj is LevelUpdatedEvent).Count() > 0; }
+        }
 
         public Camera Camera
         {
@@ -53,11 +55,8 @@ namespace Wink
         /// <returns></returns>
         public GameObject GetGameObjectByGUID(Guid guid)
         {
-            if (guid == Guid.Empty)
+            if (guid == Guid.Empty || Level == null)
                 return null;
-
-            if (new HashSet<GameObject>(Level.FindAll(o => o.GUID == guid)).Count > 1)
-                throw new Exception("!");
 
             GameObject obj = Level.Find(o => o.GUID == guid);
             return obj;
@@ -86,6 +85,16 @@ namespace Wink
         public override void Update(GameTime gameTime)
         {
             GUI.Update(gameTime);
+            
+            if (LevelBeingUpdated)
+            {
+                LevelUpdatedEvent e = pendingEvents.Where(obj => obj is LevelUpdatedEvent).First() as LevelUpdatedEvent;
+                int luIndex = pendingEvents.IndexOf(e);
+                for (int i = 0; i < luIndex; i++)
+                {
+                    pendingEvents.RemoveAt(0);
+                }
+            }
 
             if (pendingEvents.Count > 0)
                 ExecuteIfValid(pendingEvents[0]);
@@ -95,6 +104,9 @@ namespace Wink
         {
             newCamera.HandleInput(inputHelper);
             gameObjects.HandleInput(inputHelper);
+            
+            if (inputHelper.KeyPressed(Keys.Space))
+                Server.Send(new EndTurnEvent(Player));
         }
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
@@ -120,17 +132,18 @@ namespace Wink
             pendingEvents.Add(e);
         }
 
-        public override void Send(Event e)
-        {
-            e = SerializationHelper.Clone(e, this, e.GUIDSerialization);
-            pendingEvents.Add(e);
-        }
-
         public override void SendPreSerialized(MemoryStream ms)
         {
             ms.Seek(0, SeekOrigin.Begin);
-            Event e = SerializationHelper.Deserialize(ms, this, false) as Event;
-            pendingEvents.Add(e);
+            if (pendingEvents.Where(obj => obj is LevelUpdatedEvent).Count() == 0)
+            {
+                Event e = SerializationHelper.Deserialize(ms, this) as Event;
+                pendingEvents.Add(e);
+            }
+            else
+            {
+                throw new Exception("Event sent in same tick as LevelUpdatedEvent, this causes issues when deserializing because new level has not yet been put in place.");
+            }
         }
 
         private void ExecuteIfValid(Event e)

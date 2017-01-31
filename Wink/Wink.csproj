@@ -85,7 +85,7 @@
     <Compile Include="GameManagement\IGameObjectContainer.cs" />
     <Compile Include="GameObjects\TileObjects\IGUIGameObject.cs" />
     <Compile Include="GameObjects\InventorySystem\Container.cs" />
-    <Compile Include="GameObjects\InventorySystem\EquipmentSlot.cs" />
+    <Compile Include="GameObjects\InventorySystem\RestrictedItemSlot.cs" />
     <Compile Include="GameObjects\InventorySystem\ItemSlot.cs" />
     <Compile Include="GameObjects\Items\BodyEquipment.cs" />
     <Compile Include="GameObjects\Items\Equipment.cs" />

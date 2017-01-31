@@ -18,8 +18,7 @@ namespace Wink
             this.ClientName = ClientName;
             this.playerType = playerType;
         }
-
-
+        
         #region Serialization
         public ClientPlayerType(SerializationInfo info, StreamingContext context) : base (info, context)
         {
@@ -35,12 +34,9 @@ namespace Wink
         }
         #endregion
 
-        public override bool GUIDSerialization
+        public override List<Guid> GetFullySerialized(Level level)
         {
-            get
-            {
-                return false;
-            }
+            return null; //Irrelevant because client->server
         }
 
         public override bool OnClientReceive(LocalClient client)

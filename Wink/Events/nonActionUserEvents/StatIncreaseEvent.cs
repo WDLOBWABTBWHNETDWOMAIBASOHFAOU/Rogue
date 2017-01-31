@@ -27,6 +27,8 @@ namespace Wink
             stat = (Stat)info.GetValue("stat", typeof(Stat));
         }
 
+
+
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             base.GetObjectData(info, context);
@@ -35,12 +37,9 @@ namespace Wink
         }
         #endregion
 
-        public override bool GUIDSerialization
+        public override List<Guid> GetFullySerialized(Level level)
         {
-            get
-            {
-                return false;
-            }
+            return null; //
         }
 
         public override bool OnClientReceive(LocalClient client)
@@ -55,18 +54,14 @@ namespace Wink
 
             NonAnimationSoundEvent statSoundEvent = new NonAnimationSoundEvent("Sounds/CLICK10A",true,player.Id);
             LocalServer.SendToClients(statSoundEvent);
+            LocalServer.SendToClients(new LevelChangedEvent(new List<GameObject>{ player }) );
             return true;
         }
 
         public override bool Validate(Level level)
         {
-            if(player.freeStatPoints > 0)
-            {
-                return true;
-            }
-            return false;
+            return player.freeStatPoints > 0;
         }
     }
-
 }
 

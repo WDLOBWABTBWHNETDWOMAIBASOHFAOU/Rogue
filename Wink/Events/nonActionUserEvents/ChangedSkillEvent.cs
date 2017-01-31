@@ -1,17 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Wink
 {
     [Serializable]
     class ChangedSkillEvent : Event
     {
-        Player player;
-        Skill newSelectedSkill;
+        private Player player;
+        private Skill newSelectedSkill;
+
         public ChangedSkillEvent(Player player, Skill newSelectedSkill) : base()
         {
             this.player = player;
@@ -33,12 +31,9 @@ namespace Wink
         }
         #endregion
 
-        public override bool GUIDSerialization
+        public override List<Guid> GetFullySerialized(Level level)
         {
-            get
-            {
-                return true;
-            }
+            return null; //Irrelevant because client->server
         }
 
         public override bool OnClientReceive(LocalClient client)
@@ -48,14 +43,11 @@ namespace Wink
 
         public override bool OnServerReceive(LocalServer server)
         {
-            if(player.CurrentSkill != newSelectedSkill)
-            {
-                player.CurrentSkill = newSelectedSkill;
-            }
-            else
-            {
+            if (player.CurrentSkill != newSelectedSkill) 
+                player.CurrentSkill = newSelectedSkill; 
+            else 
                 player.CurrentSkill = null;
-            }
+            
             NonAnimationSoundEvent selectSkillSound = new NonAnimationSoundEvent("Sounds/CLICK14A",true,player.Id);
             LocalServer.SendToClients(selectSkillSound);
             return true;
@@ -63,11 +55,7 @@ namespace Wink
 
         public override bool Validate(Level level)
         {
-            if(newSelectedSkill != null)
-            {
-                return true;
-            }
-            return false;
+            return newSelectedSkill != null;
         }
     }
 }

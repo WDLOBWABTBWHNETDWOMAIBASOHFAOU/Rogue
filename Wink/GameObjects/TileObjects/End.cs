@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using System.Runtime.Serialization;
 
@@ -40,27 +36,22 @@ namespace Wink
         #region Serialization
         public End(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            if (context.GetVars().GUIDSerialization)
-            {
-                parentTile = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("parentTileGUID"))) as Tile; 
-            }
-            else
-            {
-                parentTile = info.GetValue("parentTile", typeof(Tile)) as Tile;
-            }
+            parentTile = info.TryGUIDThenFull<Tile>(context, "parentTile");
+            
             levelIndex = info.GetInt32("levelIndex");
             level = info.GetValue("level", typeof(Level)) as Level;
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            if (context.GetVars().GUIDSerialization)
+            SerializationHelper.Variables v = context.GetVars();
+            if (v.FullySerializeEverything || v.FullySerialized.Contains(parentTile.GUID))
             {
-                info.AddValue("parentTileGUID", parentTile.GUID.ToString());
+                info.AddValue("parentTile", parentTile);
             }
             else
             {
-                info.AddValue("parentTile", parentTile); 
+                info.AddValue("parentTileGUID", parentTile.GUID.ToString());
             }
             info.AddValue("levelIndex", levelIndex);
             info.AddValue("level", level);
@@ -79,12 +70,12 @@ namespace Wink
         public override void HandleInput(InputHelper inputHelper)
         {
             Action onClick = () =>
-                {
-                    Player player = GameWorld.Find(p => p.Id == Player.LocalPlayerName) as Player;
+            {
+                Player player = GameWorld.Find(p => p.Id == Player.LocalPlayerName) as Player;
 
-                    Event e = new NextLevelEvent(this, player);
-                    Server.Send(e);
-                };
+                Event e = new NextLevelEvent(this, player);
+                Server.Send(e);
+            };
             inputHelper.IfMouseLeftButtonPressedOn(this, onClick);
             base.HandleInput(inputHelper);
         }

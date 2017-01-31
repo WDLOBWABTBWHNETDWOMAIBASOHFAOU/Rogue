@@ -48,7 +48,7 @@ namespace Wink
 
         public virtual bool SkillValidation(Living caster, Living livingTarget, Tile TileTarget)
         {
-            if(caster.CurrentSkill!=null)
+            if (caster.CurrentSkill != null)
             { 
                 bool manacost = caster.Mana >= ManaCost;
                 bool AtH;

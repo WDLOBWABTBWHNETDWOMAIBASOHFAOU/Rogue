@@ -44,7 +44,7 @@ namespace Wink
                 floorNumber = 1;
 
             this.floorNumber = floorNumber;
-            this.type = SetupType(type, floorNumber);
+            type = SetupType(type, floorNumber);
         }
 
         /// <summary>
@@ -153,7 +153,7 @@ namespace Wink
             List<Player> playerList = (GameWorld.FindAll(p => p is Player).Cast<Player>().ToList());
             foreach (Player p in playerList)
             {
-                p.ReciveExp(0, this);
+                p.ReceiveExp(0, this);
             }
 
             //Drop equipment/loot, remove itself from world, etc
@@ -164,57 +164,37 @@ namespace Wink
             LootSack ls = new LootSack(this);
             tile.PutOnTile(ls);
 
+            List<GameObject> changes = new List<GameObject>() { ls, Inventory, tile.OnTile };
+            changes.AddRange(Inventory.Objects.Cast<GameObject>().ToList());
+            changes.AddRange(Inventory.Items);
+            LocalServer.SendToClients(new LevelChangedEvent(changes));
 
             base.Death();
         }
 
-        protected override void DoBehaviour(List<GameObject> changedObjects)
+        protected override void DoBehaviour(HashSet<GameObject> changedObjects)
         {
-            GoTo(changedObjects, GameWorld.Find(Player.LocalPlayerName) as Player);
-        }
-
-        /// <summary>
-        /// Pathfind towards a given player
-        /// </summary>
-        /// <param name="player">The player to target with Pathfinding</param>
-        public virtual void GoTo(List<GameObject> changedObjects, Player player)
-        {
-            TileField tf = GameWorld.Find("TileField") as TileField;
+            //TODO: replace by closest player.
+            Player player = GameWorld.Find(Player.LocalPlayerName) as Player;
 
             if (player.Tile.SeenBy.ContainsKey(this))
             {
-                bool ableToHit = AttackEvent.AbleToHit(this, player.Tile,this.Reach);
+                bool ableToHit = AttackEvent.AbleToHit(this, player.Tile, Reach);
                 if (ableToHit)
                 {
                     Attack(player);
+                    changedObjects.Add(player);
 
                     int cost = BaseActionCost;
-                    if((EquipmentSlots.Find("bodySlot") as RestrictedItemSlot).SlotItem != null)
+                    if ((EquipmentSlots.Find("bodySlot") as RestrictedItemSlot).SlotItem != null)
                     {
-                        cost =(int)(cost * ((EquipmentSlots.Find("bodySlot") as RestrictedItemSlot).SlotItem as BodyEquipment).WalkCostMod);
+                        cost = (int)(cost * ((EquipmentSlots.Find("bodySlot") as RestrictedItemSlot).SlotItem as BodyEquipment).WalkCostMod);
                     }
                     actionPoints -= cost;
-                    changedObjects.Add(player);
                 }
                 else
                 {
-                    PathFinder pf = new PathFinder(tf);
-                    List<Tile> path = pf.ShortestPath(Tile, player.Tile);
-                    // TODO?:(assuming there are tiles that cannot be walked over but can be fired over)
-                    // check if there is a path to a spot that can hit the player (move closer water to fire over it)
-                    if (path.Count > 0)
-                    {
-                        changedObjects.Add(this);
-                        changedObjects.Add(Tile);
-                        changedObjects.Add(path[0]);
-
-                        MoveTo(path[0]);
-                        actionPoints -= BaseActionCost;
-                    }
-                    else
-                    {
-                        Idle();
-                    }
+                    GoTo(changedObjects, player);
                 }
             }
             else
@@ -223,10 +203,38 @@ namespace Wink
             }
         }
 
+        /// <summary>
+        /// Pathfind towards a given player
+        /// </summary>
+        /// <param name="player">The player to target with Pathfinding</param>
+        public virtual void GoTo(HashSet<GameObject> changedObjects, Player player)
+        {
+            TileField tf = GameWorld.Find("TileField") as TileField;
+            PathFinder pf = new PathFinder(tf);
+
+            List<Tile> path = pf.ShortestPath(Tile, player.Tile);
+            // TODO?:(assuming there are tiles that cannot be walked over but can be fired over)
+            // check if there is a path to a spot that can hit the player (move closer water to fire over it)
+            if (path.Count > 0)
+            {
+                changedObjects.Add(this);
+                changedObjects.Add(Tile.OnTile);
+                changedObjects.Add(path[0].OnTile);
+
+                MoveTo(path[0]);
+                actionPoints -= BaseActionCost;
+            }
+            else
+            {//No path possible.
+                Idle();
+            }
+        }
+
         private void Idle()
         {
             //TODO: implement idle behaviour (seeing the player part done)
-            actionPoints=0;//if this is reached the enemy has no other options than to skip its turn (reduces number of GoTo loops executed compared to actionpoints--;)
+            //If this is reached the enemy has no other options than to skip its turn.
+            actionPoints = 0;
         }
         
         public override void HandleInput(InputHelper inputHelper)
@@ -256,11 +264,14 @@ namespace Wink
 
         public void InitGUI(Dictionary<string, object> guiState)
         {
-            SpriteFont textfieldFont = GameEnvironment.AssetManager.GetFont("Arial26");
-            hpBar = new Bar<Enemy>(this, e => e.Health, e => e.MaxHealth, textfieldFont, Color.Red, "", 2, "HealthBar" + guid.ToString(), 1.0f, 1f, false);
-            (GameWorld.Find("PlayingGui") as PlayingGUI).Add(hpBar);
-            hpBar.Visible = !Tile.Visible ? false : Visible;
-            hpBar.Position = Tile.GlobalPosition - new Vector2(Math.Abs(Tile.Width - hpBar.Width) / 2, 0);
+            if (Health > 0)
+            {
+                SpriteFont textfieldFont = GameEnvironment.AssetManager.GetFont("Arial26");
+                hpBar = new Bar<Enemy>(this, e => e.Health, e => e.MaxHealth, textfieldFont, Color.Red, "", 2, "HealthBar" + guid.ToString(), 1.0f, 1f, false);
+                (GameWorld.Find("PlayingGui") as PlayingGUI).Add(hpBar);
+                hpBar.Visible = !Tile.Visible ? false : Visible;
+                hpBar.Position = Tile.GlobalPosition - new Vector2(Math.Abs(Tile.Width - hpBar.Width) / 2, 0);
+            }
         }
 
         public void CleanupGUI(Dictionary<string, object> guiState)

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace Wink
@@ -28,7 +29,7 @@ namespace Wink
             }*/
         }
 
-        public abstract bool GUIDSerialization { get; }
+        public abstract List<Guid> GetFullySerialized(Level level);
 
         public abstract bool OnClientReceive(LocalClient client);
         public abstract bool OnServerReceive(LocalServer server);

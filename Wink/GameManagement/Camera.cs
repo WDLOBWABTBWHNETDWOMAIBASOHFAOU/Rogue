@@ -23,6 +23,9 @@ public class Camera : GameObject
 
         if (inputHelper.IsKeyDown(Keys.D))
             Position += new Vector2(realSpeed, 0);
+
+        if (inputHelper.MouseMiddleButtonDown())
+            Position += inputHelper.MouseDelta.ToVector2();
     }
 
     public void CenterOn(GameObject go)

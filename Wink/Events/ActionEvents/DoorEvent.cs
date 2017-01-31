@@ -30,25 +30,21 @@ namespace Wink
         }
         #endregion
 
-        public override bool GUIDSerialization
-        {
-            get
-            {
-                return true;
-            }
-        }
-
         protected override int Cost
         {
-            get { return Living.BaseActionCost/2; }
+            get { return Living.BaseActionCost / 2; }
         }
 
-        protected override void DoAction(LocalServer server)
+        protected override void DoAction(LocalServer server, HashSet<GameObject> changedObjects)
         {
             door.Sprite.SheetIndex = (door.Sprite.SheetIndex + 1) % 2;
             door.Open();
+
+            AddVisibleTiles(server.Level, changedObjects);
             player.ComputeVisibility();
-            server.ChangedObjects.Add(door);
+            AddVisibleTiles(server.Level, changedObjects);
+
+            changedObjects.Add(door);
             NonAnimationSoundEvent DoorSoundEvent = new NonAnimationSoundEvent("Sounds/door-1-open");
             LocalServer.SendToClients(DoorSoundEvent);
         }

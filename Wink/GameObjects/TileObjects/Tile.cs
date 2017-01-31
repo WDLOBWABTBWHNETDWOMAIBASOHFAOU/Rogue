@@ -16,7 +16,7 @@ namespace Wink
     }
 
     [Serializable]
-    public class Tile : SpriteGameObject, IGameObjectContainer
+    public class Tile : SpriteGameObject, IGameObjectContainer, IDeserializationCallback
     {
         public const int TileWidth = 64;
         public const int TileHeight = 64;
@@ -35,7 +35,6 @@ namespace Wink
         {
             get { return seenBy; }
         }
-
         public GameObjectList OnTile
         {
             get { return onTile; }
@@ -81,20 +80,57 @@ namespace Wink
         }
 
         #region Serialization
+        private Dictionary<string, float> tempSeenBy;
+        private ILocal tempLocal;
         public Tile(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             type = (TileType)info.GetValue("type", typeof(TileType));
             passable = info.GetBoolean("passable");
-            onTile = info.GetValue("onTile", typeof(GameObjectList)) as GameObjectList;
+            onTile = info.TryGUIDThenFull<GameObjectList>(context, "onTile");
+
+            tempLocal = context.GetVars().Local;
+            tempSeenBy = info.GetValue("seenByGUIDs", typeof(Dictionary<string, float>)) as Dictionary<string, float>;
             seenBy = info.GetValue("seenBy", typeof(Dictionary<Living, float>)) as Dictionary<Living, float>;
+        }
+
+        public void OnDeserialization(object sender)
+        {
+            tempSeenBy.OnDeserialization(sender);
+            seenBy.OnDeserialization(sender);
+            foreach (KeyValuePair<string, float> kvp in tempSeenBy)
+            {
+                Living l = (tempLocal.GetGameObjectByGUID(Guid.Parse(kvp.Key)) ??
+                    onTile.Find(obj => obj.GUID == Guid.Parse(kvp.Key))) as Living;
+                seenBy.Add(l, kvp.Value);
+            }
+            
+            tempSeenBy = null;
+            tempLocal = null;
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
+            SerializationHelper.Variables v = context.GetVars();
             info.AddValue("type", type);
             info.AddValue("passable", passable);
-            info.AddValue("onTile", onTile);
-            info.AddValue("seenBy", seenBy);
+
+            if (v.FullySerializeEverything || v.FullySerialized.Contains(onTile.GUID))
+                info.AddValue("onTile", onTile);
+            else
+                info.AddValue("onTileGUID", OnTile.GUID.ToString());
+
+            //Serialization of seenBy is split up so only Living objects that need to be fully serialized are.
+            Dictionary<string, float> guidBasedSeenBy = new Dictionary<string, float>();
+            Dictionary<Living, float> fullSeenBy = new Dictionary<Living, float>();
+            foreach (KeyValuePair<Living, float> kvp in seenBy)
+            {
+                if (v.FullySerializeEverything || v.FullySerialized.Contains(kvp.Key.GUID))
+                    fullSeenBy.Add(kvp.Key, kvp.Value);
+                else
+                    guidBasedSeenBy.Add(kvp.Key.GUID.ToString(), kvp.Value);
+            }
+            info.AddValue("seenBy", fullSeenBy);
+            info.AddValue("seenByGUIDs", guidBasedSeenBy);
             base.GetObjectData(info, context);
         }
         #endregion
@@ -120,8 +156,24 @@ namespace Wink
 
         public override void Replace(GameObject replacement)
         {
-            if (onTile != null && onTile.GUID == replacement.GUID)
+            if (onTile.GUID == replacement.GUID)
                 onTile = replacement as GameObjectList;
+
+            onTile.Replace(replacement);
+
+            Living toRemove = null;
+            foreach (Living l in seenBy.Keys)
+            {
+                if (l != replacement && l.GUID == replacement.GUID)
+                {
+                    toRemove = l;
+                    seenBy.Add(replacement as Living, seenBy[l]);
+                    break;
+                }
+            }
+
+            if (toRemove != null)
+                seenBy.Remove(toRemove);
 
             base.Replace(replacement);
         }
@@ -254,8 +306,7 @@ namespace Wink
                     SkillEvent SkE = new SkillEvent(player, this);
                     Server.Send(SkE);
                 };
-
-
+                
                 inputHelper.IfMouseLeftButtonPressedOn(this, onLeftClick);
             }
 
@@ -264,11 +315,19 @@ namespace Wink
 
         public List<GameObject> FindAll(Func<GameObject, bool> del)
         {
-            return onTile.FindAll(del);
+            List<GameObject> result = new List<GameObject>();
+            if (del.Invoke(onTile))
+                result.Add(onTile);
+
+            result.AddRange(onTile.FindAll(del));
+            return result;
         }
 
         public GameObject Find(Func<GameObject, bool> del)
         {
+            if (del.Invoke(onTile))
+                return onTile;
+
             return onTile.Find(del);
         }
 

@@ -14,8 +14,7 @@ namespace Wink
         {
             this.server = server;
         }
-
-        public abstract void Send(Event e);
+        
         public abstract void SendPreSerialized(MemoryStream ms);
         public abstract Player Player { get; }
         public abstract void Update(GameTime gameTime);

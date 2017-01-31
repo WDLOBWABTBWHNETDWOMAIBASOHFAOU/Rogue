@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace Wink
@@ -32,12 +33,7 @@ namespace Wink
             get { return Living.BaseActionCost / 3; }
         }
 
-        public override bool GUIDSerialization
-        {
-            get { return true; }
-        }
-
-        protected override void DoAction(LocalServer server)
+        protected override void DoAction(LocalServer server, HashSet<GameObject> changedObjects)
         {
             potion.stackCount--;
             switch (potion.GetPotionType)
@@ -51,6 +47,7 @@ namespace Wink
                 default:
                     throw new Exception("invalid potionType");
             }
+            changedObjects.Add(potion);
         }
 
         protected override bool ValidateAction(Level level)
