@@ -484,3 +484,9 @@
 /processorParam:Quality=Best
 /build:Sounds/Potion Sound smaller.wav
 
+#begin Sounds/Footsteps 2 steps.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Footsteps 2 steps.wav
+
