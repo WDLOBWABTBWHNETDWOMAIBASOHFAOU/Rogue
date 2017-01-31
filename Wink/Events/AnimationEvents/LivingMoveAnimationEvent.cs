@@ -54,10 +54,10 @@ namespace Wink
             origin = toMove.Tile;
             toMove.Position = toMove.GlobalPosition;
             client.Level.Add(toMove);
-            if (toMove is Enemy)
+           // if (toMove is Enemy)
             { //TODO: This shouldn't be necessary at all! Fix the problem where there is multiple tilefields...
-                Tile trueOrigin = client.Level.Find(obj => obj != origin && obj is Tile && (obj as Tile).TilePosition == origin.TilePosition) as Tile;
-                trueOrigin.OnTile.Children.Clear();
+               // Tile trueOrigin = client.Level.Find(obj => obj != origin && obj is Tile && (obj as Tile).TilePosition == origin.TilePosition) as Tile;
+               // trueOrigin.OnTile.Children.Clear();
             }
             origin.RemoveImmediatly(toMove);
 
