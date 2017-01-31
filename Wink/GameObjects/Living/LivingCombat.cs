@@ -26,10 +26,10 @@ namespace Wink
             if (TryHit(target))
             {
                 double attackValue = AttackValue();
-                damageDealt = target.TakeDamage(attackValue, damageType);
                 NonAnimationSoundEvent hitSoundEvent = new NonAnimationSoundEvent(hitSound);
                 //no annimation for attacks (hit or miss) yet. when inplementing that, include sound effect there and remove this.
                 LocalServer.SendToClients(hitSoundEvent);
+                damageDealt = target.TakeDamage(attackValue, damageType);
 
             }
             else

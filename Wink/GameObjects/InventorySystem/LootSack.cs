@@ -17,8 +17,9 @@ namespace Wink
             get { return false; }
         }
 
-        public LootSack(Enemy enemy) : base("Sprites/Containers/unseen_item", enemy.FloorNumber, enemy.Inventory)
+        public LootSack(Enemy enemy) : base("Sprites/Containers/unseen_item", "Sprites/Containers/unseen_item", "Sounds/CLICK14A", enemy.FloorNumber, enemy.Inventory)
         {
+            scale = 0.5f;
             for (int i = 0; i < enemy.EquipmentSlots.Children.Count-1; i++)
             {
                 RestrictedItemSlot equipSlot = enemy.EquipmentSlots.Children[i] as RestrictedItemSlot;
