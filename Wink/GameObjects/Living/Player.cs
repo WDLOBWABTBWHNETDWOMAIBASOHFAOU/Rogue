@@ -8,8 +8,9 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Wink
 {
-    public enum PlayerType { warrior, archer, mage, random }
-    public enum Stat { vitality, strength, dexterity, wisdom, luck, intelligence }
+    public enum PlayerType { Warrior, Archer, Mage, Random }
+    public enum Stat { Vitality, Strength, Dexterity, Wisdom, Luck, Intelligence }
+
     [Serializable]
     public class Player : Living, IGameObjectContainer, IGUIGameObject
     {
@@ -21,12 +22,17 @@ namespace Wink
         protected int exp;
         public int freeStatPoints;
         private TextGameObject playerNameTitle;
-
         private MouseSlot mouseSlot;
-        public MouseSlot MouseSlot { get { return mouseSlot; } }
         private PlayerType playerType;
-        public PlayerType PlayerType { get { return playerType; } }
 
+        public PlayerType PlayerType
+        {
+            get { return playerType; }
+        }
+        public MouseSlot MouseSlot
+        {
+            get { return mouseSlot; }
+        }
         public override Point PointInTile
         {
             get { return new Point(Tile.TileWidth / 2, Tile.TileHeight / 2); }
@@ -50,7 +56,7 @@ namespace Wink
 
         private void SetupType()
         {
-            if (playerType == PlayerType.random)
+            if (playerType == PlayerType.Random)
             {
                 //select random armorType
                 Array pTypeValues = Enum.GetValues(typeof(PlayerType));
@@ -72,19 +78,19 @@ namespace Wink
 
             switch (playerType)
             {
-                case PlayerType.warrior:
+                case PlayerType.Warrior:
                     weaponslot.ChangeItem(new WeaponEquipment(EquipmentStartingStrenght, WeaponType.melee));
                     bodyslot.ChangeItem(new BodyEquipment(EquipmentStartingStrenght, 2, ArmorType.heavy));
                     SetStats(1, 4, 4, 1, 1, 1, 1);
                     break;
 
-                case PlayerType.archer:
+                case PlayerType.Archer:
                     weaponslot.ChangeItem(new WeaponEquipment(EquipmentStartingStrenght, WeaponType.bow));
                     bodyslot.ChangeItem(new BodyEquipment(EquipmentStartingStrenght, 2, ArmorType.normal));
                     SetStats(1, 1, 1, 4, 1, 1, 4);
                     break;
 
-                case PlayerType.mage:
+                case PlayerType.Mage:
                     weaponslot.ChangeItem(new WeaponEquipment(EquipmentStartingStrenght, WeaponType.staff));
                     bodyslot.ChangeItem(new BodyEquipment(EquipmentStartingStrenght, 2, ArmorType.robes));
                     SetStats(1, 1, 1, 1, 4, 4, 1);
@@ -304,29 +310,49 @@ namespace Wink
             return mouseSlot.Find(del) ?? base.Find(del);
         }
         
+        public int GetStat(Stat s)
+        {
+            switch (s)
+            {
+                case Stat.Vitality:
+                    return Vitality;
+                case Stat.Strength:
+                    return Strength;
+                case Stat.Dexterity:
+                    return Dexterity;
+                case Stat.Wisdom:
+                    return Wisdom;
+                case Stat.Luck:
+                    return Luck;
+                case Stat.Intelligence:
+                    return Intelligence;
+                default:
+                    return int.MinValue;
+            }
+        }
 
         public void AddStatPoint(Stat stat)
         {
             switch (stat)
             {
-                case Stat.vitality:
+                case Stat.Vitality:
                     vitality++;
                     healthPoints += 4;//plus hp mod per vitality point
                     break;
-                case Stat.strength:
+                case Stat.Strength:
                     strength++;
                     break;
-                case Stat.dexterity:
+                case Stat.Dexterity:
                     dexterity++;
                     break;
-                case Stat.wisdom:
+                case Stat.Wisdom:
                     wisdom++;
                     manaPoints += 5;//plus mp mod per wisdom
                     break;
-                case Stat.luck:
+                case Stat.Luck:
                     luck++;
                     break;
-                case Stat.intelligence:
+                case Stat.Intelligence:
                     intelligence++;
                     break;
                 default:
@@ -363,7 +389,6 @@ namespace Wink
             if (Id == LocalPlayerName)
             {
                 SpriteFont textfieldFont = GameEnvironment.AssetManager.GetFont("Arial26");
-
                 const int barX = 150;
                 const int barY = 10;
 
