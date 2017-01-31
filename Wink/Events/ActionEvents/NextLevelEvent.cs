@@ -43,7 +43,7 @@ namespace Wink
 
         public override bool OnServerReceive(LocalServer server)
         {
-            NonAnimationSoundEvent nextLevelSound = new NonAnimationSoundEvent("wooden-stairs-1");
+            NonAnimationSoundEvent nextLevelSound = new NonAnimationSoundEvent("Sounds/wooden-stairs-1");
             LocalServer.SendToClients(nextLevelSound);
             Level level = new Level(server.LevelIndex + 1);
             List<GameObject> playerlist = server.Level.FindAll(obj => obj is Player);

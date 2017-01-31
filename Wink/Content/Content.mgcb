@@ -478,3 +478,9 @@
 /processorParam:Quality=Best
 /build:Sounds\Dodge.wav
 
+#begin Sounds/Potion Sound smaller.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Potion Sound smaller.wav
+
