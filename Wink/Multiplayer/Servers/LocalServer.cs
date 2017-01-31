@@ -237,6 +237,7 @@ namespace Wink
             if (livingObjects[turnIndex] == player)
             {
                 player.ActionPoints = 0;
+                SendToAllClients(new LevelChangedEvent(new List<GameObject>() { player }));
                 ComputeVisibilities();
                 UpdateTurn();
             }

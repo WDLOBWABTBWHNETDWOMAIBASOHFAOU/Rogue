@@ -36,7 +36,7 @@ namespace Wink
         {
             //Inventory
             this.playerType = playerType;
-            mouseSlot = new MouseSlot(layer + 11, "mouseSlot");  
+            mouseSlot = new MouseSlot(layer + 11, clientName + "_mouseSlot");  
             SetupType();
         }
 
