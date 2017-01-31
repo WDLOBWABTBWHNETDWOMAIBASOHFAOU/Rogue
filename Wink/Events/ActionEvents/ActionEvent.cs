@@ -43,7 +43,6 @@ namespace Wink
             foreach (GameObject go in vision)
                 changedObjects.Add(go);
         }
-        #endregion
 
         protected void AddVisibleTiles(Level level, HashSet<GameObject> changedObjects)
         {

@@ -61,7 +61,7 @@ namespace Wink
                 triggered = true;
                 if (l.GetType() == typeof(Player))
                 {
-                    (l as Player).ReciveExp(trapExp);
+                    (l as Player).ReceiveExp(trapExp);
                 }
             }
             else

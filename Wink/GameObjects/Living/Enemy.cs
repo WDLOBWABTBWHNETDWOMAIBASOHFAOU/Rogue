@@ -153,7 +153,7 @@ namespace Wink
             List<Player> playerList = (GameWorld.FindAll(p => p is Player).Cast<Player>().ToList());
             foreach (Player p in playerList)
             {
-                p.ReciveExp(0, this);
+                p.ReceiveExp(0, this);
             }
 
             //Drop equipment/loot, remove itself from world, etc
@@ -267,7 +267,7 @@ namespace Wink
             if (Health > 0)
             {
                 SpriteFont textfieldFont = GameEnvironment.AssetManager.GetFont("Arial26");
-                hpBar = new Bar<Enemy>(this, e => e.Health, e => e.MaxHealth, textfieldFont, Color.Red, 2, "HealthBar" + guid.ToString(), 1.0f, 1f, false);
+                hpBar = new Bar<Enemy>(this, e => e.Health, e => e.MaxHealth, textfieldFont, Color.Red, "", 2, "HealthBar" + guid.ToString(), 1.0f, 1f, false);
                 (GameWorld.Find("PlayingGui") as PlayingGUI).Add(hpBar);
                 hpBar.Visible = !Tile.Visible ? false : Visible;
                 hpBar.Position = Tile.GlobalPosition - new Vector2(Math.Abs(Tile.Width - hpBar.Width) / 2, 0);

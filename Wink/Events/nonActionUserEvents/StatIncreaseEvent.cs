@@ -27,6 +27,8 @@ namespace Wink
             stat = (Stat)info.GetValue("stat", typeof(Stat));
         }
 
+
+
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             base.GetObjectData(info, context);
@@ -35,12 +37,9 @@ namespace Wink
         }
         #endregion
 
-        public override bool GUIDSerialization
+        public override List<Guid> GetFullySerialized(Level level)
         {
-            get
-            {
-                return false;
-            }
+            return null; //
         }
 
         public override bool OnClientReceive(LocalClient client)
@@ -51,19 +50,14 @@ namespace Wink
         public override bool OnServerReceive(LocalServer server)
         {
             player.AddStatPoint(stat);
-            server.ChangedObjects.Add(player);
+            LocalServer.SendToClients(new LevelChangedEvent(new List<GameObject>{ player }) );
             return true;
         }
 
         public override bool Validate(Level level)
         {
-            if(player.freeStatPoints > 0)
-            {
-                return true;
-            }
-            return false;
+            return player.freeStatPoints > 0;
         }
     }
-
 }
 
