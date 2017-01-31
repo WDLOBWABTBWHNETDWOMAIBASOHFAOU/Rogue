@@ -16,7 +16,7 @@ namespace Wink
                 // need to check if in multiplayer you can change the type of a different player
                 SpriteFont textFieldFont = GameEnvironment.AssetManager.GetFont("Arial26");
                 SelectField<SelectPlayer> SelectPlayer = new SelectField<SelectPlayer>(true, textFieldFont, Color.Red);
-                SelectPlayer.Options = new List<SelectPlayer>() { new SelectPlayer(PlayerType.warrior , client), new SelectPlayer(PlayerType.archer, client), new SelectPlayer(PlayerType.mage, client), new SelectPlayer(PlayerType.random, client) };
+                SelectPlayer.Options = new List<SelectPlayer>() { new SelectPlayer(PlayerType.Warrior , client), new SelectPlayer(PlayerType.Archer, client), new SelectPlayer(PlayerType.Mage, client), new SelectPlayer(PlayerType.Random, client) };
                 
                 Add(SelectPlayer);
 

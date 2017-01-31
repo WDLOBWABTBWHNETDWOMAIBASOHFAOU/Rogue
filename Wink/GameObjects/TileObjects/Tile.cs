@@ -213,22 +213,39 @@ namespace Wink
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
         {
+            float bmin = 0.75f;
+            foreach (KeyValuePair<Living, float> kvp in seenBy)
+            {
+                if (kvp.Key is Player)
+                {
+                    float p = kvp.Value / kvp.Key.ViewDistance;
+                    bmin = p < bmin ? p : bmin;
+                }
+            }
+            bmin = 1 - bmin;
+            DrawColor = new Color(bmin, bmin, bmin);
+
             if (type != TileType.Background)
                 base.Draw(gameTime, spriteBatch, camera);
             
             if (Visible)
             {
+                foreach (GameObject go in onTile.Children)
+                {
+                    if (go is SpriteGameObject)
+                    {
+                        SpriteGameObject sgo = go as SpriteGameObject;
+                        sgo.DrawColor = DrawColor;
+                    }
+                }
+                
                 onTile.Draw(gameTime, spriteBatch, camera);
 
                 Texture2D blackTex = GameEnvironment.AssetManager.GetSingleColorPixel(Color.Black);
-                float bmin = 0.75f;
-
                 foreach (KeyValuePair<Living, float> kvp in seenBy)
                 {
                     if (kvp.Key is Player)
                     {
-                        float p = kvp.Value / kvp.Key.ViewDistance;
-                        bmin = p < bmin ? p : bmin;
                         #region HighlightReach
                         //highlight tiles that are whithin reach for the local player
                         //current key is the localplayer and the tile is not a wall or the key's tile
@@ -261,8 +278,8 @@ namespace Wink
                     }
                 }
                 Rectangle drawBox = new Rectangle(camera.CalculateScreenPosition(this).ToPoint(), new Point(sprite.Width, sprite.Height));
-                Color drawBColor = new Color(Color.White, bmin);
-                spriteBatch.Draw(blackTex, null, drawBox, sprite.SourceRectangle, origin, 0.0f, new Vector2(scale), drawBColor, SpriteEffects.None, 0.0f);                
+                
+                //spriteBatch.Draw(blackTex, null, drawBox, sprite.SourceRectangle, origin, 0.0f, new Vector2(scale), drawBColor, SpriteEffects.None, 0.0f);                
             }
         }
 
