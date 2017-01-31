@@ -44,7 +44,11 @@ namespace Wink
                 floorNumber = 1;
 
             this.floorNumber = floorNumber;
-            type = SetupType(type, floorNumber);
+            
+            this.type = SetupType(type, floorNumber);
+            InitAnimationVariables();
+            LoadAnimations();
+            PlayAnimation("idle");
         }
 
         /// <summary>

@@ -12,6 +12,8 @@ namespace Wink
         private Window iWindow;
         public bool Closed;
         private int floorNumber;
+        private string openContainerSprite;
+        protected string openSound;
 
         public InventoryBox IBox
         {
@@ -30,11 +32,13 @@ namespace Wink
             get { return parent.Parent as Tile; }
         }
 
-        public Container(string asset, int floorNumber, InventoryBox inv = null, int layer = 0, string id = "") : base(asset, layer, id)
+        public Container(string asset, string openContainerSprite,string openSound, int floorNumber, InventoryBox inv = null, int layer = 0, string id = "") : base(asset, layer, id)
         {
             iBox = inv ?? new InventoryBox(2, 4, layer + 1, "", cameraSensitivity);
             this.floorNumber = floorNumber;
             Closed = true;
+            this.openContainerSprite = openContainerSprite;
+            this.openSound = openSound;
         }
 
         #region Serialization
@@ -43,6 +47,8 @@ namespace Wink
             iBox = info.TryGUIDThenFull<InventoryBox>(context, "iBox");
             Closed = info.GetBoolean("Closed");
             floorNumber = info.GetInt32("floorNumber");
+            openContainerSprite = info.GetString("openContainerSprite");
+            openSound = info.GetString("openSound");
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
@@ -55,6 +61,8 @@ namespace Wink
             
             info.AddValue("Closed", Closed);
             info.AddValue("floorNumber", floorNumber);
+            info.AddValue("openContainerSprite", openContainerSprite);
+            info.AddValue("openSound", openSound);
 
             base.GetObjectData(info, context);
         }
@@ -172,6 +180,16 @@ namespace Wink
             };
             inputHelper.IfMouseLeftButtonPressedOn(this, onClick);
             base.HandleInput(inputHelper);
+        }
+
+        public void openingChest()
+        {
+            if (Closed)
+            {
+                NonAnimationSoundEvent openedChestSoundEvent = new NonAnimationSoundEvent(openSound);
+                LocalServer.SendToClients(openedChestSoundEvent);
+                spriteAssetName = openContainerSprite;
+            }
         }
 
         public List<GameObject> FindAll(Func<GameObject, bool> del)

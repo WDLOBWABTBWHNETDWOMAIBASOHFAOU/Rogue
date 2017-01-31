@@ -33,26 +33,24 @@ namespace Wink
         {
             get
             {
-                if (container.Closed)
-                {
-                    return Living.BaseActionCost / 2;
-                }
+                //cant get it to work correctly regarding showing contents
+                //if (container.Closed)
+                //{
+                //    return Living.BaseActionCost / 2;
+                //}
                 return 0;
             }
         }
 
         protected override void DoAction(LocalServer server, HashSet<GameObject> changedObjects)
         {
-            if (container.Closed)
-            {
-                NonAnimationSoundEvent openedChestSoundEvent = new NonAnimationSoundEvent("Sounds/creaking-door-2");
-                LocalServer.SendToClients(openedChestSoundEvent);
-                container.Closed = false;
-                //TODO: sugetions: 
-                //1 init contents here to take specific players luck in to account.
-                //2 if keys (for doors and chests) are implemented, add if(locked) with key requirement in validation
-            }
+            container.openingChest();
             changedObjects.Add(container);
+            container.Closed = false;
+            //TODO: sugetions: 
+            //1 init contents here to take specific players luck in to account.
+            //2 if keys (for doors and chests) are implemented, add if(locked) with key requirement in validation
+
         }
 
         protected override bool ValidateAction(Level level)

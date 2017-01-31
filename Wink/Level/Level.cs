@@ -174,7 +174,7 @@ namespace Wink
         {
             floorNumber++;
             Tile t = LoadFloorTile("", assetName);
-            Container chest = new Container("Sprites/Containers/chest2_closed", levelIndex);
+            Container chest = new Container("Sprites/Containers/chest2_closed", "Sprites/Containers/chest2_open", "Sounds/creaking-door-2", levelIndex);
             for (int x = 0; x < chest.IBox.Columns; x++)
             {
                 for (int y = 0; y < chest.IBox.Rows; y++)
