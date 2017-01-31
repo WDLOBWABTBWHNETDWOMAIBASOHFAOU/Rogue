@@ -45,17 +45,17 @@ namespace Wink
         /// </summary>
         /// <param name="layer">The layer for drawing the object</param>
         /// <param name="floorNumber">The floor the Enemy is placed on</param>
-        /// <param name="type">The enemy type</param>
+        /// <param name="enemyType">The enemy type</param>
         /// <param name="id">The (unique) object ID</param>
         /// <param name="FOVlength">The view distance for the Enemy</param>
         /// <param name="scale">The scale (multiplier) for the sprite size</param>
-        public Enemy(int layer, int floorNumber, EnemyType type = EnemyType.random, string id = "Enemy", float FOVlength = 8.5f) : base(layer, id, FOVlength)
+        public Enemy(int layer, int floorNumber, EnemyType enemyType = EnemyType.random, string id = "Enemy", float FOVlength = 8.5f) : base(layer, id, FOVlength)
         {
             if (floorNumber < 1)
                 floorNumber = 1;
 
             this.floorNumber = floorNumber;
-            type = SetupType(type, floorNumber);
+            this.type = SetupType(enemyType, floorNumber);
         }
 
         /// <summary>
@@ -73,17 +73,17 @@ namespace Wink
             }
 
             id += " : " + etype.ToString();
-            int eLvl = GameEnvironment.Random.Next(1,floorNumber);
+            int eLvl = GameEnvironment.Random.Next(1, floorNumber);
             int weaponChance = 15 * floorNumber; // higher chance the deeper you go
-            int armorChance = 15  *floorNumber;  //
+            int armorChance = 15 * floorNumber;  //
 
             switch (etype)
             {
                 case EnemyType.warrior:
-                    if(weaponChance < GameEnvironment.Random.Next(100))
+                    if (weaponChance < GameEnvironment.Random.Next(100))
                     {
                         RestrictedItemSlot weaponslot = EquipmentSlots.Find("weaponSlot") as RestrictedItemSlot;
-                        weaponslot.ChangeItem(new WeaponEquipment(floorNumber,WeaponType.melee));
+                        weaponslot.ChangeItem(new WeaponEquipment(floorNumber, WeaponType.melee));
                     }
                     if (armorChance < GameEnvironment.Random.Next(100))
                     {
@@ -236,7 +236,7 @@ namespace Wink
                 actionPoints -= BaseActionCost;
             }
             else
-            {//No path possible.
+            { //No path possible.
                 Idle();
             }
         }

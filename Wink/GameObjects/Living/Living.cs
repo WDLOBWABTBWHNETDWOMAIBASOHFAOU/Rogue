@@ -88,13 +88,8 @@ namespace Wink
             viewDistance = FOVlength;
 
             skillList = new GameObjectList ();
-            for (int y = 0; y < 1; y++)
-            {
-                for (int x = 0; x < 10; x++)
-                {
-                    skillList.Add(new RestrictedItemSlot(typeof(Skill), "inventory/slot", id:"skillSlot"+x));
-                }
-            }
+            for (int x = 0; x < 10; x++)
+                skillList.Add(new RestrictedItemSlot(typeof(Skill), "inventory/slot", id:"skillSlot" + x));
             
             inventory = new InventoryBox(4, 4, 0, "");
 
@@ -276,7 +271,7 @@ namespace Wink
                     throw new Exception();
             }
             else if (Visible)
-            {   // Movement animation
+            { //Movement animation
                 LocalServer.SendToClients(new LivingMoveAnimationEvent(this, t, "Sounds/footsteps-4"));
             }
         }
