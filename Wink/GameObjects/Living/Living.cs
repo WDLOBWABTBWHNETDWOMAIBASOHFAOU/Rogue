@@ -272,7 +272,7 @@ namespace Wink
             }
             else if (Visible)
             { //Movement animation
-                LocalServer.SendToClients(new LivingMoveAnimationEvent(this, t, "Sounds/footsteps-4"));
+                LocalServer.SendToClients(new LivingMoveAnimationEvent(this, t, "Sounds/Footsteps 2 steps"));
             }
         }
 

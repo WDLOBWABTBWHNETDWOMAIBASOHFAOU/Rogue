@@ -832,3 +832,9 @@
 /processorParam:TextureFormat=Color
 /build:Sprites/Rings/emerald.png
 
+#begin Sounds/Footsteps 2 steps.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Footsteps 2 steps.wav
+
