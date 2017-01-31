@@ -38,6 +38,7 @@ namespace Wink
             mainMenuButton.Action = () =>
             {
                 GameEnvironment.GameStateManager.SwitchTo("mainMenuState");
+                GameEnvironment.AssetManager.PlayMusic("Sounds/Welcome Screen");
             };
             mainMenuButton.Position = new Vector2(centerx, 300);
             Add(mainMenuButton);

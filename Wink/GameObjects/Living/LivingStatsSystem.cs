@@ -44,7 +44,7 @@
 
                 if (healthPoints <= 0)
                 {
-                    LocalServer.SendToClients(new DeathAnimationEvent(this));
+                    LocalServer.SendToClients(new DeathAnimationEvent(this, "Sounds/video_game_announcer_grunt"));
                     Death();
                 }
             }
@@ -178,7 +178,7 @@
         /// <returns></returns>
         protected double HitChance()
         {
-            double hitChance = CalculateValue(0.7, Luck, 0.01);
+            double hitChance = CalculateValue(0.7, Luck, 0.1);
             return hitChance;
         }
 
@@ -188,7 +188,7 @@
         /// <returns></returns>
         public double DodgeChance()
         {
-            double dodgeChance = CalculateValue(0.3, Luck, 0.01);
+            double dodgeChance = CalculateValue(0.3, Luck, 0.1);
             return dodgeChance;
         }
 

@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -100,9 +96,7 @@ namespace Wink
         public override void HandleInput(InputHelper inputHelper)
         {
             if (visible)
-            {
                 base.HandleInput(inputHelper);
-            }
 
             if (isDraggable)
             {
@@ -114,13 +108,9 @@ namespace Wink
                 inputHelper.IfMouseLeftButtonPressedOn(this, onClick, TitleBar);
 
                 if (inputHelper.MouseLeftButtonDown() && dragging)
-                {
                     Position = inputHelper.MousePosition - mouseOffset;
-                }
                 else
-                {
                     dragging = false;
-                }
             }
         }
     }

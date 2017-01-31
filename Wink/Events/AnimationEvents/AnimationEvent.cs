@@ -8,14 +8,30 @@ namespace Wink
     {
         protected abstract int Length { get; }
         protected int counter;
+        protected string assetName;
+        protected bool playerSpecific;
+        protected string LocalPlayerName;
 
-        public AnimationEvent()
-        { }
+        public AnimationEvent(string assetName, bool playerSpecific = false, string LocalPlayerName = "")
+        {
+            this.assetName=assetName;
+            this.playerSpecific = playerSpecific;
+            this.LocalPlayerName = LocalPlayerName;
+        }
 
         #region Serialization
         public AnimationEvent(SerializationInfo info, StreamingContext context) : base (info, context)
-        {
+        {            assetName = info.GetString("assetName");
+            playerSpecific = info.GetBoolean("playerSpecific");
+            LocalPlayerName = info.GetString("LocalPlayerName");
+        }
 
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            base.GetObjectData(info, context);
+            info.AddValue("assetName", assetName);
+            info.AddValue("playerSpecific", playerSpecific);
+            info.AddValue("LocalPlayerName", LocalPlayerName);
         }
         #endregion
 
@@ -30,9 +46,9 @@ namespace Wink
                 PreAnimate(client);
 
             Animate();
-            counter++;
+            counter++;//TODO: make GameTime dependent
 
-            if (counter == Length)
+            if (counter >= Length)
             {
                 PostAnimate();
                 return true;

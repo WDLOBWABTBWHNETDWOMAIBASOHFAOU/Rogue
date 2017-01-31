@@ -11,12 +11,14 @@ namespace Wink
         /// <param name="target"></param>
         public void Attack(Living target)
         {
+            string hitSound = "Sounds/muted_metallic_crash_impact";
             int damageDealt = 0;
             DamageType damageType = DamageType.Physical;
             if (Weapon.SlotItem != null)
             {
                 WeaponEquipment weaponItem = Weapon.SlotItem as WeaponEquipment;
                 damageType = weaponItem.GetDamageType;
+                hitSound = weaponItem.HitSound;
             }
 
             //double hitNumber = GameEnvironment.Random.NextDouble(); 
@@ -25,17 +27,31 @@ namespace Wink
             {
                 double attackValue = AttackValue();
                 damageDealt = target.TakeDamage(attackValue, damageType);
+                NonAnimationSoundEvent hitSoundEvent = new NonAnimationSoundEvent(hitSound);
+                //no annimation for attacks (hit or miss) yet. when inplementing that, include sound effect there and remove this.
+                LocalServer.SendToClients(hitSoundEvent);
+
+            }
+            else
+            {
+                //TODO: Display attack missed (visual feedback on fail)
+
+                NonAnimationSoundEvent missSoundEvent = new NonAnimationSoundEvent("Sounds/Dodge");
+                //no annimation for attacks (hit or miss) yet. when inplementing that, include sound effect there and remove this.
+                LocalServer.SendToClients(missSoundEvent);
             }
 
             if (damageDealt > 0) ProcessReflection(damageDealt, target);
-            // Display attack missed (feedback on fail)
+
         }
 
-        public bool TryHit(Living target)
+        public bool TryHit(Living target) //is there still a distinction between dodge and miss?
         {
             double hitChance = HitChance(); // Example: 0.7
             double dodgeChance = target.DodgeChance(); // Example: 0.3
-            Debug.WriteLine((0.5/(System.Math.Sqrt(creatureLevel+target.creatureLevel))) * (hitChance / dodgeChance)); // example: (0.5/(sqrt(1+1)) * (0.7/0.3) = 0.82
+            Debug.WriteLine("(2.5 / (System.Math.Sqrt(36 + creatureLevel + target.creatureLevel))) * (hitChance / dodgeChance)");
+            Debug.WriteLine("2.5 / sqrt(36 +" + creatureLevel + " + " + target.creatureLevel + ") * (" + hitChance + " / " + dodgeChance + ")");
+            Debug.WriteLine((2.5/(System.Math.Sqrt(36 + creatureLevel+target.creatureLevel))) * (hitChance / dodgeChance)); // example: (0.5/(sqrt(1+1)) * (0.7/0.3) = 0.82
             return (0.5 / (System.Math.Sqrt(creatureLevel + target.creatureLevel))) * (hitChance / dodgeChance) > GameEnvironment.Random.NextDouble();
         }
 
@@ -133,9 +149,9 @@ namespace Wink
         /// </summary>
         /// <param name="idA">Death animation</param>
         /// <param name="idS">Death sound</param>
-        public void DeathFeedback(string idA = "die", string idS = "die")
+        public void DeathFeedback(string idA = "die", string idS = "Sounds/video_game_announcer_grunt")
         {
-            PlayAnimation(idA);
+            //PlayAnimation(idA);
             //PlaySound(idS);
 
             if (this is IGUIGameObject)

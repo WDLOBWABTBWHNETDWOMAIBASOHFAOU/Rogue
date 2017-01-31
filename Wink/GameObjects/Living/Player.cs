@@ -36,7 +36,7 @@ namespace Wink
         {
             //Inventory
             this.playerType = playerType;
-            mouseSlot = new MouseSlot(layer + 11, "mouseSlot");  
+            mouseSlot = new MouseSlot(layer + 11, clientName + "_mouseSlot");  
             SetupType();
         }
 
@@ -167,6 +167,8 @@ namespace Wink
             while (exp >= RequiredExperience())
             {
                 LevelUp();
+                NonAnimationSoundEvent LevelUpSound = new NonAnimationSoundEvent("Sounds/Taiko_Drum_1",true,Id);
+                LocalServer.SendToClients(LevelUpSound);
             }
         }
 

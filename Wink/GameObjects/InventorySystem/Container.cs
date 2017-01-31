@@ -10,7 +10,7 @@ namespace Wink
     {
         private InventoryBox iBox;
         private Window iWindow;
-        private int clickCount;
+        public bool Closed;
         private int floorNumber;
 
         public InventoryBox IBox
@@ -25,7 +25,7 @@ namespace Wink
         {
             get { return true; }
         }
-        private Tile Tile
+        public Tile Tile
         {
             get { return parent.Parent as Tile; }
         }
@@ -34,13 +34,14 @@ namespace Wink
         {
             iBox = inv ?? new InventoryBox(2, 4, layer + 1, "", cameraSensitivity);
             this.floorNumber = floorNumber;
+            Closed = true;
         }
 
         #region Serialization
         public Container(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             iBox = info.TryGUIDThenFull<InventoryBox>(context, "iBox");
-            clickCount = info.GetInt32("clickCount");
+            Closed = info.GetBoolean("Closed");
             floorNumber = info.GetInt32("floorNumber");
         }
 
@@ -51,8 +52,8 @@ namespace Wink
                 info.AddValue("iBox", iBox);
             else
                 info.AddValue("iBoxGUID", iBox.GUID.ToString()); 
-
-            info.AddValue("clickCount", clickCount);
+            
+            info.AddValue("Closed", Closed);
             info.AddValue("floorNumber", floorNumber);
 
             base.GetObjectData(info, context);
@@ -99,6 +100,7 @@ namespace Wink
             //TODO: move to a piece of code that actually gets called client-side.
             if (iWindow != null && iWindow.Visible)
             {
+                //TODO: fix, doen't work at the moment
                 Player player = GameWorld.Find(Player.LocalPlayerName) as Player;
                 int dx = (int)Math.Abs(player.Tile.Position.X - Tile.Position.X);
                 int dy = (int)Math.Abs(player.Tile.Position.Y - Tile.Position.Y);
@@ -155,21 +157,18 @@ namespace Wink
             Action onClick = () =>
             {
                 Player player = GameWorld.Find(p => p.Id == Player.LocalPlayerName) as Player;
-
                 int dx = (int)Math.Abs(player.Tile.Position.X - Tile.Position.X);
                 int dy = (int)Math.Abs(player.Tile.Position.Y - Tile.Position.Y);
                 bool withinReach = dx <= Tile.TileWidth && dy <= Tile.TileHeight;
                 if (withinReach)
                 {
-                    //if (clickCount == 0)
-                    //{
-                    //    InitContents(floorNumber);
-                    //}
-                    //clickCount++;
+                    if (Closed)
+                    {
+                        OpenedChestEvent OcE = new OpenedChestEvent(player, this);
+                        Server.Send(OcE);
+                    }
                     iWindow.Visible = !iWindow.Visible;
                 }
-                //possibly generate items here on first click instead of at floor generation (possible to take specific players luck in to account)
-
             };
             inputHelper.IfMouseLeftButtonPressedOn(this, onClick);
             base.HandleInput(inputHelper);

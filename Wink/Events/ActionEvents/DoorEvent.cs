@@ -45,6 +45,8 @@ namespace Wink
             AddVisibleTiles(server.Level, changedObjects);
 
             changedObjects.Add(door);
+            NonAnimationSoundEvent DoorSoundEvent = new NonAnimationSoundEvent("Sounds/door-1-open");
+            LocalServer.SendToClients(DoorSoundEvent);
         }
 
         protected override bool ValidateAction(Level level)
