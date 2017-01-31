@@ -54,14 +54,21 @@ namespace Wink
         private float scale;
         private bool stringVisible;
         private T trackingObject;
+        private string barTag;
 
         public int Width
         {
             get { return (stringVisible ? (int)font.MeasureString(inner.Value.ToString()).X : 0) + outer.Width; }
         }
 
-        public Bar(T o, Func<T, int> value, Func<T, int> maxValue, SpriteFont font, Color color, int layer = 0, string id = "", float cameraSensitivity = 0, float scale = 1, bool stringVisible = true) : base(layer, id)
+        public int Height
         {
+            get { return outer.Height; }
+        }
+
+        public Bar(T o, Func<T, int> value, Func<T, int> maxValue, SpriteFont font, Color color,string barTag, int layer = 0, string id = "", float cameraSensitivity = 0, float scale = 1, bool stringVisible = true) : base(layer, id)
+        {
+            this.barTag = barTag;
             this.font = font;
             this.color = color;
             this.scale = scale;
@@ -93,13 +100,15 @@ namespace Wink
             if (Visible)
             {
                 Vector2 stringSize = font.MeasureString(inner.Value.ToString());
-                float x = GlobalPosition.X + outer.Width + 10;
+                float valx = GlobalPosition.X + outer.Width + 10;
+                float tagx = GlobalPosition.X - font.MeasureString(barTag).X - 10;
                 float y = inner.GlobalPosition.Y - inner.Height / 2;
 
                 if (stringVisible)
                 {
                     string valueString = inner.Value.ToString() + "/" + inner.MaxValue.ToString();
-                    spriteBatch.DrawString(font, valueString, new Vector2(x, y) - (inner.CameraSensitivity * camera.GlobalPosition), color, 0, Vector2.Zero, scale / 2.5f, SpriteEffects.None, 0);
+                    spriteBatch.DrawString(font, valueString, new Vector2(valx, y) - (inner.CameraSensitivity * camera.GlobalPosition), color, 0, Vector2.Zero, scale / 2.5f, SpriteEffects.None, 0);
+                    spriteBatch.DrawString(font,barTag, new Vector2(tagx, y) - (inner.CameraSensitivity * camera.GlobalPosition), color, 0, Vector2.Zero, scale / 2.5f, SpriteEffects.None, 0);
                 }       
             }
         }

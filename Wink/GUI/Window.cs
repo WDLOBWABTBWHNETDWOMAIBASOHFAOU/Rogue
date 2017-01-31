@@ -46,6 +46,8 @@ namespace Wink
 
         public Window(int width, int height, bool hasCloseButton = true, bool isDraggable = true) : this(width, height, Color.DarkGray, hasCloseButton, isDraggable)
         {
+            height = height++;
+            width = width++;
         }
 
         public Window(int width, int height, Color fillColor, bool hasCloseButton = true, bool isDraggable = true)

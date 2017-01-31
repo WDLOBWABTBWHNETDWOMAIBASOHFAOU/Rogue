@@ -48,6 +48,7 @@ namespace Wink
                 );
             }
         }
+
         public bool Blocked
         {
             get
@@ -192,7 +193,7 @@ namespace Wink
             return onTile.Children.Count == 0;
         }
 
-        public bool PutOnTile<T>(T tileObject) where T : GameObject, ITileObject
+        public virtual bool PutOnTile<T>(T tileObject) where T : GameObject, ITileObject
         {
             if (Passable && !Blocked)
             {
@@ -299,7 +300,7 @@ namespace Wink
                     Server.Send(pme);
                 };
 
-                Action onRightClick = () =>
+                 Action onRightClick = () =>
                 {
                     Player player = GameWorld.Find(Player.LocalPlayerName) as Player;
                     SkillEvent SkE = new SkillEvent(player, this);

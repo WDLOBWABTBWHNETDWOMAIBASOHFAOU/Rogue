@@ -143,7 +143,7 @@ namespace Wink
 
             foreach(RingEffect e in ringEffects)
             {
-                TextGameObject ringInfo = new TextGameObject("Arial12", 0, 0, "RingInfo." + this);
+                TextGameObject ringInfo = new TextGameObject("Arial12", cameraSensitivity: 0, layer: 0, id: "RingInfo." + this);
                 ringInfo.Text = e.EffectType.ToString() + " Ring" + " : " + e.EffectValue;// needs more telling information but not sure what to use/ how to read/reach it
                 if (e.Multiplier)
                 {

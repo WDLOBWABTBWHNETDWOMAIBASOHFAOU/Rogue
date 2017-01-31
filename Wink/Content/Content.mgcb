@@ -184,6 +184,12 @@
 /processorParam:TextureFormat=Compressed
 /build:Arial36.spritefont
 
+#begin Arial20.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:TextureFormat=Compressed
+/build:Arial20.spritefont
+
 #begin inventory/background.png
 /importer:TextureImporter
 /processor:TextureProcessor

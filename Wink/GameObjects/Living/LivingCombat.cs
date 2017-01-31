@@ -18,8 +18,9 @@ namespace Wink
                 damageType = weaponItem.GetDamageType;
             }
 
-            double hitNumber = GameEnvironment.Random.NextDouble();
-            if (hitNumber < HitChance())
+            //double hitNumber = GameEnvironment.Random.NextDouble(); 
+            //if (hitNumber < HitChance())
+            if (TryHit(target))
             {
                 double attackValue = AttackValue();
                 damageDealt = target.TakeDamage(attackValue, damageType);
@@ -27,6 +28,14 @@ namespace Wink
 
             if (damageDealt > 0) ProcessReflection(damageDealt, target);
             // Display attack missed (feedback on fail)
+        }
+
+        public bool TryHit(Living target)
+        {
+            double hitChance = HitChance(); // Example: 0.7
+            double dodgeChance = target.DodgeChance(); // Example: 0.7
+            System.Console.WriteLine((0.5/(System.Math.Sqrt(creatureLevel+target.creatureLevel))) * (hitChance / dodgeChance));
+            return (0.5 / (System.Math.Sqrt(creatureLevel + target.creatureLevel))) * (hitChance / dodgeChance) > GameEnvironment.Random.NextDouble();
         }
 
         public void Special_Attack(Living target, double mod)
@@ -75,9 +84,9 @@ namespace Wink
         /// <param name="">Attackvalue of the attacking side</param>
         public int TakeDamage(double attackValue, DamageType damageType)
         {
-            double dodgeNumber = GameEnvironment.Random.NextDouble();
-            if (dodgeNumber > DodgeChance())
-            {
+            //double dodgeNumber = GameEnvironment.Random.NextDouble();
+            //if (dodgeNumber > DodgeChance())
+            //{
                 double defenceValue = ArmorValue(damageType);
                 int damageTaken = (int)(attackValue / defenceValue);
 
@@ -86,11 +95,11 @@ namespace Wink
 
                 // Return damage taken for ring effect :D:D
                 return damageTaken;
-            }
+            //}
             // Display attack dodged (feedback on succes)
 
             // return no damage was taken
-            return 0;
+            //return 0;
         }
 
         /// <summary>

@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Input;
 namespace Wink
 {
     public enum PlayerType { warrior, archer, mage, random }
-
+    public enum Stat { vitality, strength, dexterity, wisdom, luck, intelligence }
     [Serializable]
     public class Player : Living, IGameObjectContainer, IGUIGameObject
     {
@@ -23,11 +23,10 @@ namespace Wink
         private TextGameObject playerNameTitle;
 
         private MouseSlot mouseSlot;
-        public MouseSlot MouseSlot
-        {
-            get { return mouseSlot; }
-        }
-        
+        public MouseSlot MouseSlot { get { return mouseSlot; } }
+        private PlayerType playerType;
+        public PlayerType PlayerType { get { return playerType; } }
+
         public override Point PointInTile
         {
             get { return new Point(Tile.TileWidth / 2, Tile.TileHeight / 2); }
@@ -36,8 +35,9 @@ namespace Wink
         public Player(string clientName, int layer, PlayerType playerType, float FOVlength = 8.5f) : base(layer, "player_" + clientName, FOVlength)
         {
             //Inventory
+            this.playerType = playerType;
             mouseSlot = new MouseSlot(layer + 11, "mouseSlot");  
-            SetupType(playerType);
+            SetupType();
         }
 
         private void PlayerNameTitle()
@@ -48,13 +48,13 @@ namespace Wink
             playerNameTitle.Position = GlobalPosition - new Vector2((playerNameTitle.Size.X / 2), 64 + playerNameTitle.Size.Y);
         }
 
-        private void SetupType(PlayerType ptype)
+        private void SetupType()
         {
-            if (ptype == PlayerType.random)
+            if (playerType == PlayerType.random)
             {
                 //select random armorType
                 Array pTypeValues = Enum.GetValues(typeof(PlayerType));
-                ptype = (PlayerType)pTypeValues.GetValue(GameEnvironment.Random.Next(pTypeValues.Length - 1));
+                playerType = (PlayerType)pTypeValues.GetValue(GameEnvironment.Random.Next(pTypeValues.Length - 1));
             }
 
             RestrictedItemSlot weaponslot = EquipmentSlots.Find("weaponSlot") as RestrictedItemSlot;
@@ -70,7 +70,7 @@ namespace Wink
             ItemSlot slot_3_2 = Inventory[3, 2] as ItemSlot;
             slot_3_2.ChangeItem(new MagicBolt());
 
-            switch (ptype)
+            switch (playerType)
             {
                 case PlayerType.warrior:
                     weaponslot.ChangeItem(new WeaponEquipment(EquipmentStartingStrenght, WeaponType.melee));
@@ -108,7 +108,8 @@ namespace Wink
             exp = info.GetInt32("exp");
             freeStatPoints = info.GetInt32("freeStatPoints");
             playerNameTitle = info.GetValue("playerNameTitle", typeof(TextGameObject)) as TextGameObject;
-
+            playerType = (PlayerType)info.GetValue("playerType", typeof(PlayerType));
+            
             mouseSlot = info.TryGUIDThenFull<MouseSlot>(context, "mouseSlot");
         }
 
@@ -120,6 +121,7 @@ namespace Wink
             else
                 info.AddValue("mouseSlotGUID", mouseSlot.GUID.ToString());
 
+            info.AddValue("playerType", playerType);
             info.AddValue("playerNameTitle",playerNameTitle);
             info.AddValue("exp", exp);
             info.AddValue("freeStatPoints", freeStatPoints);
@@ -143,12 +145,9 @@ namespace Wink
             base.Update(gameTime);
             mouseSlot.Update(gameTime);
 
-            if (exp >= RequiredExperience())
-            {
-                LevelUp();
-            }
         }
 
+        #region leveling
         /// <summary>
         /// Adds exp to the players current exp. Can be a flat value or calculated based on the killed enemy his "power"
         /// </summary>
@@ -158,12 +157,17 @@ namespace Wink
         {
             if (killedEnemy != null)
             {
-                int expmod = 100;
-                float statAverige = (killedEnemy.Strength + killedEnemy.Dexterity + killedEnemy.Intelligence + killedEnemy.Wisdom + killedEnemy.Vitality + killedEnemy.Luck) / 6;
-                expGained = (int)(statAverige * expmod);
+                int expmod = 50;
+                float diffulcityMod = killedEnemy.statAverige / statAverige;
+                expGained = (int)(diffulcityMod * expmod);
             }
 
             exp += expGained;
+
+            while (exp >= RequiredExperience())
+            {
+                LevelUp();
+            }
         }
 
         /// <summary>
@@ -184,7 +188,10 @@ namespace Wink
             exp -= RequiredExperience();
             creatureLevel++;
             freeStatPoints = 3;
+
+            //do we want to reset hp and mp to max on a lvl up?
         }
+#endregion
 
         protected override void InitAnimationVariables()
         {
@@ -295,7 +302,6 @@ namespace Wink
             return mouseSlot.Find(del) ?? base.Find(del);
         }
         
-        public enum Stat { vitality, strength, dexterity, wisdom, luck, intelligence }
 
         public void AddStatPoint(Stat stat)
         {
@@ -303,6 +309,7 @@ namespace Wink
             {
                 case Stat.vitality:
                     vitality++;
+                    healthPoints += 4;//plus hp mod per vitality point
                     break;
                 case Stat.strength:
                     strength++;
@@ -312,6 +319,7 @@ namespace Wink
                     break;
                 case Stat.wisdom:
                     wisdom++;
+                    manaPoints += 5;//plus mp mod per wisdom
                     break;
                 case Stat.luck:
                     luck++;
@@ -355,29 +363,36 @@ namespace Wink
                 SpriteFont textfieldFont = GameEnvironment.AssetManager.GetFont("Arial26");
 
                 const int barX = 150;
-                Vector2 HPBarPosition = new Vector2(barX, 14);
-                Vector2 MPBarPosition = new Vector2(barX, HPBarPosition.Y + 32);
+                const int barY = 10;
 
                 //Healthbar
-                Bar<Player> hpBar = new Bar<Player>(this, p => p.Health, p => p.MaxHealth, textfieldFont, Color.Red, 2, "HealthBar", 0, 2.5f);
-                hpBar.Position = new Vector2(HPBarPosition.X, HPBarPosition.Y);
+                Bar<Player> hpBar = new Bar<Player>(this, p => p.Health, p => p.MaxHealth, textfieldFont, Color.Red, "HP", 2, "HealthBar", 0, 2.5f);
+                hpBar.Position = new Vector2(barX, barY);
                 gui.Add(hpBar);
-
                 //Manabar
-                Bar<Player> mpBar = new Bar<Player>(this, p => p.Mana, p => p.MaxMana, textfieldFont, Color.Blue, 2, "ManaBar", 0, 2.5f);
-                mpBar.Position = new Vector2(MPBarPosition.X, MPBarPosition.Y);
+                Bar<Player> mpBar = new Bar<Player>(this, p => p.Mana, p => p.MaxMana, textfieldFont, Color.Blue, "MP", 2, "ManaBar", 0, 2.5f);
+                mpBar.Position = hpBar.Position + new Vector2(0, hpBar.Height +barY);
                 gui.Add(mpBar);
 
                 //Action Points
-                Bar<Player> apBar = new Bar<Player>(this, p => p.ActionPoints, p => MaxActionPoints, textfieldFont, Color.Yellow, 2, "ActionBar", 0, 2.5f);
-                Vector2 APBarPosition = new Vector2(screenWidth - barX - apBar.Width, HPBarPosition.Y);
-                apBar.Position = new Vector2(APBarPosition.X, APBarPosition.Y);
+                Bar<Player> apBar = new Bar<Player>(this, p => p.ActionPoints, p => MaxActionPoints, textfieldFont, Color.GreenYellow, "AP", 2, "ActionBar", 0, 2.5f);
+                apBar.Position = new Vector2(GameEnvironment.Screen.X- barX*3, barY);
                 gui.Add(apBar);
+
+                //exp Points
+                Bar<Player> expBar = new Bar<Player>(this, p => p.exp, p => p.RequiredExperience(), textfieldFont, Color.Gold, "XP", 2, "ExpBar", 0, 2.5f);
+                expBar.Position = apBar.Position + new Vector2(0, apBar.Height + barY);
+                gui.Add(expBar);
 
                 PlayerInventoryAndEquipment pie = new PlayerInventoryAndEquipment(Inventory, EquipmentSlots);
                 pie.Position = guiState.ContainsKey("playerIaEPosition") ? (Vector2)guiState["playerIaEPosition"] : new Vector2(screenWidth - pie.Width, 300);
                 pie.Visible = guiState.ContainsKey("playerIaEVisibility") ? (bool)guiState["playerIaEVisibility"] : false;
                 gui.Add(pie);
+
+                StatScreen ss = new StatScreen(this);
+                ss.Position = guiState.ContainsKey("playerSsPosition") ? (Vector2)guiState["playerSsPosition"] : new Vector2(0, 300);
+                ss.Visible = guiState.ContainsKey("playerSsVisibility") ? (bool)guiState["playerSsVisibility"] : false;
+                gui.Add(ss);
 
                 SkillBar skillBar = new SkillBar(SkillList);
                 skillBar.Position = guiState.ContainsKey("skillbarPosition") ? (Vector2)guiState["skillbarPosition"] : new Vector2((screenWidth-skillBar.Width)/2,(gui.Find("TopBar")as SpriteGameObject).Sprite.Height);
@@ -394,9 +409,13 @@ namespace Wink
             gui.Remove(gui.Find("playerName" + guid.ToString()));
             if (Id == LocalPlayerName && GameWorld != null)
             {
-                PlayerInventoryAndEquipment pIaE = gui.Find(obj => obj is PlayerInventoryAndEquipment) as PlayerInventoryAndEquipment;
+                PlayerInventoryAndEquipment pIaE = gui.Inventory;
+                StatScreen pSs = gui.CharacterScreen;
+
                 guiState.Add("playerIaEVisibility", pIaE.Visible);
                 guiState.Add("playerIaEPosition", pIaE.Position);
+                guiState.Add("playerSsVisibility", pSs.Visible);
+                guiState.Add("playerSsPosition", pSs.Position);
 
                 SkillBar skillbar = gui.Find(obj=> obj is SkillBar) as SkillBar;
                 guiState.Add("skillBarVisibility", skillbar.Visible);
@@ -405,7 +424,9 @@ namespace Wink
                 gui.RemoveImmediatly(gui.Find("HealthBar"));
                 gui.RemoveImmediatly(gui.Find("ManaBar"));
                 gui.RemoveImmediatly(gui.Find("ActionBar"));
+                gui.RemoveImmediatly(gui.Find("ExpBar"));
                 gui.RemoveImmediatly(pIaE);
+                gui.RemoveImmediatly(pSs);
                 gui.RemoveImmediatly(mouseSlot);
                 gui.RemoveImmediatly(skillbar);
             }

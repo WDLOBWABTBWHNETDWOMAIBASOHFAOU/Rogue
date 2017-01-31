@@ -60,6 +60,7 @@ namespace Wink
                 Array eTypeValues = Enum.GetValues(typeof(EnemyType));
                 etype = (EnemyType)eTypeValues.GetValue(GameEnvironment.Random.Next(eTypeValues.Length - 1));
             }
+
             id += " : " + etype.ToString();
             int eLvl = GameEnvironment.Random.Next(1,floorNumber);
             int weaponChance = 15 * floorNumber; // higher chance the deeper you go
@@ -149,6 +150,12 @@ namespace Wink
 
         public override void Death()
         {
+            List<Player> playerList = (GameWorld.FindAll(p => p is Player).Cast<Player>().ToList());
+            foreach (Player p in playerList)
+            {
+                p.ReciveExp(0, this);
+            }
+
             //Drop equipment/loot, remove itself from world, etc
             Tile tile = Tile;
             if (tile != null)

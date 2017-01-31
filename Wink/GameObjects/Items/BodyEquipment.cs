@@ -144,7 +144,7 @@ namespace Wink
         {
             base.ItemInfo(caller);
 
-            TextGameObject armorinfo = new TextGameObject("Arial12", 0, 0, "ArmorValueTypeInfo." + this);
+            TextGameObject armorinfo = new TextGameObject("Arial12", cameraSensitivity: 0, layer: 0, id: "ArmorValueTypeInfo." + this);
             armorinfo.Text = "ArmorValue: " + physicalValue + " physical, " + magicValue + " magic";
             armorinfo.Color = Color.Red;
             armorinfo.Parent = infoList;

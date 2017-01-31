@@ -12,7 +12,7 @@ namespace Wink
         Func<T, string> textFunc;
         T target;
 
-        public TrackingTextGameObject(T target, Func<T, string> textFunc, string fontName, float cameraSensitivity = 1, int layer = 0, string id = "") : base(fontName, cameraSensitivity, layer, id)
+        public TrackingTextGameObject(T target, Func<T, string> textFunc, string fontName, float cameraSensitivity = 1, int layer = 0, string id = "") : base(fontName, cameraSensitivity: cameraSensitivity, layer: layer, id: id)
         {
             this.target = target;
             this.textFunc = textFunc;

@@ -2,7 +2,7 @@
 
 namespace Wink
 {
-    class PlayerInventoryAndEquipment : Window
+    public class PlayerInventoryAndEquipment : Window
     {
         //I suggest using an inventory background sprite and using its height and width in the base
         public PlayerInventoryAndEquipment(InventoryBox inventory, GameObjectList equipmentslots) : base(576, 384)//base(inventory.ItemGrid.Columns * Tile.TileHeight, (2 + inventory.ItemGrid.Rows) * Tile.TileHeight)
