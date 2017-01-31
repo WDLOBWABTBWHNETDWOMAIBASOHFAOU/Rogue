@@ -55,10 +55,11 @@ namespace Wink
             if (player.MouseSlot.Item != null)
                 changed.Add(player.MouseSlot.Item);
 
-            player.MouseSlot.AddTo(item, target);
-
             changed.Add(target);
             changed.Add(player.MouseSlot);
+            changed.Add(player);//needed for skill slots
+            player.MouseSlot.AddTo(item, target);
+
             NonAnimationSoundEvent pickupSound = new NonAnimationSoundEvent("Sounds/CLICK10B", true, player.Id);
             LocalServer.SendToClients(new LevelChangedEvent(changed));
             return true;
