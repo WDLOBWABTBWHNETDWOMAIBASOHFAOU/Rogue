@@ -17,6 +17,7 @@ namespace Wink
             base.OnClientReceive(client);
             client.Camera.CenterOn(client.Player);
             GameEnvironment.GameStateManager.SwitchTo("playingState");
+            GameEnvironment.AssetManager.StopMusic();
             return true;
         }
     }

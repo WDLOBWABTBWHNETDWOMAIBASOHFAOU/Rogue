@@ -75,7 +75,7 @@ namespace Wink
                     dexRequirement = GameEnvironment.Random.Next(physicalValue) / highPriority;
                     intRequirement = GameEnvironment.Random.Next(magicValue) / lowPriority;
 
-                    spriteAssetName = "empty:64:64:10:DarkGray";//TODO: replace by correct spritename
+                    spriteAssetName = "Sprites/Armor/elven_leather_armor";//TODO: replace by correct spritename
                     break;
                 case ArmorType.normal:
                     physicalValue = someBaseValue + MediumBonusValue(baseBonusValue);
@@ -85,7 +85,7 @@ namespace Wink
                     dexRequirement = GameEnvironment.Random.Next(physicalValue) / mediumPriority;
                     intRequirement = GameEnvironment.Random.Next(magicValue) / mediumPriority;
 
-                    spriteAssetName = "empty:64:64:10:Yellow";//TODO: replace by correct spritename
+                    spriteAssetName = "Sprites/Armor/dwarven_ringmail";//TODO: replace by correct spritename
                     break;
                 case ArmorType.heavy:
                     physicalValue = someBaseValue + HighBonusValue(baseBonusValue) + HighBonusValue(baseBonusValue);
@@ -95,7 +95,7 @@ namespace Wink
                     dexRequirement = GameEnvironment.Random.Next(physicalValue) / mediumPriority;
                     intRequirement = GameEnvironment.Random.Next(magicValue) / lowPriority;
 
-                    spriteAssetName = "empty:64:64:10:Brown";//TODO: replace by correct spritename
+                    spriteAssetName = "Sprites/Armor/orcish_platemail";//TODO: replace by correct spritename
                     break;
                 case ArmorType.robes:
                     physicalValue = someBaseValue + LowBonusValue(baseBonusValue);
@@ -105,7 +105,7 @@ namespace Wink
                     dexRequirement = GameEnvironment.Random.Next(physicalValue) / lowPriority;
                     intRequirement = GameEnvironment.Random.Next(magicValue) / highPriority;
 
-                    spriteAssetName = "empty:64:64:10:Purple";//TODO: replace by correct spritename
+                    spriteAssetName = "Sprites/Armor/robe2";//TODO: replace by correct spritename
                     break;
                 default:
                     throw new Exception("invalid ArmorType");

@@ -149,7 +149,7 @@ namespace Wink
             return t;
         }
 
-        private Tile LoadStartTile(int number, string assetName = "empty:64:64:10:Red")
+        private Tile LoadStartTile(int number, string assetName = "spr_floor")
         {
             return LoadFloorTile("StartTile" + number, assetName);
         }
@@ -174,7 +174,7 @@ namespace Wink
         {
             floorNumber++;
             Tile t = LoadFloorTile("", assetName);
-            Container chest = new Container("empty:64:64:10:Brown", levelIndex);
+            Container chest = new Container("Sprites/Containers/chest2_closed", levelIndex);
             for (int x = 0; x < chest.IBox.Columns; x++)
             {
                 for (int y = 0; y < chest.IBox.Rows; y++)

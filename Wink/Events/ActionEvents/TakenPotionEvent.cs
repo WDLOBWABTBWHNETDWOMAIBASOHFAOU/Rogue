@@ -40,9 +40,14 @@ namespace Wink
             {
                 case PotionType.Health:
                     player.Health += potion.PotionValue;
+                    NonAnimationSoundEvent PotionSoundEvent = new NonAnimationSoundEvent("Sounds/Potion Sound smaller");
+                    LocalServer.SendToClients(PotionSoundEvent);
+                    
                     break;
                 case PotionType.Mana:
                     player.Mana += potion.PotionValue;
+                    NonAnimationSoundEvent PotionSoundEvent2 = new NonAnimationSoundEvent("Sounds/Potion Sound smaller");
+                    LocalServer.SendToClients(PotionSoundEvent2);
                     break;
                 default:
                     throw new Exception("invalid potionType");

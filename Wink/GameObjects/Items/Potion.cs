@@ -59,10 +59,10 @@ namespace Wink
             switch (potionType)
             {
                 case PotionType.Health:
-                    spriteAssetName = "empty:64:64:10:Red";//TODO: replace by correct spritename
+                    spriteAssetName = "Sprites/Potions/ruby";//TODO: replace by correct spritename
                     break;
                 case PotionType.Mana:
-                    spriteAssetName = "empty:64:64:10:Blue";//TODO: replace by correct spritename
+                    spriteAssetName = "Sprites/Potions/brilliant_blue";//TODO: replace by correct spritename
                     break;
                 default:
                     throw new Exception("invalid potionType");

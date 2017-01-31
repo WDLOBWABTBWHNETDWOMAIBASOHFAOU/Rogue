@@ -50,6 +50,10 @@ namespace Wink
         public override bool OnServerReceive(LocalServer server)
         {
             player.AddStatPoint(stat);
+
+            NonAnimationSoundEvent statSoundEvent = new NonAnimationSoundEvent("Sounds/CLICK10A", true, player.Id);
+            LocalServer.SendToClients(statSoundEvent);
+
             LocalServer.SendToClients(new LevelChangedEvent(new List<GameObject>{ player }) );
             return true;
         }

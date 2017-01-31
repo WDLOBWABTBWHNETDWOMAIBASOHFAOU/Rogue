@@ -59,6 +59,7 @@ namespace Wink
 
             changed.Add(target);
             changed.Add(player.MouseSlot);
+            NonAnimationSoundEvent pickupSound = new NonAnimationSoundEvent("Sounds/CLICK10B", true, player.Id);
             LocalServer.SendToClients(new LevelChangedEvent(changed));
             return true;
         }

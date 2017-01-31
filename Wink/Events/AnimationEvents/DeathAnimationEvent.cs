@@ -12,13 +12,13 @@ namespace Wink
     {
         private Living dead;
 
-        public DeathAnimationEvent(Living dead)
+        public DeathAnimationEvent(Living dead, string soundAssetName, bool playerSpecific = false, string LocalPlayerName = "") : base(soundAssetName, playerSpecific, LocalPlayerName)
         {
             this.dead = dead;
         }
 
         #region Serialization
-        public DeathAnimationEvent(SerializationInfo info, StreamingContext context)
+        public DeathAnimationEvent(SerializationInfo info, StreamingContext context):base(info,context)
         {
             dead = context.GetVars().Local.GetGameObjectByGUID(Guid.Parse(info.GetString("deadGUID"))) as Living;
         }
@@ -48,6 +48,15 @@ namespace Wink
         public override void PreAnimate(LocalClient client)
         {
             dead.PlayAnimation("die");
+
+            if (!playerSpecific)
+            {
+                GameEnvironment.AssetManager.PlaySound(assetName);
+            }
+            else if (Player.LocalPlayerName == LocalPlayerName)
+            {
+                GameEnvironment.AssetManager.PlaySound(assetName);
+            }
         }
     }
 }

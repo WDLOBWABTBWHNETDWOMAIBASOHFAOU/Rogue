@@ -24,7 +24,9 @@ namespace Wink
         protected double strScalingFactor;
         protected double dexScalingFactor;
         protected double intScalingFactor;
+        protected string hitSound;
 
+        public string HitSound { get { return hitSound; } }
         public int Reach { get { return reach; } }
         public DamageType GetDamageType { get { return damageType; } }
 
@@ -114,8 +116,9 @@ namespace Wink
                     strRequirement = GameEnvironment.Random.Next(baseValue) / highPriority;
                     dexRequirement = GameEnvironment.Random.Next(baseValue) / lowPriority;
                     intRequirement =0;
-
-                    spriteAssetName = "empty:64:64:10:DarkGoldenrod";//TODO: replace by correct spritename
+                    
+                    hitSound = "Sounds/SwordHit";
+                    spriteAssetName = "Sprites/Weapons/urand_doom_knight";//TODO: replace by correct spritename
                     break;
                 case WeaponType.bow:
                     //base values
@@ -135,7 +138,8 @@ namespace Wink
                     dexRequirement = GameEnvironment.Random.Next(baseValue) / highPriority;
                     intRequirement = 0;
 
-                    spriteAssetName = "spr_bow";//TODO: replace by correct spritename
+                    spriteAssetName = "Sprites/Weapons/longbow";//TODO: replace by correct spritename
+                    hitSound = "Sounds/Arrow";
                     break;
                 case WeaponType.staff:
                     //base values
@@ -153,7 +157,9 @@ namespace Wink
                     strRequirement = GameEnvironment.Random.Next(baseValue) / lowPriority;
                     dexRequirement = GameEnvironment.Random.Next(baseValue) / lowPriority;
                     intRequirement = GameEnvironment.Random.Next(baseValue) / highPriority;
-                    spriteAssetName = "empty:64:64:10:LightSkyBlue";//TODO: replace by correct spritename
+                    spriteAssetName = "Sprites/Weapons/staff04";//TODO: replace by correct spritename
+                    hitSound = "Sounds/FireIgnite";
+
                     break;
                 default:
                     throw new Exception("invalid weaponType");

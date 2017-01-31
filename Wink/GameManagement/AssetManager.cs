@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -169,6 +170,11 @@ public class AssetManager
         return emptyTexture;
     }
 
+    public TimeSpan Duration(string assetName)
+    {
+        return contentManager.Load<SoundEffect>(assetName).Duration;
+    }
+
     public void PlaySound(string assetName)
     {
         SoundEffect snd = contentManager.Load<SoundEffect>(assetName);
@@ -179,6 +185,11 @@ public class AssetManager
     {
         MediaPlayer.IsRepeating = repeat;
         MediaPlayer.Play(contentManager.Load<Song>(assetName));
+    }
+
+    public void StopMusic()
+    {
+        MediaPlayer.Stop();
     }
 
     public ContentManager Content

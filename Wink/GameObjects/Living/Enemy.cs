@@ -131,19 +131,19 @@ namespace Wink
             switch (type)
             {
                 case EnemyType.warrior:
-                    idleAnimation = "empty:64:64:12:Brown";
-                    moveAnimation = "empty:64:64:24:Brown";
-                    dieAnimation = "empty:64:64:48:Brown";
+                    idleAnimation = "Sprites/Living/norbert";
+                    moveAnimation = "Sprites/Living/norbert";
+                    dieAnimation = "Sprites/Living/norbert";
                     break;
                 case EnemyType.archer:
-                    idleAnimation = "empty:64:64:12:Yellow";
-                    moveAnimation = "empty:64:64:24:Yellow";
-                    dieAnimation = "empty:64:64:48:Yellow";
+                    idleAnimation = "Sprites/Living/centaur";
+                    moveAnimation = "Sprites/Living/centaur";
+                    dieAnimation = "Sprites/Living/centaur";
                     break;
                 case EnemyType.mage:
-                    idleAnimation = "empty:64:64:12:CornflowerBlue";
-                    moveAnimation = "empty:64:64:24:CornflowerBlue";
-                    dieAnimation = "empty:64:64:48:CornflowerBlue";
+                    idleAnimation = "Sprites/Living/francis";
+                    moveAnimation = "Sprites/Living/francis";
+                    dieAnimation = "Sprites/Living/francis";
                     break;
             }
         }

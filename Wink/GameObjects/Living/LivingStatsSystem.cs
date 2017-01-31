@@ -44,7 +44,7 @@
 
                 if (healthPoints <= 0)
                 {
-                    LocalServer.SendToClients(new DeathAnimationEvent(this));
+                    LocalServer.SendToClients(new DeathAnimationEvent(this, "Sounds/video_game_announcer_grunt"));
                     Death();
                 }
             }

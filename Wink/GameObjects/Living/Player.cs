@@ -62,7 +62,7 @@ namespace Wink
             int EquipmentStartingStrenght = 3;
 
             ItemSlot slot_0_0 = Inventory[0, 0] as ItemSlot;
-            slot_0_0.ChangeItem(new Potion("empty:64:64:10:Red", PotionType.Health, PotionPower.minor, 5));//some starting healt potions
+            slot_0_0.ChangeItem(new Potion("Sprites/Potions/ruby", PotionType.Health, PotionPower.minor, 5));//some starting healt potions
 
 
             ItemSlot slot_2_2 = Inventory[2, 2] as ItemSlot;
@@ -89,7 +89,7 @@ namespace Wink
                     bodyslot.ChangeItem(new BodyEquipment(EquipmentStartingStrenght, 2, ArmorType.robes));
                     SetStats(1, 1, 1, 1, 4, 4, 1);
                     ItemSlot slot_1_0 = Inventory[1, 0] as ItemSlot;
-                    slot_1_0.ChangeItem(new Potion("empty:64:64:10:Blue", PotionType.Mana, PotionPower.minor, 5));//some starting mana potions
+                    slot_1_0.ChangeItem(new Potion("Sprites/Potions/brilliant_blue", PotionType.Mana, PotionPower.minor, 5));//some starting mana potions
                     break;
 
                 default:
@@ -167,6 +167,8 @@ namespace Wink
             while (exp >= RequiredExperience())
             {
                 LevelUp();
+                NonAnimationSoundEvent LevelUpSound = new NonAnimationSoundEvent("Sounds/Taiko_Drum_1",true,Id);
+                LocalServer.SendToClients(LevelUpSound);
             }
         }
 
@@ -195,9 +197,9 @@ namespace Wink
 
         protected override void InitAnimationVariables()
         {
-            idleAnimation = "player";
-            moveAnimation = "empty:64:64:10:DarkBlue";
-            dieAnimation = "empty:64:64:10:LightBlue";
+            idleAnimation = "Sprites/Living/Human";
+            moveAnimation = "Sprites/Living/Human";
+            dieAnimation = "Sprites/Living/Human";
         }
 
         public override void HandleInput(InputHelper inputHelper)
