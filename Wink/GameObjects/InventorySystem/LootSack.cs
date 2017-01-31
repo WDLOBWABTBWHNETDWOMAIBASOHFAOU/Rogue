@@ -17,7 +17,7 @@ namespace Wink
             get { return false; }
         }
 
-        public LootSack(Enemy enemy) : base("empty:32:32:12:Yellow", enemy.FloorNumber, enemy.Inventory)
+        public LootSack(Enemy enemy) : base("Sprites/Containers/unseen_item", enemy.FloorNumber, enemy.Inventory)
         {
             for (int i = 0; i < enemy.EquipmentSlots.Children.Count-1; i++)
             {

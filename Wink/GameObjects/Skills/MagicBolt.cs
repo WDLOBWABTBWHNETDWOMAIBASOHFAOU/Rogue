@@ -13,7 +13,7 @@ namespace Wink
     class MagicBolt : Skill
     {
         int skillPower;
-        public MagicBolt(int skillPower = 250, int skillReach = 3, int ManaCost = 20, string assetName = "empty:64:64:10:White") : base(skillReach, ManaCost, assetName)
+        public MagicBolt(int skillPower = 250, int skillReach = 3, int ManaCost = 20, string assetName = "Sprites/Skills/lehudibs_crystal_spear") : base(skillReach, ManaCost, assetName)
         {
             this.skillPower = skillPower;
         }

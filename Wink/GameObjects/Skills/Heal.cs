@@ -12,7 +12,7 @@ namespace Wink
     class Heal : Skill
     {
         int skillPower;
-        public Heal(int skillPower = 15,int skillReach = 2, int ManaCost = 20, string assetName = "empty:64:64:10:White") : base(skillReach,ManaCost,assetName)
+        public Heal(int skillPower = 15,int skillReach = 2, int ManaCost = 20, string assetName = "Sprites/Skills/borgnjors_revivification") : base(skillReach,ManaCost,assetName)
         {
             this.skillPower = skillPower;
         }
