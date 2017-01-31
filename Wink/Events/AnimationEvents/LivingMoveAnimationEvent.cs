@@ -67,7 +67,6 @@ namespace Wink
                 destination.PutOnTile(toMove);
                 toMove.Position += origin.Position - destination.Position;
             }
-            origin.RemoveImmediatly(toMove);
 
             if (!playerSpecific)
             {

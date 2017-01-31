@@ -29,14 +29,6 @@ namespace Wink
         }
         #endregion
 
-        public override bool GUIDSerialization
-        {
-            get
-            {
-                return true;
-            }
-        }
-
         protected override int Cost
         {
             get
@@ -49,7 +41,7 @@ namespace Wink
             }
         }
 
-        protected override void DoAction(LocalServer server)
+        protected override void DoAction(LocalServer server, HashSet<GameObject> changedObjects)
         {
             if (container.Closed)
             {
@@ -60,7 +52,7 @@ namespace Wink
                 //1 init contents here to take specific players luck in to account.
                 //2 if keys (for doors and chests) are implemented, add if(locked) with key requirement in validation
             }
-            server.ChangedObjects.Add(container);
+            changedObjects.Add(container);
         }
 
         protected override bool ValidateAction(Level level)

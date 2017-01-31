@@ -41,7 +41,6 @@ namespace Wink
         public Container(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             iBox = info.TryGUIDThenFull<InventoryBox>(context, "iBox");
-            clickCount = info.GetInt32("clickCount");
             Closed = info.GetBoolean("Closed");
             floorNumber = info.GetInt32("floorNumber");
         }
@@ -53,8 +52,7 @@ namespace Wink
                 info.AddValue("iBox", iBox);
             else
                 info.AddValue("iBoxGUID", iBox.GUID.ToString()); 
-
-            info.AddValue("clickCount", clickCount);
+            
             info.AddValue("Closed", Closed);
             info.AddValue("floorNumber", floorNumber);
 
