@@ -48,7 +48,7 @@ namespace Wink
 
         protected override bool ValidateAction(Level level)
         {
-            return AbleToHit(Attacker, Defender.Tile, Attacker.Reach);
+            return Defender != null && AbleToHit(Attacker, Defender.Tile, Attacker.Reach);
         }
 
         /// <summary>

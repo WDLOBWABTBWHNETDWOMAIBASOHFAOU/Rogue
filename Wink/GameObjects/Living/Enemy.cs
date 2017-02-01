@@ -56,6 +56,9 @@ namespace Wink
 
             this.floorNumber = floorNumber;
             this.type = SetupType(enemyType, floorNumber);
+            InitAnimationVariables();
+            LoadAnimations();
+            PlayAnimation("idle");
         }
 
         /// <summary>
