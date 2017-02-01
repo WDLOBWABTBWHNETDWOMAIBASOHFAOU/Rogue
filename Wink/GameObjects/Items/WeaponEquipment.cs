@@ -118,7 +118,7 @@ namespace Wink
                     intRequirement =0;
                     
                     hitSound = "Sounds/SwordHit";
-                    spriteAssetName = "Sprites/Weapons/urand_doom_knight";//TODO: replace by correct spritename
+                    spriteAssetName = "Sprites/Weapons/urand_doom_knight"; //TODO: replace by correct spritename
                     break;
                 case WeaponType.bow:
                     //base values

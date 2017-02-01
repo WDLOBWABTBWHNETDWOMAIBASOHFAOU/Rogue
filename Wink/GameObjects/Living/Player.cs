@@ -195,11 +195,11 @@ namespace Wink
         {
             exp -= RequiredExperience();
             creatureLevel++;
-            freeStatPoints = 3;
+            freeStatPoints += 3;
 
             //do we want to reset hp and mp to max on a lvl up?
         }
-#endregion
+        #endregion
 
         protected override void InitAnimationVariables()
         {

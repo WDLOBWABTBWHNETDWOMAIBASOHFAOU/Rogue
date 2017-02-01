@@ -242,9 +242,11 @@ namespace Wink
 
         public override void LoadAnimations()
         {
+            InitAnimationVariables();
             LoadAnimation(idleAnimation, "idle", true);
             LoadAnimation(moveAnimation, "move", true, 0.05f);
             LoadAnimation(dieAnimation, "die", false);
+            PlayAnimation("idle");
         }
 
         /// <summary>

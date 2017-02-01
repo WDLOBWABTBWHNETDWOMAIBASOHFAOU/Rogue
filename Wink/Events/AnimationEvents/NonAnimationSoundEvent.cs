@@ -17,7 +17,7 @@ namespace Wink
         /// <param name="soundLength"></param>
         /// <param name="playerSpecific">True if only a specific user should hear the soundeffect</param>
         /// <param name="LocalPlayerName">if playerSpecific, id of player that should hear the sound</param>
-        public NonAnimationSoundEvent(string assetName, bool playerSpecific=false, string LocalPlayerName =""):base(assetName,playerSpecific,LocalPlayerName)
+        public NonAnimationSoundEvent(string assetName, bool playerSpecific = false, string LocalPlayerName = "") : base(assetName, playerSpecific, LocalPlayerName)
         {
         }
 
@@ -37,7 +37,7 @@ namespace Wink
             get
             {
                 int delay = 6;//ensure there is a delay between sounds
-                float miliseconds = GameEnvironment.AssetManager.Duration(assetName).Milliseconds;
+                float miliseconds = GameEnvironment.AssetManager.Duration(soundAssetName).Milliseconds;
                 float frames = ((miliseconds / 1000) * 60) + delay;
                 return (int)frames;
             }
@@ -58,19 +58,19 @@ namespace Wink
                 throw new Exception("forgot to specify specific player");
             }
 
-            if (!assetName.Contains("Sounds/"))
+            if (!soundAssetName.Contains("Sounds/"))
             {
-                assetName = "Sounds/" + assetName;//forgot to specify the sound folder
+                soundAssetName = "Sounds/" + soundAssetName;//forgot to specify the sound folder
                 throw new Exception("forgot to specify the sound folder");//exeption for now to show the programmer forgot the sound folder
             }
 
             if (!playerSpecific)
             {
-                GameEnvironment.AssetManager.PlaySound(assetName);
+                GameEnvironment.AssetManager.PlaySound(soundAssetName);
             }
             else if (Player.LocalPlayerName == LocalPlayerName)
             {
-                GameEnvironment.AssetManager.PlaySound(assetName);
+                GameEnvironment.AssetManager.PlaySound(soundAssetName);
             }
         }
     }

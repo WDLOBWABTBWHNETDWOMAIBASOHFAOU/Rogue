@@ -8,20 +8,20 @@ namespace Wink
     {
         protected abstract int Length { get; }
         protected int counter;
-        protected string assetName;
+        protected string soundAssetName;
         protected bool playerSpecific;
         protected string LocalPlayerName;
 
-        public AnimationEvent(string assetName, bool playerSpecific = false, string LocalPlayerName = "")
+        public AnimationEvent(string soundAssetName, bool playerSpecific = false, string LocalPlayerName = "")
         {
-            this.assetName=assetName;
+            this.soundAssetName = soundAssetName;
             this.playerSpecific = playerSpecific;
             this.LocalPlayerName = LocalPlayerName;
         }
 
         #region Serialization
         public AnimationEvent(SerializationInfo info, StreamingContext context) : base (info, context)
-        {            assetName = info.GetString("assetName");
+        {            soundAssetName = info.GetString("assetName");
             playerSpecific = info.GetBoolean("playerSpecific");
             LocalPlayerName = info.GetString("LocalPlayerName");
         }
@@ -29,7 +29,7 @@ namespace Wink
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             base.GetObjectData(info, context);
-            info.AddValue("assetName", assetName);
+            info.AddValue("assetName", soundAssetName);
             info.AddValue("playerSpecific", playerSpecific);
             info.AddValue("LocalPlayerName", LocalPlayerName);
         }

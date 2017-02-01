@@ -53,6 +53,9 @@ namespace Wink
 
                 if (go is IGUIGameObject)
                     (go as IGUIGameObject).InitGUI(guiState);
+
+                if (go is AnimatedGameObject)
+                    (go as AnimatedGameObject).LoadAnimations();
             }
             return true;
         }

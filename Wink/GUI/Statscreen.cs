@@ -22,7 +22,13 @@ namespace Wink
             characterClass.Color = Color.Black;
             characterClass.Position = new Vector2(0, 315 - 9 * font.MeasureString(characterClass.Text).Y);
             Add(characterClass);
-            
+
+            TextGameObject PointsLeft = new TextGameObject("Arial20", cameraSensitivity: 0, layer: 5, id: "PointsLeft");
+            PointsLeft.Text = "Points Left To Spend: " + player.freeStatPoints;
+            PointsLeft.Color = Color.Black;
+            PointsLeft.Position = new Vector2(0, 300 - font.MeasureString(PointsLeft.Text).Y);
+            Add(PointsLeft);
+
             Stat[] stats = (Stat[])Enum.GetValues(typeof(Stat));
             for (int i = 0; i < stats.Length; i++)
             {

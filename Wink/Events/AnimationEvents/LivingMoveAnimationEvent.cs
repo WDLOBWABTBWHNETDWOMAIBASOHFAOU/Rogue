@@ -15,7 +15,7 @@ namespace Wink
                 //return 30;
                 //for now as sound effect is longer than 30 frames
                 int delay = 6;//ensure there is a delay between sounds
-                float miliseconds = GameEnvironment.AssetManager.Duration(assetName).Milliseconds;
+                float miliseconds = GameEnvironment.AssetManager.Duration(soundAssetName).Milliseconds;
                 float frames = ((miliseconds / 1000) * 60) + delay;
                 return (int)frames;
             }
@@ -70,11 +70,11 @@ namespace Wink
 
             if (!playerSpecific)
             {
-                GameEnvironment.AssetManager.PlaySound(assetName);
+                GameEnvironment.AssetManager.PlaySound(soundAssetName);
             }
             else if (Player.LocalPlayerName == LocalPlayerName)
             {
-                GameEnvironment.AssetManager.PlaySound(assetName);
+                GameEnvironment.AssetManager.PlaySound(soundAssetName);
             }
         }
 

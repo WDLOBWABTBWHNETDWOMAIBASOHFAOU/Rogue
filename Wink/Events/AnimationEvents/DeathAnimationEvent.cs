@@ -51,11 +51,11 @@ namespace Wink
 
             if (!playerSpecific)
             {
-                GameEnvironment.AssetManager.PlaySound(assetName);
+                GameEnvironment.AssetManager.PlaySound(soundAssetName);
             }
             else if (Player.LocalPlayerName == LocalPlayerName)
             {
-                GameEnvironment.AssetManager.PlaySound(assetName);
+                GameEnvironment.AssetManager.PlaySound(soundAssetName);
             }
         }
     }

@@ -36,7 +36,7 @@ namespace Wink
 
         public static void RunGame()
         {
-            Instance.Run();
+           Instance.Run();
         }
 
         protected override void LoadContent()
