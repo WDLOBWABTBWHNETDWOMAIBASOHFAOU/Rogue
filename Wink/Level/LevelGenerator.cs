@@ -483,7 +483,7 @@ namespace Wink
             int numberOfEnemys = 8;
             for (int n = 0; n < numberOfEnemys; n++)
             {
-                Enemy enemy = new Enemy(0, Index, EnemyType.random, "Enemy");
+                Enemy enemy = EnemyFactory.CreateRandomEnemy(Index);
                 List<GameObject> spawnLocations = tf.FindAll(obj => obj is Tile && (obj as Tile).Passable && !(obj as Tile).Blocked);
                 Tile spawnLocation = spawnLocations[GameEnvironment.Random.Next(spawnLocations.Count)] as Tile;
                 spawnLocation.PutOnTile(enemy);

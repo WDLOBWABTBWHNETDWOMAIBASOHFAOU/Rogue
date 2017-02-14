@@ -24,8 +24,8 @@ namespace Wink
 
         public InventoryBox(int rows, int columns, int layer = 0, string id = "", float cameraSensitivity = 0) : base(rows, columns, layer, id)
         {
-            CellHeight = Tile.TileHeight;
-            CellWidth = Tile.TileWidth;
+            CellHeight = ItemSlot.SlotHeight;
+            CellWidth = ItemSlot.SlotWidth;
 
             for (int x = 0; x < Columns; x++)
             {

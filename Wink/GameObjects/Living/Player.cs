@@ -203,9 +203,9 @@ namespace Wink
 
         protected override void InitAnimationVariables()
         {
-            idleAnimation = "Sprites/Living/Human";
-            moveAnimation = "Sprites/Living/Human";
-            dieAnimation = "Sprites/Living/Human";
+            idleAnimation = "Sprites/Living/Human_probeersel";
+            moveAnimation = "Sprites/Living/Human_probeersel";
+            dieAnimation = "Sprites/Living/Human_probeersel";
         }
 
         public override void HandleInput(InputHelper inputHelper)

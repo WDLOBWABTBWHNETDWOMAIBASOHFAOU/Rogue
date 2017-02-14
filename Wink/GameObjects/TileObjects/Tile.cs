@@ -19,7 +19,7 @@ namespace Wink
     public class Tile : SpriteGameObject, IGameObjectContainer, IDeserializationCallback
     {
         public const int TileWidth = 64;
-        public const int TileHeight = 64;
+        public const int TileHeight = 48;
 
         protected TileType type;
         protected bool passable;
@@ -218,8 +218,11 @@ namespace Wink
             {
                 if (kvp.Key is Player)
                 {
-                    float p = kvp.Value / kvp.Key.ViewDistance;
-                    bmin = p < bmin ? p : bmin;
+                    if (!(type == TileType.Wall && kvp.Key.GlobalPosition.Y < GlobalPosition.Y))
+                    { 
+                        float p = kvp.Value / kvp.Key.ViewDistance;
+                        bmin = p < bmin ? p : bmin;
+                    }
                 }
             }
             bmin = 1 - bmin;

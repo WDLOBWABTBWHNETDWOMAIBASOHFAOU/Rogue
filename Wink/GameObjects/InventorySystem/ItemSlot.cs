@@ -9,6 +9,9 @@ namespace Wink
     [Serializable]
     public class ItemSlot : SpriteGameObject, IGameObjectContainer
     {
+        public const int SlotWidth = 64;
+        public const int SlotHeight = 64;
+
         private Item slotItem;
         public bool containsPrev;
 

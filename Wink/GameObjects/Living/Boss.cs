@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System.Runtime.Serialization;
 using System.IO;
 
@@ -30,7 +26,7 @@ namespace Wink
             get { return Health > 0; }
         }
 
-        public Boss(int levelIndex) : base(0, 5)
+        public Boss(int levelIndex) : base(5)
         {
             floorNumber = levelIndex + 1;
             string path = "Content/Bosses/Boss.txt";

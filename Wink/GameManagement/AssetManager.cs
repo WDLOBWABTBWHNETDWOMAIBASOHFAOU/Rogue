@@ -118,16 +118,16 @@ public class AssetManager
         spriteBatch.Begin(SpriteSortMode.Immediate, bs);
         int rowHeight = asset.Height / rows;
         int columnWidth = asset.Width / columns;
-        int amtTLvls = 16; //The amount of transparency levels.
+        int amtTLvls = 12; //The amount of transparency levels.
         for (int r = 0; r < rows; r++)
         {
             for (int c = 0; c < columns; c++)
             {
                 for (int tl = 0; tl < amtTLvls; tl++)
                 {
-                    int tLvlHeight = (rowHeight - Wink.Tile.TileHeight) / amtTLvls;
+                    int tLvlHeight = (rowHeight - /*Wink.Tile.TileHeight*/72) / amtTLvls;
                     int y = (r * rowHeight + 4) + tl * tLvlHeight;
-                    spriteBatch.Draw(GetSingleColorPixel(new Color(0, 0, 0, tl * 255 / (amtTLvls-1))), new Rectangle(c * columnWidth, y, columnWidth, tLvlHeight), Color.White);
+                    spriteBatch.Draw(GetSingleColorPixel(new Color(0, 0, 0, 64 + tl * 191 / (amtTLvls-1))), new Rectangle(c * columnWidth, y, columnWidth, tLvlHeight), Color.White);
                 }
             }
         }

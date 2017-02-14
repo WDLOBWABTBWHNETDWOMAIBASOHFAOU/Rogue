@@ -49,82 +49,15 @@ namespace Wink
         /// <param name="id">The (unique) object ID</param>
         /// <param name="FOVlength">The view distance for the Enemy</param>
         /// <param name="scale">The scale (multiplier) for the sprite size</param>
-        public Enemy(int layer, int floorNumber, EnemyType enemyType = EnemyType.random, string id = "Enemy", float FOVlength = 8.5f) : base(layer, id, FOVlength)
+        public Enemy(int floorNumber, int layer = 0, string id = "Enemy", float FOVlength = 8.5f) : base(layer, id, FOVlength)
         {
             if (floorNumber < 1)
                 floorNumber = 1;
-
+            //TODO: make an easy method to know what the floornumber is outside of storing it in each enemy (should be in Level i think)
             this.floorNumber = floorNumber;
-            this.type = SetupType(enemyType, floorNumber);
             InitAnimationVariables();
             LoadAnimations();
             PlayAnimation("idle");
-        }
-
-        /// <summary>
-        /// Set up the enemy
-        /// </summary>
-        /// <param name="etype">The Enemy type</param>
-        /// <param name="floorNumber">The floor the enemy is on</param>
-        private EnemyType SetupType(EnemyType etype, int floorNumber)
-        {
-            if (etype == EnemyType.random)
-            {
-                //select random armorType
-                Array eTypeValues = Enum.GetValues(typeof(EnemyType));
-                etype = (EnemyType)eTypeValues.GetValue(GameEnvironment.Random.Next(eTypeValues.Length - 1));
-            }
-
-            id += " : " + etype.ToString();
-            int eLvl = GameEnvironment.Random.Next(1, floorNumber);
-            int weaponChance = 15 * floorNumber; // higher chance the deeper you go
-            int armorChance = 15 * floorNumber;  //
-
-            switch (etype)
-            {
-                case EnemyType.warrior:
-                    if (weaponChance < GameEnvironment.Random.Next(100))
-                    {
-                        RestrictedItemSlot weaponslot = EquipmentSlots.Find("weaponSlot") as RestrictedItemSlot;
-                        weaponslot.ChangeItem(new WeaponEquipment(floorNumber, WeaponType.melee));
-                    }
-                    if (armorChance < GameEnvironment.Random.Next(100))
-                    {
-                        RestrictedItemSlot bodyslot = EquipmentSlots.Find("bodySlot") as RestrictedItemSlot;
-                       // bodyslot.ChangeItem(new BodyEquipment(floorNumber, 2, ArmorType.normal));
-                    }
-                    SetStats(eLvl, 3 + (eLvl), 3 + (eLvl), 2 + (eLvl / 2), 1 + (eLvl / 2), 1 + (eLvl / 2), 2 + (eLvl / 2), 20 + eLvl * 3, 2, 1);
-                    break;
-                case EnemyType.archer:
-                    if (weaponChance < GameEnvironment.Random.Next(100))
-                    {
-                        RestrictedItemSlot weaponslot = EquipmentSlots.Find("weaponSlot") as RestrictedItemSlot;
-                        weaponslot.ChangeItem(new WeaponEquipment(floorNumber, WeaponType.bow));
-                    }
-                    if (armorChance < GameEnvironment.Random.Next(100))
-                    {
-                        RestrictedItemSlot bodyslot = EquipmentSlots.Find("bodySlot") as RestrictedItemSlot;
-                        //bodyslot.ChangeItem(new BodyEquipment(floorNumber, 2, ArmorType.normal));
-                    }
-                    SetStats(eLvl, 2 + (eLvl/2), 1 + (eLvl/2), 3 + (eLvl), 1 + (eLvl / 2), 1 + (eLvl / 2), 3 + (eLvl), 20 + eLvl * 3, 2, 1);
-                    break;
-                case EnemyType.mage:
-                    if (weaponChance < GameEnvironment.Random.Next(100))
-                    {
-                        RestrictedItemSlot weaponslot = EquipmentSlots.Find("weaponSlot") as RestrictedItemSlot;
-                        weaponslot.ChangeItem(new WeaponEquipment(floorNumber, WeaponType.staff));
-                    }
-                    if (armorChance < GameEnvironment.Random.Next(100))
-                    {
-                        RestrictedItemSlot bodyslot = EquipmentSlots.Find("bodySlot") as RestrictedItemSlot;
-                        //bodyslot.ChangeItem(new BodyEquipment(floorNumber, 2, ArmorType.robes));
-                    }
-                    SetStats(eLvl, 1 + (eLvl/2), 1 + (eLvl/2), 1 + (eLvl / 2), 3 + (eLvl), 3 + (eLvl), 1 + (eLvl / 2), 20 + eLvl * 3, 2, 2);
-                    break;
-                default:
-                    throw new Exception("invalid enemy type");
-            }
-            return etype;
         }
 
         #region Serialization

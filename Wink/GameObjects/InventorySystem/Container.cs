@@ -79,7 +79,7 @@ namespace Wink
         public void InitGUI(Dictionary<string, object> guiState)
         {
             //Make a Window to display the contents of this container in.
-            iWindow = new Window(iBox.Columns * Tile.TileWidth, iBox.Rows * Tile.TileHeight);
+            iWindow = new Window(iBox.Columns * ItemSlot.SlotWidth, iBox.Rows * ItemSlot.SlotHeight);
             iWindow.Add(iBox);
             iWindow.Position = guiState.ContainsKey("iWindowPosition") ? (Vector2)guiState["iWindowPosition"] : new Vector2(300, 300);
             iWindow.Visible = guiState.ContainsKey("iWindowVisibility") ? (bool)guiState["iWindowVisibility"] : false;

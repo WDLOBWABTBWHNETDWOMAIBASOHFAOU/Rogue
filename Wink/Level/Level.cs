@@ -18,9 +18,11 @@ namespace Wink
 
         public Level(int levelIndex) : base(0, "Level")
         {
+            this.levelIndex = levelIndex;
+
             path = "Content/Levels/" + levelIndex + ".txt";
 
-            if(levelIndex % 3 == 0)//for now to repeat boss
+            if (levelIndex % 3 == 0) //for now to repeat boss
             {
                 path = "Content/Levels/3.txt";
             }
@@ -35,8 +37,6 @@ namespace Wink
                 List<Tuple<Room, Room>> hallwayPairs = GenerateHallwayPairs(rooms);
                 GenerateTiles(rooms, hallwayPairs);
             }
-
-            this.levelIndex = levelIndex;
         }
 
         #region Serialization
@@ -84,7 +84,7 @@ namespace Wink
             #region ENEMY CODE (test)
             for (int i = 0; i < 2; i++)
             {
-                Enemy testEnemy = new Enemy(0,Index,EnemyType.random, "Enemy" + i);
+                Enemy testEnemy = EnemyFactory.CreateRandomEnemy(Index);
                 testEnemy.SetStats();
                 //First find all passable tiles then select one at random.
                 List<GameObject> tileCandidates = tf.FindAll(obj => obj is Tile && (obj as Tile).Passable);
@@ -125,7 +125,7 @@ namespace Wink
             }
         }
 
-        private Tile LoadWallTile(int x, int y, string assetName = "test-wall-sprite2@10x5", string id = "")
+        private Tile LoadWallTile(int x, int y, string assetName = "wall-sprite3@10x5", string id = "")
         {
             TileField tf = Find("TileField") as TileField;
             Tile aboveTile = tf[x, y - 1] as Tile;
