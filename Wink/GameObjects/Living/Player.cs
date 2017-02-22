@@ -76,31 +76,31 @@ namespace Wink
             ItemSlot slot_3_2 = Inventory[3, 2] as ItemSlot;
             slot_3_2.ChangeItem(new MagicBolt());
 
-            switch (playerType)
-            {
-                case PlayerType.Warrior:
-                    weaponslot.ChangeItem(new WeaponEquipment(EquipmentStartingStrenght, WeaponType.melee));
-                    bodyslot.ChangeItem(new BodyEquipment(EquipmentStartingStrenght, 2, ArmorType.heavy));
-                    SetStats(1, 4, 4, 1, 1, 1, 1);
-                    break;
+            //switch (playerType)
+            //{
+            //    case PlayerType.Warrior:
+            //        weaponslot.ChangeItem(new WeaponEquipment(EquipmentStartingStrenght, WeaponType.melee));
+            //        bodyslot.ChangeItem(new ArmorEquipment(EquipmentStartingStrenght, 2, ArmorType.heavy));
+            //        SetStats(1, 4, 4, 1, 1, 1, 1);
+            //        break;
 
-                case PlayerType.Archer:
-                    weaponslot.ChangeItem(new WeaponEquipment(EquipmentStartingStrenght, WeaponType.bow));
-                    bodyslot.ChangeItem(new BodyEquipment(EquipmentStartingStrenght, 2, ArmorType.normal));
-                    SetStats(1, 1, 1, 4, 1, 1, 4);
-                    break;
+            //    case PlayerType.Archer:
+            //        weaponslot.ChangeItem(new WeaponEquipment(EquipmentStartingStrenght, WeaponType.bow));
+            //        bodyslot.ChangeItem(new ArmorEquipment(EquipmentStartingStrenght, 2, ArmorType.normal));
+            //        SetStats(1, 1, 1, 4, 1, 1, 4);
+            //        break;
 
-                case PlayerType.Mage:
-                    weaponslot.ChangeItem(new WeaponEquipment(EquipmentStartingStrenght, WeaponType.staff));
-                    bodyslot.ChangeItem(new BodyEquipment(EquipmentStartingStrenght, 2, ArmorType.robes));
-                    SetStats(1, 1, 1, 1, 4, 4, 1);
-                    ItemSlot slot_1_0 = Inventory[1, 0] as ItemSlot;
-                    slot_1_0.ChangeItem(new Potion("Sprites/Potions/brilliant_blue", PotionType.Mana, PotionPower.minor, 5));//some starting mana potions
-                    break;
+            //    case PlayerType.Mage:
+            //        weaponslot.ChangeItem(new WeaponEquipment(EquipmentStartingStrenght, WeaponType.staff));
+            //        bodyslot.ChangeItem(new ArmorEquipment(EquipmentStartingStrenght, 2, ArmorType.robes));
+            //        SetStats(1, 1, 1, 1, 4, 4, 1);
+            //        ItemSlot slot_1_0 = Inventory[1, 0] as ItemSlot;
+            //        slot_1_0.ChangeItem(new Potion("Sprites/Potions/brilliant_blue", PotionType.Mana, PotionPower.minor, 5));//some starting mana potions
+            //        break;
 
-                default:
-                    throw new Exception("invalid enemy type");
-            }
+            //    default:
+            //        throw new Exception("invalid enemy type");
+            //}
         }
 
         protected override void DoBehaviour(HashSet<GameObject> changedObjects)
@@ -310,27 +310,6 @@ namespace Wink
             return mouseSlot.Find(del) ?? base.Find(del);
         }
         
-        public int GetStat(Stat s)
-        {
-            switch (s)
-            {
-                case Stat.Vitality:
-                    return Vitality;
-                case Stat.Strength:
-                    return Strength;
-                case Stat.Dexterity:
-                    return Dexterity;
-                case Stat.Wisdom:
-                    return Wisdom;
-                case Stat.Luck:
-                    return Luck;
-                case Stat.Intelligence:
-                    return Intelligence;
-                default:
-                    return int.MinValue;
-            }
-        }
-
         public void AddStatPoint(Stat stat)
         {
             switch (stat)
@@ -359,6 +338,15 @@ namespace Wink
                     break;
             }
             freeStatPoints--;
+
+            //recalculate bonus , because the bonuses use BaseStats the order shouldn't matter
+            foreach (EquipmentSlot eqSlot in EquipmentSlots.Children)
+            {
+                eqSlot.SlotItem.RemoveBonus(this);
+                eqSlot.SlotItem.DoBonus(this);
+            }
+
+            //TODO: adding an "accept Stats button" might reduce calculations by first chancing all the stats and recaculating the bonuses aftherwards
         }
 
         public override List<GameObject> FindAll(Func<GameObject, bool> del)

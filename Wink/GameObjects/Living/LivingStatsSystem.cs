@@ -6,22 +6,78 @@
         public const int BaseActionCost = 10;
 
         #region stats
-        protected int manaPoints, healthPoints, actionPoints, baseAttack, baseArmor, vitality, strength, dexterity, wisdom, luck, intelligence, creatureLevel, baseReach, specialReach;
+        protected int manaPoints, healthPoints, actionPoints, baseAttack, baseArmor ;
+        protected int vitality, strength, dexterity, wisdom, luck, intelligence, creatureLevel, reach;
+        protected int currentVitality, currentStrength, currentDexterity, currentWisdom, currentLuck, currentIntelligence,currentReach;
 
         public int CreatureLevel { get { return creatureLevel; } }
-        public int Dexterity { get { return Ringbonus(EffectType.Dexterity, dexterity); } }
-        public int Intelligence { get { return Ringbonus(EffectType.Intelligence, intelligence); } }
-        public int Strength { get { return Ringbonus(EffectType.Strength, strength); } }
-        public int Wisdom { get { return Ringbonus(EffectType.Wisdom, wisdom); } }
-        public int Vitality { get { return Ringbonus(EffectType.Vitality, vitality); } }
-        public int Luck { get { return Ringbonus(EffectType.Luck, luck); } }
+        
+        //base stats
+        public int BaseDexterity { get { return dexterity; } }
+        public int BaseIntelligence { get { return intelligence; } }
+        public int BaseStrength { get { return strength; } }
+        public int BaseWisdom { get { return wisdom; } }
+        public int BaseVitality { get { return vitality; } }
+        public int BaseLuck { get { return luck; } }
+        public int BaseReach { get { return reach; } }
+
+        public int GetBaseStat(Stat s)
+        {
+            switch (s)
+            {
+                case Stat.Vitality:
+                    return BaseVitality;
+                case Stat.Strength:
+                    return BaseStrength;
+                case Stat.Dexterity:
+                    return BaseDexterity;
+                case Stat.Wisdom:
+                    return BaseWisdom;
+                case Stat.Luck:
+                    return BaseLuck;
+                case Stat.Intelligence:
+                    return Intelligence;
+                default:
+                    return int.MinValue;
+            }
+        }
+
+        //current stats
+        public int Dexterity { get { return currentDexterity; } set { currentDexterity = value; } }
+        public int Intelligence { get { return currentIntelligence; } set { currentIntelligence = value; } }
+        public int Strength { get { return currentStrength; } set { currentStrength = value; } }
+        public int Wisdom { get { return currentWisdom; } set { currentWisdom = value; } }
+        public int Vitality { get { return currentVitality; } set { currentVitality = value; } }
+        public int Luck { get { return currentLuck; } set { currentLuck = value; } }
+        public int Reach { get { return currentReach; } set { currentReach = value; } }
+
+        public int GetStat(Stat s)
+        {
+            switch (s)
+            {
+                case Stat.Vitality:
+                    return Vitality;
+                case Stat.Strength:
+                    return Strength;
+                case Stat.Dexterity:
+                    return Dexterity;
+                case Stat.Wisdom:
+                    return Wisdom;
+                case Stat.Luck:
+                    return Luck;
+                case Stat.Intelligence:
+                    return Intelligence;
+                default:
+                    return int.MinValue;
+            }
+        }
+
         public float statAverige { get { return (strength + dexterity + intelligence + wisdom + vitality + luck) / 6; } }//lowercases else the ring stat bonuses are taken in to account
+
         public int ActionPoints
         {
             get
-            {
-                return actionPoints;
-            }
+            { return actionPoints; }
             set
             {
                 if (value <= MaxActionPoints)
@@ -30,11 +86,12 @@
                     actionPoints = MaxActionPoints;
             }
         }
-        public int Health {
+
+        #region Health
+        public int Health
+        {
             get
-            {
-                return healthPoints;
-            }
+            { return healthPoints; }
             set
             {
                 if (value <= MaxHealth)
@@ -49,12 +106,22 @@
                 }
             }
         }
+
+        public int MaxHealth { get { return MaxHP(); } }
+        
+        protected int MaxHP()
+        {
+            int maxHP = (int)CalculateValue(40, Vitality - 1, 0.1);
+            return maxHP;
+        }
+        
+        #endregion
+
+        #region Mana
         public int Mana
         {
             get
-            {
-                return manaPoints;
-            }
+            { return manaPoints; }
             set
             {
                 if (value <= MaxMana)
@@ -63,36 +130,18 @@
                     manaPoints = MaxMana;
             }
         }
-        #endregion
 
-        /// <summary>
-        /// Check if player gets a bonus in the given stat and if so calculate the bonus
-        /// </summary>
-        /// <param name="effectType">EffectType of the stat you want to check</param>
-        /// <param name="baseValue">Base value of the stat without ring modifiers</param>
-        /// <returns></returns>
-        protected int Ringbonus(EffectType effectType, int baseValue)
+        public int MaxMana { get { return MaxManaPoints(); } }
+
+        protected int MaxManaPoints()
         {
-            int i = 0;
-            double p = 1;
-            if (EquipmentSlots != null)
-                foreach (ItemSlot slot in EquipmentSlots.Children)
-                {
-                    if (slot.SlotItem != null && slot.Id.Contains("ringSlot"))
-                    {
-                        RingEquipment ring = slot.SlotItem as RingEquipment;
-                        foreach (RingEffect effect in ring.RingEffects)
-                        {
-                            if (effect.EffectType == effectType)
-                            {
-                                if (effect.Multiplier) { p *= effect.EffectValue; }
-                                else { i += (int)effect.EffectValue; }
-                            }
-                        }
-                    }
-                }
-            return (int)(baseValue * p + i);
+            int maxManaPoints = (int)CalculateValue(50, Wisdom, 0.1);
+            return maxManaPoints;
         }
+
+        #endregion
+        #endregion
+        
 
         /// <summary>
         /// Sets starting stats when the living object is created
@@ -109,6 +158,7 @@
         /// <param name="baseReach">natural attackReach</param>
         public void SetStats(int creatureLevel = 1, int vitality = 2, int strength = 2, int dexterity = 2, int intelligence = 2, int wisdom = 2, int luck = 2, int baseAttack = 40, int baseArmor = 5, int baseReach = 1)
         {
+            //set base stats
             this.creatureLevel = creatureLevel;
             this.vitality = vitality;
             this.strength = strength;
@@ -116,10 +166,20 @@
             this.intelligence = intelligence;
             this.wisdom = wisdom;
             this.luck = luck;
+            this.reach = baseReach;
+
+            //set current stats to base stats
+            currentVitality = vitality;
+            currentStrength = strength;
+            currentDexterity = dexterity;
+            currentIntelligence = intelligence;
+            currentWisdom = wisdom;
+            currentLuck = luck;
+            currentReach = baseReach;
+
+            //set misc
             this.baseAttack = baseAttack;
             this.baseArmor = baseArmor;
-            
-            this.baseReach = baseReach;
             healthPoints = MaxHP();
             manaPoints = MaxManaPoints();
         }
@@ -137,41 +197,7 @@
             double value = baseValue + baseValue * modifier1 * stat1 + extra + baseValue * modifier2 * stat2 + baseValue * modifier3 * stat3;
             return value;
         }
-
-        #region MaxHP
-        /// <summary>
-        /// returns the maximum of healthpoints the living object can have without Ring modifiers
-        /// </summary>
-        /// <returns></returns>
-        protected int MaxHP()
-        {
-            int maxHP = (int)CalculateValue(40, Vitality - 1, 0.1);
-            return maxHP;
-        }
-
-        /// <summary>
-        /// Returns the MaxHealth from vitality stat with Ringbonus applied
-        /// </summary>
-        public int MaxHealth { get { return Ringbonus(EffectType.Vitality, MaxHP()); } }
-        #endregion
-
-        #region MaxMana
-        /// <summary>
-        /// returns the maximum of manapoints the living object can have without Ring modifiers
-        /// </summary>
-        /// <returns></returns>
-        protected int MaxManaPoints()
-        {
-            int maxManaPoints = (int)CalculateValue(50, Wisdom, 0.1);
-            return maxManaPoints;
-        }
-
-        /// <summary>
-        /// Returns the MaxMana, currently there is no Ringbonus for RAW mana (it's in wisdom)
-        /// </summary>
-        public int MaxMana { get { return MaxManaPoints(); } }
-        #endregion
-
+        
         /// <summary>
         /// returns HitChance based on stats
         /// </summary>
@@ -193,39 +219,6 @@
         }
 
         /// <summary>
-        /// returns the reach of the living object
-        /// </summary>
-        public int Reach
-        {
-            get
-            {
-                int reach;
-                if (Weapon.SlotItem != null)
-                {
-                    WeaponEquipment weaponItem = Weapon.SlotItem as WeaponEquipment;
-                    reach = weaponItem.Reach;
-                }
-                else
-                    reach = baseReach;
-
-                return reach;
-            }
-        }
-
-        /// <summary>
-        /// returns the special reach of the living object
-        /// </summary>
-        public int Special_Reach
-        {
-            get
-            {
-                int reach = specialReach;
-
-                return reach;
-            }
-        }
-
-        /// <summary>
         /// returns attackvalue based on the equiped weapon item (if unarmed, uses livingObject baseAttack)
         /// </summary>
         /// <returns></returns>
@@ -236,37 +229,7 @@
 
             int attack = baseAttack;
             double mod = 1;
-            int attackValue;
-            if (Weapon.SlotItem !=null)
-            {
-                WeaponEquipment weaponItem = Weapon.SlotItem as WeaponEquipment;
-                attackValue = weaponItem.Value(this);
-            }
-            else
-                attackValue = (int)CalculateValue(attack, Strength, mod);
-
-            return attackValue;
-        }
-
-        /// <summary>
-        /// returns special attackvalue based on the equiped weapon item (if unarmed, uses livingObject baseAttack)
-        /// </summary>
-        /// <returns></returns>
-        protected int Special_AttackValue(double mod = 1)
-        {
-            // get the baseattack value of the equiped weapon, if non equiped use baseattack of living
-            // min max base attack value for each weapon and random inbetween or random between 0.8 and 1.2 of base (for example)
-
-            int attack = baseAttack;
-            double modifier = mod;
-            int attackValue;
-            if (Weapon.SlotItem != null)
-            {
-                WeaponEquipment weaponItem = Weapon.SlotItem as WeaponEquipment;
-                attackValue = weaponItem.Value(this);
-            }
-            else
-                attackValue = (int)CalculateValue(attack, Strength, mod);
+            int attackValue = (int)CalculateValue(attack, Strength, mod);
 
             return attackValue;
         }
@@ -280,7 +243,7 @@
             int armorValue = baseArmor;
             if (Body.SlotItem != null)
             {
-                BodyEquipment ArmorItem = Body.SlotItem as BodyEquipment;
+                ArmorEquipment ArmorItem = Body.SlotItem as ArmorEquipment;
                 armorValue = ArmorItem.Value(this, damageType);
             }
 

@@ -33,7 +33,7 @@ namespace Wink
         public override void Replace(GameObject replacement)
         {
             base.Replace(replacement);
-            if (replacement is RestrictedItemSlot)
+            if (replacement is EquipmentSlot)
                 SetEquipmentPositions();
         }
     }

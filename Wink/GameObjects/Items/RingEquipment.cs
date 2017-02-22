@@ -197,7 +197,88 @@ namespace Wink
                 infoList.Children.Insert(1,ringInfo);
             }
         }
+
+        protected override bool MeetsRequirements(Living l)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected int Ringbonus(RingEffect rE, int baseValue)
+        {
+            int i = 0;
+            double p = 1;
+
+            if (rE.Multiplier) { p *= rE.EffectValue; }
+            else { i += (int)rE.EffectValue; }
+
+            return (int)(baseValue * p + i);
+        }
+
+        public override void DoBonus(Living living)
+        {
+            foreach (RingEffect rE in RingEffects)
+            {
+                switch (rE.EffectType)
+                {
+                    case EffectType.Vitality:
+                        living.Vitality += Ringbonus(rE, living.BaseVitality);
+                        break;
+                    case EffectType.Strength:
+                        living.Strength += Ringbonus(rE, living.BaseStrength);
+                        break;
+                    case EffectType.Dexterity:
+                        living.Dexterity += Ringbonus(rE, living.BaseDexterity);
+                        break;
+                    case EffectType.Luck:
+                        living.Luck += Ringbonus(rE, living.BaseLuck);
+                        break;
+                    case EffectType.Intelligence:
+                        living.Intelligence += Ringbonus(rE, living.BaseIntelligence);
+                        break;
+                    case EffectType.Wisdom:
+                        living.Wisdom += Ringbonus(rE, living.BaseWisdom);
+                        break;
+                    case EffectType.Reflection:
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+        public override void RemoveBonus(Living living)
+        {
+            foreach (RingEffect rE in RingEffects)
+            {
+                switch (rE.EffectType)
+                {
+                    case EffectType.Vitality:
+                        living.Vitality -= Ringbonus(rE, living.BaseVitality);
+                        break;
+                    case EffectType.Strength:
+                        living.Strength -= Ringbonus(rE, living.BaseStrength);
+                        break;
+                    case EffectType.Dexterity:
+                        living.Dexterity -= Ringbonus(rE, living.BaseDexterity);
+                        break;
+                    case EffectType.Luck:
+                        living.Luck -= Ringbonus(rE, living.BaseLuck);
+                        break;
+                    case EffectType.Intelligence:
+                        living.Intelligence -= Ringbonus(rE, living.BaseIntelligence);
+                        break;
+                    case EffectType.Wisdom:
+                        living.Wisdom -= Ringbonus(rE, living.BaseWisdom);
+                        break;
+                    case EffectType.Reflection:
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
     }
+
     [Serializable]
     class RingEffect : ISerializable
     {

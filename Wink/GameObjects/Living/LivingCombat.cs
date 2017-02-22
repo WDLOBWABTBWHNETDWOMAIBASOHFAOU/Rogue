@@ -14,23 +14,25 @@ namespace Wink
             string hitSound = "Sounds/muted_metallic_crash_impact";
             int damageDealt = 0;
             DamageType damageType = DamageType.Physical;
-            if (Weapon.SlotItem != null)
-            {
-                WeaponEquipment weaponItem = Weapon.SlotItem as WeaponEquipment;
-                damageType = weaponItem.GetDamageType;
-                hitSound = weaponItem.HitSound;
-            }
 
             //double hitNumber = GameEnvironment.Random.NextDouble(); 
             //if (hitNumber < HitChance())
             if (TryHit(target))
             {
-                double attackValue = AttackValue();
+                if (Weapon.SlotItem != null)
+                {
+                    WeaponEquipment weaponItem = Weapon.SlotItem as WeaponEquipment;
+                    weaponItem.Attack(this,target);
+                    hitSound = weaponItem.HitSound;
+                }
+                else
+                {
+                    double attackValue = AttackValue();
+                    damageDealt = target.TakeDamage(attackValue, damageType);
+                }
                 NonAnimationSoundEvent hitSoundEvent = new NonAnimationSoundEvent(hitSound);
                 //no annimation for attacks (hit or miss) yet. when inplementing that, include sound effect there and remove this.
                 LocalServer.SendToClients(hitSoundEvent);
-                damageDealt = target.TakeDamage(attackValue, damageType);
-
             }
             else
             {
@@ -49,24 +51,7 @@ namespace Wink
         {
             double hitChance = HitChance(); // Example: 0.7
             double dodgeChance = target.DodgeChance(); // Example: 0.3
-            Debug.WriteLine("(2.5 / (System.Math.Sqrt(36 + creatureLevel + target.creatureLevel))) * (hitChance / dodgeChance)");
-            Debug.WriteLine("2.5 / sqrt(36 +" + creatureLevel + " + " + target.creatureLevel + ") * (" + hitChance + " / " + dodgeChance + ")");
-            Debug.WriteLine((2.5/(System.Math.Sqrt(36 + creatureLevel+target.creatureLevel))) * (hitChance / dodgeChance)); // example: (0.5/(sqrt(1+1)) * (0.7/0.3) = 0.82
-            return (0.5 / (System.Math.Sqrt(creatureLevel + target.creatureLevel))) * (hitChance / dodgeChance) > GameEnvironment.Random.NextDouble();
-        }
-
-        public void Special_Attack(Living target, double mod)
-        {
-            int damageDealt = 0;
-            DamageType damageType = DamageType.Magic;
-
-            double modifier = mod;
-
-            double attackValue = Special_AttackValue(modifier);
-            damageDealt = target.TakeDamage(attackValue, damageType);
-
-            if (damageDealt > 0) ProcessReflection(damageDealt, target);
-            // Display attack missed (feedback on fail)
+            return (0.5 / (System.Math.Sqrt(creatureLevel + target.creatureLevel))) * (hitChance / dodgeChance) > GameEnvironment.Random.NextDouble();//should be target dodgechance
         }
 
         /// <summary>

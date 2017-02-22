@@ -135,11 +135,11 @@ namespace Wink
                         break;
                     case 1:
                         spawnChance = 30;
-                        newItem = new WeaponEquipment(floorNumber);
+                        newItem = new MeleeWeapon("",30);//TODO: replace with weaponfactory
                         break;
                     case 2:
                         spawnChance = 30;
-                        newItem = new BodyEquipment(floorNumber, 3);
+                        newItem = new ChestArmor();//TODO: replace with weaponfactory
                         break;
                     case 3:
                         spawnChance = 30;

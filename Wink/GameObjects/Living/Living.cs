@@ -33,10 +33,10 @@ namespace Wink
         {
             get { return equipmentSlots; }
         }
-        private RestrictedItemSlot Weapon { get { return equipmentSlots.Find("weaponSlot") as RestrictedItemSlot; } }
-        private RestrictedItemSlot Body { get { return equipmentSlots.Find("bodySlot") as RestrictedItemSlot; } }
-        private RestrictedItemSlot Ring1 { get { return equipmentSlots.Find("ringSlot1") as RestrictedItemSlot; } }
-        private RestrictedItemSlot Ring2 { get { return equipmentSlots.Find("ringSlot2") as RestrictedItemSlot; } }
+        private EquipmentSlot Weapon { get { return equipmentSlots.Find("weaponSlot") as EquipmentSlot; } }
+        private EquipmentSlot Body { get { return equipmentSlots.Find("bodySlot") as EquipmentSlot; } }
+        private EquipmentSlot Ring1 { get { return equipmentSlots.Find("ringSlot1") as EquipmentSlot; } }
+        private EquipmentSlot Ring2 { get { return equipmentSlots.Find("ringSlot2") as EquipmentSlot; } }
         #endregion
 
         public InventoryBox Inventory
@@ -94,11 +94,11 @@ namespace Wink
             inventory = new InventoryBox(4, 4, 0, "");
 
             equipmentSlots = new GameObjectList();
-            equipmentSlots.Add(new RestrictedItemSlot(typeof(WeaponEquipment), "inventory/weaponSlot", id: "weaponSlot"));
-            equipmentSlots.Add(new RestrictedItemSlot(typeof(BodyEquipment), "inventory/bodySlot", id: "bodySlot"));
-            equipmentSlots.Add(new RestrictedItemSlot(typeof(RingEquipment), "inventory/ringSlot", id: "ringSlot1"));
-            equipmentSlots.Add(new RestrictedItemSlot(typeof(RingEquipment), "inventory/ringSlot", id: "ringSlot2"));
-            equipmentSlots.Add(new RestrictedItemSlot(typeof(HeadEquipment), "inventory/headSlot", id: "headSlot"));
+            equipmentSlots.Add(new EquipmentSlot(typeof(WeaponEquipment), this, "inventory/weaponSlot", id: "weaponSlot"));
+            equipmentSlots.Add(new EquipmentSlot(typeof(ArmorEquipment), this, "inventory/bodySlot", id: "bodySlot"));
+            equipmentSlots.Add(new EquipmentSlot(typeof(RingEquipment), this, "inventory/ringSlot", id: "ringSlot1"));
+            equipmentSlots.Add(new EquipmentSlot(typeof(RingEquipment), this, "inventory/ringSlot", id: "ringSlot2"));
+            equipmentSlots.Add(new EquipmentSlot(typeof(HeadEquipment), this, "inventory/headSlot", id: "headSlot"));
 
             InitAnimationVariables();
             LoadAnimations();
@@ -131,8 +131,7 @@ namespace Wink
             luck = info.GetInt32("luck");
             vitality = info.GetInt32("vitality");
             creatureLevel = info.GetInt32("creatureLevel");
-            baseReach = info.GetInt32("baseReach");
-            specialReach = info.GetInt32("specialReach");
+            reach = info.GetInt32("baseReach");
             viewDistance = info.GetInt32("viewDistance");
         }
 
@@ -179,8 +178,7 @@ namespace Wink
             info.AddValue("vitality", vitality);
             info.AddValue("wisdom", wisdom);
             info.AddValue("luck", luck);
-            info.AddValue("baseReach", baseReach);
-            info.AddValue("specialReach", specialReach);
+            info.AddValue("baseReach", reach);
             info.AddValue("viewDistance", viewDistance);
         }
         #endregion
@@ -211,7 +209,7 @@ namespace Wink
 
             ShadowCast.ComputeVisibility(tf, pos.X, pos.Y, this);
             //skill idea: peek corner, allows the player to move its FOV position 1 tile in N,S,E or W direction,
-            //allowing the player to peek around a corner into a halway whithout actualy stepping out
+            //allowing the player to peek around a corner into a halway without actualy stepping out
         }
 
         /// <summary>

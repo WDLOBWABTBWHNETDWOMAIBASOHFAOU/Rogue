@@ -86,12 +86,12 @@ namespace Wink
                     if (weaponChance < GameEnvironment.Random.Next(100))
                     {
                         RestrictedItemSlot weaponslot = EquipmentSlots.Find("weaponSlot") as RestrictedItemSlot;
-                        weaponslot.ChangeItem(new WeaponEquipment(floorNumber, WeaponType.melee));
+                        weaponslot.ChangeItem(new MeleeWeapon("",30));
                     }
                     if (armorChance < GameEnvironment.Random.Next(100))
                     {
                         RestrictedItemSlot bodyslot = EquipmentSlots.Find("bodySlot") as RestrictedItemSlot;
-                       // bodyslot.ChangeItem(new BodyEquipment(floorNumber, 2, ArmorType.normal));
+                        // bodyslot.ChangeItem(new BodyEquipment(floorNumber, 2, ArmorType.normal));
                     }
                     SetStats(eLvl, 3 + (eLvl), 3 + (eLvl), 2 + (eLvl / 2), 1 + (eLvl / 2), 1 + (eLvl / 2), 2 + (eLvl / 2), 20 + eLvl * 3, 2, 1);
                     break;
@@ -99,27 +99,27 @@ namespace Wink
                     if (weaponChance < GameEnvironment.Random.Next(100))
                     {
                         RestrictedItemSlot weaponslot = EquipmentSlots.Find("weaponSlot") as RestrictedItemSlot;
-                        weaponslot.ChangeItem(new WeaponEquipment(floorNumber, WeaponType.bow));
+                        weaponslot.ChangeItem(new RangedWeapon("", 30));
                     }
                     if (armorChance < GameEnvironment.Random.Next(100))
                     {
                         RestrictedItemSlot bodyslot = EquipmentSlots.Find("bodySlot") as RestrictedItemSlot;
                         //bodyslot.ChangeItem(new BodyEquipment(floorNumber, 2, ArmorType.normal));
                     }
-                    SetStats(eLvl, 2 + (eLvl/2), 1 + (eLvl/2), 3 + (eLvl), 1 + (eLvl / 2), 1 + (eLvl / 2), 3 + (eLvl), 20 + eLvl * 3, 2, 1);
+                    SetStats(eLvl, 2 + (eLvl / 2), 1 + (eLvl / 2), 3 + (eLvl), 1 + (eLvl / 2), 1 + (eLvl / 2), 3 + (eLvl), 20 + eLvl * 3, 2, 1);
                     break;
                 case EnemyType.mage:
                     if (weaponChance < GameEnvironment.Random.Next(100))
                     {
                         RestrictedItemSlot weaponslot = EquipmentSlots.Find("weaponSlot") as RestrictedItemSlot;
-                        weaponslot.ChangeItem(new WeaponEquipment(floorNumber, WeaponType.staff));
+                        weaponslot.ChangeItem(new MageWeapon("", 30));
                     }
                     if (armorChance < GameEnvironment.Random.Next(100))
                     {
                         RestrictedItemSlot bodyslot = EquipmentSlots.Find("bodySlot") as RestrictedItemSlot;
                         //bodyslot.ChangeItem(new BodyEquipment(floorNumber, 2, ArmorType.robes));
                     }
-                    SetStats(eLvl, 1 + (eLvl/2), 1 + (eLvl/2), 1 + (eLvl / 2), 3 + (eLvl), 3 + (eLvl), 1 + (eLvl / 2), 20 + eLvl * 3, 2, 2);
+                    SetStats(eLvl, 1 + (eLvl / 2), 1 + (eLvl / 2), 1 + (eLvl / 2), 3 + (eLvl), 3 + (eLvl), 1 + (eLvl / 2), 20 + eLvl * 3, 2, 2);
                     break;
                 default:
                     throw new Exception("invalid enemy type");
@@ -200,9 +200,9 @@ namespace Wink
                     changedObjects.Add(player);
 
                     int cost = BaseActionCost;
-                    if ((EquipmentSlots.Find("bodySlot") as RestrictedItemSlot).SlotItem != null)
+                    if ((EquipmentSlots.Find("bodySlot") as EquipmentSlot).SlotItem != null)
                     {
-                        cost = (int)(cost * ((EquipmentSlots.Find("bodySlot") as RestrictedItemSlot).SlotItem as BodyEquipment).WalkCostMod);
+                        cost = (int)(cost * ((EquipmentSlots.Find("bodySlot") as EquipmentSlot).SlotItem as ArmorEquipment).WalkCostMod);
                     }
                     actionPoints -= cost;
                 }

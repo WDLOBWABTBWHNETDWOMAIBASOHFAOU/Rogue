@@ -48,7 +48,7 @@ namespace Wink
         }
         #endregion
 
-        public void ChangeItem(Item newItem)
+        public virtual void ChangeItem(Item newItem)
         {
             slotItem = newItem;
             if (slotItem != null)

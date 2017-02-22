@@ -34,9 +34,9 @@ namespace Wink
             get
             {
                 int mc = Living.BaseActionCost;
-                if ((player.EquipmentSlots.Find("bodySlot") as RestrictedItemSlot).SlotItem != null)
+                if ((player.EquipmentSlots.Find("bodySlot") as EquipmentSlot).SlotItem != null)
                 {
-                    mc = (int)(mc * ((player.EquipmentSlots.Find("bodySlot") as RestrictedItemSlot).SlotItem as BodyEquipment).WalkCostMod);
+                    mc = (int)(mc * ((player.EquipmentSlots.Find("bodySlot") as EquipmentSlot).SlotItem as ArmorEquipment).WalkCostMod);
                 }
 
                 return mc;

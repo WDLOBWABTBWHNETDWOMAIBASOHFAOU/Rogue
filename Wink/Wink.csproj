@@ -78,6 +78,11 @@
     <Compile Include="Events\ActionEvents\SkillEvent.cs" />
     <Compile Include="Events\nonActionUserEvents\StatIncreaseEvent.cs" />
     <Compile Include="Events\ActionEvents\TakenPotionEvent.cs" />
+    <Compile Include="GameObjects\InventorySystem\EquipmentSlot.cs" />
+    <Compile Include="GameObjects\Items\armor\ChestArmor.cs" />
+    <Compile Include="GameObjects\Items\weapon\MageWeapon.cs" />
+    <Compile Include="GameObjects\Items\weapon\MeleeWeapon.cs" />
+    <Compile Include="GameObjects\Items\weapon\RangedWeapon.cs" />
     <Compile Include="GameObjects\Skills\Heal.cs" />
     <Compile Include="GameObjects\Skills\Skill.cs" />
     <Compile Include="GameObjects\Skills\MagicBolt.cs" />
@@ -88,15 +93,14 @@
     <Compile Include="GameObjects\InventorySystem\Container.cs" />
     <Compile Include="GameObjects\InventorySystem\RestrictedItemSlot.cs" />
     <Compile Include="GameObjects\InventorySystem\ItemSlot.cs" />
-    <Compile Include="GameObjects\Items\BodyEquipment.cs" />
+    <Compile Include="GameObjects\Items\armor\ArmorEquipment.cs" />
     <Compile Include="GameObjects\Items\Equipment.cs" />
-    <Compile Include="GameObjects\Items\HeadEquipment.cs" />
+    <Compile Include="GameObjects\Items\armor\HeadEquipment.cs" />
     <Compile Include="GameObjects\Items\Potion.cs" />
     <Compile Include="GameObjects\Items\RingEquipment.cs" />
-    <Compile Include="GameObjects\Items\WeaponEquipment.cs" />
+    <Compile Include="GameObjects\Items\weapon\WeaponEquipment.cs" />
     <Compile Include="GUI\MiniButton.cs" />
     <Compile Include="GUI\StatScreen.cs" />
-    <Compile Include="GameObjects\Living\Boss.cs" />
     <Compile Include="GameObjects\InventorySystem\LootSack.cs" />
     <Compile Include="GUI\ShadowCasting\ICellGrid.cs" />
     <Compile Include="GUI\ShadowCasting\IViewer.cs" />
@@ -204,9 +208,6 @@
     <Content Include="Content\Levels\1.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\Levels\3.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="Icon.ico" />
   </ItemGroup>
   <ItemGroup>
@@ -215,6 +216,7 @@
     </MonoGameContentReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="ClassDiagram1.cd" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

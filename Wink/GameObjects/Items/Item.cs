@@ -20,6 +20,9 @@ namespace Wink
         {
             get { return false; }
         }
+
+        public abstract void DoBonus(Living living);
+        public abstract void RemoveBonus(Living living);
         /// <summary>
         /// Generated Item
         /// </summary>

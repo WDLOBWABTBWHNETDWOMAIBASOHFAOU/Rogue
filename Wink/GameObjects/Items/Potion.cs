@@ -165,5 +165,15 @@ namespace Wink
             PotionText.Color = Color.Red;
             infoList.Add(PotionText);
         }
+
+        public override void DoBonus(Living living)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void RemoveBonus(Living living)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
