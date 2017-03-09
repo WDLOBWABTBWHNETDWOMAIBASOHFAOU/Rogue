@@ -20,11 +20,13 @@ namespace Wink
         public LootSack(Enemy enemy) : base("Sprites/Containers/unseen_item", "Sprites/Containers/unseen_item", "Sounds/CLICK14A", enemy.FloorNumber, enemy.Inventory)
         {
             scale = 0.5f;
-            for (int i = 0; i < enemy.EquipmentSlots.Children.Count-1; i++)
+
+            GameObjectList lootlist = enemy.Lootlist;
+            for (int i = 0; i < lootlist.Children.Count - 1; i++)
             {
-                EquipmentSlot equipSlot = enemy.EquipmentSlots.Children[i] as EquipmentSlot;
-                ItemSlot slot = enemy.Inventory[i, 0] as ItemSlot;
-                slot.ChangeItem(equipSlot.SlotItem);
+                Item item = lootlist.Children[i] as Item;
+                ItemSlot slot = enemy.Inventory[0, i] as ItemSlot;
+                slot.ChangeItem(item);
             }
         }
 

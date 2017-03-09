@@ -33,12 +33,7 @@ namespace Wink
         {
             get
             {
-                int mc = Living.BaseActionCost;
-                if ((player.EquipmentSlots.Find("bodySlot") as EquipmentSlot).SlotItem != null)
-                {
-                    mc = (int)(mc * ((player.EquipmentSlots.Find("bodySlot") as EquipmentSlot).SlotItem as ArmorEquipment).WalkCostMod);
-                }
-
+                int mc = (int)(Living.BaseActionCost*player.MoveMod);
                 return mc;
             }
         }

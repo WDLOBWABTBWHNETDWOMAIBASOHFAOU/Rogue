@@ -12,6 +12,7 @@ namespace Wink
         private string dieSound;
         protected float viewDistance;
         private InventoryBox inventory;
+        protected LivingEquipment equipedItems;
 
         protected Skill currentSkill;
         public Skill CurrentSkill
@@ -25,19 +26,6 @@ namespace Wink
         {
             get { return skillList; }
         }
-
-        #region EquipmentSlots
-        // Accessors for all the different equipment slots
-        private GameObjectList equipmentSlots;
-        public GameObjectList EquipmentSlots
-        {
-            get { return equipmentSlots; }
-        }
-        private EquipmentSlot Weapon { get { return equipmentSlots.Find("weaponSlot") as EquipmentSlot; } }
-        private EquipmentSlot Body { get { return equipmentSlots.Find("bodySlot") as EquipmentSlot; } }
-        private EquipmentSlot Ring1 { get { return equipmentSlots.Find("ringSlot1") as EquipmentSlot; } }
-        private EquipmentSlot Ring2 { get { return equipmentSlots.Find("ringSlot2") as EquipmentSlot; } }
-        #endregion
 
         public InventoryBox Inventory
         {
@@ -93,13 +81,8 @@ namespace Wink
             
             inventory = new InventoryBox(4, 4, 0, "");
 
-            equipmentSlots = new GameObjectList();
-            equipmentSlots.Add(new EquipmentSlot(typeof(WeaponEquipment), this, "inventory/weaponSlot", id: "weaponSlot"));
-            equipmentSlots.Add(new EquipmentSlot(typeof(ArmorEquipment), this, "inventory/bodySlot", id: "bodySlot"));
-            equipmentSlots.Add(new EquipmentSlot(typeof(RingEquipment), this, "inventory/ringSlot", id: "ringSlot1"));
-            equipmentSlots.Add(new EquipmentSlot(typeof(RingEquipment), this, "inventory/ringSlot", id: "ringSlot2"));
-            equipmentSlots.Add(new EquipmentSlot(typeof(HeadEquipment), this, "inventory/headSlot", id: "headSlot"));
-
+            equipedItems = new LivingEquipment(this);//might give problems
+            equipedItems.Parent = this;
             InitAnimationVariables();
             LoadAnimations();
             PlayAnimation("idle");
@@ -115,7 +98,7 @@ namespace Wink
             dieSound = info.GetString("dieSound");
 
             inventory = info.TryGUIDThenFull<InventoryBox>(context, "inventory");
-            equipmentSlots = info.TryGUIDThenFull<GameObjectList>(context, "equipmentSlots");
+            equipedItems = info.TryGUIDThenFull<LivingEquipment>(context, "equipedItems");
             skillList = info.TryGUIDThenFull<GameObjectList>(context, "skillList");
             currentSkill = info.TryGUIDThenFull<Skill>(context, "currentSkill");
             
@@ -124,15 +107,34 @@ namespace Wink
             healthPoints = info.GetInt32("healthPoints");
             actionPoints = info.GetInt32("actionPoints");
             baseAttack = info.GetInt32("baseAttack");
-            strength = info.GetInt32("strength");
-            dexterity = info.GetInt32("dexterity");
-            intelligence = info.GetInt32("intelligence");
-            wisdom = info.GetInt32("wisdom");
-            luck = info.GetInt32("luck");
-            vitality = info.GetInt32("vitality");
             creatureLevel = info.GetInt32("creatureLevel");
             reach = info.GetInt32("baseReach");
+            currentReach = info.GetInt32("currentReach");
             viewDistance = info.GetInt32("viewDistance");
+
+            strength = info.GetInt32("strength");
+            currentStrength = info.GetInt32("currentStrength");
+            sMul = info.GetDouble("sMul");
+
+            dexterity = info.GetInt32("dexterity");
+            currentDexterity = info.GetInt32("currentDexterity");
+            dMul = info.GetDouble("dMul");
+
+            intelligence = info.GetInt32("intelligence");
+            currentIntelligence = info.GetInt32("currentIntelligence");
+            iMul = info.GetDouble("iMul");
+
+            wisdom = info.GetInt32("wisdom");
+            currentWisdom = info.GetInt32("currentWisdom");
+            wMul = info.GetDouble("wMul");
+
+            luck = info.GetInt32("luck");
+            currentLuck = info.GetInt32("currentLuck");
+            lMul = info.GetDouble("lMul");
+
+            vitality = info.GetInt32("vitality");
+            currentVitality= info.GetInt32("currentVitality");
+            vMul = info.GetDouble("vMul");
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
@@ -150,11 +152,11 @@ namespace Wink
                 info.AddValue("inventory", inventory);
             else
                 info.AddValue("inventoryGUID", inventory.GUID.ToString());
-            
-            if (v.FullySerializeEverything || v.FullySerialized.Contains(equipmentSlots.GUID))
-                info.AddValue("equipmentSlots", equipmentSlots); 
+
+            if (v.FullySerializeEverything || v.FullySerialized.Contains(equipedItems.GUID))
+                info.AddValue("equipedItems", equipedItems);
             else
-                info.AddValue("equipmentSlotsGUID", equipmentSlots.GUID.ToString());
+                info.AddValue("equipedItemsGUID", equipedItems.GUID.ToString());
 
             if (v.FullySerializeEverything || v.FullySerialized.Contains(skillList.GUID))
                 info.AddValue("skillList", skillList);
@@ -171,15 +173,35 @@ namespace Wink
             info.AddValue("healthPoints", healthPoints);
             info.AddValue("actionPoints", actionPoints);
             info.AddValue("baseAttack", baseAttack);
-            info.AddValue("strength", strength);
-            info.AddValue("dexterity", dexterity);
-            info.AddValue("intelligence", intelligence);
-            info.AddValue("creatureLevel", creatureLevel);
-            info.AddValue("vitality", vitality);
-            info.AddValue("wisdom", wisdom);
-            info.AddValue("luck", luck);
+
             info.AddValue("baseReach", reach);
+            info.AddValue("currentReach", currentReach);
             info.AddValue("viewDistance", viewDistance);
+            info.AddValue("creatureLevel", creatureLevel);
+
+            info.AddValue("strength", strength);
+            info.AddValue("currentStrength", currentStrength);
+            info.AddValue("sMul", sMul);
+
+            info.AddValue("dexterity", dexterity);
+            info.AddValue("currentDexterity", currentDexterity);
+            info.AddValue("dMul", dMul);
+
+            info.AddValue("intelligence", intelligence);
+            info.AddValue("currentIntelligence", currentIntelligence);
+            info.AddValue("iMul", iMul);
+
+            info.AddValue("vitality", vitality);
+            info.AddValue("currentVitality", currentVitality);
+            info.AddValue("vMul", vMul);
+
+            info.AddValue("wisdom", wisdom);
+            info.AddValue("currentWisdom", currentWisdom);
+            info.AddValue("wMul", wMul);
+
+            info.AddValue("luck", luck);
+            info.AddValue("currentLuck", currentLuck);
+            info.AddValue("lMul", lMul);
         }
         #endregion
 
@@ -286,8 +308,8 @@ namespace Wink
             List<GameObject> result = new List<GameObject>();
             if (inventory != null)
                 result.AddRange(inventory.FindAll(del));
-            if (equipmentSlots != null)
-                result.AddRange(equipmentSlots.FindAll(del));
+            if (equipedItems != null)
+                result.AddRange(equipedItems.FindAll(del));
             if (skillList != null)
                 result.AddRange(skillList.FindAll(del));
             return result;
@@ -308,11 +330,11 @@ namespace Wink
                 if (invResult != null)
                     return invResult;
             }
-            if (equipmentSlots != null)
+            if (equipedItems != null)
             {
-                if (del.Invoke(equipmentSlots)) // Check if equipmentSlots fits "del"
-                    return equipmentSlots;
-                GameObject eqResult = equipmentSlots.Find(del); // Find the object matching "del" among the children of equipmentSlots
+                if (del.Invoke(equipedItems)) // Check if equipmentSlots fits "del"
+                    return equipedItems;
+                GameObject eqResult = equipedItems.Find(del); // Find the object matching "del" among the children of equipmentSlots
                 if (eqResult != null)
                     return eqResult;
             }

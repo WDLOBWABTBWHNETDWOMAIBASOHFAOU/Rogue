@@ -1,14 +1,17 @@
 ﻿namespace Wink
 {
-    public abstract partial class Living : AnimatedGameObject
+    public abstract partial class Living
     {
         public const int MaxActionPoints = 40;
         public const int BaseActionCost = 10;
 
         #region stats
-        protected int manaPoints, healthPoints, actionPoints, baseAttack, baseArmor ;
-        protected int vitality, strength, dexterity, wisdom, luck, intelligence, creatureLevel, reach;
-        protected int currentVitality, currentStrength, currentDexterity, currentWisdom, currentLuck, currentIntelligence,currentReach;
+        protected int manaPoints, healthPoints, actionPoints, baseAttack, baseArmor, creatureLevel, reach, currentReach;
+        protected int vitality, strength, dexterity, wisdom, luck, intelligence;
+        public double vMul, sMul, dMul, wMul, lMul, iMul;
+        protected int currentVitality, currentStrength, currentDexterity, currentWisdom, currentLuck, currentIntelligence;
+
+        
 
         public int CreatureLevel { get { return creatureLevel; } }
         
@@ -43,12 +46,12 @@
         }
 
         //current stats
-        public int Dexterity { get { return currentDexterity; } set { currentDexterity = value; } }
-        public int Intelligence { get { return currentIntelligence; } set { currentIntelligence = value; } }
-        public int Strength { get { return currentStrength; } set { currentStrength = value; } }
-        public int Wisdom { get { return currentWisdom; } set { currentWisdom = value; } }
-        public int Vitality { get { return currentVitality; } set { currentVitality = value; } }
-        public int Luck { get { return currentLuck; } set { currentLuck = value; } }
+        public int Dexterity { get { return (int)((currentDexterity+dexterity)*dMul); } set { currentDexterity = value; } }
+        public int Intelligence { get { return (int)((currentIntelligence+intelligence)*iMul); } set { currentIntelligence = value; } }
+        public int Strength { get { return (int)((currentStrength + strength) *sMul); } set { currentStrength = value; } }
+        public int Wisdom { get { return (int)((currentWisdom +wisdom) *wMul); } set { currentWisdom = value; } }
+        public int Vitality { get { return (int)((currentVitality + vitality) *vMul); } set { currentVitality = value; } }
+        public int Luck { get { return (int)((currentLuck +luck)*lMul); } set { currentLuck = value; } }
         public int Reach { get { return currentReach; } set { currentReach = value; } }
 
         public int GetStat(Stat s)
@@ -74,18 +77,7 @@
 
         public float statAverige { get { return (strength + dexterity + intelligence + wisdom + vitality + luck) / 6; } }//lowercases else the ring stat bonuses are taken in to account
 
-        public int ActionPoints
-        {
-            get
-            { return actionPoints; }
-            set
-            {
-                if (value <= MaxActionPoints)
-                    actionPoints = value;
-                else
-                    actionPoints = MaxActionPoints;
-            }
-        }
+        public int ActionPoints { get { return actionPoints; } set { actionPoints= System.Math.Min(value, MaxActionPoints); } }
 
         #region Health
         public int Health
@@ -169,19 +161,24 @@
             this.reach = baseReach;
 
             //set current stats to base stats
-            currentVitality = vitality;
-            currentStrength = strength;
-            currentDexterity = dexterity;
-            currentIntelligence = intelligence;
-            currentWisdom = wisdom;
-            currentLuck = luck;
             currentReach = baseReach;
 
+            resetMultipliers();
             //set misc
             this.baseAttack = baseAttack;
             this.baseArmor = baseArmor;
             healthPoints = MaxHP();
             manaPoints = MaxManaPoints();
+        }
+
+        public void resetMultipliers()
+        {
+            vMul = 1f;
+            sMul = 1f;
+            dMul = 1f;
+            iMul = 1f;
+            wMul = 1f;
+            lMul = 1f;
         }
 
         /// <summary>
@@ -240,13 +237,7 @@
         /// <returns></returns>
         protected int ArmorValue(DamageType damageType)
         {
-            int armorValue = baseArmor;
-            if (Body.SlotItem != null)
-            {
-                ArmorEquipment ArmorItem = Body.SlotItem as ArmorEquipment;
-                armorValue = ArmorItem.Value(this, damageType);
-            }
-
+            int armorValue = baseArmor + equipedItems.TotalArmorvalue(damageType);
             if (armorValue <= 0)
                 armorValue = 1;
 

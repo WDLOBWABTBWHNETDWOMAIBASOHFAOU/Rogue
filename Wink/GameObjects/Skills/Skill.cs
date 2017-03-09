@@ -65,6 +65,15 @@ namespace Wink
             return false;
         }
 
+        public override void DoBonus(Living living)
+        {
+            //empty because base skills don't have this by deffinition (aura or buff skills however do)
+        }
+
+        public override void RemoveBonus(Living living)
+        {
+            //see DoBonus
+        }
 
         public override void ItemInfo(ItemSlot caller)
         {

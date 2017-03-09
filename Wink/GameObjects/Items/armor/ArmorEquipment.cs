@@ -21,7 +21,7 @@ namespace Wink
         int magicValue;
         int reqPenalty;
         ArmorType armorType;
-        float walkCostMod, fast = 0.8f, normal = 1.0f, slow = 1.2f;
+        float walkCostMod, fast = 0.8f, normal = 1.0f, slowed = 1.2f, slow = 1.4f;
 
         public float WalkCostMod { get { return walkCostMod; } }
 
@@ -32,13 +32,13 @@ namespace Wink
         //    SetID();
         //}
 
-        public ArmorEquipment(string assetName, string id, ArmorType armorType, int physicalValue = 0, int magicValue = 0, int reqPenalty = 0, int layer = 0, int stackSize = 1) : base(assetName, id, layer, stackSize)
+        public ArmorEquipment(ArmorType armorType, int physicalValue = 0, int magicValue = 0, int reqPenalty = 0, int layer = 0, int stackSize = 1) : base("", "", layer, stackSize)
         {
             this.physicalValue = physicalValue;
             this.magicValue = magicValue;
             this.reqPenalty = reqPenalty;
             this.armorType = armorType;
-            SetWalkCostMod();
+            SetTypeSpecs();
             SetID();
         }
 
@@ -79,19 +79,25 @@ namespace Wink
             infoList.Children.Insert(1, armorinfo);
         }
 
-        void SetWalkCostMod()
+        void SetTypeSpecs()
         {
             switch (armorType)
             {
                 case ArmorType.light:
+                    walkCostMod = normal;
+                    spriteAssetName = "Sprites/Armor/elven_leather_armor";
+                    break;
                 case ArmorType.robes:
                     walkCostMod = fast;
+                    spriteAssetName = "Sprites/Armor/robe2";
                     break;
                 case ArmorType.normal:
-                    walkCostMod = normal;
+                    walkCostMod = slowed;
+                    spriteAssetName = "Sprites/Armor/dwarven_ringmail";
                     break;
                 case ArmorType.heavy:
                     walkCostMod = slow;
+                    spriteAssetName = "Sprites/Armor/orcish_platemail";
                     break;
                 default:
                     break;

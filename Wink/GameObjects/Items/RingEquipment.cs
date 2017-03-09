@@ -18,7 +18,7 @@ namespace Wink
     }
 
     [Serializable]
-    class RingEquipment : Equipment
+    public class RingEquipment : Equipment
     {
         // mulchance is the chance a ring effect will be a multiplier, I'm keeping this relatively high because
         // a multiplier is much easier to balance than a set value
@@ -211,37 +211,68 @@ namespace Wink
             if (rE.Multiplier) { p *= rE.EffectValue; }
             else { i += (int)rE.EffectValue; }
 
-            return (int)(baseValue * p + i);
+            return (int)( p + i);
         }
 
         public override void DoBonus(Living living)
         {
-            foreach (RingEffect rE in RingEffects)
+            foreach (RingEffect rE in RingEffects)//check every effect that is on the ring
             {
-                switch (rE.EffectType)
+                if (rE.Multiplier)
                 {
-                    case EffectType.Vitality:
-                        living.Vitality += Ringbonus(rE, living.BaseVitality);
-                        break;
-                    case EffectType.Strength:
-                        living.Strength += Ringbonus(rE, living.BaseStrength);
-                        break;
-                    case EffectType.Dexterity:
-                        living.Dexterity += Ringbonus(rE, living.BaseDexterity);
-                        break;
-                    case EffectType.Luck:
-                        living.Luck += Ringbonus(rE, living.BaseLuck);
-                        break;
-                    case EffectType.Intelligence:
-                        living.Intelligence += Ringbonus(rE, living.BaseIntelligence);
-                        break;
-                    case EffectType.Wisdom:
-                        living.Wisdom += Ringbonus(rE, living.BaseWisdom);
-                        break;
-                    case EffectType.Reflection:
-                        break;
-                    default:
-                        break;
+                    switch (rE.EffectType)
+                    {
+                        case EffectType.Vitality:
+                            living.vMul *= rE.EffectValue;
+                            break;
+                        case EffectType.Strength:
+                            living.sMul *= rE.EffectValue;
+                            break;
+                        case EffectType.Dexterity:
+                            living.dMul *= rE.EffectValue;
+                            break;
+                        case EffectType.Luck:
+                            living.lMul *= rE.EffectValue;
+                            break;
+                        case EffectType.Intelligence:
+                            living.iMul *= rE.EffectValue;
+                            break;
+                        case EffectType.Wisdom:
+                            living.wMul *= rE.EffectValue;
+                            break;
+                        case EffectType.Reflection:
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (rE.EffectType)
+                    {
+                        case EffectType.Vitality:
+                            living.Vitality += (int)rE.EffectValue;
+                            break;
+                        case EffectType.Strength:
+                            living.Strength += (int)rE.EffectValue;
+                            break;
+                        case EffectType.Dexterity:
+                            living.Dexterity += (int)rE.EffectValue;
+                            break;
+                        case EffectType.Luck:
+                            living.Luck += (int)rE.EffectValue;
+                            break;
+                        case EffectType.Intelligence:
+                            living.Intelligence += (int)rE.EffectValue;
+                            break;
+                        case EffectType.Wisdom:
+                            living.Wisdom += (int)rE.EffectValue;
+                            break;
+                        case EffectType.Reflection:
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
         }
@@ -250,37 +281,68 @@ namespace Wink
         {
             foreach (RingEffect rE in RingEffects)
             {
-                switch (rE.EffectType)
+                if (rE.Multiplier)
                 {
-                    case EffectType.Vitality:
-                        living.Vitality -= Ringbonus(rE, living.BaseVitality);
-                        break;
-                    case EffectType.Strength:
-                        living.Strength -= Ringbonus(rE, living.BaseStrength);
-                        break;
-                    case EffectType.Dexterity:
-                        living.Dexterity -= Ringbonus(rE, living.BaseDexterity);
-                        break;
-                    case EffectType.Luck:
-                        living.Luck -= Ringbonus(rE, living.BaseLuck);
-                        break;
-                    case EffectType.Intelligence:
-                        living.Intelligence -= Ringbonus(rE, living.BaseIntelligence);
-                        break;
-                    case EffectType.Wisdom:
-                        living.Wisdom -= Ringbonus(rE, living.BaseWisdom);
-                        break;
-                    case EffectType.Reflection:
-                        break;
-                    default:
-                        break;
+                    switch (rE.EffectType)
+                    {
+                        case EffectType.Vitality:
+                            living.vMul /= rE.EffectValue;
+                            break;
+                        case EffectType.Strength:
+                            living.sMul /= rE.EffectValue;
+                            break;
+                        case EffectType.Dexterity:
+                            living.dMul /= rE.EffectValue;
+                            break;
+                        case EffectType.Luck:
+                            living.lMul /= rE.EffectValue;
+                            break;
+                        case EffectType.Intelligence:
+                            living.iMul /= rE.EffectValue;
+                            break;
+                        case EffectType.Wisdom:
+                            living.wMul /= rE.EffectValue;
+                            break;
+                        case EffectType.Reflection:
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (rE.EffectType)
+                    {
+                        case EffectType.Vitality:
+                            living.Vitality -= (int)rE.EffectValue;
+                            break;
+                        case EffectType.Strength:
+                            living.Strength -= (int)rE.EffectValue;
+                            break;
+                        case EffectType.Dexterity:
+                            living.Dexterity -= (int)rE.EffectValue;
+                            break;
+                        case EffectType.Luck:
+                            living.Luck -= (int)rE.EffectValue;
+                            break;
+                        case EffectType.Intelligence:
+                            living.Intelligence -= (int)rE.EffectValue;
+                            break;
+                        case EffectType.Wisdom:
+                            living.Wisdom -= (int)rE.EffectValue;
+                            break;
+                        case EffectType.Reflection:
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
         }
     }
 
     [Serializable]
-    class RingEffect : ISerializable
+    public class RingEffect : ISerializable
     {
         protected EffectType effectType;
         protected bool multiplier;
@@ -315,53 +377,53 @@ namespace Wink
     }
 
     [Serializable]
-    class ReflectionEffect : RingEffect
+    public class ReflectionEffect : RingEffect
     {
-        protected double power;
-        protected double chance;
+        //protected double power;
+        //protected double chance;
 
-        public double Power { get { return power; } }
-        public double Chance { get { return chance; } }
+        //public double Power { get { return power; } }
+        //public double Chance { get { return chance; } }
 
         public ReflectionEffect(double power, double chance) : base(EffectType.Reflection, false, -1)
         {
-            this.power = power;
-            this.chance = chance;
+            //this.power = power;
+            //this.chance = chance;
         }
 
         #region Serialization
         public ReflectionEffect(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             effectType = (EffectType)info.GetValue("effectType", typeof(EffectType));
-            power = info.GetDouble("power");
-            chance = info.GetDouble("chance");
+            //power = info.GetDouble("power");
+            //chance = info.GetDouble("chance");
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             base.GetObjectData(info, context);
-            info.AddValue("power", power);
-            info.AddValue("chance", chance);
+            //info.AddValue("power", power);
+            //info.AddValue("chance", chance);
         }
         #endregion
 
-        public double this[string val]
-        {
-            get
-            {
-                if (val == "power")
-                {
-                    return Power;
-                }
-                else if (val == "chance")
-                {
-                    return Chance;
-                }
-                else
-                {
-                    throw new KeyNotFoundException("The value " + val + " is not in ReflectionEffect");
-                }
-            }
-        }
+    //    public double this[string val]
+    //    {
+    //        get
+    //        {
+    //            if (val == "power")
+    //            {
+    //                return Power;
+    //            }
+    //            else if (val == "chance")
+    //            {
+    //                return Chance;
+    //            }
+    //            else
+    //            {
+    //                throw new KeyNotFoundException("The value " + val + " is not in ReflectionEffect");
+    //            }
+    //        }
+    //    }
     }
 }

@@ -56,6 +56,7 @@ namespace Wink
 
         private void SetupType()
         {
+            freeStatPoints = 3;
             if (playerType == PlayerType.Random)
             {
                 //select random armorType
@@ -63,9 +64,13 @@ namespace Wink
                 playerType = (PlayerType)pTypeValues.GetValue(GameEnvironment.Random.Next(pTypeValues.Length - 1));
             }
 
-            RestrictedItemSlot weaponslot = EquipmentSlots.Find("weaponSlot") as RestrictedItemSlot;
-            RestrictedItemSlot bodyslot = EquipmentSlots.Find("bodySlot") as RestrictedItemSlot;
-            int EquipmentStartingStrenght = 3;
+            EquipmentSlot weaponslot = equipedItems.WeaponSlot;
+            EquipmentSlot bodyslot = equipedItems.BodySlot;
+            ItemSlot ringslot = Inventory[1, 2] as ItemSlot;
+            ringslot.ChangeItem(new RingEquipment(10, EffectType.Strength, "Sprites/Rings/brass", true));
+            ItemSlot ringslot2 = Inventory[1, 0] as ItemSlot;
+            ringslot2.ChangeItem(new RingEquipment(10, EffectType.Strength, "Sprites/Rings/brass"));
+            int EquipmentStartingStrenght = 1000;
 
             ItemSlot slot_0_0 = Inventory[0, 0] as ItemSlot;
             slot_0_0.ChangeItem(new Potion("Sprites/Potions/ruby", PotionType.Health, PotionPower.minor, 5));//some starting healt potions
@@ -76,31 +81,31 @@ namespace Wink
             ItemSlot slot_3_2 = Inventory[3, 2] as ItemSlot;
             slot_3_2.ChangeItem(new MagicBolt());
 
-            //switch (playerType)
-            //{
-            //    case PlayerType.Warrior:
-            //        weaponslot.ChangeItem(new WeaponEquipment(EquipmentStartingStrenght, WeaponType.melee));
-            //        bodyslot.ChangeItem(new ArmorEquipment(EquipmentStartingStrenght, 2, ArmorType.heavy));
-            //        SetStats(1, 4, 4, 1, 1, 1, 1);
-            //        break;
+            switch (playerType)
+            {
+                case PlayerType.Warrior:
+                    weaponslot.ChangeItem(new MeleeWeapon("Sword",EquipmentStartingStrenght));
+                    bodyslot.ChangeItem(new ChestArmor(ArmorType.heavy,10,5));
+                    SetStats(1, 4, 4, 1, 1, 1, 1);
+                    break;
 
-            //    case PlayerType.Archer:
-            //        weaponslot.ChangeItem(new WeaponEquipment(EquipmentStartingStrenght, WeaponType.bow));
-            //        bodyslot.ChangeItem(new ArmorEquipment(EquipmentStartingStrenght, 2, ArmorType.normal));
-            //        SetStats(1, 1, 1, 4, 1, 1, 4);
-            //        break;
+                case PlayerType.Archer:
+                    weaponslot.ChangeItem(new RangedWeapon("Bow", EquipmentStartingStrenght));
+                    bodyslot.ChangeItem(new ChestArmor(ArmorType.light, 5, 3));
+                    SetStats(1, 1, 1, 4, 1, 1, 4);
+                    break;
 
-            //    case PlayerType.Mage:
-            //        weaponslot.ChangeItem(new WeaponEquipment(EquipmentStartingStrenght, WeaponType.staff));
-            //        bodyslot.ChangeItem(new ArmorEquipment(EquipmentStartingStrenght, 2, ArmorType.robes));
-            //        SetStats(1, 1, 1, 1, 4, 4, 1);
-            //        ItemSlot slot_1_0 = Inventory[1, 0] as ItemSlot;
-            //        slot_1_0.ChangeItem(new Potion("Sprites/Potions/brilliant_blue", PotionType.Mana, PotionPower.minor, 5));//some starting mana potions
-            //        break;
+                case PlayerType.Mage:
+                    weaponslot.ChangeItem(new MageWeapon("Staff", EquipmentStartingStrenght));
+                    bodyslot.ChangeItem(new ChestArmor(ArmorType.robes, 3, 10));
+                    SetStats(1, 1, 1, 1, 4, 4, 1);
+                    ItemSlot slot_1_0 = Inventory[1, 0] as ItemSlot;
+                    slot_1_0.ChangeItem(new Potion("Sprites/Potions/brilliant_blue", PotionType.Mana, PotionPower.minor, 5));//some starting mana potions
+                    break;
 
-            //    default:
-            //        throw new Exception("invalid enemy type");
-            //}
+                default:
+                    throw new Exception("invalid enemy type");
+            }
         }
 
         protected override void DoBehaviour(HashSet<GameObject> changedObjects)
@@ -338,15 +343,6 @@ namespace Wink
                     break;
             }
             freeStatPoints--;
-
-            //recalculate bonus , because the bonuses use BaseStats the order shouldn't matter
-            foreach (EquipmentSlot eqSlot in EquipmentSlots.Children)
-            {
-                eqSlot.SlotItem.RemoveBonus(this);
-                eqSlot.SlotItem.DoBonus(this);
-            }
-
-            //TODO: adding an "accept Stats button" might reduce calculations by first chancing all the stats and recaculating the bonuses aftherwards
         }
 
         public override List<GameObject> FindAll(Func<GameObject, bool> del)
@@ -399,7 +395,7 @@ namespace Wink
                 expBar.Position = apBar.Position + new Vector2(0, apBar.Height + barY);
                 gui.Add(expBar);
 
-                PlayerInventoryAndEquipment pie = new PlayerInventoryAndEquipment(Inventory, EquipmentSlots);
+                PlayerInventoryAndEquipment pie = new PlayerInventoryAndEquipment(Inventory, equipedItems);
                 pie.Position = guiState.ContainsKey("playerIaEPosition") ? (Vector2)guiState["playerIaEPosition"] : new Vector2(screenWidth - pie.Width, 300);
                 pie.Visible = guiState.ContainsKey("playerIaEVisibility") ? (bool)guiState["playerIaEVisibility"] : false;
                 gui.Add(pie);

@@ -51,11 +51,11 @@ namespace Wink
 
         protected override double AttackValue(Living user)
         {
-            int aVal=0;
+            double aVal=0;
             if (MeetsRequirements(user))
-                user.CalculateValue(baseValue, user.Strength - strRequirement, strScaling, 0, user.Dexterity - dexRequirement, dexScaling);
+                aVal = user.CalculateValue(baseValue, user.Strength - strRequirement, strScaling, 0, user.Dexterity - dexRequirement, dexScaling);
             else
-                user.CalculateValue(baseValue,strRequirement - user.Strength, strScaling, 0,dexRequirement- user.Dexterity, dexScaling);
+                aVal = user.CalculateValue(baseValue,strRequirement - user.Strength, strScaling, 0,dexRequirement- user.Dexterity, dexScaling);
             return aVal;
         }
     }

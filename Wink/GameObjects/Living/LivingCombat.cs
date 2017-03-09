@@ -3,7 +3,7 @@ using System.Diagnostics;
 
 namespace Wink
 {
-    public abstract partial class Living : AnimatedGameObject
+    public abstract partial class Living 
     {
         /// <summary>
         /// Handles attacking an opponent. First checks if attacker hits opponent, if succesfull sends attackvalue to defending side, if unsuccesfull displays miss feedback
@@ -19,14 +19,15 @@ namespace Wink
             //if (hitNumber < HitChance())
             if (TryHit(target))
             {
-                if (Weapon.SlotItem != null)
+                WeaponEquipment weapon = equipedItems.Weapon;
+                if (weapon != null)
                 {
-                    WeaponEquipment weaponItem = Weapon.SlotItem as WeaponEquipment;
-                    weaponItem.Attack(this,target);
-                    hitSound = weaponItem.HitSound;
+                    weapon.Attack(this,target);
+                    hitSound = weapon.HitSound;
                 }
                 else
                 {
+                    Debug.Write("no weapon equiped");
                     double attackValue = AttackValue();
                     damageDealt = target.TakeDamage(attackValue, damageType);
                 }
@@ -61,23 +62,23 @@ namespace Wink
         /// <param name="source">The living object that gave the damage</param>
         public void ProcessReflection(int damage, Living source)
         {
-            if (source.EquipmentSlots != null)                                      // 
-                foreach (ItemSlot slot in source.EquipmentSlots.Children)           // Looking up the ring(s) the living object has equipped
-                    if (slot.SlotItem != null && slot.Id.Contains("ringSlot"))      // 
-                    {
-                        RingEquipment ring = slot.SlotItem as RingEquipment;
-                        foreach (RingEffect effect in ring.RingEffects)
-                            if (effect.EffectType == EffectType.Reflection)           // Check if the ring is a Ring of Reflection
-                            {
-                                ReflectionEffect rEffect = effect as ReflectionEffect;
-                                double randomNumber = GameEnvironment.Random.NextDouble();
-                                double reflectChance = rEffect["chance"] - 1 / source.luck; // Calculate reflection chance
-                                if (randomNumber <= reflectChance)
-                                {
-                                    TakeReflectionDamage(source, damage, rEffect["power"]); // Deal Reflection Damage
-                                }
-                            }
-                    }
+            //if (source.EquipmentSlots != null)                                      // 
+            //    foreach (ItemSlot slot in source.EquipmentSlots.Children)           // Looking up the ring(s) the living object has equipped
+            //        if (slot.SlotItem != null && slot.Id.Contains("ringSlot"))      // 
+            //        {
+            //            RingEquipment ring = slot.SlotItem as RingEquipment;
+            //            foreach (RingEffect effect in ring.RingEffects)
+            //                if (effect.EffectType == EffectType.Reflection)           // Check if the ring is a Ring of Reflection
+            //                {
+            //                    ReflectionEffect rEffect = effect as ReflectionEffect;
+            //                    double randomNumber = GameEnvironment.Random.NextDouble();
+            //                    double reflectChance = rEffect["chance"] - 1 / source.luck; // Calculate reflection chance
+            //                    if (randomNumber <= reflectChance)
+            //                    {
+            //                        TakeReflectionDamage(source, damage, rEffect["power"]); // Deal Reflection Damage
+            //                    }
+            //                }
+            //        }
         }
 
         /// <summary>
@@ -89,7 +90,7 @@ namespace Wink
             //double dodgeNumber = GameEnvironment.Random.NextDouble();
             //if (dodgeNumber > DodgeChance())
             //{
-                double defenceValue = ArmorValue(damageType);
+            double defenceValue = ArmorValue(damageType);
                 int damageTaken = (int)(attackValue / defenceValue);
 
                 Health -= damageTaken;

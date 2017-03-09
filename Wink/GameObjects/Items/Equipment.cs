@@ -74,18 +74,18 @@ namespace Wink
         #endregion
 
         public override void ItemAction(Living caller)
-        {
+        {   
             //TODO: send event to switch this equipment with the equipment currently in the appropriate slot.
         }
 
         public override void DoBonus(Living living)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         public override void RemoveBonus(Living living)
         {
-            throw new NotImplementedException();
+           // throw new NotImplementedException();
         }
     }
 }

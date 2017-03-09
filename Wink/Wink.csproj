@@ -83,6 +83,7 @@
     <Compile Include="GameObjects\Items\weapon\MageWeapon.cs" />
     <Compile Include="GameObjects\Items\weapon\MeleeWeapon.cs" />
     <Compile Include="GameObjects\Items\weapon\RangedWeapon.cs" />
+    <Compile Include="GameObjects\Living\LivingEquipment.cs" />
     <Compile Include="GameObjects\Skills\Heal.cs" />
     <Compile Include="GameObjects\Skills\Skill.cs" />
     <Compile Include="GameObjects\Skills\MagicBolt.cs" />

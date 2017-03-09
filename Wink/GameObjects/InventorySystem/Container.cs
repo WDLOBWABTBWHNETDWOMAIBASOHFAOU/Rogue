@@ -139,7 +139,7 @@ namespace Wink
                         break;
                     case 2:
                         spawnChance = 30;
-                        newItem = new ChestArmor();//TODO: replace with weaponfactory
+                        newItem = new ChestArmor(ArmorType.light);//TODO: replace with weaponfactory
                         break;
                     case 3:
                         spawnChance = 30;
