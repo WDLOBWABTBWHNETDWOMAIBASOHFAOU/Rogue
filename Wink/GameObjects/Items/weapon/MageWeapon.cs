@@ -37,7 +37,7 @@ namespace Wink
 
         protected override bool MeetsRequirements(Living l)
         {
-            if (l.Intelligence >= intRequirement)
+            if (l.GetStat(Stat.Intelligence) >= intRequirement)
                 return true;
             else
                 return false;
@@ -46,9 +46,9 @@ namespace Wink
         {
             int aVal = 0;
             if (MeetsRequirements(user))
-                user.CalculateValue(baseValue, user.Intelligence - intRequirement, intScaling);
+                user.CalculateValue(baseValue, user.GetStat(Stat.Intelligence) - intRequirement, intScaling);
             else
-                user.CalculateValue(baseValue, intRequirement - user.Intelligence, intScaling);
+                user.CalculateValue(baseValue, intRequirement - user.GetStat(Stat.Intelligence), intScaling);
             return aVal;
         }
     }

@@ -7,12 +7,8 @@ namespace Wink
 {
     public enum EffectType
     {
-        Vitality,
-        Strength,
-        Dexterity,
-        Luck,
-        Intelligence,
-        Wisdom,
+        StatBonus,
+        StatMultiplier,
         // Make sure types of magic effects or other types that shouldn't be randomly put on rings are at the end of the enum
         Reflection
     }
@@ -32,12 +28,12 @@ namespace Wink
         protected Dictionary<EffectType, double> balanceMultiplier = new Dictionary<EffectType, double>();
         private void SetBalance()
         {
-            balanceMultiplier.Add(EffectType.Strength, 0.8);
-            balanceMultiplier.Add(EffectType.Vitality, 1);
-            balanceMultiplier.Add(EffectType.Dexterity, 0.8);
-            balanceMultiplier.Add(EffectType.Luck, 1);
-            balanceMultiplier.Add(EffectType.Intelligence, 1.2);
-            balanceMultiplier.Add(EffectType.Wisdom, 1);
+            //balanceMultiplier.Add(EffectType.Strength, 0.8);
+            //balanceMultiplier.Add(EffectType.Vitality, 1);
+            //balanceMultiplier.Add(EffectType.Dexterity, 0.8);
+            //balanceMultiplier.Add(EffectType.Luck, 1);
+            //balanceMultiplier.Add(EffectType.Intelligence, 1.2);
+            //balanceMultiplier.Add(EffectType.Wisdom, 1);
         }
 
         protected List<RingEffect> ringEffects = new List<RingEffect>();
@@ -47,7 +43,7 @@ namespace Wink
 
         public RingEquipment(double ringValue, EffectType ringType, string assetName, bool multiplier = false, int stackSize = 1, int layer = 0, string id = "") : base(assetName, id, stackSize, layer)
         {
-            AddEffect(ringType, ringValue, multiplier);
+            AddEffect(ringType);
             SetId();
         }
 
@@ -70,45 +66,39 @@ namespace Wink
             }
             else
             {
-                switch (ringEffects[0].EffectType)
-                {
-                    case EffectType.Vitality:
-                        spriteAssetName += "agate";
-                        break;
-                    case EffectType.Strength:
-                        spriteAssetName += "bronze";
-                        break;
-                    case EffectType.Dexterity:
-                        spriteAssetName += "clay";
-                        break;
-                    case EffectType.Luck:
-                        spriteAssetName += "copper";
-                        break;
-                    case EffectType.Intelligence:
-                        spriteAssetName += "coral";
-                        break;
-                    case EffectType.Wisdom:
-                        spriteAssetName += "diamond";
-                        break;
-                    case EffectType.Reflection:
-                        spriteAssetName += "emerald";
-                        break;
-                    default:
-                        break;
-                }
+                spriteAssetName += ringEffects[0].SpriteString;//sprite based on first (main) effect                
             }
         }
 
         void SetId()
         {
-            id = "Ring of ";
-            foreach (RingEffect rE in RingEffects)
-            {
-                id += rE.EffectType.ToString()+ ",";
-            }
             if ( ringEffects.Count == 0)
             {
                 id = "Plain Ring";
+            }
+            else
+            {
+                id = "Ring of ";
+                for (int i = 0; i < ringEffects.Count; i++)
+                {
+                    RingEffect rE = ringEffects[i];
+                    switch (rE.EffectType)
+                    {
+                        case EffectType.StatBonus:
+                            id += (rE as StatBonusEffect).Stat.ToString();
+                            break;
+                        case EffectType.StatMultiplier:
+                            id += (rE as StatMultiplier).Stat.ToString() + " multiplier";
+                            break;
+                        case EffectType.Reflection:
+                            id += rE.EffectType.ToString();
+                            break;
+                    }
+                    if (i != ringEffects.Count - 1)
+                    {
+                        id += rE.EffectType.ToString()+ ",";
+                    }
+                }
             }
         }
 
@@ -127,9 +117,9 @@ namespace Wink
         }
         #endregion
 
-        protected void AddEffect(EffectType effectType, double effectValue, bool multiplier)
+        protected void AddEffect(EffectType effectType)
         {
-            RingEffect effect = new RingEffect(effectType, multiplier, effectValue);
+            RingEffect effect = new RingEffect(effectType);
             ringEffects.Add(effect);
         }
 
@@ -166,15 +156,13 @@ namespace Wink
                 effectValue = Math.Round(acceptablePower * GameEnvironment.Random.NextDouble()); 
 
             effectValue *= balanceMultiplier[effectType];
-            AddEffect(effectType, effectValue, multiplier);
+            AddEffect(effectType);
         }
 
         public List<RingEffect> RingEffects
         {
             get { return ringEffects; }
         }
-
-        // Change in code broke this part
 
         public override void ItemInfo(ItemSlot caller)
         {
@@ -183,15 +171,7 @@ namespace Wink
             foreach(RingEffect e in ringEffects)
             {
                 TextGameObject ringInfo = new TextGameObject("Arial12", cameraSensitivity: 0, layer: 0, id: "RingInfo." + this);
-                ringInfo.Text = e.EffectType.ToString() + " Ring" + " : " + e.EffectValue;// needs more telling information but not sure what to use/ how to read/reach it
-                if (e.Multiplier)
-                {
-                    ringInfo.Text += " : multipier";
-                }
-                else
-                {
-                    ringInfo.Text += " : bonus";
-                }
+                ringInfo.Text = e.InfoString;
                 ringInfo.Color = Color.Red;
                 ringInfo.Parent = infoList;
                 infoList.Children.Insert(1,ringInfo);
@@ -203,77 +183,11 @@ namespace Wink
             throw new NotImplementedException();
         }
 
-        protected int Ringbonus(RingEffect rE, int baseValue)
-        {
-            int i = 0;
-            double p = 1;
-
-            if (rE.Multiplier) { p *= rE.EffectValue; }
-            else { i += (int)rE.EffectValue; }
-
-            return (int)( p + i);
-        }
-
         public override void DoBonus(Living living)
         {
             foreach (RingEffect rE in RingEffects)//check every effect that is on the ring
             {
-                if (rE.Multiplier)
-                {
-                    switch (rE.EffectType)
-                    {
-                        case EffectType.Vitality:
-                            living.vMul *= rE.EffectValue;
-                            break;
-                        case EffectType.Strength:
-                            living.sMul *= rE.EffectValue;
-                            break;
-                        case EffectType.Dexterity:
-                            living.dMul *= rE.EffectValue;
-                            break;
-                        case EffectType.Luck:
-                            living.lMul *= rE.EffectValue;
-                            break;
-                        case EffectType.Intelligence:
-                            living.iMul *= rE.EffectValue;
-                            break;
-                        case EffectType.Wisdom:
-                            living.wMul *= rE.EffectValue;
-                            break;
-                        case EffectType.Reflection:
-                            break;
-                        default:
-                            break;
-                    }
-                }
-                else
-                {
-                    switch (rE.EffectType)
-                    {
-                        case EffectType.Vitality:
-                            living.Vitality += (int)rE.EffectValue;
-                            break;
-                        case EffectType.Strength:
-                            living.Strength += (int)rE.EffectValue;
-                            break;
-                        case EffectType.Dexterity:
-                            living.Dexterity += (int)rE.EffectValue;
-                            break;
-                        case EffectType.Luck:
-                            living.Luck += (int)rE.EffectValue;
-                            break;
-                        case EffectType.Intelligence:
-                            living.Intelligence += (int)rE.EffectValue;
-                            break;
-                        case EffectType.Wisdom:
-                            living.Wisdom += (int)rE.EffectValue;
-                            break;
-                        case EffectType.Reflection:
-                            break;
-                        default:
-                            break;
-                    }
-                }
+                rE.DoBonus(living);
             }
         }
 
@@ -281,62 +195,7 @@ namespace Wink
         {
             foreach (RingEffect rE in RingEffects)
             {
-                if (rE.Multiplier)
-                {
-                    switch (rE.EffectType)
-                    {
-                        case EffectType.Vitality:
-                            living.vMul /= rE.EffectValue;
-                            break;
-                        case EffectType.Strength:
-                            living.sMul /= rE.EffectValue;
-                            break;
-                        case EffectType.Dexterity:
-                            living.dMul /= rE.EffectValue;
-                            break;
-                        case EffectType.Luck:
-                            living.lMul /= rE.EffectValue;
-                            break;
-                        case EffectType.Intelligence:
-                            living.iMul /= rE.EffectValue;
-                            break;
-                        case EffectType.Wisdom:
-                            living.wMul /= rE.EffectValue;
-                            break;
-                        case EffectType.Reflection:
-                            break;
-                        default:
-                            break;
-                    }
-                }
-                else
-                {
-                    switch (rE.EffectType)
-                    {
-                        case EffectType.Vitality:
-                            living.Vitality -= (int)rE.EffectValue;
-                            break;
-                        case EffectType.Strength:
-                            living.Strength -= (int)rE.EffectValue;
-                            break;
-                        case EffectType.Dexterity:
-                            living.Dexterity -= (int)rE.EffectValue;
-                            break;
-                        case EffectType.Luck:
-                            living.Luck -= (int)rE.EffectValue;
-                            break;
-                        case EffectType.Intelligence:
-                            living.Intelligence -= (int)rE.EffectValue;
-                            break;
-                        case EffectType.Wisdom:
-                            living.Wisdom -= (int)rE.EffectValue;
-                            break;
-                        case EffectType.Reflection:
-                            break;
-                        default:
-                            break;
-                    }
-                }
+                rE.RemoveBonus(living);
             }
         }
     }
@@ -345,33 +204,175 @@ namespace Wink
     public class RingEffect : ISerializable
     {
         protected EffectType effectType;
-        protected bool multiplier;
-        protected double effectValue;
-
         public EffectType EffectType { get { return effectType; } }
-        public bool Multiplier { get { return multiplier; } }
-        public double EffectValue { get { return effectValue; } }
 
-        public RingEffect(EffectType effectType, bool multiplier, double effectValue)
+        protected string spriteString;
+        public string SpriteString { get { return spriteString; } }
+
+        protected string infoString;
+        public string InfoString { get { return infoString; } }
+
+        public RingEffect(EffectType effectType)
         {
             this.effectType = effectType;
-            this.multiplier = multiplier;
-            this.effectValue = effectValue;
         }
+
+        public virtual void DoBonus(Living target) { }
+        public virtual void RemoveBonus(Living target) { }
+        protected virtual void setSpriteString() { }
+        protected virtual void setInfoString() { }
 
         #region Serialization
         public RingEffect(SerializationInfo info, StreamingContext context)
         {
             effectType = (EffectType)info.GetValue("effectType", typeof(EffectType));
-            multiplier = info.GetBoolean("multiplier");
-            effectValue = info.GetDouble("effectValue");
+            spriteString = info.GetString("spriteString");
+            infoString = info.GetString("infoString");
         }
 
         public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             info.AddValue("effectType", effectType, typeof(EffectType));
+            info.AddValue("spriteString", spriteString);
+            info.AddValue("infoString", infoString);
+        }
+        #endregion
+    }
+
+    [Serializable]
+    public class StatBonusEffect : RingEffect
+    {
+        private Stat stat;
+        public Stat Stat { get { return stat; } }
+        private int bonusValue;
+
+        public StatBonusEffect(Stat stat) : base(EffectType.StatBonus)
+        {
+            this.stat = stat;
+        }
+
+        public override void DoBonus(Living target)
+        {
+            target.statsBonus[stat] += bonusValue;
+        }
+
+        public override void RemoveBonus(Living target)
+        {
+            target.statsBonus[stat] -= bonusValue;
+        }
+
+        protected override void setInfoString()
+        {
+            infoString = stat.ToString() + " + " + bonusValue;
+        }
+
+        protected override void setSpriteString()
+        {
+            switch (stat)
+            {
+                case Stat.Vitality:
+                    spriteString += "agate";
+                    break;
+                case Stat.Strength:
+                    spriteString += "bronze";
+                    break;
+                case Stat.Dexterity:
+                    spriteString += "clay";
+                    break;
+                case Stat.Luck:
+                    spriteString += "copper";
+                    break;
+                case Stat.Intelligence:
+                    spriteString += "coral";
+                    break;
+                case Stat.Wisdom:
+                    spriteString += "diamond";
+                    break;
+            }
+        }
+
+        #region Serialization
+        public StatBonusEffect(SerializationInfo info, StreamingContext context):base(info,context)
+        {
+            stat = (Stat)info.GetValue("stat", typeof(Stat));
+            bonusValue = info.GetInt32("bonusValue");
+        }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            base.GetObjectData(info, context);
+            info.AddValue("stat", effectType, typeof(Stat));
+            info.AddValue("bonusValue", bonusValue);
+        }
+        #endregion
+    }
+
+    [Serializable]
+    public class StatMultiplier : RingEffect
+    {
+        private Stat stat;
+        public Stat Stat { get { return stat; } }
+        private double multiplier;
+
+        public StatMultiplier(Stat stat) : base(EffectType.StatMultiplier)
+        {
+            this.stat = stat;
+        }
+
+        public override void DoBonus(Living target)
+        {
+            target.statsMultiplier[stat] += multiplier;
+            // will result in added stacking ( 0.2 and 0,3 results in 0.5 bonus (so times 1.5)), instead of multiplied stacking ( 1.2 and 1,3 results in 1.56 bonus)
+            // need to deside which one we want
+        }
+
+        public override void RemoveBonus(Living target)
+        {
+            target.statsMultiplier[stat] -= multiplier;
+        }
+
+        protected override void setInfoString()
+        {
+            infoString = stat.ToString() + " * " + multiplier;
+        }
+
+        protected override void setSpriteString()
+        {
+            switch (stat)
+            {
+                case Stat.Vitality:
+                    spriteString += "agate";
+                    break;
+                case Stat.Strength:
+                    spriteString += "bronze";
+                    break;
+                case Stat.Dexterity:
+                    spriteString += "clay";
+                    break;
+                case Stat.Luck:
+                    spriteString += "copper";
+                    break;
+                case Stat.Intelligence:
+                    spriteString += "coral";
+                    break;
+                case Stat.Wisdom:
+                    spriteString += "diamond";
+                    break;
+            }
+        }
+
+        #region Serialization
+        public StatMultiplier(SerializationInfo info, StreamingContext context):base(info,context)
+        {
+            stat = (Stat)info.GetValue("stat", typeof(Stat));
+            multiplier = info.GetInt32("multiplier");
+        }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            base.GetObjectData(info, context);
+            info.AddValue("stat", effectType, typeof(Stat));
             info.AddValue("multiplier", multiplier);
-            info.AddValue("effectValue", effectValue);
         }
         #endregion
     }
@@ -385,16 +386,25 @@ namespace Wink
         //public double Power { get { return power; } }
         //public double Chance { get { return chance; } }
 
-        public ReflectionEffect(double power, double chance) : base(EffectType.Reflection, false, -1)
+        public ReflectionEffect(double power, double chance) : base(EffectType.Reflection)
         {
             //this.power = power;
             //this.chance = chance;
         }
 
+        protected override void setInfoString()
+        {
+            infoString = "damage reflected";
+        }
+
+        protected override void setSpriteString()
+        {
+            spriteString += "emerald";
+        }
+
         #region Serialization
         public ReflectionEffect(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            effectType = (EffectType)info.GetValue("effectType", typeof(EffectType));
             //power = info.GetDouble("power");
             //chance = info.GetDouble("chance");
         }

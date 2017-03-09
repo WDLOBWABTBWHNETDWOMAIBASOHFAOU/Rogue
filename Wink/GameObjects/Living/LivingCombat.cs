@@ -113,7 +113,7 @@ namespace Wink
         /// <param name="power">The power multiplier of the reflection</param>
         protected void TakeReflectionDamage(Living source, int baseDamage, double power = 1)
         {
-            double reflectAmount = 0.8 - 2 / source.Intelligence;
+            double reflectAmount = 0.8 - 2 / source.GetStat(Stat.Intelligence);
             if (reflectAmount < 0) // makes sure you can never heal the opponent by dealing 
                 reflectAmount = 0; //     negative reflection damage
             int damageTaken = (int)(baseDamage * reflectAmount * power);

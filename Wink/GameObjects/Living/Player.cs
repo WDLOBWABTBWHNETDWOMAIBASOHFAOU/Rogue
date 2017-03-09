@@ -67,9 +67,9 @@ namespace Wink
             EquipmentSlot weaponslot = equipedItems.WeaponSlot;
             EquipmentSlot bodyslot = equipedItems.BodySlot;
             ItemSlot ringslot = Inventory[1, 2] as ItemSlot;
-            ringslot.ChangeItem(new RingEquipment(10, EffectType.Strength, "Sprites/Rings/brass", true));
+            ringslot.ChangeItem(new RingEquipment(10, EffectType.StatBonus, "Sprites/Rings/brass", true));
             ItemSlot ringslot2 = Inventory[1, 0] as ItemSlot;
-            ringslot2.ChangeItem(new RingEquipment(10, EffectType.Strength, "Sprites/Rings/brass"));
+            ringslot2.ChangeItem(new RingEquipment(10, EffectType.StatMultiplier, "Sprites/Rings/brass"));
             int EquipmentStartingStrenght = 1000;
 
             ItemSlot slot_0_0 = Inventory[0, 0] as ItemSlot;
@@ -317,31 +317,9 @@ namespace Wink
         
         public void AddStatPoint(Stat stat)
         {
-            switch (stat)
-            {
-                case Stat.Vitality:
-                    vitality++;
-                    healthPoints += 4;//plus hp mod per vitality point
-                    break;
-                case Stat.Strength:
-                    strength++;
-                    break;
-                case Stat.Dexterity:
-                    dexterity++;
-                    break;
-                case Stat.Wisdom:
-                    wisdom++;
-                    manaPoints += 5;//plus mp mod per wisdom
-                    break;
-                case Stat.Luck:
-                    luck++;
-                    break;
-                case Stat.Intelligence:
-                    intelligence++;
-                    break;
-                default:
-                    break;
-            }
+            statsBase[stat]++;
+            if (stat == Stat.Vitality) { healthPoints += 4; }
+            if (stat == Stat.Wisdom) { manaPoints += 5; }
             freeStatPoints--;
         }
 

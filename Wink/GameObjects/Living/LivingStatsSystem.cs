@@ -1,4 +1,11 @@
-﻿namespace Wink
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.Serialization;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Wink
 {
     public abstract partial class Living
     {
@@ -7,75 +14,24 @@
 
         #region stats
         protected int manaPoints, healthPoints, actionPoints, baseAttack, baseArmor, creatureLevel, reach, currentReach;
-        protected int vitality, strength, dexterity, wisdom, luck, intelligence;
-        public double vMul, sMul, dMul, wMul, lMul, iMul;
-        protected int currentVitality, currentStrength, currentDexterity, currentWisdom, currentLuck, currentIntelligence;
 
-        
+        protected Dictionary<Stat, int> statsBase = new Dictionary<Stat, int>();
+        public Dictionary<Stat, int> statsBonus = new Dictionary<Stat, int>();
+        public Dictionary<Stat, double> statsMultiplier = new Dictionary<Stat, double>();
+
+        public int GetStat(Stat s)
+        {
+            int stat = (int)((statsBase[s] + statsBonus[s]) * statsMultiplier[s]);
+            return stat;
+        }
 
         public int CreatureLevel { get { return creatureLevel; } }
         
         //base stats
-        public int BaseDexterity { get { return dexterity; } }
-        public int BaseIntelligence { get { return intelligence; } }
-        public int BaseStrength { get { return strength; } }
-        public int BaseWisdom { get { return wisdom; } }
-        public int BaseVitality { get { return vitality; } }
-        public int BaseLuck { get { return luck; } }
         public int BaseReach { get { return reach; } }
-
-        public int GetBaseStat(Stat s)
-        {
-            switch (s)
-            {
-                case Stat.Vitality:
-                    return BaseVitality;
-                case Stat.Strength:
-                    return BaseStrength;
-                case Stat.Dexterity:
-                    return BaseDexterity;
-                case Stat.Wisdom:
-                    return BaseWisdom;
-                case Stat.Luck:
-                    return BaseLuck;
-                case Stat.Intelligence:
-                    return Intelligence;
-                default:
-                    return int.MinValue;
-            }
-        }
-
-        //current stats
-        public int Dexterity { get { return (int)((currentDexterity+dexterity)*dMul); } set { currentDexterity = value; } }
-        public int Intelligence { get { return (int)((currentIntelligence+intelligence)*iMul); } set { currentIntelligence = value; } }
-        public int Strength { get { return (int)((currentStrength + strength) *sMul); } set { currentStrength = value; } }
-        public int Wisdom { get { return (int)((currentWisdom +wisdom) *wMul); } set { currentWisdom = value; } }
-        public int Vitality { get { return (int)((currentVitality + vitality) *vMul); } set { currentVitality = value; } }
-        public int Luck { get { return (int)((currentLuck +luck)*lMul); } set { currentLuck = value; } }
         public int Reach { get { return currentReach; } set { currentReach = value; } }
 
-        public int GetStat(Stat s)
-        {
-            switch (s)
-            {
-                case Stat.Vitality:
-                    return Vitality;
-                case Stat.Strength:
-                    return Strength;
-                case Stat.Dexterity:
-                    return Dexterity;
-                case Stat.Wisdom:
-                    return Wisdom;
-                case Stat.Luck:
-                    return Luck;
-                case Stat.Intelligence:
-                    return Intelligence;
-                default:
-                    return int.MinValue;
-            }
-        }
-
-        public float statAverige { get { return (strength + dexterity + intelligence + wisdom + vitality + luck) / 6; } }//lowercases else the ring stat bonuses are taken in to account
+        public float statAverige { get { return (statsBase[Stat.Dexterity] + statsBase[Stat.Intelligence] + statsBase[Stat.Luck] + statsBase[Stat.Strength] + statsBase[Stat.Vitality] + statsBase[Stat.Wisdom]) / 6; } }
 
         public int ActionPoints { get { return actionPoints; } set { actionPoints= System.Math.Min(value, MaxActionPoints); } }
 
@@ -103,7 +59,7 @@
         
         protected int MaxHP()
         {
-            int maxHP = (int)CalculateValue(40, Vitality - 1, 0.1);
+            int maxHP = (int)CalculateValue(40, GetStat(Stat.Vitality) - 1, 0.1);
             return maxHP;
         }
         
@@ -127,7 +83,7 @@
 
         protected int MaxManaPoints()
         {
-            int maxManaPoints = (int)CalculateValue(50, Wisdom, 0.1);
+            int maxManaPoints = (int)CalculateValue(50, GetStat(Stat.Wisdom), 0.1);
             return maxManaPoints;
         }
 
@@ -150,21 +106,32 @@
         /// <param name="baseReach">natural attackReach</param>
         public void SetStats(int creatureLevel = 1, int vitality = 2, int strength = 2, int dexterity = 2, int intelligence = 2, int wisdom = 2, int luck = 2, int baseAttack = 40, int baseArmor = 5, int baseReach = 1)
         {
-            //set base stats
-            this.creatureLevel = creatureLevel;
-            this.vitality = vitality;
-            this.strength = strength;
-            this.dexterity = dexterity;
-            this.intelligence = intelligence;
-            this.wisdom = wisdom;
-            this.luck = luck;
-            this.reach = baseReach;
+            //set stats
+            statsBase.Add(Stat.Dexterity, dexterity);
+            statsBase.Add(Stat.Intelligence, intelligence);
+            statsBase.Add(Stat.Luck, luck);
+            statsBase.Add(Stat.Strength, strength);
+            statsBase.Add(Stat.Vitality, vitality);
+            statsBase.Add(Stat.Wisdom, wisdom);
 
-            //set current stats to base stats
-            currentReach = baseReach;
+            statsBonus.Add(Stat.Dexterity, 0);
+            statsBonus.Add(Stat.Intelligence, 0);
+            statsBonus.Add(Stat.Luck, 0);
+            statsBonus.Add(Stat.Strength, 0);
+            statsBonus.Add(Stat.Vitality, 0);
+            statsBonus.Add(Stat.Wisdom, 0);
 
-            resetMultipliers();
+            statsMultiplier.Add(Stat.Dexterity, 1);
+            statsMultiplier.Add(Stat.Intelligence, 1);
+            statsMultiplier.Add(Stat.Luck, 1);
+            statsMultiplier.Add(Stat.Strength, 1);
+            statsMultiplier.Add(Stat.Vitality, 1);
+            statsMultiplier.Add(Stat.Wisdom, 1);
+
             //set misc
+            this.creatureLevel = creatureLevel;
+            this.reach = baseReach;
+            currentReach = baseReach;
             this.baseAttack = baseAttack;
             this.baseArmor = baseArmor;
             healthPoints = MaxHP();
@@ -173,12 +140,10 @@
 
         public void resetMultipliers()
         {
-            vMul = 1f;
-            sMul = 1f;
-            dMul = 1f;
-            iMul = 1f;
-            wMul = 1f;
-            lMul = 1f;
+            foreach (Stat s in statsMultiplier.Keys)
+            {
+                statsMultiplier[s] = 1;
+            }
         }
 
         /// <summary>
@@ -201,7 +166,7 @@
         /// <returns></returns>
         protected double HitChance()
         {
-            double hitChance = CalculateValue(0.7, Luck, 0.1);
+            double hitChance = CalculateValue(0.7, GetStat(Stat.Luck), 0.1);
             return hitChance;
         }
 
@@ -211,7 +176,7 @@
         /// <returns></returns>
         public double DodgeChance()
         {
-            double dodgeChance = CalculateValue(0.3, Luck, 0.1);
+            double dodgeChance = CalculateValue(0.3, GetStat(Stat.Luck), 0.1);
             return dodgeChance;
         }
 
@@ -226,7 +191,7 @@
 
             int attack = baseAttack;
             double mod = 1;
-            int attackValue = (int)CalculateValue(attack, Strength, mod);
+            int attackValue = (int)CalculateValue(attack, GetStat(Stat.Strength), mod);
 
             return attackValue;
         }

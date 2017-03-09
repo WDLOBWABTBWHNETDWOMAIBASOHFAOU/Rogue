@@ -72,7 +72,7 @@ namespace Wink
         /// <param name="scale">The scale (multiplier) for the sprite size</param>
         public Living(int layer = 0, string id = "", float FOVlength = 8.5f, float scale = 1.0f) : base(layer, id, scale)
         {
-            SetStats();
+            //SetStats();
             viewDistance = FOVlength;
 
             skillList = new GameObjectList ();
@@ -112,29 +112,29 @@ namespace Wink
             currentReach = info.GetInt32("currentReach");
             viewDistance = info.GetInt32("viewDistance");
 
-            strength = info.GetInt32("strength");
-            currentStrength = info.GetInt32("currentStrength");
-            sMul = info.GetDouble("sMul");
+            //strength = info.GetInt32("strength");
+            //currentStrength = info.GetInt32("currentStrength");
+            //sMul = info.GetDouble("sMul");
 
-            dexterity = info.GetInt32("dexterity");
-            currentDexterity = info.GetInt32("currentDexterity");
-            dMul = info.GetDouble("dMul");
+            //dexterity = info.GetInt32("dexterity");
+            //currentDexterity = info.GetInt32("currentDexterity");
+            //dMul = info.GetDouble("dMul");
 
-            intelligence = info.GetInt32("intelligence");
-            currentIntelligence = info.GetInt32("currentIntelligence");
-            iMul = info.GetDouble("iMul");
+            //intelligence = info.GetInt32("intelligence");
+            //currentIntelligence = info.GetInt32("currentIntelligence");
+            //iMul = info.GetDouble("iMul");
 
-            wisdom = info.GetInt32("wisdom");
-            currentWisdom = info.GetInt32("currentWisdom");
-            wMul = info.GetDouble("wMul");
+            //wisdom = info.GetInt32("wisdom");
+            //currentWisdom = info.GetInt32("currentWisdom");
+            //wMul = info.GetDouble("wMul");
 
-            luck = info.GetInt32("luck");
-            currentLuck = info.GetInt32("currentLuck");
-            lMul = info.GetDouble("lMul");
+            //luck = info.GetInt32("luck");
+            //currentLuck = info.GetInt32("currentLuck");
+            //lMul = info.GetDouble("lMul");
 
-            vitality = info.GetInt32("vitality");
-            currentVitality= info.GetInt32("currentVitality");
-            vMul = info.GetDouble("vMul");
+            //vitality = info.GetInt32("vitality");
+            //currentVitality= info.GetInt32("currentVitality");
+            //vMul = info.GetDouble("vMul");
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
@@ -168,40 +168,40 @@ namespace Wink
             else
                 info.AddValue("currentSkillGUID", currentSkill.GUID.ToString());
 
-            //stats
-            info.AddValue("manaPoints", manaPoints);
-            info.AddValue("healthPoints", healthPoints);
-            info.AddValue("actionPoints", actionPoints);
-            info.AddValue("baseAttack", baseAttack);
+            ////stats
+            //info.AddValue("manaPoints", manaPoints);
+            //info.AddValue("healthPoints", healthPoints);
+            //info.AddValue("actionPoints", actionPoints);
+            //info.AddValue("baseAttack", baseAttack);
 
-            info.AddValue("baseReach", reach);
-            info.AddValue("currentReach", currentReach);
-            info.AddValue("viewDistance", viewDistance);
-            info.AddValue("creatureLevel", creatureLevel);
+            //info.AddValue("baseReach", reach);
+            //info.AddValue("currentReach", currentReach);
+            //info.AddValue("viewDistance", viewDistance);
+            //info.AddValue("creatureLevel", creatureLevel);
 
-            info.AddValue("strength", strength);
-            info.AddValue("currentStrength", currentStrength);
-            info.AddValue("sMul", sMul);
+            //info.AddValue("strength", strength);
+            //info.AddValue("currentStrength", currentStrength);
+            //info.AddValue("sMul", sMul);
 
-            info.AddValue("dexterity", dexterity);
-            info.AddValue("currentDexterity", currentDexterity);
-            info.AddValue("dMul", dMul);
+            //info.AddValue("dexterity", dexterity);
+            //info.AddValue("currentDexterity", currentDexterity);
+            //info.AddValue("dMul", dMul);
 
-            info.AddValue("intelligence", intelligence);
-            info.AddValue("currentIntelligence", currentIntelligence);
-            info.AddValue("iMul", iMul);
+            //info.AddValue("intelligence", intelligence);
+            //info.AddValue("currentIntelligence", currentIntelligence);
+            //info.AddValue("iMul", iMul);
 
-            info.AddValue("vitality", vitality);
-            info.AddValue("currentVitality", currentVitality);
-            info.AddValue("vMul", vMul);
+            //info.AddValue("vitality", vitality);
+            //info.AddValue("currentVitality", currentVitality);
+            //info.AddValue("vMul", vMul);
 
-            info.AddValue("wisdom", wisdom);
-            info.AddValue("currentWisdom", currentWisdom);
-            info.AddValue("wMul", wMul);
+            //info.AddValue("wisdom", wisdom);
+            //info.AddValue("currentWisdom", currentWisdom);
+            //info.AddValue("wMul", wMul);
 
-            info.AddValue("luck", luck);
-            info.AddValue("currentLuck", currentLuck);
-            info.AddValue("lMul", lMul);
+            //info.AddValue("luck", luck);
+            //info.AddValue("currentLuck", currentLuck);
+            //info.AddValue("lMul", lMul);
         }
         #endregion
 

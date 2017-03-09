@@ -132,7 +132,7 @@ namespace Wink
         public void InitLivingObjects()
         {
             livingObjects = Level.FindAll(obj => obj is Living).Cast<Living>().ToList();
-            livingObjects.Sort((obj1, obj2) => obj1.Dexterity - obj2.Dexterity);
+            livingObjects.Sort((obj1, obj2) => obj1.GetStat(Stat.Dexterity) - obj2.GetStat(Stat.Dexterity));
             turnIndex = livingObjects.Count - 1;
         }
 

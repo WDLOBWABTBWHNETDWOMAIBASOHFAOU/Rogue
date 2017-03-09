@@ -53,7 +53,7 @@ namespace Wink
         public void disarmTrap(Living l)
         {
             //attempt to disarm the trap, if succesfull trap is disarmed whithout the livingObject taking damage, else trap is sprung (same effect as stepping on it)
-            int disarmChance = (int)l.CalculateValue(40, l.Luck, 0,1);
+            int disarmChance = (int)l.CalculateValue(40, l.GetStat(Stat.Luck), 0,1);
             int disarmValue = GameEnvironment.Random.Next(100);
 
             if (disarmChance >= disarmValue)//check if the livingObject succesfully disarms the trap
