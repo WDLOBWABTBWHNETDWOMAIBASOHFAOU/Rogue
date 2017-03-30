@@ -277,7 +277,7 @@ namespace Wink
             if (Health > 0)
             {
                 SpriteFont textfieldFont = GameEnvironment.AssetManager.GetFont("Arial26");
-                hpBar = new Bar<Enemy>(this, e => e.Health, e => e.MaxHealth, textfieldFont, Color.Red, "", 2, "HealthBar" + guid.ToString(), 1.0f, 1f, false);
+                hpBar = new Bar<Enemy>(this, e => e.Health, e => e.MaxHealth(), textfieldFont, Color.Red, "", 2, "HealthBar" + guid.ToString(), 1.0f, 1f, false);
                 (GameWorld.Find("PlayingGui") as PlayingGUI).Add(hpBar);
                 hpBar.Visible = !Tile.Visible ? false : Visible;
                 hpBar.Position = Tile.GlobalPosition - new Vector2(Math.Abs(Tile.Width - hpBar.Width) / 2, 0);

@@ -6,10 +6,10 @@ namespace Wink
 {
     public enum ArmorType
     {
-        light,
-        normal,
-        heavy,
-        robes,
+        Light,
+        Normal,
+        Heavy,
+        Robes,
 
         gen//ALWAYS LAST
     }
@@ -20,7 +20,7 @@ namespace Wink
         int physicalValue;
         int magicValue;
         int reqPenalty;
-        ArmorType armorType;
+        protected ArmorType armorType;
         float walkCostMod, fast = 0.8f, normal = 1.0f, slowed = 1.2f, slow = 1.4f;
 
         public float WalkCostMod { get { return walkCostMod; } }
@@ -83,19 +83,19 @@ namespace Wink
         {
             switch (armorType)
             {
-                case ArmorType.light:
+                case ArmorType.Light:
                     walkCostMod = normal;
                     spriteAssetName = "Sprites/Armor/elven_leather_armor";
                     break;
-                case ArmorType.robes:
+                case ArmorType.Robes:
                     walkCostMod = fast;
                     spriteAssetName = "Sprites/Armor/robe2";
                     break;
-                case ArmorType.normal:
+                case ArmorType.Normal:
                     walkCostMod = slowed;
                     spriteAssetName = "Sprites/Armor/dwarven_ringmail";
                     break;
-                case ArmorType.heavy:
+                case ArmorType.Heavy:
                     walkCostMod = slow;
                     spriteAssetName = "Sprites/Armor/orcish_platemail";
                     break;

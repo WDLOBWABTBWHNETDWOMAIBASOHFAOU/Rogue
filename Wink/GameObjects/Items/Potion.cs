@@ -13,12 +13,12 @@ namespace Wink
     }
     enum PotionPower
     {
-        minor,
-        small,
-        normal,
-        large,
-        greater,
-        huge
+        Minor,
+        Small,
+        Normal,
+        Large,
+        Greater,
+        Huge
     }
 
     [Serializable]
@@ -59,10 +59,10 @@ namespace Wink
             switch (potionType)
             {
                 case PotionType.Health:
-                    spriteAssetName = "Sprites/Potions/ruby";//TODO: replace by correct spritename
+                    spriteAssetName = "Sprites/Potions/ruby";
                     break;
                 case PotionType.Mana:
-                    spriteAssetName = "Sprites/Potions/brilliant_blue";//TODO: replace by correct spritename
+                    spriteAssetName = "Sprites/Potions/brilliant_blue";
                     break;
                 default:
                     throw new Exception("invalid potionType");
@@ -86,7 +86,6 @@ namespace Wink
         void SetId()
         {
             id = potionPower.ToString() + " " + potionType.ToString() + "Potion";
-            //TODO; connect potion type to spriteAssetName
         }
 
         public int setPotionPower()
@@ -94,22 +93,22 @@ namespace Wink
             switch (potionPower)
             {
                 #region PotionPower
-                case PotionPower.minor:
+                case PotionPower.Minor:
                     potionValue = 10;
                     break;
-                case PotionPower.small:
+                case PotionPower.Small:
                     potionValue = 25;
                     break;
-                case PotionPower.normal:
+                case PotionPower.Normal:
                     potionValue = 50;
                     break;
-                case PotionPower.large:
+                case PotionPower.Large:
                     potionValue = 100;
                     break;
-                case PotionPower.greater:
+                case PotionPower.Greater:
                     potionValue = 250;
                     break;
-                case PotionPower.huge:
+                case PotionPower.Huge:
                     potionValue = 500;
                     break;
                 default:
@@ -144,6 +143,7 @@ namespace Wink
 
         public override void ItemInfo(ItemSlot caller)
         {
+            displayedName = potionPower.ToString() + " " + potionType.ToString() + " Potion";
             base.ItemInfo(caller);
 
             TextGameObject PotionText = new TextGameObject("Arial12", cameraSensitivity: 0, layer: 0, id: "PotionText." + this);

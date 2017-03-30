@@ -5,11 +5,10 @@ using Microsoft.Xna.Framework;
 
 namespace Wink
 {
-    public enum EffectType
+    public enum RingEffectType
     {
         StatBonus,
         StatMultiplier,
-        // Make sure types of magic effects or other types that shouldn't be randomly put on rings are at the end of the enum
         Reflection
     }
 
@@ -25,7 +24,7 @@ namespace Wink
 
         // This dictionary will hold all of the multipliers for balancing rings for the different stats
         // for now these will all be set to 1
-        protected Dictionary<EffectType, double> balanceMultiplier = new Dictionary<EffectType, double>();
+        protected Dictionary<RingEffectType, double> balanceMultiplier = new Dictionary<RingEffectType, double>();
         private void SetBalance()
         {
             //balanceMultiplier.Add(EffectType.Strength, 0.8);
@@ -36,25 +35,65 @@ namespace Wink
             //balanceMultiplier.Add(EffectType.Wisdom, 1);
         }
 
-        protected List<RingEffect> ringEffects = new List<RingEffect>();
-
         // the amount of magic effects in the EffectType enum, these will not be put on randomly generated rings
         protected int magicEffects = 1;
 
-        public RingEquipment(double ringValue, EffectType ringType, string assetName, bool multiplier = false, int stackSize = 1, int layer = 0, string id = "") : base(assetName, id, stackSize, layer)
-        {
-            AddEffect(ringType);
-            SetId();
-        }
+        //public RingEquipment(double ringValue, RingEffectType ringType, string assetName, bool multiplier = false, int stackSize = 1, int layer = 0, string id = "") : base(assetName, id, stackSize, layer)
+        //{
+        //    AddEffect(ringType);
+        //    SetId();
+        //}
 
-        public RingEquipment(string assetName, int maxEffects = 3, int stackSize = 1, int layer = 0, string id = "", bool reflectEffect = false) : base(assetName, id, stackSize, layer)
+        public RingEquipment(int maxEffects = 3, int stackSize = 1, int layer = 0, string id = "", bool reflectEffect = false) : base("", id, stackSize, layer)
         {
             SetBalance();
             GenerateRing(maxEffects + 1);
-            if (reflectEffect)
-                AddReflection();
             SetId();
             SetSprite();
+        }
+
+        protected void GenerateEffect()
+        {
+            Array values = RingEffectType.GetValues(typeof(RingEffectType));
+            RingEffectType effectType = (RingEffectType)values.GetValue(GameEnvironment.Random.Next(values.Length));
+            RingEffect effect;
+            switch (effectType)
+            {
+                case RingEffectType.StatBonus:;
+                    effect = new StatBonusEffect((Stat)GameEnvironment.Random.Next(typeof(Stat).GetEnumValues().Length), GameEnvironment.Random.Next(5));
+                    ringEffects.Add(effect);
+                    break;
+                case RingEffectType.StatMultiplier:
+                    effect = new StatMultiplier((Stat)GameEnvironment.Random.Next(typeof(Stat).GetEnumValues().Length), Math.Round(GameEnvironment.Random.NextDouble(),2));
+                    ringEffects.Add(effect);
+                    break;
+                case RingEffectType.Reflection:
+                    effect = new ReflectionEffect(2);
+                    ringEffects.Add(effect);
+                    break;
+            }
+        }
+
+        #region Serialization
+        public RingEquipment(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+            ringEffects = info.GetValue("ringEffects", typeof(List<RingEffect>)) as List<RingEffect>;
+            balanceMultiplier = info.GetValue("balanceMultiplier", typeof(Dictionary<RingEffectType, double>)) as Dictionary<RingEffectType, double>;
+        }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            base.GetObjectData(info, context);
+            info.AddValue("ringEffects", ringEffects, typeof(List<RingEffect>));
+            info.AddValue("balanceMultiplier", balanceMultiplier);
+        }
+        #endregion
+
+        protected void GenerateRing(int maxEffects = 3)
+        {
+            int effectAmt = GameEnvironment.Random.Next(0, maxEffects);
+            for (int i = 0; i < effectAmt; i++)
+                GenerateEffect();
         }
 
         void SetSprite()
@@ -84,80 +123,26 @@ namespace Wink
                     RingEffect rE = ringEffects[i];
                     switch (rE.EffectType)
                     {
-                        case EffectType.StatBonus:
+                        case RingEffectType.StatBonus:
                             id += (rE as StatBonusEffect).Stat.ToString();
                             break;
-                        case EffectType.StatMultiplier:
-                            id += (rE as StatMultiplier).Stat.ToString() + " multiplier";
+                        case RingEffectType.StatMultiplier:
+                            id += (rE as StatMultiplier).Stat.ToString();
                             break;
-                        case EffectType.Reflection:
+                        case RingEffectType.Reflection:
                             id += rE.EffectType.ToString();
                             break;
                     }
+
                     if (i != ringEffects.Count - 1)
                     {
-                        id += rE.EffectType.ToString()+ ",";
+                        id += ", ";
                     }
                 }
             }
         }
 
-        #region Serialization
-        public RingEquipment(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
-            ringEffects = info.GetValue("ringEffects", typeof(List<RingEffect>)) as List<RingEffect>;
-            balanceMultiplier = info.GetValue("balanceMultiplier", typeof(Dictionary<EffectType, double>)) as Dictionary<EffectType, double>;
-        }
-
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            base.GetObjectData(info, context);
-            info.AddValue("ringEffects", ringEffects, typeof(List<RingEffect>));
-            info.AddValue("balanceMultiplier", balanceMultiplier, typeof(Dictionary<EffectType, double>));
-        }
-        #endregion
-
-        protected void AddEffect(EffectType effectType)
-        {
-            RingEffect effect = new RingEffect(effectType);
-            ringEffects.Add(effect);
-        }
-
-        protected void AddReflection()
-        {
-            // This method adds a special effect to a ring, this being the "Reflection" effect.
-            // It's the first attempt of magic in the game
-            ReflectionEffect reflectionEffect = new ReflectionEffect(2.5, 1.5);
-            ringEffects.Add(reflectionEffect);
-        }
-
-        protected void GenerateRing(int maxEffects = 3)
-        {
-            int effectAmt = GameEnvironment.Random.Next(0, maxEffects);
-            for (int i = 0; i < effectAmt; i++)
-                GenerateEffect();
-        }
-
-        protected void GenerateEffect()
-        {
-            Array values = EffectType.GetValues(typeof(EffectType));
-            EffectType effectType = (EffectType)values.GetValue(GameEnvironment.Random.Next(values.Length - magicEffects));
-
-            bool multiplier = true;
-            if (GameEnvironment.Random.NextDouble() < mulchance)
-                multiplier = false;
-
-            Dictionary<string, object> ret = new Dictionary<string, object>(); 
-            double effectValue = 0;
-
-            if (multiplier) 
-                effectValue = 1 + Math.Round(GameEnvironment.Random.NextDouble(), 2); 
-            else 
-                effectValue = Math.Round(acceptablePower * GameEnvironment.Random.NextDouble()); 
-
-            effectValue *= balanceMultiplier[effectType];
-            AddEffect(effectType);
-        }
+        protected List<RingEffect> ringEffects = new List<RingEffect>();
 
         public List<RingEffect> RingEffects
         {
@@ -166,6 +151,7 @@ namespace Wink
 
         public override void ItemInfo(ItemSlot caller)
         {
+            displayedName = id;
             base.ItemInfo(caller);
 
             foreach(RingEffect e in ringEffects)
@@ -174,7 +160,7 @@ namespace Wink
                 ringInfo.Text = e.InfoString;
                 ringInfo.Color = Color.Red;
                 ringInfo.Parent = infoList;
-                infoList.Children.Insert(1,ringInfo);
+                infoList.Children.Add(ringInfo);
             }
         }
 
@@ -201,10 +187,10 @@ namespace Wink
     }
 
     [Serializable]
-    public class RingEffect : ISerializable
+    public abstract class RingEffect : ISerializable
     {
-        protected EffectType effectType;
-        public EffectType EffectType { get { return effectType; } }
+        protected RingEffectType effectType;
+        public RingEffectType EffectType { get { return effectType; } }
 
         protected string spriteString;
         public string SpriteString { get { return spriteString; } }
@@ -212,7 +198,7 @@ namespace Wink
         protected string infoString;
         public string InfoString { get { return infoString; } }
 
-        public RingEffect(EffectType effectType)
+        public RingEffect(RingEffectType effectType)
         {
             this.effectType = effectType;
         }
@@ -225,14 +211,14 @@ namespace Wink
         #region Serialization
         public RingEffect(SerializationInfo info, StreamingContext context)
         {
-            effectType = (EffectType)info.GetValue("effectType", typeof(EffectType));
+            effectType = (RingEffectType)info.GetValue("effectType", typeof(RingEffectType));
             spriteString = info.GetString("spriteString");
             infoString = info.GetString("infoString");
         }
 
         public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            info.AddValue("effectType", effectType, typeof(EffectType));
+            info.AddValue("effectType", effectType);
             info.AddValue("spriteString", spriteString);
             info.AddValue("infoString", infoString);
         }
@@ -246,9 +232,12 @@ namespace Wink
         public Stat Stat { get { return stat; } }
         private int bonusValue;
 
-        public StatBonusEffect(Stat stat) : base(EffectType.StatBonus)
+        public StatBonusEffect(Stat stat, int bonusValue) : base(RingEffectType.StatBonus)
         {
             this.stat = stat;
+            this.bonusValue = bonusValue;
+            setInfoString();
+            setSpriteString();
         }
 
         public override void DoBonus(Living target)
@@ -301,7 +290,7 @@ namespace Wink
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             base.GetObjectData(info, context);
-            info.AddValue("stat", effectType, typeof(Stat));
+            info.AddValue("stat", stat);
             info.AddValue("bonusValue", bonusValue);
         }
         #endregion
@@ -314,9 +303,12 @@ namespace Wink
         public Stat Stat { get { return stat; } }
         private double multiplier;
 
-        public StatMultiplier(Stat stat) : base(EffectType.StatMultiplier)
+        public StatMultiplier(Stat stat, double multiplier) : base(RingEffectType.StatMultiplier)
         {
             this.stat = stat;
+            this.multiplier = multiplier;
+            setInfoString();
+            setSpriteString();
         }
 
         public override void DoBonus(Living target)
@@ -371,25 +363,32 @@ namespace Wink
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             base.GetObjectData(info, context);
-            info.AddValue("stat", effectType, typeof(Stat));
+            info.AddValue("stat", stat);
             info.AddValue("multiplier", multiplier);
         }
         #endregion
     }
 
     [Serializable]
-    public class ReflectionEffect : RingEffect
+    public class ReflectionEffect : RingEffect,ItriggerEffect
     {
-        //protected double power;
-        //protected double chance;
-
-        //public double Power { get { return power; } }
-        //public double Chance { get { return chance; } }
-
-        public ReflectionEffect(double power, double chance) : base(EffectType.Reflection)
+        public virtual TriggerEffects effect { get { return TriggerEffects.Reflection; } }
+        protected double power;
+        protected double chance;
+        protected double luckmod;
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="power"></param>
+        /// <param name="chance">chance reflection hits/has effect. if higher it's than 1 it's guaranteed to hit 
+        /// if the luck the opponent/source is lower than (chance-1)/luckmod</param>
+        public ReflectionEffect(double power, double chance = 1.0, double luckmod = 0.05) : base(RingEffectType.Reflection)
         {
-            //this.power = power;
-            //this.chance = chance;
+            this.power = power;
+            this.chance = chance;
+            this.luckmod = luckmod;
+            setInfoString();
+            setSpriteString();
         }
 
         protected override void setInfoString()
@@ -405,35 +404,43 @@ namespace Wink
         #region Serialization
         public ReflectionEffect(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            //power = info.GetDouble("power");
-            //chance = info.GetDouble("chance");
+            power = info.GetDouble("power");
+            chance = info.GetDouble("chance");
+            luckmod = info.GetDouble("luckmod");
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             base.GetObjectData(info, context);
-            //info.AddValue("power", power);
-            //info.AddValue("chance", chance);
+            info.AddValue("power", power);
+            info.AddValue("chance", chance);
+            info.AddValue("luckmod", luckmod);
         }
         #endregion
 
-    //    public double this[string val]
-    //    {
-    //        get
-    //        {
-    //            if (val == "power")
-    //            {
-    //                return Power;
-    //            }
-    //            else if (val == "chance")
-    //            {
-    //                return Chance;
-    //            }
-    //            else
-    //            {
-    //                throw new KeyNotFoundException("The value " + val + " is not in ReflectionEffect");
-    //            }
-    //        }
-    //    }
+        public override void DoBonus(Living target)
+        {
+            target.triggerEffects.Add(this);
+        }
+
+        public override void RemoveBonus(Living target)
+        {
+            target.triggerEffects.Remove(this);
+        }
+
+        public void ExecuteTrigger(Living source, Living target, double value)
+        {
+            double randomNumber = GameEnvironment.Random.NextDouble();
+            double reflectChance = chance - luckmod * source.GetStat(Stat.Luck); // Calculate reflection chance
+            if (randomNumber <= reflectChance)
+            { // Deal Reflection Damage
+                double reflectAmount = 0.8 - 2 / source.GetStat(Stat.Intelligence);
+                if (reflectAmount < 0) // makes sure you can never heal the opponent by dealing 
+                    reflectAmount = 0; //     negative reflection damage
+                int damageTaken = (int)(value * reflectAmount * power)*1000;
+                target.Health -= damageTaken;
+                // TODO: Visual feedback of reflection
+            }
+        }
     }
 }

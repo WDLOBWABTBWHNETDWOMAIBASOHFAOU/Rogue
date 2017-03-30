@@ -9,6 +9,7 @@ namespace Wink
         private int stackSize;
         public int stackCount;
         protected GameObjectList infoList;
+        protected string displayedName;
 
         public int getStackSize { get { return stackSize; } }
         public GameObjectList InfoList { get { return infoList; } }
@@ -64,6 +65,7 @@ namespace Wink
             stackSize = info.GetInt32("stackSize");
             stackCount = info.GetInt32("stackCount");
             infoList = info.GetValue("infoList", typeof(GameObjectList)) as GameObjectList;
+            displayedName = info.GetString("displayedName");
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
@@ -72,6 +74,7 @@ namespace Wink
             info.AddValue("stackSize", stackSize);
             info.AddValue("stackCount", stackCount);
             info.AddValue("infoList", infoList);
+            info.AddValue("displayedName", displayedName);
         }
         #endregion
 
@@ -79,7 +82,9 @@ namespace Wink
         {
             infoList = new GameObjectList();
             TextGameObject IDinfo = new TextGameObject("Arial26", cameraSensitivity: 0, layer: 0, id: "IDinfo." + this);
-            IDinfo.Text = Id.Split(':')[0];//only show first part of the id
+            
+            IDinfo.Text = displayedName;//only show first part of the id
+           // IDinfo.Text = Id.Split(':')[0];//only show first part of the id
             IDinfo.Color = Color.Red;
             infoList.Add(IDinfo);
         }

@@ -100,6 +100,7 @@
     <Compile Include="GameObjects\Items\Potion.cs" />
     <Compile Include="GameObjects\Items\RingEquipment.cs" />
     <Compile Include="GameObjects\Items\weapon\WeaponEquipment.cs" />
+    <Compile Include="GameObjects\TriggerEffects\ItriggerEffect.cs" />
     <Compile Include="GUI\MiniButton.cs" />
     <Compile Include="GUI\StatScreen.cs" />
     <Compile Include="GameObjects\InventorySystem\LootSack.cs" />

@@ -22,5 +22,15 @@ namespace Wink
         {
             return true; //TODO: determine and set requirements
         }
+
+        public override void ItemInfo(ItemSlot caller)
+        {
+            displayedName = armorType.ToString();
+            if(armorType != ArmorType.Robes)
+            {
+                displayedName += " Chest Armor";
+            }
+            base.ItemInfo(caller);
+        }
     }
 }

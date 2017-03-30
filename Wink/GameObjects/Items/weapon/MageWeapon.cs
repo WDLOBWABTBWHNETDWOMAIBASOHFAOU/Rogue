@@ -51,5 +51,10 @@ namespace Wink
                 user.CalculateValue(baseValue, intRequirement - user.GetStat(Stat.Intelligence), intScaling);
             return aVal;
         }
+        public override void ItemInfo(ItemSlot caller)
+        {
+            displayedName = "Staff";
+            base.ItemInfo(caller);
+        }
     }
 }

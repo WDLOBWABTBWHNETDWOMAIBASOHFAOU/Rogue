@@ -60,14 +60,12 @@ namespace Wink
             switch (potion.GetPotionType)
             {
                 case PotionType.Health:
-                    if (player.Health < player.MaxHealth)
+                    if (player.Health < player.MaxHealth())
                         return true;
                     break;
                 case PotionType.Mana:
-                    if (!(player.Mana >= player.MaxMana))
-                    {
+                    if (player.Mana < player.MaxMana())
                         return true;
-                    }
                     break;
                 default:
                     throw new Exception("invalid potionType");

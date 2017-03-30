@@ -85,7 +85,6 @@ namespace Wink
             for (int i = 0; i < 2; i++)
             {
                 Enemy testEnemy = new Enemy(0,Index,EnemyType.random, "Enemy" + i);
-                testEnemy.SetStats();
                 //First find all passable tiles then select one at random.
                 List<GameObject> tileCandidates = tf.FindAll(obj => obj is Tile && (obj as Tile).Passable);
                 Tile startTile = tileCandidates[GameEnvironment.Random.Next(tileCandidates.Count)] as Tile;
@@ -193,11 +192,11 @@ namespace Wink
                             break;
                         case 2:
                             spawnChance = 30;
-                            newItem = new ChestArmor(ArmorType.light);//TODO: replace with weaponfactory
+                            newItem = new ChestArmor(ArmorType.Light);//TODO: replace with weaponfactory
                             break;
                         case 3:
                             spawnChance = 30;
-                            newItem = new RingEquipment("empty:64:64:10:Gold");
+                            newItem = new RingEquipment();
                             break;
                         default:
                             throw new Exception("wtf");

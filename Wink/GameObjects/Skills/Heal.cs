@@ -41,15 +41,16 @@ namespace Wink
             {
                 caster.Mana -= ManaCost;
                 livingTarget.Health += skillPower;
-                if(livingTarget.Health > livingTarget.MaxHealth)
+                if(livingTarget.Health > livingTarget.MaxHealth())
                 {
-                    livingTarget.Health = livingTarget.MaxHealth;
+                    livingTarget.Health = livingTarget.MaxHealth();
                 }
             }
         }
 
         public override void ItemInfo(ItemSlot caller)
         {
+            displayedName = "Heal Spell";
             base.ItemInfo(caller);
             
             TextGameObject HealInfo = new TextGameObject("Arial12", 0, 0, "HealInfo." + this);

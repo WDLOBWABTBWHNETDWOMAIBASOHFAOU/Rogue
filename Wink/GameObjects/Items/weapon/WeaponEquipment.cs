@@ -165,6 +165,12 @@ namespace Wink
 
             Player player = caller.GameWorld.Find(Player.LocalPlayerName) as Player;
 
+            TextGameObject attackValueText = new TextGameObject("Arial12", cameraSensitivity: 0, layer: 0, id: "AttackInfoText." + this);
+            attackValueText.Text = "Attack Value: " + Math.Round(AttackValue(player)) + " " + damageType;
+            attackValueText.Color = Color.Red;
+            attackValueText.Parent = infoList;
+            infoList.Add(attackValueText);
+
             TextGameObject reachText = new TextGameObject("Arial12", cameraSensitivity: 0, layer: 0, id: "ReachInfoText." + this);
             reachText.Text = "Reach: " + reach;
             reachText.Color = Color.Red;
@@ -184,7 +190,7 @@ namespace Wink
         //virtual so special weapons (2+ damageTypes for example) can alter the Attack Method
         public virtual void Attack(Living user, Living target)
         {
-            target.TakeDamage(AttackValue(user), damageType);
+            target.TakeDamage(AttackValue(user), damageType,user);
         }
         protected abstract double AttackValue(Living user);
     }

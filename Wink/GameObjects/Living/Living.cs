@@ -31,6 +31,9 @@ namespace Wink
         {
             get { return inventory; }
         }
+
+        public List<ItriggerEffect> triggerEffects;
+
         public float ViewDistance
         {
             get { return viewDistance; }
@@ -80,6 +83,7 @@ namespace Wink
                 skillList.Add(new RestrictedItemSlot(typeof(Skill), "inventory/slot", id:"skillSlot" + x));
             
             inventory = new InventoryBox(4, 4, 0, "");
+            triggerEffects = new List<ItriggerEffect>();
 
             equipedItems = new LivingEquipment(this);//might give problems
             equipedItems.Parent = this;
@@ -101,7 +105,8 @@ namespace Wink
             equipedItems = info.TryGUIDThenFull<LivingEquipment>(context, "equipedItems");
             skillList = info.TryGUIDThenFull<GameObjectList>(context, "skillList");
             currentSkill = info.TryGUIDThenFull<Skill>(context, "currentSkill");
-            
+            triggerEffects = info.GetValue("triggerEffects",typeof(List<ItriggerEffect>)) as List<ItriggerEffect>;
+
             //stats
             manaPoints = info.GetInt32("manaPoints");
             healthPoints = info.GetInt32("healthPoints");
@@ -112,29 +117,9 @@ namespace Wink
             currentReach = info.GetInt32("currentReach");
             viewDistance = info.GetInt32("viewDistance");
 
-            //strength = info.GetInt32("strength");
-            //currentStrength = info.GetInt32("currentStrength");
-            //sMul = info.GetDouble("sMul");
-
-            //dexterity = info.GetInt32("dexterity");
-            //currentDexterity = info.GetInt32("currentDexterity");
-            //dMul = info.GetDouble("dMul");
-
-            //intelligence = info.GetInt32("intelligence");
-            //currentIntelligence = info.GetInt32("currentIntelligence");
-            //iMul = info.GetDouble("iMul");
-
-            //wisdom = info.GetInt32("wisdom");
-            //currentWisdom = info.GetInt32("currentWisdom");
-            //wMul = info.GetDouble("wMul");
-
-            //luck = info.GetInt32("luck");
-            //currentLuck = info.GetInt32("currentLuck");
-            //lMul = info.GetDouble("lMul");
-
-            //vitality = info.GetInt32("vitality");
-            //currentVitality= info.GetInt32("currentVitality");
-            //vMul = info.GetDouble("vMul");
+            statsBase = info.GetValue("statsBase", typeof(Dictionary<Stat, int>)) as Dictionary<Stat, int>;
+            statsBonus = info.GetValue("statsBonus", typeof(Dictionary<Stat, int>)) as Dictionary<Stat, int>;
+            statsMultiplier = info.GetValue("statsMultiplier", typeof(Dictionary<Stat, double>)) as Dictionary<Stat, double>;
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
@@ -168,40 +153,22 @@ namespace Wink
             else
                 info.AddValue("currentSkillGUID", currentSkill.GUID.ToString());
 
-            ////stats
-            //info.AddValue("manaPoints", manaPoints);
-            //info.AddValue("healthPoints", healthPoints);
-            //info.AddValue("actionPoints", actionPoints);
-            //info.AddValue("baseAttack", baseAttack);
+            info.AddValue("triggerEffects", triggerEffects);
 
-            //info.AddValue("baseReach", reach);
-            //info.AddValue("currentReach", currentReach);
-            //info.AddValue("viewDistance", viewDistance);
-            //info.AddValue("creatureLevel", creatureLevel);
+            //stats
+            info.AddValue("manaPoints", manaPoints);
+            info.AddValue("healthPoints", healthPoints);
+            info.AddValue("actionPoints", actionPoints);
+            info.AddValue("baseAttack", baseAttack);
 
-            //info.AddValue("strength", strength);
-            //info.AddValue("currentStrength", currentStrength);
-            //info.AddValue("sMul", sMul);
+            info.AddValue("baseReach", reach);
+            info.AddValue("currentReach", currentReach);
+            info.AddValue("viewDistance", viewDistance);
+            info.AddValue("creatureLevel", creatureLevel);
 
-            //info.AddValue("dexterity", dexterity);
-            //info.AddValue("currentDexterity", currentDexterity);
-            //info.AddValue("dMul", dMul);
-
-            //info.AddValue("intelligence", intelligence);
-            //info.AddValue("currentIntelligence", currentIntelligence);
-            //info.AddValue("iMul", iMul);
-
-            //info.AddValue("vitality", vitality);
-            //info.AddValue("currentVitality", currentVitality);
-            //info.AddValue("vMul", vMul);
-
-            //info.AddValue("wisdom", wisdom);
-            //info.AddValue("currentWisdom", currentWisdom);
-            //info.AddValue("wMul", wMul);
-
-            //info.AddValue("luck", luck);
-            //info.AddValue("currentLuck", currentLuck);
-            //info.AddValue("lMul", lMul);
+            info.AddValue("statsBase", statsBase);
+            info.AddValue("statsBonus", statsBonus);
+            info.AddValue("statsMultiplier", statsMultiplier);
         }
         #endregion
 
@@ -232,6 +199,17 @@ namespace Wink
             ShadowCast.ComputeVisibility(tf, pos.X, pos.Y, this);
             //skill idea: peek corner, allows the player to move its FOV position 1 tile in N,S,E or W direction,
             //allowing the player to peek around a corner into a halway without actualy stepping out
+        }
+
+        public void ExecuteTriggeredEffect(TriggerEffects type, Living target = null, double value = 0)
+        {
+            foreach (ItriggerEffect t in triggerEffects)
+            {
+                if(t.effect == type)
+                {
+                    t.ExecuteTrigger(this,target,value);
+                }
+            }
         }
 
         /// <summary>

@@ -33,8 +33,8 @@ namespace Wink
         {
             get
             {
-                int mc = (int)(Living.BaseActionCost*player.MoveMod);
-                return mc;
+                float mc = Living.BaseActionCost*player.MoveMod;
+                return (int)mc;//cast to int here to prevent rounding error (10 * 1.4 returning 13)
             }
         }
 

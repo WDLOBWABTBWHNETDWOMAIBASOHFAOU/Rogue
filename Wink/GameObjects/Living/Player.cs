@@ -66,14 +66,15 @@ namespace Wink
 
             EquipmentSlot weaponslot = equipedItems.WeaponSlot;
             EquipmentSlot bodyslot = equipedItems.BodySlot;
+            EquipmentSlot headslot = equipedItems.HeadSlot;
             ItemSlot ringslot = Inventory[1, 2] as ItemSlot;
-            ringslot.ChangeItem(new RingEquipment(10, EffectType.StatBonus, "Sprites/Rings/brass", true));
-            ItemSlot ringslot2 = Inventory[1, 0] as ItemSlot;
-            ringslot2.ChangeItem(new RingEquipment(10, EffectType.StatMultiplier, "Sprites/Rings/brass"));
-            int EquipmentStartingStrenght = 1000;
+            ringslot.ChangeItem(new RingEquipment());
+            ItemSlot ringslot2 = Inventory[1, 1] as ItemSlot;
+            ringslot2.ChangeItem(new RingEquipment());
+            int EquipmentStartingStrenght = 25;
 
             ItemSlot slot_0_0 = Inventory[0, 0] as ItemSlot;
-            slot_0_0.ChangeItem(new Potion("Sprites/Potions/ruby", PotionType.Health, PotionPower.minor, 5));//some starting healt potions
+            slot_0_0.ChangeItem(new Potion("Sprites/Potions/ruby", PotionType.Health, PotionPower.Minor, 5));//some starting healt potions
 
 
             ItemSlot slot_2_2 = Inventory[2, 2] as ItemSlot;
@@ -85,22 +86,25 @@ namespace Wink
             {
                 case PlayerType.Warrior:
                     weaponslot.ChangeItem(new MeleeWeapon("Sword",EquipmentStartingStrenght));
-                    bodyslot.ChangeItem(new ChestArmor(ArmorType.heavy,10,5));
+                    bodyslot.ChangeItem(new ChestArmor(ArmorType.Heavy,10,5));
+                    headslot.ChangeItem(new HeadEquipment(ArmorType.Heavy, 3, 2));
                     SetStats(1, 4, 4, 1, 1, 1, 1);
                     break;
 
                 case PlayerType.Archer:
                     weaponslot.ChangeItem(new RangedWeapon("Bow", EquipmentStartingStrenght));
-                    bodyslot.ChangeItem(new ChestArmor(ArmorType.light, 5, 3));
+                    bodyslot.ChangeItem(new ChestArmor(ArmorType.Light, 5, 3));
+                    headslot.ChangeItem(new HeadEquipment(ArmorType.Light, 2, 2));
                     SetStats(1, 1, 1, 4, 1, 1, 4);
                     break;
 
                 case PlayerType.Mage:
                     weaponslot.ChangeItem(new MageWeapon("Staff", EquipmentStartingStrenght));
-                    bodyslot.ChangeItem(new ChestArmor(ArmorType.robes, 3, 10));
+                    bodyslot.ChangeItem(new ChestArmor(ArmorType.Robes, 3, 10));
+                    headslot.ChangeItem(new HeadEquipment(ArmorType.Robes, 1, 6));
                     SetStats(1, 1, 1, 1, 4, 4, 1);
                     ItemSlot slot_1_0 = Inventory[1, 0] as ItemSlot;
-                    slot_1_0.ChangeItem(new Potion("Sprites/Potions/brilliant_blue", PotionType.Mana, PotionPower.minor, 5));//some starting mana potions
+                    slot_1_0.ChangeItem(new Potion("Sprites/Potions/brilliant_blue", PotionType.Mana, PotionPower.Minor, 5));//some starting mana potions
                     break;
 
                 default:
@@ -169,7 +173,7 @@ namespace Wink
             if (killedEnemy != null)
             {
                 int expmod = 50;
-                float diffulcityMod = killedEnemy.statAverige / statAverige;
+                double diffulcityMod = killedEnemy.AverageBaseStat() / AverageBaseStat();
                 expGained = (int)(diffulcityMod * expmod);
             }
 
@@ -355,11 +359,11 @@ namespace Wink
                 const int barY = 10;
 
                 //Healthbar
-                Bar<Player> hpBar = new Bar<Player>(this, p => p.Health, p => p.MaxHealth, textfieldFont, Color.Red, "HP", 2, "HealthBar", 0, 2.5f);
+                Bar<Player> hpBar = new Bar<Player>(this, p => p.Health, p => p.MaxHealth(), textfieldFont, Color.Red, "HP", 2, "HealthBar", 0, 2.5f);
                 hpBar.Position = new Vector2(barX, barY);
                 gui.Add(hpBar);
                 //Manabar
-                Bar<Player> mpBar = new Bar<Player>(this, p => p.Mana, p => p.MaxMana, textfieldFont, Color.Blue, "MP", 2, "ManaBar", 0, 2.5f);
+                Bar<Player> mpBar = new Bar<Player>(this, p => p.Mana, p => p.MaxMana(), textfieldFont, Color.Blue, "MP", 2, "ManaBar", 0, 2.5f);
                 mpBar.Position = hpBar.Position + new Vector2(0, hpBar.Height +barY);
                 gui.Add(mpBar);
 

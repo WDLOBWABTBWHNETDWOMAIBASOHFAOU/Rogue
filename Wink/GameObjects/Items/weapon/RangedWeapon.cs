@@ -58,5 +58,11 @@ namespace Wink
                 user.CalculateValue(baseValue, strRequirement - user.GetStat(Stat.Strength), strScaling, 0, dexRequirement - user.GetStat(Stat.Dexterity), dexScaling);
             return aVal;
         }
+
+        public override void ItemInfo(ItemSlot caller)
+        {
+            displayedName = "Bow";
+            base.ItemInfo(caller);
+        }
     }
 }

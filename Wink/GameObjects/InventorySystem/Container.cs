@@ -139,11 +139,11 @@ namespace Wink
                         break;
                     case 2:
                         spawnChance = 30;
-                        newItem = new ChestArmor(ArmorType.light);//TODO: replace with weaponfactory
+                        newItem = new ChestArmor(ArmorType.Light);//TODO: replace with weaponfactory
                         break;
                     case 3:
                         spawnChance = 30;
-                        newItem = new RingEquipment("empty:64:64:10:Gold");
+                        newItem = new RingEquipment();
                         break;
                     default:
                         throw new Exception("wtf");

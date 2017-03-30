@@ -44,24 +44,6 @@ namespace Wink
         public override void ItemInfo(ItemSlot caller)
         {
             base.ItemInfo(caller);
-
-            //if(strRequirement != 0 || dexRequirement != 0 || intRequirement != 0)
-            //{
-            //    TextGameObject emptyLine = new TextGameObject("Arial12", cameraSensitivity: 0, layer: 0, id: "emptyLine." + this);
-            //    emptyLine.Text = " ";
-            //    emptyLine.Color = Color.Red;
-            //    infoList.Add(emptyLine);
-
-            //    TextGameObject requirementsText = new TextGameObject("Arial12", cameraSensitivity: 0, layer: 0, id: "reqInfoText." + this);
-            //    requirementsText.Text = "Requirements";
-            //    requirementsText.Color = Color.Red;
-            //    infoList.Add(requirementsText);
-
-            //    TextGameObject requirements = new TextGameObject("Arial12", cameraSensitivity: 0, layer: 0, id: "reqInfo." + this);
-            //    requirements.Text = "Str: " + strRequirement+ "   Dex: " + dexRequirement + "   Int: " + intRequirement ;
-            //    requirements.Color = Color.Red;
-            //    infoList.Add(requirements);
-            //}
         }
 
         #region BonusValues

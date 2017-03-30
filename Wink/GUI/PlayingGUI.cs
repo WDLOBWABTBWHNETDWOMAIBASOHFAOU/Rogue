@@ -7,17 +7,9 @@ namespace Wink
     public class PlayingGUI : GameObjectList
     {
         private PlayingMenu playingMenu;
-        public PlayerInventoryAndEquipment Inventory
-        {
-            get { return Find(obj => obj is PlayerInventoryAndEquipment) as PlayerInventoryAndEquipment; }
-        }
+        public PlayerInventoryAndEquipment Inventory { get { return Find(obj => obj is PlayerInventoryAndEquipment) as PlayerInventoryAndEquipment; } }
         private SkillBar SkillBar { get { return Find(obj => obj is SkillBar) as SkillBar; } }
-
-        public StatScreen CharacterScreen
-        {
-            
-            get { return Find(obj => obj is StatScreen) as StatScreen; }
-        }
+        public StatScreen CharacterScreen { get { return Find(obj => obj is StatScreen) as StatScreen; } }
         
         public PlayingGUI()
         {

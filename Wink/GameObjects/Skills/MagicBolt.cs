@@ -42,7 +42,7 @@ namespace Wink
                 caster.Mana -= ManaCost;
                 NonAnimationSoundEvent MagicBoldSound = new NonAnimationSoundEvent("Sounds/donnerre2");
                 LocalServer.SendToClients(MagicBoldSound);
-                livingTarget.TakeDamage(skillPower, DamageType.Magic);
+                livingTarget.TakeDamage(skillPower, DamageType.Magic,caster);
             }
             else
             {
@@ -51,6 +51,7 @@ namespace Wink
         }
         public override void ItemInfo(ItemSlot caller)
         {
+            displayedName = "MagicBolt";
             base.ItemInfo(caller);
 
             TextGameObject MagicBoltInfo = new TextGameObject("Arial12", 0, 0, "MagicBoltInfo." + this);

@@ -21,7 +21,7 @@ namespace Wink
 
         public int GetStat(Stat s)
         {
-            int stat = (int)((statsBase[s] + statsBonus[s]) * statsMultiplier[s]);
+            int stat = (int)((statsBase[s] + statsBonus[s]) * Math.Round(statsMultiplier[s],2));//round multiplier so it doesn't produce 1 statpoint lower if its 0,99999.... (presision error inherent to modifing doubles)
             return stat;
         }
 
@@ -31,33 +31,52 @@ namespace Wink
         public int BaseReach { get { return reach; } }
         public int Reach { get { return currentReach; } set { currentReach = value; } }
 
-        public float statAverige { get { return (statsBase[Stat.Dexterity] + statsBase[Stat.Intelligence] + statsBase[Stat.Luck] + statsBase[Stat.Strength] + statsBase[Stat.Vitality] + statsBase[Stat.Wisdom]) / 6; } }
+        /// <summary>
+        /// Returns the average of the base stats
+        /// </summary>
+        /// <returns></returns>
+        public double AverageBaseStat()
+        {
+            double avr = statsBase.Values.Average();
+            return avr;
+        }
 
-        public int ActionPoints { get { return actionPoints; } set { actionPoints= System.Math.Min(value, MaxActionPoints); } }
+        /// <summary>
+        /// returns the average of the current stats (taking bonuses in to account)
+        /// </summary>
+        /// <returns></returns>
+        public double AverageCurrentStat()
+        {
+            Stat[] stats = (Stat[])Enum.GetValues(typeof(Stat));
+            double sum = 0;
+            for (int i = 0; i < stats.Length; i++)
+            {
+                Stat s = stats[i];
+                sum += GetStat(s);
+            }
+            double avr = sum / stats.Length;
+            return avr;
+        }
 
+        public int ActionPoints { get { return actionPoints; } set { actionPoints= Math.Min(value, MaxActionPoints); } }
+        #endregion
+        
         #region Health
         public int Health
         {
             get
             { return healthPoints; }
             set
-            {
-                if (value <= MaxHealth)
-                    healthPoints = value;
-                else
-                    healthPoints = MaxHealth;
-
+            {                
+                healthPoints = value;
                 if (healthPoints <= 0)
-                {
-                    LocalServer.SendToClients(new DeathAnimationEvent(this, "Sounds/video_game_announcer_grunt"));
                     Death();
-                }
+                if (value >= MaxHealth())
+                    healthPoints = MaxHealth();
             }
         }
-
-        public int MaxHealth { get { return MaxHP(); } }
         
-        protected int MaxHP()
+        public int MaxHealth()
         {
             int maxHP = (int)CalculateValue(40, GetStat(Stat.Vitality) - 1, 0.1);
             return maxHP;
@@ -72,24 +91,20 @@ namespace Wink
             { return manaPoints; }
             set
             {
-                if (value <= MaxMana)
+                if (value <= MaxMana())
                     manaPoints = value;
                 else
-                    manaPoints = MaxMana;
+                    manaPoints = MaxMana();
             }
         }
-
-        public int MaxMana { get { return MaxManaPoints(); } }
-
-        protected int MaxManaPoints()
+        
+        public int MaxMana()
         {
             int maxManaPoints = (int)CalculateValue(50, GetStat(Stat.Wisdom), 0.1);
             return maxManaPoints;
         }
 
         #endregion
-        #endregion
-        
 
         /// <summary>
         /// Sets starting stats when the living object is created
@@ -121,12 +136,12 @@ namespace Wink
             statsBonus.Add(Stat.Vitality, 0);
             statsBonus.Add(Stat.Wisdom, 0);
 
-            statsMultiplier.Add(Stat.Dexterity, 1);
-            statsMultiplier.Add(Stat.Intelligence, 1);
-            statsMultiplier.Add(Stat.Luck, 1);
-            statsMultiplier.Add(Stat.Strength, 1);
-            statsMultiplier.Add(Stat.Vitality, 1);
-            statsMultiplier.Add(Stat.Wisdom, 1);
+            statsMultiplier.Add(Stat.Dexterity, 1f);
+            statsMultiplier.Add(Stat.Intelligence, 1f);
+            statsMultiplier.Add(Stat.Luck, 1f);
+            statsMultiplier.Add(Stat.Strength, 1f);
+            statsMultiplier.Add(Stat.Vitality, 1f);
+            statsMultiplier.Add(Stat.Wisdom, 1f);
 
             //set misc
             this.creatureLevel = creatureLevel;
@@ -134,8 +149,8 @@ namespace Wink
             currentReach = baseReach;
             this.baseAttack = baseAttack;
             this.baseArmor = baseArmor;
-            healthPoints = MaxHP();
-            manaPoints = MaxManaPoints();
+            healthPoints = MaxHealth();
+            manaPoints = MaxMana();
         }
 
         public void resetMultipliers()

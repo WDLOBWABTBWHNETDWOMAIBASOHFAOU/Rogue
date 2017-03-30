@@ -22,5 +22,11 @@ namespace Wink
         {
             return true; //TODO: determine and set requirements
         }
+
+        public override void ItemInfo(ItemSlot caller)
+        {
+            displayedName = armorType.ToString() + " Helmet";
+            base.ItemInfo(caller);
+        }
     }
 }
